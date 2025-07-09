@@ -31,12 +31,6 @@ actual fun RequestCameraPermission(
     var showDialog by remember { mutableStateOf(false) }
     var isPermissionDeniedPermanently by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isPermissionDeniedPermanently) {
-        if (isPermissionDeniedPermanently) {
-            onPermissionPermanentlyDenied()
-        }
-    }
-
     LaunchedEffect(Unit) {
         val currentStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
         when (currentStatus) {
@@ -60,21 +54,22 @@ actual fun RequestCameraPermission(
         }
     }
 
-    if (showDialog) {
-        if (isPermissionDeniedPermanently) {
-            if (customSettingsDialog != null) {
-                customSettingsDialog { openSettings() }
-            } else {
-                CustomPermissionDialog(
-                    title = titleDialogConfig,
-                    description = descriptionDialogConfig,
-                    confirmationButtonText = btnDialogConfig,
-                    onConfirm = {
-                        openSettings()
-                        showDialog = false
-                    }
-                )
-            }
+    if (showDialog && isPermissionDeniedPermanently) {
+        if (customSettingsDialog != null) {
+            customSettingsDialog { openSettings() }
+        } else {
+            CustomPermissionDialog(
+                title = titleDialogDenied,
+                description = descriptionDialogDenied,
+                confirmationButtonText = btnDialogDenied,
+                onConfirm = {
+                    openSettings()
+                    showDialog = false
+                }
+            )
+        }
+        LaunchedEffect(Unit) {
+            onPermissionPermanentlyDenied()
         }
     }
 }

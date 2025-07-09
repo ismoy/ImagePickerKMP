@@ -11,6 +11,7 @@ This guide will help you integrate ImagePickerKMP into your Kotlin Multiplatform
 - [Advanced Configuration](#advanced-configuration)
 - [Troubleshooting](#troubleshooting)
 - [Migration from Other Libraries](#migration-from-other-libraries)
+- [Gallery Selection & iOS Dialog Customization](#gallery-selection-ios-dialog-customization)
 
 ## Prerequisites
 
@@ -291,6 +292,31 @@ fun IOSImagePicker() {
     )
 }
 ```
+
+## Gallery Selection & iOS Dialog Customization
+
+### Multiplatform Gallery Support
+
+You can allow users to select images from the gallery on both Android and iOS. On Android, a gallery icon appears in the camera UI. On iOS, you can present a dialog to choose between camera and gallery.
+
+### iOS Dialog Text Customization
+
+You can customize the dialog texts (title, take photo, select from gallery, cancel) on iOS:
+
+```kotlin
+ImagePickerLauncher(
+    context = ..., // platform context
+    onPhotoCaptured = { result -> /* ... */ },
+    onError = { exception -> /* ... */ },
+    dialogTitle = "Choose action", // iOS only
+    takePhotoText = "Camera",      // iOS only
+    selectFromGalleryText = "Gallery", // iOS only
+    cancelText = "Dismiss"         // iOS only
+)
+```
+
+- On Android, these parameters are ignored.
+- On iOS, if not provided, defaults are in English.
 
 ## Troubleshooting
 
