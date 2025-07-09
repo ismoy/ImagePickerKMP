@@ -1,12 +1,10 @@
 package io.github.ismoy.imagepickerkmp
 
-import io.github.ismoy.imagepickerkmp.CameraPhotoHandler.PhotoResult as CameraPhotoResult
-import io.github.ismoy.imagepickerkmp.GalleryPhotoHandler.PhotoResult as GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.CameraPhotoHandler.PhotoResult
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.Foundation.NSData
 import platform.Foundation.NSFileManager
-import platform.Foundation.NSNumber
 import platform.Foundation.NSURL
 import platform.Foundation.NSUUID
 import platform.Foundation.temporaryDirectory
@@ -17,20 +15,14 @@ import platform.UIKit.UIImageJPEGRepresentation
 @OptIn(ExperimentalForeignApi::class)
 object ImageProcessor {
 
-    fun processImage(image: UIImage, quality: Double = 0.9): CameraPhotoResult {
-        val jpegData = convertToJPEG(image, quality)
+    fun processImage(image: UIImage): PhotoResult {
+        val jpegData = convertToJPEG(image)
         val fileURL = saveImageToDisk(jpegData)
-        return createCameraPhotoResult(image, fileURL)
+        return createPhotoResult(image, fileURL)
     }
 
-    fun processImageForGallery(image: UIImage, quality: Double = 0.9): GalleryPhotoResult {
-        val jpegData = convertToJPEG(image, quality)
-        val fileURL = saveImageToDisk(jpegData)
-        return createGalleryPhotoResult(image, fileURL)
-    }
-
-    private fun convertToJPEG(image: UIImage, quality: Double): NSData {
-        return UIImageJPEGRepresentation(image, quality)
+    private fun convertToJPEG(image: UIImage): NSData {
+        return UIImageJPEGRepresentation(image, 0.9)
             ?: throw PhotoCaptureException("Failed to convert image to JPEG")
     }
 
@@ -46,42 +38,18 @@ object ImageProcessor {
         return fileURL
     }
 
-    private fun createCameraPhotoResult(image: UIImage, fileURL: NSURL): CameraPhotoResult {
+    private fun createPhotoResult(image: UIImage, fileURL: NSURL): PhotoResult {
         val size = image.size
         val uri = fileURL.absoluteString
         if (uri.isNullOrEmpty()) {
             throw PhotoCaptureException("Failed to get valid URI for saved image")
         }
-        return CameraPhotoResult(
+
+        val result = PhotoResult(
             uri = uri,
             width = size.useContents { width.toInt() },
             height = size.useContents { height.toInt() }
         )
-    }
-
-    private fun createGalleryPhotoResult(image: UIImage, fileURL: NSURL): GalleryPhotoResult {
-        val size = image.size
-        val uri = fileURL.absoluteString
-        if (uri.isNullOrEmpty()) {
-            throw PhotoCaptureException("Failed to get valid URI for saved image")
-        }
-        val fileSize = getFileSize(fileURL)
-        return GalleryPhotoResult(
-            uri = uri,
-            width = size.useContents { width.toInt() },
-            height = size.useContents { height.toInt() },
-            fileName = fileURL.lastPathComponent,
-            fileSize = fileSize
-        )
-    }
-
-    private fun getFileSize(fileURL: NSURL): Long? {
-        return try {
-            val fileManager = NSFileManager.defaultManager
-            val attrs = fileManager.attributesOfItemAtPath(fileURL.path!!, null)
-            (attrs?.get("NSFileSize") as? NSNumber)?.longValue
-        } catch (e: Exception) {
-            null
-        }
+        return result
     }
 }

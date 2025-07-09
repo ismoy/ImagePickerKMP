@@ -33,7 +33,7 @@ class CameraDelegate(
 
     private fun processCapturedImage(image: UIImage, picker: UIImagePickerController) {
         try {
-            val photoResult = ImageProcessor.processImage(image, quality = 0.9)
+            val photoResult = ImageProcessor.processImage(image)
             onPhotoCaptured(photoResult)
         } catch (e: Exception) {
             onError(PhotoCaptureException("Failed to process image: ${e.message}"))
