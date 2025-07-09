@@ -1,18 +1,21 @@
 [versions]
-accompanistPermissions = "0.37.3"
-agp = "8.5.2"
+accompanistPermissions = "0.30.1"
+agp = "8.5.0"
 barcodeScanning = "17.2.0"
-cameraCore = "1.4.2"
-cameraView = "1.4.2"
-core = "3.5.3"
+cameraCore = "1.2.3"
+cameraView = "1.4.0"
+core = "3.4.1"
 kotlin = "2.1.21"
 android-minSdk = "24"
-android-compileSdk = "36"
-compose = "1.8.2"
-androidx-activityCompose = "1.10.1"
-kotlinxCoroutinesCore = "1.10.2"
+android-compileSdk = "34"
+compose = "1.8.0"
+androidx-activityCompose = "1.8.0"
+kotlinxCoroutinesCore = "1.7.3"
 kotlinxCoroutinesCoreVersion = "1.10.2"
-ui = "1.8.3"
+ui = "1.4.0"
+zxingAndroidEmbedded = "4.3.0"
+browser = "1.8.0"
+startupRuntime = "1.2.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -22,6 +25,7 @@ androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", versi
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraView" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "ui" }
+barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcodeScanning" }
 core = { module = "com.google.zxing:core", version.ref = "core" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
 compose-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "compose" }
@@ -31,8 +35,13 @@ compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.re
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-coroutines-core-v1102 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCoreVersion" }
+zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
+browser = { module = "androidx.browser:browser", version.ref = "browser" }
+startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
+
 
 [plugins]
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+vanniktech-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version = "2.0.21" }

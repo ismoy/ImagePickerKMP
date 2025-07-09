@@ -16,6 +16,7 @@ object PhotoCaptureOrchestrator {
             
             CameraPresenter.presentCamera(rootViewController, onPhotoCaptured, onError)
         } catch (e: Exception) {
+            println("PhotoCaptureOrchestrator: Exception caught: ${e.message}")
             onError(PhotoCaptureException("Failed to launch camera: ${e.message}"))
         }
     }

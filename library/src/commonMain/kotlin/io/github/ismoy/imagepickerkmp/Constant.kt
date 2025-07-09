@@ -11,7 +11,6 @@ object Constant {
     const val PERMISSION_PERMANENTLY_DENIED:String = "Camera permission permanently denied"
     const val BTN_ACCEPT:String = "Accept"
     const val BTN_RETRY:String = "Retry"
-    const val TITLE_IMAGE_CONFIRMATION:String = "Are you satisfied with the photo?"
 
 
 }

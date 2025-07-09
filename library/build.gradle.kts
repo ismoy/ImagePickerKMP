@@ -10,9 +10,11 @@ plugins {
     id("maven-publish")
 }
 
+
+
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    kotlin.applyDefaultHierarchyTemplate()
+    targetHierarchy.default()
     androidTarget {
         publishLibraryVariants("release")
         compilations.all {
@@ -43,7 +45,6 @@ kotlin {
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material)
                 implementation(libs.kotlinx.coroutines.core.v1102)
-                implementation("io.coil-kt.coil3:coil-compose:3.2.0")
             }
         }
         val androidMain by getting {
@@ -54,11 +55,19 @@ kotlin {
                 implementation(libs.androidx.camera.lifecycle)
                 implementation(libs.androidx.camera.view)
                 implementation(libs.accompanist.permissions)
+                implementation(libs.zxing.android.embedded)
                 implementation(libs.core)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.androidx.ui)
                 implementation(libs.androidx.ui.tooling.preview)
-                implementation("androidx.compose.material:material-icons-extended:1.5.4")
+                implementation(libs.barcode.scanning)
+                implementation(libs.startup.runtime)
+                implementation(libs.browser)
+                implementation ("com.google.firebase:firebase-analytics-ktx:21.5.0")
+                implementation("androidx.camera:camera-core:1.3.1")
+                implementation("androidx.camera:camera-camera2:1.3.1")
+                implementation("androidx.camera:camera-lifecycle:1.3.1")
+                implementation("androidx.camera:camera-view:1.3.1")
             }
         }
         val iosResourcesDir =
@@ -68,7 +77,9 @@ kotlin {
             tasks.withType<ProcessResources> {
                 duplicatesStrategy = DuplicatesStrategy.INCLUDE
             }
-            dependencies {}
+            dependencies {
+                // iOS dependencies are handled through CocoaPods
+            }
         }
         all {
             languageSettings {
@@ -101,7 +112,7 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.19"
+        version = "1.0.10"
     )
     pom {
         name.set("ImagePickerKMP")

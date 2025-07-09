@@ -14,28 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - High-quality photo capture option
 - Memory optimization improvements
 - Better error handling and recovery
-- Gallery selection support for Android and iOS
-- Customizable dialog texts for iOS and Android
-- Accessibility improvements: contentDescription and configurable button sizes
-- JPEG compression quality configuration for image processing
-- Logger interface for configurable logging
-- Unit test for PhotoResult
-- Linter and static analysis (ktlint, detekt) configuration
-- Example and documentation for internationalization
-- CI and coverage badges in README
 
 ### Changed
 - Improved permission handling flow
 - Enhanced UI components
 - Better cross-platform compatibility
-- Preview image in confirmation now uses FIT_CENTER to avoid zoom on gallery images
 
 ### Fixed
 - iOS permission denial flow
 - Android camera initialization issues
 - Memory leaks in photo processing
 - Permission dialog display issues
-- Disparador (capture button) always centered, gallery button does not push it
 
 ## [1.0.0] - 2024-01-15
 

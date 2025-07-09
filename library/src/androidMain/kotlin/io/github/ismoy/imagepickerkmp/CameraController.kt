@@ -17,17 +17,9 @@ class CameraController(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner
 ) {
-    enum class FlashMode {
-        AUTO, ON, OFF
-    }
-    enum class CameraType {
-        BACK, FRONT
-    }
     private var imageCapture: ImageCapture? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private val fileManager = FileManager(context)
-    private var currentFlashMode: FlashMode = FlashMode.AUTO
-    private var currentCameraType: CameraType = CameraType.BACK
 
     suspend fun startCamera(
         previewView: PreviewView,
@@ -43,13 +35,9 @@ class CameraController(
 
         imageCapture = ImageCapture.Builder()
             .setCaptureMode(getCaptureMode(preference))
-            .setFlashMode(getImageCaptureFlashMode(currentFlashMode))
             .build()
 
-        val cameraSelector = when (currentCameraType) {
-            CameraType.BACK -> CameraSelector.DEFAULT_BACK_CAMERA
-            CameraType.FRONT -> CameraSelector.DEFAULT_FRONT_CAMERA
-        }
+        val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
         try {
             cameraProvider?.unbindAll()
@@ -61,26 +49,6 @@ class CameraController(
             )
         } catch (exc: Exception) {
             throw PhotoCaptureException("Failed to bind camera use cases: ${exc.message}")
-        }
-    }
-
-    fun switchCamera() {
-        currentCameraType = when (currentCameraType) {
-            CameraType.BACK -> CameraType.FRONT
-            CameraType.FRONT -> CameraType.BACK
-        }
-    }
-
-    fun setFlashMode(mode: FlashMode) {
-        currentFlashMode = mode
-        imageCapture?.flashMode = getImageCaptureFlashMode(mode)
-    }
-
-    private fun getImageCaptureFlashMode(mode: FlashMode): Int {
-        return when (mode) {
-            FlashMode.AUTO -> ImageCapture.FLASH_MODE_AUTO
-            FlashMode.ON -> ImageCapture.FLASH_MODE_ON
-            FlashMode.OFF -> ImageCapture.FLASH_MODE_OFF
         }
     }
 

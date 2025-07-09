@@ -18,6 +18,7 @@ object CameraPresenter {
             val imagePickerController = createImagePickerController(onPhotoCaptured, onError)
             viewController.presentViewController(imagePickerController, animated = true, completion = null)
         } catch (e: Exception) {
+            println("CameraPresenter: Exception caught: ${e.message}")
             onError(PhotoCaptureException("Failed to present camera: ${e.message}"))
         }
     }
