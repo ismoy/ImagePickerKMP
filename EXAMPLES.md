@@ -642,6 +642,35 @@ fun IOSSpecificImagePicker() {
 }
 ```
 
+### 4. Gallery Selection and iOS Dialog Customization
+
+```kotlin
+@Composable
+fun GalleryAndCustomDialogExample() {
+    var showPicker by remember { mutableStateOf(false) }
+    if (showPicker) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            onPhotoCaptured = { result ->
+                println("Photo: ${result.uri}")
+                showPicker = false
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+                showPicker = false
+            },
+            dialogTitle = "Choose action", // iOS only
+            takePhotoText = "Camera",      // iOS only
+            selectFromGalleryText = "Gallery", // iOS only
+            cancelText = "Dismiss"         // iOS only
+        )
+    }
+    Button(onClick = { showPicker = true }) {
+        Text("Pick or Take Photo")
+    }
+}
+```
+
 ## Integration Examples
 
 ### 1. Integration with ViewModel
@@ -957,4 +986,363 @@ For examples-related issues:
 For more information, refer to:
 - [API Reference](API_REFERENCE.md)
 - [Integration Guide](INTEGRATION_GUIDE.md)
-- [Customization Guide](CUSTOMIZATION_GUIDE.md) 
+- [Customization Guide](CUSTOMIZATION_GUIDE.md)
+
+## Configuración Básica con Crashlytics
+
+### 1. Configurar la Aplicación
+
+```kotlin
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        
+        // Establecer el contexto para que la librería pueda inicializar Firebase
+        CrashlyticsManager.setApplicationContext(this)
+        
+        // Inicializar Crashlytics con la configuración recomendada
+        CrashlyticsManager.initialize(CrashlyticsConfig.RECOMMENDED)
+    }
+}
+```
+
+### 2. Usar ImagePickerLauncher
+
+```kotlin
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        setContent {
+            Column {
+                Button(
+                    onClick = {
+                        ImagePickerLauncher.launchImagePicker(
+                            context = this@MainActivity,
+                            onImageSelected = { uri ->
+                                // Manejar imagen seleccionada
+                                println("Imagen seleccionada: $uri")
+                            },
+                            onError = { exception ->
+                                // Los errores se registrarán automáticamente en Crashlytics
+                                println("Error: ${exception.message}")
+                            }
+                        )
+                    }
+                ) {
+                    Text("Seleccionar Imagen")
+                }
+            }
+        }
+    }
+}
+```
+
+## Configuración Avanzada
+
+### Configuración Personalizada de Crashlytics
+
+```kotlin
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        
+        // Establecer el contexto
+        CrashlyticsManager.setApplicationContext(this)
+        
+        // Configuración personalizada
+        CrashlyticsManager.initialize(
+            CrashlyticsConfig(
+                enabled = true,
+                logExceptions = true,
+                logMessages = true,
+                trackUserSessions = true,
+                customKeys = mapOf(
+                    "app_version" to BuildConfig.VERSION_NAME,
+                    "build_type" to BuildConfig.BUILD_TYPE,
+                    "device_model" to Build.MODEL
+                )
+            )
+        )
+    }
+}
+```
+
+### Usar CameraPreview con Crashlytics
+
+```kotlin
+@Composable
+fun CameraScreen() {
+    CameraPreview(
+        onPhotoCaptured = { uri ->
+            // Manejar foto capturada
+            println("Foto capturada: $uri")
+        },
+        onError = { exception ->
+            // Los errores se registrarán automáticamente
+            println("Error de cámara: ${exception.message}")
+        },
+        crashlyticsConfig = CrashlyticsConfig.RECOMMENDED
+    )
+}
+```
+
+## Logs Esperados
+
+Cuando configures correctamente Crashlytics, verás logs como estos:
+
+```
+🔥 Firebase Crashlytics: Initializing with config enabled=true
+🔥 Firebase Crashlytics Android: Application context set
+🔥 Firebase Crashlytics: Session tracking enabled
+🔥 Firebase Crashlytics: Set custom key session_start = started
+🔥 Firebase Crashlytics: Sending test crash to verify connection...
+🔥 Firebase Crashlytics Android: Recording exception - ImagePickerKMP Test Crash - Library initialized successfully
+🔥 Firebase Crashlytics Android: Exception recorded successfully!
+🔥 Firebase Crashlytics: Test crash sent successfully!
+```
+
+## Solución de Problemas
+
+### Si ves "Firebase not initialized"
+
+1. **Asegúrate de establecer el contexto**:
+```kotlin
+CrashlyticsManager.setApplicationContext(this)
+```
+
+2. **Verifica que tu google-services.json esté en la carpeta correcta**:
+```
+app/google-services.json
+```
+
+3. **Asegúrate de que las dependencias estén añadidas**:
+```kotlin
+dependencies {
+    implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+    implementation("com.google.firebase:firebase-crashlytics-ktx:18.6.2")
+    implementation("com.google.firebase:firebase-analytics-ktx:21.5.1")
+}
+```
+
+### Si no aparecen logs
+
+1. **Verifica que Crashlytics esté habilitado**:
+```kotlin
+CrashlyticsConfig.RECOMMENDED // en lugar de DISABLED
+```
+
+2. **Asegúrate de que la inicialización se ejecute en onCreate()**:
+```kotlin
+override fun onCreate() {
+    super.onCreate()
+    CrashlyticsManager.initialize(CrashlyticsConfig.RECOMMENDED)
+}
+```
+
+## Configuración Completa
+
+### build.gradle.kts (App)
+
+```kotlin
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")  // IMPORTANTE
+    id("com.google.firebase.crashlytics")  // IMPORTANTE
+}
+
+dependencies {
+    implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+    implementation("com.google.firebase:firebase-crashlytics-ktx:18.6.2")
+    implementation("com.google.firebase:firebase-analytics-ktx:21.5.1")
+}
+```
+
+**IMPORTANTE**: Los plugins de Firebase deben estar en la aplicación, NO en la librería.
+
+### AndroidManifest.xml
+
+```xml
+<application
+    android:name=".MyApplication"
+    ...>
+    
+    <activity
+        android:name=".MainActivity"
+        ...>
+    </activity>
+</application>
+```
+
+### MyApplication.kt
+
+```kotlin
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        
+        // Configurar Crashlytics
+        CrashlyticsManager.setApplicationContext(this)
+        CrashlyticsManager.initialize(CrashlyticsConfig.RECOMMENDED)
+    }
+}
+```
+
+### MainActivity.kt
+
+```kotlin
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        setContent {
+            ImagePickerApp()
+        }
+    }
+}
+
+@Composable
+fun ImagePickerApp() {
+    var showImagePicker by remember { mutableStateOf(false) }
+    
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Button(
+            onClick = { showImagePicker = true }
+        ) {
+            Text("Seleccionar Imagen")
+        }
+        
+        if (showImagePicker) {
+            ImagePickerLauncher(
+                context = LocalContext.current,
+                onImageSelected = { uri ->
+                    showImagePicker = false
+                    println("Imagen seleccionada: $uri")
+                },
+                onError = { exception ->
+                    showImagePicker = false
+                    println("Error: ${exception.message}")
+                }
+            )
+        }
+    }
+}
+```
+
+## Verificar que Funciona
+
+1. **Ejecuta la aplicación**
+2. **Busca los logs en Logcat**:
+   ```
+   🔥 Firebase Crashlytics: Initializing with config enabled=true
+   ```
+3. **Verifica en Firebase Console** que aparezcan los datos
+4. **Prueba el crash de prueba** que se envía automáticamente
+
+## Beneficios
+
+- ✅ **Inicialización automática**: La librería maneja todo
+- ✅ **Logs detallados**: Puedes ver qué se está enviando
+- ✅ **Crash de prueba**: Verificación automática
+- ✅ **Manejo de errores**: Sistema robusto
+- ✅ **Configuración flexible**: Los desarrolladores pueden personalizar 
+
+# Ejemplos de Integración - ImagePickerKMP
+
+## Selección simple y múltiple de imágenes con ImagePickerLauncher
+
+A partir de la versión actual, puedes usar `ImagePickerLauncher` para permitir a tus usuarios tomar una foto con la cámara o seleccionar una o varias imágenes desde la galería, de forma multiplataforma.
+
+### Ejemplo completo en Compose
+
+```kotlin
+@Composable
+fun CameraScreen(context: Any?) {
+    var showImagePicker by remember { mutableStateOf(false) }
+    var capturedImages by remember { mutableStateOf<List<CameraPhotoHandler.PhotoResult>>(emptyList()) }
+
+    Scaffold { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                if (showImagePicker) {
+                    ImagePickerLauncher(
+                        context = context,
+                        onPhotoCaptured = { photoResult ->
+                            // Cuando se toma una foto con la cámara
+                            capturedImages = listOf(photoResult)
+                            showImagePicker = false
+                        },
+                        onPhotosSelected = { photoResults ->
+                            // Cuando se seleccionan una o varias imágenes de la galería
+                            capturedImages = photoResults
+                            showImagePicker = false
+                        },
+                        onError = { exception ->
+                            showImagePicker = false
+                        },
+                        preference = CapturePhotoPreference.QUALITY,
+                        dialogTitle = "Seleccionar imagen",
+                        takePhotoText = "Tomar foto",
+                        selectFromGalleryText = "Seleccionar de galería",
+                        cancelText = "Cancelar",
+                        allowMultiple = true // Cambia a false para solo una imagen
+                    )
+                } else if (capturedImages.isNotEmpty()) {
+                    LazyRow {
+                        items(capturedImages) { image ->
+                            AsyncImage(
+                                model = image.uri,
+                                contentDescription = "Imagen seleccionada",
+                                modifier = Modifier
+                                    .size(120.dp)
+                                    .padding(4.dp)
+                            )
+                        }
+                    }
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        showImagePicker = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text("Abrir selector de imágenes")
+                }
+            }
+        }
+    }
+}
+```
+
+### Puntos clave
+- Usa `onPhotoCaptured` para manejar la foto tomada con la cámara (siempre una sola imagen).
+- Usa `onPhotosSelected` para manejar la selección desde galería (puede ser una o varias imágenes, según `allowMultiple`).
+- Muestra las imágenes usando una lista (`LazyRow`, `Column`, etc.).
+- El callback siempre recibe una lista, aunque solo se seleccione una imagen.
+
+---
+
+¿Dudas? Consulta la guía de arquitectura o abre un issue. 

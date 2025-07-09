@@ -1,6 +1,6 @@
 package io.github.ismoy.imagepickerkmp
 
-import io.github.ismoy.imagepickerkmp.CameraPhotoHandler.PhotoResult
+import io.github.ismoy.imagepickerkmp.GalleryPhotoHandler.PhotoResult
 import platform.UIKit.UIImage
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerDelegateProtocol
@@ -8,9 +8,8 @@ import platform.UIKit.UIImagePickerControllerOriginalImage
 import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.darwin.NSObject
 
-
-class CameraDelegate(
-    private val onPhotoCaptured: (PhotoResult) -> Unit,
+class GalleryDelegate(
+    private val onPhotoSelected: (PhotoResult) -> Unit,
     private val onError: (Exception) -> Unit
 ) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
 
@@ -20,23 +19,23 @@ class CameraDelegate(
     ) {
         val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
             ?: run {
-                onError(PhotoCaptureException("No image captured"))
+                onError(Exception("No image selected"))
                 dismissPicker(picker)
                 return
             }
-        processCapturedImage(image, picker)
+        processSelectedImage(image, picker)
     }
 
     override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
         dismissPicker(picker)
     }
 
-    private fun processCapturedImage(image: UIImage, picker: UIImagePickerController) {
+    private fun processSelectedImage(image: UIImage, picker: UIImagePickerController) {
         try {
-            val photoResult = ImageProcessor.processImage(image, quality = 0.9)
-            onPhotoCaptured(photoResult)
+            val photoResult = ImageProcessor.processImageForGallery(image)
+            onPhotoSelected(photoResult)
         } catch (e: Exception) {
-            onError(PhotoCaptureException("Failed to process image: ${e.message}"))
+            onError(Exception("Failed to process image: ${e.message}"))
         } finally {
             dismissPicker(picker)
         }
@@ -45,4 +44,4 @@ class CameraDelegate(
     private fun dismissPicker(picker: UIImagePickerController) {
         picker.dismissViewControllerAnimated(true, completion = null)
     }
-}
+} 
