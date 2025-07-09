@@ -31,4 +31,13 @@ class CameraXManager (
     fun stopCamera(){
         cameraController.stopCamera()
     }
+    fun setFlashMode(mode: CameraController.FlashMode) {
+        cameraController.setFlashMode(mode)
+    }
+    fun switchCamera() {
+        cameraController.switchCamera()
+    }
+
+    val flashModes: List<CameraController.FlashMode>
+        get() = CameraController.FlashMode.values().toList()
 }
