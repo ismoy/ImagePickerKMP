@@ -1,40 +1,42 @@
-# Manejo de Permisos de Cámara en Android e iOS
+Este documento también está disponible en inglés: [PERMISSION.md](PERMISSION.md)
 
-## Descripción General
+# Manejo de permisos de cámara en Android e iOS
 
-Este documento explica cómo se manejan los permisos de cámara en la librería ImagePickerKMP para ambas plataformas, Android e iOS, incluyendo las diferencias en comportamiento, detalles de implementación y ejemplos.
+## Resumen
 
-## Diferencias entre Plataformas
+Este documento explica cómo se gestionan los permisos de cámara en la librería ImagePickerKMP para Android e iOS, incluyendo diferencias de comportamiento, detalles de implementación y ejemplos.
 
-### Sistema de Permisos de Android
+## Diferencias entre plataformas
 
-Android utiliza un sistema de permisos donde:
+### Sistema de permisos en Android
+
+Android utiliza un sistema donde:
 - Los permisos se solicitan en tiempo de ejecución (API 23+)
-- Los usuarios pueden conceder/denegar permisos múltiples veces
-- Las aplicaciones pueden solicitar permisos nuevamente después de la denegación
-- Los usuarios pueden habilitar/deshabilitar permisos manualmente en Configuración
+- El usuario puede conceder/denegar permisos varias veces
+- La app puede volver a solicitar permisos tras una denegación
+- El usuario puede habilitar/deshabilitar permisos manualmente en Ajustes
 
-### Sistema de Permisos de iOS
+### Sistema de permisos en iOS
 
-iOS utiliza un sistema de permisos más restrictivo donde:
-- Los permisos se solicitan una vez por instalación de la aplicación
-- Después de la primera denegación, los usuarios deben ir a Configuración para habilitar permisos
-- No existe un mecanismo de reintento automático
+iOS utiliza un sistema más restrictivo donde:
+- Los permisos se solicitan una sola vez por instalación
+- Tras la primera denegación, el usuario debe ir a Ajustes para habilitar el permiso
+- No existe un mecanismo automático de reintento
 - Los controles parentales pueden restringir permisos
 
-## Detalles de Implementación
+## Detalles de implementación
 
 ### Implementación en Android
 
-#### Estados de Permisos en Android
+#### Estados de permiso en Android
 
 ```kotlin
-// Estados de permisos en Android
+// Estados de permiso en Android
 PackageManager.PERMISSION_GRANTED    // Permiso concedido
 PackageManager.PERMISSION_DENIED     // Permiso denegado
 ```
 
-#### Flujo de Permisos en Android
+#### Flujo de permisos en Android
 
 ```kotlin
 @Composable
@@ -53,11 +55,12 @@ actual fun RequestCameraPermission(
             permissionDeniedCount++
             when {
                 permissionDeniedCount >= 2 -> {
-                    // Marcar como denegación permanente después de 2 intentos
+                    // Tras la segunda denegación, mostrar diálogo de ajustes
+                    showSettingsDialog = true
                     onPermissionPermanentlyDenied()
                 }
                 else -> {
-                    // Mostrar diálogo de reintento
+                    // Primera denegación, mostrar diálogo de reintento
                     showRationale = true
                 }
             }
@@ -66,7 +69,7 @@ actual fun RequestCameraPermission(
 }
 ```
 
-#### Ejemplo de Solicitud de Permisos en Android
+#### Ejemplo de solicitud de permiso en Android
 
 ```kotlin
 // Ejemplo: Solicitar permiso de cámara en Android
@@ -74,7 +77,7 @@ val permissionLauncher = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.RequestPermission()
 ) { isGranted ->
     if (isGranted) {
-        // Permiso concedido - proceder con la cámara
+        // Permiso concedido - iniciar cámara
         startCamera()
     } else {
         // Permiso denegado - mostrar diálogo de reintento
@@ -88,17 +91,17 @@ permissionLauncher.launch(Manifest.permission.CAMERA)
 
 ### Implementación en iOS
 
-#### Estados de Permisos en iOS
+#### Estados de permiso en iOS
 
 ```kotlin
-// Estados de permisos en iOS
+// Estados de permiso en iOS
 AVAuthorizationStatusAuthorized      // Permiso concedido
 AVAuthorizationStatusNotDetermined  // Primera solicitud
 AVAuthorizationStatusDenied         // Permiso denegado
 AVAuthorizationStatusRestricted     // Restringido por controles parentales
 ```
 
-#### Flujo de Permisos en iOS
+#### Flujo de permisos en iOS
 
 ```kotlin
 @Composable
@@ -117,14 +120,14 @@ actual fun RequestCameraPermission(
                     if (granted) {
                         onResult(true)
                     } else {
-                        // En iOS, mostrar diálogo de configuración directamente después de la primera denegación
+                        // En iOS, mostrar diálogo de ajustes tras la primera denegación
                         isPermissionDeniedPermanently = true
                         showDialog = true
                     }
                 }
             }
             AVAuthorizationStatusDenied, AVAuthorizationStatusRestricted -> {
-                // Permiso ya denegado - mostrar diálogo de configuración
+                // Permiso ya denegado - mostrar diálogo de ajustes
                 isPermissionDeniedPermanently = true
                 showDialog = true
             }
@@ -133,7 +136,7 @@ actual fun RequestCameraPermission(
 }
 ```
 
-#### Ejemplo de Solicitud de Permisos en iOS
+#### Ejemplo de solicitud de permiso en iOS
 
 ```kotlin
 // Ejemplo: Solicitar permiso de cámara en iOS
@@ -143,7 +146,7 @@ fun requestCameraAccess(callback: (Boolean) -> Unit) {
     }
 }
 
-// Verificar estado actual del permiso
+// Comprobar estado actual del permiso
 val status = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
 when (status) {
     AVAuthorizationStatusAuthorized -> {
@@ -161,119 +164,119 @@ when (status) {
         }
     }
     AVAuthorizationStatusDenied, AVAuthorizationStatusRestricted -> {
-        // Permiso denegado - mostrar diálogo de configuración
+        // Permiso denegado - mostrar diálogo de ajustes
         showSettingsDialog()
     }
 }
 ```
 
-## Flujo de Experiencia de Usuario
+## Flujo de experiencia de usuario
 
-### Experiencia de Usuario en Android
+### Experiencia en Android
 
-1. **Primera Solicitud**
+1. **Primera solicitud**
    ```
    La app solicita permiso de cámara
    ↓
-   El sistema muestra diálogo de permiso
+   El sistema muestra el diálogo de permiso
    ↓
-   Usuario concede permiso → La cámara inicia
-   Usuario deniega permiso → Mostrar diálogo de reintento
+   Usuario concede permiso → Se inicia la cámara
+   Usuario deniega permiso → Mostrar diálogo de reintento (permissionDeniedCount = 1)
    ```
 
-2. **Diálogo de Reintento**
+2. **Diálogo de reintento**
    ```
-   Mostrar diálogo "Conceder Permiso"
+   Mostrar diálogo "Conceder permiso"
    ↓
-   Usuario hace clic en "Conceder Permiso"
+   Usuario pulsa "Conceder permiso"
    ↓
-   El sistema muestra diálogo de permiso nuevamente
+   El sistema muestra el diálogo de permiso de nuevo
    ↓
-   Usuario concede → La cámara inicia
-   Usuario deniega → Marcar como denegación permanente
-   ```
-
-3. **Denegación Permanente**
-   ```
-   Mostrar diálogo "Abrir Configuración"
-   ↓
-   Usuario hace clic en "Abrir Configuración"
-   ↓
-   La app abre configuración del sistema
-   ↓
-   Usuario habilita permiso manualmente
-   ↓
-   Volver a la app → La cámara inicia
+   Usuario concede → Se inicia la cámara
+   Usuario deniega → Mostrar diálogo de ajustes (permissionDeniedCount = 2)
    ```
 
-### Experiencia de Usuario en iOS
+3. **Diálogo de ajustes (denegación permanente)**
+   ```
+   Mostrar diálogo "Abrir ajustes"
+   ↓
+   Usuario pulsa "Abrir ajustes"
+   ↓
+   La app abre los ajustes del sistema
+   ↓
+   Usuario habilita el permiso manualmente
+   ↓
+   Vuelve a la app → Se inicia la cámara
+   ```
 
-1. **Primera Solicitud**
+### Experiencia en iOS
+
+1. **Primera solicitud**
    ```
    La app solicita permiso de cámara
    ↓
-   El sistema muestra diálogo de permiso
+   El sistema muestra el diálogo de permiso
    ↓
-   Usuario concede permiso → La cámara inicia
-   Usuario deniega permiso → Mostrar diálogo de configuración
+   Usuario concede permiso → Se inicia la cámara
+   Usuario deniega permiso → Mostrar diálogo de ajustes
    ```
 
-2. **Diálogo de Configuración**
+2. **Diálogo de ajustes**
    ```
-   Mostrar diálogo "Abrir Configuración"
+   Mostrar diálogo "Abrir ajustes"
    ↓
-   Usuario hace clic en "Abrir Configuración"
+   Usuario pulsa "Abrir ajustes"
    ↓
-   La app abre configuración del sistema
+   La app abre los ajustes del sistema
    ↓
-   Usuario habilita permiso manualmente
+   Usuario habilita el permiso manualmente
    ↓
-   Volver a la app → La cámara inicia
+   Vuelve a la app → Se inicia la cámara
    ```
 
-## Implementación de Diálogos
+## Implementación de diálogos
 
-### Diálogos de Permisos en Android
+### Diálogos de permisos en Android
 
 ```kotlin
-// Diálogo de Reintento
+// Diálogo de reintento
 CustomPermissionDialog(
     title = "Permiso de cámara denegado",
-    description = "El permiso de cámara es necesario para capturar fotos. Por favor concede los permisos",
+    description = "Se requiere el permiso de cámara para capturar fotos. Por favor, concédelo",
     confirmationButtonText = "Conceder permiso",
     onConfirm = {
         permissionLauncher.launch(Manifest.permission.CAMERA)
     }
 )
 
-// Diálogo de Configuración
+// Diálogo de ajustes
 CustomPermissionDialog(
     title = "Permiso de cámara requerido",
-    description = "El permiso de cámara es necesario para capturar fotos. Por favor concédelo en configuración",
-    confirmationButtonText = "Abrir configuración",
+    description = "Se requiere el permiso de cámara para capturar fotos. Por favor, concédelo en los ajustes",
+    confirmationButtonText = "Abrir ajustes",
     onConfirm = {
         openAppSettings(context)
     }
 )
 ```
 
-### Diálogos de Permisos en iOS
+### Diálogos de permisos en iOS
 
 ```kotlin
-// Diálogo de Configuración (único diálogo mostrado en iOS)
+// Diálogo de ajustes (único diálogo mostrado en iOS)
 CustomPermissionDialog(
     title = "Permiso de cámara requerido",
-    description = "El permiso de cámara es necesario para capturar fotos. Por favor concédelo en configuración",
-    confirmationButtonText = "Abrir configuración",
+    description = "Se requiere el permiso de cámara para capturar fotos. Por favor, concédelo en los ajustes",
+    confirmationButtonText = "Abrir ajustes",
     onConfirm = {
         openSettings()
     }
 )
 ```
 
-## Navegación a Configuración
+## Navegación a ajustes
 
-### Navegación a Configuración en Android
+### Navegación a ajustes en Android
 
 ```kotlin
 fun openAppSettings(context: Context) {
@@ -284,7 +287,7 @@ fun openAppSettings(context: Context) {
 }
 ```
 
-### Navegación a Configuración en iOS
+### Navegación a ajustes en iOS
 
 ```kotlin
 fun openSettings() {
@@ -295,9 +298,9 @@ fun openSettings() {
 }
 ```
 
-## Manejo de Errores
+## Manejo de errores
 
-### Manejo de Errores en Android
+### Manejo de errores en Android
 
 ```kotlin
 // Manejar errores de permisos
@@ -312,7 +315,7 @@ when {
 }
 ```
 
-### Manejo de Errores en iOS
+### Manejo de errores en iOS
 
 ```kotlin
 // Manejar errores de permisos
@@ -321,18 +324,18 @@ when (currentStatus) {
         onError(PhotoCaptureException("Permiso de cámara denegado"))
     }
     else -> {
-        // Manejar otros casos
+        // Otros casos
     }
 }
 ```
 
-## Mejores Prácticas
+## Buenas prácticas
 
-### Mejores Prácticas en Android
+### Buenas prácticas en Android
 
 1. **Solicitar permisos en el momento adecuado**
    ```kotlin
-   // Solicitar permiso cuando el usuario realmente necesita la cámara
+   // Solicitar permiso cuando el usuario realmente lo necesita
    LaunchedEffect(Unit) {
        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) 
            == PackageManager.PERMISSION_GRANTED) {
@@ -343,13 +346,13 @@ when (currentStatus) {
    }
    ```
 
-2. **Proporcionar justificación clara**
+2. **Proporcionar una justificación clara**
    ```kotlin
    // Explicar por qué se necesita el permiso
-   description = "El permiso de cámara es necesario para capturar fotos para tu perfil"
+   description = "Se requiere el permiso de cámara para capturar fotos de tu perfil"
    ```
 
-3. **Manejar todos los estados de permisos**
+3. **Manejar todos los estados de permiso**
    ```kotlin
    when (currentPermission) {
        PackageManager.PERMISSION_GRANTED -> onResult(true)
@@ -357,9 +360,9 @@ when (currentStatus) {
    }
    ```
 
-### Mejores Prácticas en iOS
+### Buenas prácticas en iOS
 
-1. **Verificar estado del permiso primero**
+1. **Comprobar primero el estado del permiso**
    ```kotlin
    val status = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
    when (status) {
@@ -371,71 +374,71 @@ when (currentStatus) {
 
 2. **Proporcionar instrucciones claras**
    ```kotlin
-   // Instrucciones claras para configuración
-   description = "Por favor ve a Configuración > Privacidad y Seguridad > Cámara y habilita el acceso para esta app"
+   // Instrucciones claras para ajustes
+   description = "Por favor, ve a Ajustes > Privacidad y seguridad > Cámara y habilita el acceso para esta app"
    ```
 
 3. **Manejar permisos restringidos**
    ```kotlin
-   // Verificar restricciones parentales
+   // Comprobar restricciones parentales
    if (status == AVAuthorizationStatusRestricted) {
        showParentalControlDialog()
    }
    ```
 
-## Escenarios de Prueba
+## Escenarios de prueba
 
 ### Pruebas en Android
 
 1. **Primera solicitud de permiso**
-   - Conceder permiso → Debería iniciar la cámara
-   - Denegar permiso → Debería mostrar diálogo de reintento
+   - Conceder permiso → Debe iniciar la cámara
+   - Denegar permiso → Debe mostrar diálogo de reintento
 
 2. **Reintento de solicitud de permiso**
-   - Conceder permiso → Debería iniciar la cámara
-   - Denegar permiso → Debería mostrar diálogo de configuración
+   - Conceder permiso → Debe iniciar la cámara
+   - Denegar permiso → Debe mostrar diálogo de ajustes
 
-3. **Navegación a configuración**
-   - Hacer clic en "Abrir Configuración" → Debería abrir configuración de la app
-   - Habilitar permiso → Debería iniciar la cámara al volver
+3. **Navegación a ajustes**
+   - Pulsar "Abrir ajustes" → Debe abrir los ajustes de la app
+   - Habilitar permiso → Debe iniciar la cámara al volver
 
 ### Pruebas en iOS
 
 1. **Primera solicitud de permiso**
-   - Conceder permiso → Debería iniciar la cámara
-   - Denegar permiso → Debería mostrar diálogo de configuración
+   - Conceder permiso → Debe iniciar la cámara
+   - Denegar permiso → Debe mostrar diálogo de ajustes
 
-2. **Navegación a configuración**
-   - Hacer clic en "Abrir Configuración" → Debería abrir configuración del sistema
-   - Habilitar permiso → Debería iniciar la cámara al volver
+2. **Navegación a ajustes**
+   - Pulsar "Abrir ajustes" → Debe abrir los ajustes del sistema
+   - Habilitar permiso → Debe iniciar la cámara al volver
 
 3. **Permiso ya denegado**
-   - Abrir app → Debería mostrar diálogo de configuración directamente
+   - Abrir la app → Debe mostrar el diálogo de ajustes directamente
 
-## Problemas Comunes y Soluciones
+## Problemas comunes y soluciones
 
 ### Problemas en Android
 
 1. **Permiso no solicitado**
    ```kotlin
-   // Solución: Verificar si el permiso ya está concedido
+   // Solución: Comprobar si el permiso ya está concedido
    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) 
        != PackageManager.PERMISSION_GRANTED) {
        permissionLauncher.launch(Manifest.permission.CAMERA)
    }
    ```
 
-2. **Múltiples solicitudes de permisos**
+2. **Múltiples solicitudes de permiso**
    ```kotlin
-   // Solución: Usar contador de permisos
+   // Solución: Usar contador de denegaciones
    var permissionDeniedCount by remember { mutableIntStateOf(0) }
    ```
 
 ### Problemas en iOS
 
-1. **Estado del permiso no actualizado**
+1. **Estado de permiso no actualizado**
    ```kotlin
-   // Solución: Verificar estado después de volver de configuración
+   // Solución: Comprobar estado tras volver de ajustes
    LaunchedEffect(Unit) {
        val status = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
        if (status == AVAuthorizationStatusAuthorized) {
@@ -444,9 +447,9 @@ when (currentStatus) {
    }
    ```
 
-2. **Configuración no se abre**
+2. **No se abren los ajustes**
    ```kotlin
-   // Solución: Verificar si la URL se puede abrir
+   // Solución: Comprobar si la URL se puede abrir
    if (UIApplication.sharedApplication.canOpenURL(settingsUrl)) {
        UIApplication.sharedApplication.openURL(settingsUrl)
    }
@@ -454,11 +457,11 @@ when (currentStatus) {
 
 ## Resumen
 
-El sistema de manejo de permisos en ImagePickerKMP proporciona una experiencia consistente entre plataformas mientras respeta el comportamiento nativo de cada sistema operativo:
+El sistema de manejo de permisos en ImagePickerKMP proporciona una experiencia consistente entre plataformas respetando el comportamiento nativo de cada sistema operativo:
 
 - **Android**: Permite reintentos con diálogos de justificación
-- **iOS**: Muestra diálogo de configuración directamente después de la primera denegación
-- **Ambas**: Proporcionan orientación clara al usuario y manejo de errores
-- **Ambas**: Soportan diálogos personalizados y callbacks
+- **iOS**: Muestra el diálogo de ajustes tras la primera denegación
+- **Ambos**: Proporcionan instrucciones claras y manejo de errores
+- **Ambos**: Soportan diálogos y callbacks personalizados
 
-Esta implementación asegura que los usuarios entiendan por qué se necesitan los permisos y cómo habilitarlos si inicialmente son denegados. 
+Esta implementación asegura que los usuarios entiendan por qué se requieren los permisos y cómo habilitarlos si los deniegan inicialmente. 

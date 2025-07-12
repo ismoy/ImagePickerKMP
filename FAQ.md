@@ -11,7 +11,8 @@ Common questions and answers about ImagePickerKMP.
 - [Troubleshooting](#troubleshooting)
 - [Performance & Optimization](#performance--optimization)
 - [Customization](#customization)
-- [Analytics](#analytics)
+
+- [Problemas Comunes](#problemas-comunes)
 
 ## General Questions
 
@@ -23,7 +24,7 @@ ImagePickerKMP is a modern, cross-platform image picker library for Kotlin Multi
 - Cross-platform camera integration
 - Smart permission handling
 - Customizable UI components
-- Optional analytics integration
+
 - High-quality photo capture
 - Comprehensive error handling
 
@@ -56,7 +57,7 @@ Yes, ImagePickerKMP is open-source and free to use under the MIT License. You ca
 - Modern Compose Multiplatform UI
 - Smart permission handling
 - Customizable components
-- Privacy-focused analytics
+
 - Active development and support
 
 **Compared to alternatives:**
@@ -97,7 +98,7 @@ For basic usage, no additional configuration is required. The library handles mo
 
 For advanced features, you may need to:
 - Configure custom themes
-- Set up analytics (optional)
+
 - Add custom permission dialogs
 - Configure photo capture preferences
 
@@ -515,104 +516,56 @@ fun ThemedImagePicker() {
 }
 ```
 
-## Analytics
 
-### How do I enable analytics?
 
+## Problemas Comunes
+
+### ¿Por qué las fotos de la cámara frontal se ven "espejadas" o rotadas?
+
+**Problema**: Las fotos capturadas con la cámara frontal aparecen con orientación incorrecta (espejadas o rotadas).
+
+**Causa**: Las cámaras frontales de Android tienen una orientación diferente a las traseras. La imagen se captura con una orientación que no es natural para el usuario.
+
+**Solución**: La librería ahora incluye corrección automática de orientación para fotos de cámara frontal. El sistema:
+
+1. **Detecta automáticamente** si la foto fue tomada con cámara frontal
+2. **Aplica corrección de espejo** solo cuando es necesario
+3. **Mantiene la calidad** de la imagen original
+4. **Es eficiente** - solo procesa cuando realmente necesita corrección
+
+**Ejemplo de uso**:
 ```kotlin
-@Composable
-fun ImagePickerWithAnalytics() {
-    val context = LocalContext.current
-    
-    ImagePickerLauncher(
-        context = context,
-        onPhotoCaptured = { result ->
-            // Track successful photo capture
-            FirebaseAnalytics.getInstance(context).logEvent("photo_captured", Bundle().apply {
-                putString("photo_uri", result.uri.toString())
-                putLong("photo_size", result.size)
-            })
-        },
-        onError = { exception ->
-            // Track errors
-            FirebaseAnalytics.getInstance(context).logEvent("photo_capture_error", Bundle().apply {
-                putString("error_type", exception.javaClass.simpleName)
-                putString("error_message", exception.message)
-            })
-        }
-    )
-}
-```
-
-### What data is collected by analytics?
-
-**Performance metrics:**
-- Camera startup time
-- Photo capture time
-- Error rates and types
-
-**Usage statistics:**
-- Number of photos captured
-- Permission request outcomes
-- Feature usage frequency
-
-**System information:**
-- Platform (Android/iOS)
-- OS version
-- Device type
-
-**No personal data is collected.**
-
-### How do I disable analytics?
-
-Analytics are disabled by default. If you want to ensure no analytics are collected:
-
-```kotlin
-@Composable
-fun ImagePickerWithoutAnalytics() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Handle photo capture without analytics
-        },
-        onError = { exception ->
-            // Handle errors without analytics
-        }
-        // Analytics are disabled by default
-    )
-}
-```
-
-### How do I implement custom analytics?
-
-```kotlin
-class CustomAnalytics {
-    fun trackPhotoCapture(uri: Uri, size: Long) {
-        // Your custom analytics implementation
-        println("Photo captured: $uri, size: $size")
+ImagePickerLauncher(
+    context = LocalContext.current,
+    onPhotoCaptured = { result ->
+        // La imagen ya viene corregida automáticamente
+        // No necesitas hacer nada adicional
     }
-    
-    fun trackError(error: Exception) {
-        // Track errors
-        println("Error occurred: ${error.message}")
-    }
-}
-
-@Composable
-fun ImagePickerWithCustomAnalytics() {
-    val analytics = remember { CustomAnalytics() }
-    
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            analytics.trackPhotoCapture(result.uri, result.size)
-        },
-        onError = { exception ->
-            analytics.trackError(exception)
-        }
-    )
-}
+)
 ```
+
+**Nota**: Esta corrección se aplica automáticamente y es transparente para el desarrollador. No necesitas configurar nada adicional.
+
+### ¿Cómo funciona la corrección de orientación?
+
+La corrección incluye:
+
+1. **Lectura de metadatos EXIF**: Se lee la orientación original de la imagen
+2. **Aplicación de rotación**: Se corrige la rotación basada en los metadatos
+3. **Corrección de espejo**: Solo para cámara frontal, se aplica un espejo horizontal
+4. **Optimización**: Solo se procesa si realmente es necesario
+
+### ¿Afecta el rendimiento?
+
+No, la corrección está optimizada para:
+
+- **Procesamiento solo cuando es necesario**: Si no hay corrección requerida, se devuelve la imagen original
+- **Gestión eficiente de memoria**: Los bitmaps se reciclan correctamente
+- **Procesamiento asíncrono**: No bloquea la UI
+
+### ¿Puedo desactivar la corrección automática?
+
+Actualmente la corrección es automática y no se puede desactivar, ya que mejora significativamente la experiencia del usuario. Si necesitas el comportamiento original, puedes procesar la imagen manualmente después de recibirla.
 
 ## Additional Questions
 

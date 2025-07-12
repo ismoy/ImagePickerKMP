@@ -14,9 +14,7 @@ import platform.UIKit.UIAlertControllerStyleActionSheet
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
-import io.github.ismoy.imagepickerkmp.Constant.DESCRIPTION_DIALOG_CONFIG
-import io.github.ismoy.imagepickerkmp.Constant.TITLE_DIALOG_CONFIG
-import io.github.ismoy.imagepickerkmp.Constant.TITLE_DIALOG_DENIED
+import io.github.ismoy.imagepickerkmp.StringResource
 @Composable
 actual fun ImagePickerLauncher(
     context: Any?,
@@ -45,6 +43,17 @@ actual fun ImagePickerLauncher(
     allowMultiple: Boolean,
     mimeTypes: List<String>
 ) {
+    // Debug: Probar localización
+    LaunchedEffect(Unit) {
+        testLocalization()
+    }
+    
+    // Forzar textos en inglés para iOS
+    val englishDialogTitle = "Select option"
+    val englishTakePhotoText = "Take photo"
+    val englishSelectFromGalleryText = "Select from gallery"
+    val englishCancelText = "Cancel"
+    
     var showDialog by remember { mutableStateOf(true) }
     var askCameraPermission by remember { mutableStateOf(false) }
     var launchCamera by remember { mutableStateOf(false) }
@@ -54,13 +63,13 @@ actual fun ImagePickerLauncher(
         LaunchedEffect(Unit) {
             val rootVC = ViewControllerProvider.getRootViewController() ?: return@LaunchedEffect
             val alert = UIAlertController.alertControllerWithTitle(
-                title = dialogTitle,
+                title = englishDialogTitle,
                 message = null,
                 preferredStyle = UIAlertControllerStyleActionSheet
             )
             alert.addAction(
                 UIAlertAction.actionWithTitle(
-                    title = takePhotoText,
+                    title = englishTakePhotoText,
                     style = 0,
                     handler = {
                         showDialog = false
@@ -70,7 +79,7 @@ actual fun ImagePickerLauncher(
             )
             alert.addAction(
                 UIAlertAction.actionWithTitle(
-                    title = selectFromGalleryText,
+                    title = englishSelectFromGalleryText,
                     style = 0,
                     handler = {
                         showDialog = false
@@ -87,7 +96,7 @@ actual fun ImagePickerLauncher(
             alert.addAction(spacerAction)
             alert.addAction(
                 UIAlertAction.actionWithTitle(
-                    title = cancelText,
+                    title = englishCancelText,
                     style = 1,
                     handler = {
                         showDialog = false
@@ -99,13 +108,14 @@ actual fun ImagePickerLauncher(
     }
 
     if (askCameraPermission) {
+        // Forzar textos en inglés para los diálogos de permisos
         RequestCameraPermission(
-            titleDialogConfig = TITLE_DIALOG_CONFIG,
-            descriptionDialogConfig = DESCRIPTION_DIALOG_CONFIG,
-            btnDialogConfig = "Permitir",
-            titleDialogDenied = TITLE_DIALOG_DENIED,
-            descriptionDialogDenied = "Por favor, habilita el acceso a la cámara en Ajustes.",
-            btnDialogDenied = "Abrir Ajustes",
+            titleDialogConfig = "Camera permission required",
+            descriptionDialogConfig = "Camera permission is required to capture photos. Please grant it in settings",
+            btnDialogConfig = "Grant permission",
+            titleDialogDenied = "Camera permission denied",
+            descriptionDialogDenied = "Camera permission is required to capture photos. Please grant the permissions",
+            btnDialogDenied = "Open settings",
             customDeniedDialog = null,
             customSettingsDialog = null,
             onPermissionPermanentlyDenied = {},

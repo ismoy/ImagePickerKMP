@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Permisos de cámara -->
+    <string name="camera_permission_required">Permission d\'appareil photo requise</string>
+    <string name="camera_permission_description"> Pour utiliser cette fonctionnalité, vous devez autoriser l\'accès à l\'appareil photo dans les paramètres</string>
+    <string name="open_settings">Ouvrir les paramètres</string>
+    <string name="camera_permission_denied">Permission d\'appareil photo refusée</string>
+    <string name="camera_permission_denied_description">Cette application a besoin d\'accéder à votre appareil photo pour prendre des photos</string>
+    <string name="grant_permission">Accorder la permission</string>
+    <string name="camera_permission_permanently_denied">Permission d\'appareil photo définitivement refusée</string>
+    
+    <!-- Confirmación de imagen -->
+    <string name="image_confirmation_title">Confirmer l\'image</string>
+    <string name="accept_button">Accepter</string>
+    <string name="retry_button">Réessayer</string>
+    
+    <!-- Diálogos de selección -->
+    <string name="select_option_dialog_title">Sélectionner une option</string>
+    <string name="take_photo_option">Prendre une photo</string>
+    <string name="select_from_gallery_option">Sélectionner depuis la galerie</string>
+    <string name="cancel_option">Annuler</string>
+    
+    <!-- Accesibilidad -->
+    <string name="preview_image_description">Aperçu de l\'image capturée</string>
+    <string name="hd_quality_description">Qualité haute définition</string>
+    <string name="sd_quality_description">Qualité standard</string>
+    
+    <!-- Errores -->
+    <string name="invalid_context_error">Contexte invalide</string>
+    <string name="photo_capture_error">Erreur lors de la capture de la photo</string>
+    <string name="gallery_selection_error">Erreur lors de la sélection depuis la galerie</string>
+    <string name="permission_error">Erreur de permission</string>
+</resources> 

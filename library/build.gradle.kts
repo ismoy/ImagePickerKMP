@@ -8,6 +8,85 @@ plugins {
     alias(libs.plugins.composeCompiler)
     id("com.vanniktech.maven.publish") version "0.30.0"
     id("maven-publish")
+    id("jacoco")
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    finalizedBy("jacocoTestReport")
+}
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "**/databinding/*",
+        "**/android/databinding/*",
+        "**/androidx/databinding/*",
+        "**/BR.*"
+    )
+    classDirectories.setFrom(
+        files(
+            fileTree("$buildDir/tmp/kotlin-classes/debug") {
+                exclude(fileFilter)
+            }
+        )
+    )
+    sourceDirectories.setFrom(files("src/commonMain/kotlin", "src/androidMain/kotlin"))
+    executionData.setFrom(files("$buildDir/jacoco/testDebugUnitTest.exec"))
+}
+
+// Configuración de verificación de cobertura
+tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+    dependsOn("jacocoTestReport")
+    violationRules {
+        rule {
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = "0.04".toBigDecimal()
+            }
+        }
+        rule {
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = "0.00".toBigDecimal()
+            }
+        }
+    }
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "**/databinding/*",
+        "**/android/databinding/*",
+        "**/androidx/databinding/*",
+        "**/BR.*"
+    )
+    classDirectories.setFrom(
+        files(
+            fileTree("$buildDir/tmp/kotlin-classes/debug") {
+                exclude(fileFilter)
+            }
+        )
+    )
+    sourceDirectories.setFrom(files("src/commonMain/kotlin", "src/androidMain/kotlin"))
+    executionData.setFrom(files("$buildDir/jacoco/testDebugUnitTest.exec"))
 }
 
 kotlin {
@@ -30,6 +109,7 @@ kotlin {
             baseName = "imagepickerkmp"
             isStatic = true
             binaryOption("bundleId", "io.github.ismoy.imagepickerkmp")
+            export(libs.compose.runtime)
         }
         target.mavenPublication {}
     }
@@ -70,16 +150,45 @@ kotlin {
             }
             dependencies {}
         }
+        
+        tasks.register("copyLocalizationResources") {
+            dependsOn("linkReleaseFrameworkIosArm64")
+            
+            doLast {
+                val frameworkDir = file("build/xcode-frameworks/konan/iosArm64/imagepickerkmp.framework")
+                val resourcesDir = file("src/iosMain/resources")
+                
+                if (frameworkDir.exists() && resourcesDir.exists()) {
+                    copy {
+                        from(resourcesDir)
+                        into("${frameworkDir}/Resources")
+                        include("**/*.lproj/**")
+                    }
+                    println("✅ Localization resources copied to framework")
+                } else {
+                    println("⚠️  Framework or resources directory not found")
+                }
+            }
+        }
         all {
             languageSettings {
                 optIn("kotlin.ExperimentalMultiplatform")
                 optIn("kotlin.ExperimentalUnsignedTypes")
             }
         }
+        val androidUnitTest by getting {
+            dependencies {
+                implementation("junit:junit:4.13.2")
+                implementation("androidx.compose.ui:ui-test-junit4:1.5.4")
+                implementation("androidx.test:core:1.5.0")
+                implementation("androidx.test.ext:junit:1.1.5")
+                implementation("androidx.compose.material3:material3:1.2.0")
+            }
+        }
+        val androidInstrumentedTest by getting {}
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
-
             }
         }
     }
@@ -95,13 +204,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.19"
+        version = "1.0.20"
     )
     pom {
         name.set("ImagePickerKMP")
@@ -158,4 +270,9 @@ afterEvaluate {
             }
         }
     }
+}
+
+dependencies {
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("junit:junit:4.13.2")
 }

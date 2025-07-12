@@ -85,7 +85,7 @@ class CameraController(
     }
 
     fun takePicture(
-        onImageCaptured: (File) -> Unit,
+        onImageCaptured: (File, CameraType) -> Unit,
         onError: (Exception) -> Unit
     ) {
         val imageCapture = this.imageCapture
@@ -99,7 +99,7 @@ class CameraController(
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    onImageCaptured(photoFile)
+                    onImageCaptured(photoFile, currentCameraType)
                 }
 
                 override fun onError(exc: ImageCaptureException) {

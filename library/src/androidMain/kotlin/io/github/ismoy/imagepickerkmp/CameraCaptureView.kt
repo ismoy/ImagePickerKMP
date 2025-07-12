@@ -12,48 +12,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.CameraPhotoHandler.PhotoResult
-import io.github.ismoy.imagepickerkmp.Constant.PERMISSION_PERMANENTLY_DENIED
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 
-/**
- * Entry point de alto nivel para el flujo de captura de imagen.
- *
- * Este Composable gestiona:
- * - Permisos de cámara (mostrando diálogos personalizados si es necesario)
- * - Renderizado de la UI de cámara ([CameraCapturePreview])
- * - Renderizado de la pantalla de confirmación ([ImageConfirmationViewWithCustomButtons])
- * - Integración con selección múltiple desde galería
- *
- * ## Uso típico:
- *
- * ```kotlin
- * CameraCaptureView(
- *     activity = activity,
- *     onPhotoResult = { ... },
- *     onError = { ... }
- * )
- * ```
- *
- * ## Parámetros clave:
- * - [activity]: Activity host (necesario para CameraX y permisos)
- * - [onPhotoResult]: Callback con el resultado de la foto
- * - [onPhotosSelected]: Callback para selección múltiple desde galería
- * - [onError]: Callback para errores
- * - [customPermissionHandler]: Permite personalizar los diálogos de permisos
- * - [customConfirmationView]: Permite personalizar la pantalla de confirmación
- * - Personalización de colores, iconos, layout y eventos
- *
- * ## Flujo general:
- * 1. Solicita permisos de cámara
- * 2. Si se otorgan, muestra la UI de cámara
- * 3. Tras capturar, muestra la pantalla de confirmación
- * 4. Permite seleccionar desde galería si está habilitado
- *
- * @see CameraCapturePreview
- * @see ImageConfirmationViewWithCustomButtons
- */
 @Composable
 fun CameraCaptureView(
     activity: ComponentActivity,
@@ -90,7 +52,7 @@ fun CameraCaptureView(
     }
 
     if (!hasPermission){
-        val defaultConfig = PermissionConfig()
+        val defaultConfig = PermissionConfig.createLocalizedComposable()
         if (customPermissionHandler != null){
             customPermissionHandler(defaultConfig)
         }
@@ -105,7 +67,7 @@ fun CameraCaptureView(
                 customDeniedDialog = null,
                 customSettingsDialog = null,
                 onPermissionPermanentlyDenied = {
-                    onError(PhotoCaptureException(PERMISSION_PERMANENTLY_DENIED))
+                    onError(PhotoCaptureException(getStringResource(StringResource.CAMERA_PERMISSION_PERMANENTLY_DENIED)))
                 },
                 onResult = {granted->
                     hasPermission = granted

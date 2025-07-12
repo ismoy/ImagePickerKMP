@@ -12,6 +12,7 @@ This guide will help you integrate ImagePickerKMP into your Kotlin Multiplatform
 - [Troubleshooting](#troubleshooting)
 - [Migration from Other Libraries](#migration-from-other-libraries)
 - [Gallery Selection & iOS Dialog Customization](#gallery-selection-ios-dialog-customization)
+- [Platform-Specific Examples](#platform-specific-examples)
 
 ## Prerequisites
 
@@ -160,6 +161,259 @@ fun CustomImagePicker() {
 }
 ```
 
+## Platform-Specific Examples
+
+### Android Native (Jetpack Compose)
+
+For Android apps using Jetpack Compose:
+
+```kotlin
+// build.gradle.kts (app level)
+dependencies {
+    implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+    implementation("androidx.compose.ui:ui:1.4.0")
+    implementation("androidx.compose.material:material:1.4.0")
+}
+
+// MainActivity.kt
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MyApp()
+        }
+    }
+}
+
+@Composable
+fun MyApp() {
+    MaterialTheme {
+        ImagePickerScreen()
+    }
+}
+
+@Composable
+fun ImagePickerScreen() {
+    var showPicker by remember { mutableStateOf(false) }
+    
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Button(
+            onClick = { showPicker = true },
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("Take Photo")
+        }
+        
+        if (showPicker) {
+            ImagePickerLauncher(
+                context = LocalContext.current,
+                onPhotoCaptured = { result ->
+                    // Handle photo capture
+                    println("Photo captured: ${result.uri}")
+                    showPicker = false
+                },
+                onError = { exception ->
+                    // Handle errors
+                    println("Error: ${exception.message}")
+                    showPicker = false
+                }
+            )
+        }
+    }
+}
+```
+
+### iOS Native (Swift/SwiftUI)
+
+For iOS apps using SwiftUI:
+
+```swift
+// Podfile
+target 'YourApp' do
+  use_frameworks!
+  pod 'ImagePickerKMP', :path => '../path/to/your/library'
+end
+
+// ContentView.swift
+import SwiftUI
+import ImagePickerKMP
+
+struct ContentView: View {
+    @State private var showImagePicker = false
+    @State private var capturedImage: UIImage?
+    
+    var body: some View {
+        VStack {
+            if let image = capturedImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 200)
+            }
+            
+            Button("Take Photo") {
+                showImagePicker = true
+            }
+            .padding()
+        }
+        .sheet(isPresented: $showImagePicker) {
+            ImagePickerView(
+                onPhotoCaptured: { result in
+                    // Handle photo capture
+                    print("Photo captured: \(result.uri)")
+                    showImagePicker = false
+                },
+                onError: { error in
+                    // Handle errors
+                    print("Error: \(error.localizedDescription)")
+                    showImagePicker = false
+                }
+            )
+        }
+    }
+}
+
+// ImagePickerView.swift
+import SwiftUI
+import ImagePickerKMP
+
+struct ImagePickerView: UIViewControllerRepresentable {
+    let onPhotoCaptured: (PhotoResult) -> Void
+    let onError: (Error) -> Void
+    
+    func makeUIViewController(context: Context) -> UIViewController {
+        let controller = UIViewController()
+        
+        // Create ImagePickerKMP launcher
+        let imagePicker = ImagePickerLauncher(
+            context: nil, // iOS doesn't need context
+            onPhotoCaptured: onPhotoCaptured,
+            onError: onError
+        )
+        
+        // Present the image picker
+        controller.present(imagePicker, animated: true)
+        
+        return controller
+    }
+    
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        // Update if needed
+    }
+}
+```
+
+### Kotlin Multiplatform / Compose Multiplatform
+
+For cross-platform apps using KMP/CMP:
+
+```kotlin
+// build.gradle.kts (shared module)
+kotlin {
+    android {
+        // Android configuration
+    }
+    
+    ios {
+        binaries {
+            framework {
+                baseName = "Shared"
+            }
+        }
+    }
+    
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
+            }
+        }
+        
+        androidMain {
+            dependencies {
+                implementation("androidx.compose.ui:ui:1.4.0")
+                implementation("androidx.compose.material:material:1.4.0")
+            }
+        }
+    }
+}
+
+// SharedImagePicker.kt (shared module)
+@Composable
+fun SharedImagePicker(
+    onPhotoCaptured: (PhotoResult) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    // Platform-specific context
+    val context = if (Platform().isAndroid) {
+        LocalContext.current
+    } else {
+        null // iOS doesn't need context
+    }
+    
+    ImagePickerLauncher(
+        context = context,
+        onPhotoCaptured = onPhotoCaptured,
+        onError = onError
+    )
+}
+
+// Android implementation
+@Composable
+fun AndroidImagePicker() {
+    var showPicker by remember { mutableStateOf(false) }
+    
+    Column {
+        Button(onClick = { showPicker = true }) {
+            Text("Take Photo")
+        }
+        
+        if (showPicker) {
+            SharedImagePicker(
+                onPhotoCaptured = { result ->
+                    println("Photo captured on Android: ${result.uri}")
+                    showPicker = false
+                },
+                onError = { exception ->
+                    println("Error on Android: ${exception.message}")
+                    showPicker = false
+                }
+            )
+        }
+    }
+}
+
+// iOS implementation (in Kotlin)
+@Composable
+fun IOSImagePicker() {
+    var showPicker by remember { mutableStateOf(false) }
+    
+    Column {
+        Button(onClick = { showPicker = true }) {
+            Text("Take Photo")
+        }
+        
+        if (showPicker) {
+            SharedImagePicker(
+                onPhotoCaptured = { result ->
+                    println("Photo captured on iOS: ${result.uri}")
+                    showPicker = false
+                },
+                onError = { exception ->
+                    println("Error on iOS: ${exception.message}")
+                    showPicker = false
+                }
+            )
+        }
+    }
+}
+```
+
 ## Advanced Configuration
 
 ### Custom Permission Dialogs
@@ -199,28 +453,7 @@ ImagePickerLauncher(
 )
 ```
 
-### Analytics Integration
 
-```kotlin
-@Composable
-fun ImagePickerWithAnalytics() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Track photo capture event
-            FirebaseAnalytics.getInstance(context).logEvent("photo_captured", Bundle().apply {
-                putString("photo_uri", result.uri.toString())
-            })
-        },
-        onError = { exception ->
-            // Track error event
-            FirebaseAnalytics.getInstance(context).logEvent("photo_capture_error", Bundle().apply {
-                putString("error_message", exception.message)
-            })
-        }
-    )
-}
-```
 
 ### Custom Photo Processing
 
@@ -576,4 +809,4 @@ If you encounter issues during integration:
 For more detailed information, refer to:
 - [API Reference](API_REFERENCE.md)
 - [Examples](EXAMPLES.md)
-- [Permission Guide](Permission_readme_English.md) 
+- [Permission Guide](PERMISSION.md) 

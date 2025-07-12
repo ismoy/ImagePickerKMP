@@ -25,7 +25,7 @@ actual fun GalleryPickerLauncher(
     mimeTypes: List<String>
 ) {
     if (context !is ComponentActivity) {
-        onError(Exception("Invalid context. Must be ComponentActivity"))
+        onError(Exception(getStringResource(StringResource.INVALID_CONTEXT_ERROR)))
         return
     }
 
@@ -65,7 +65,7 @@ actual fun GalleryPickerLauncher(
                     if (results.isNotEmpty()) {
                         onPhotosSelected(results)
                     } else {
-                        onError(Exception("No se pudo procesar ninguna imagen seleccionada"))
+                        onError(Exception(getStringResource(StringResource.GALLERY_SELECTION_ERROR)))
                     }
                 }
             } catch (e: Exception) {
@@ -161,7 +161,7 @@ private suspend fun processSelectedImage(
                     )
                 )
             } else {
-                onError(Exception("Failed to read image data"))
+                onError(Exception(getStringResource(StringResource.GALLERY_SELECTION_ERROR)))
             }
         }
     } catch (e: Exception) {
