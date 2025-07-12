@@ -53,11 +53,12 @@ actual fun RequestCameraPermission(
             permissionDeniedCount++
             when {
                 permissionDeniedCount >= 2 -> {
-                    // Mark as permanently denied after 2 attempts
+                    // After second denial, show settings dialog
+                    showSettingsDialog = true
                     onPermissionPermanentlyDenied()
                 }
                 else -> {
-                    // Show retry dialog
+                    // First denial, show retry dialog
                     showRationale = true
                 }
             }
@@ -178,7 +179,7 @@ when (status) {
    System shows permission dialog
    ↓
    User grants permission → Camera starts
-   User denies permission → Show retry dialog
+   User denies permission → Show retry dialog (permissionDeniedCount = 1)
    ```
 
 2. **Retry Dialog**
@@ -190,10 +191,10 @@ when (status) {
    System shows permission dialog again
    ↓
    User grants → Camera starts
-   User denies → Mark as permanently denied
+   User denies → Show settings dialog (permissionDeniedCount = 2)
    ```
 
-3. **Permanently Denied**
+3. **Settings Dialog (Permanent Denial)**
    ```
    Show "Open Settings" dialog
    ↓

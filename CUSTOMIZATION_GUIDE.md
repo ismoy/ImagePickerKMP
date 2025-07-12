@@ -12,6 +12,7 @@ This guide explains how to customize ImagePickerKMP to match your app's design a
 - [Advanced Configuration](#advanced-configuration)
 - [Custom Callbacks](#custom-callbacks)
 - [Examples](#examples)
+- [Corrección Automática de Orientación](#corrección-automática-de-orientación)
 
 ## Overview
 
@@ -823,6 +824,51 @@ fun PerformantImagePicker() {
     }
 }
 ```
+
+## Corrección Automática de Orientación
+
+### Problema Resuelto
+
+Las cámaras frontales de Android capturan imágenes con orientación incorrecta, causando que las fotos aparezcan "espejadas" o rotadas. Esto es un problema común en aplicaciones móviles.
+
+### Solución Implementada
+
+ImagePickerKMP incluye **corrección automática de orientación** que:
+
+- ✅ **Detecta automáticamente** si la foto fue tomada con cámara frontal
+- ✅ **Aplica corrección de espejo** solo cuando es necesario
+- ✅ **Mantiene la calidad** de la imagen original
+- ✅ **Es transparente** para el desarrollador
+- ✅ **Es eficiente** - solo procesa cuando realmente necesita corrección
+
+### Cómo Funciona
+
+```kotlin
+// No necesitas hacer nada especial
+ImagePickerLauncher(
+    context = LocalContext.current,
+    onPhotoCaptured = { result ->
+        // La imagen ya viene corregida automáticamente
+        // Tu cabeza aparecerá en la dirección correcta
+    }
+)
+```
+
+### Detalles Técnicos
+
+La corrección incluye:
+
+1. **Lectura de metadatos EXIF**: Se lee la orientación original
+2. **Aplicación de rotación**: Se corrige basada en los metadatos
+3. **Corrección de espejo**: Solo para cámara frontal
+4. **Optimización**: Solo procesa si es necesario
+
+### Beneficios
+
+- **Experiencia de usuario mejorada**: Las fotos se ven naturales
+- **Sin configuración adicional**: Funciona automáticamente
+- **Rendimiento optimizado**: No afecta el rendimiento
+- **Compatibilidad**: Funciona en todos los dispositivos Android
 
 ## Support
 

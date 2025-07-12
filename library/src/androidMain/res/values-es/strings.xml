@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Camera Permissions -->
+    <string name="camera_permission_required">Permiso de cámara requerido</string>
+    <string name="camera_permission_description">El permiso de cámara es necesario para capturar fotos. Por favor, concédelo en la configuración</string>
+    <string name="open_settings">Abrir configuración</string>
+    <string name="camera_permission_denied">Permiso de cámara denegado</string>
+    <string name="camera_permission_denied_description">El permiso de cámara es necesario para capturar fotos. Por favor, concede los permisos</string>
+    <string name="grant_permission">Conceder permiso</string>
+    <string name="camera_permission_permanently_denied">Permiso de cámara denegado permanentemente</string>
+    
+    <!-- Image Confirmation -->
+    <string name="image_confirmation_title">¿Estás satisfecho con la foto?</string>
+    <string name="accept_button">Aceptar</string>
+    <string name="retry_button">Reintentar</string>
+    
+    <!-- Selection Dialogs -->
+    <string name="select_option_dialog_title">Seleccionar opción</string>
+    <string name="take_photo_option">Tomar foto</string>
+    <string name="select_from_gallery_option">Seleccionar de galería</string>
+    <string name="cancel_option">Cancelar</string>
+    
+    <!-- Accessibility -->
+    <string name="preview_image_description">Vista previa</string>
+    <string name="hd_quality_description">HD</string>
+    <string name="sd_quality_description">SD</string>
+    
+    <!-- Errors -->
+    <string name="invalid_context_error">Contexto inválido. Debe ser ComponentActivity</string>
+    <string name="photo_capture_error">Error al capturar la foto</string>
+    <string name="gallery_selection_error">Error al seleccionar de la galería</string>
+    <string name="permission_error">Error de permisos</string>
+</resources> 

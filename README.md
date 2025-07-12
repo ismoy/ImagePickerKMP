@@ -1,6 +1,8 @@
-[![CI](https://github.com/ismoy/ImagePickerKMP/actions/workflows/ci.yml/badge.svg)](https://github.com/ismoy/ImagePickerKMP/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/codecov/c/github/ismoy/ImagePickerKMP)](https://codecov.io/gh/ismoy/ImagePickerKMP)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp)](https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp)
+[![CI](https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg)](https://github.com/ismoy/ImagePickerKMP/actions)
+[![Code Coverage](https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg)](https://codecov.io/gh/ismoy/ImagePickerKMP)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-blue.svg)](https://kotlinlang.org)
+[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-lightgrey.svg)](https://kotlinlang.org/docs/multiplatform.html)
 
 [![official project](http://jb.gg/badges/official.svg)](https://github.com/JetBrains#jetbrains-on-github)
 
@@ -8,13 +10,14 @@
 
 A modern, cross-platform image picker library for Kotlin Multiplatform (KMP) that provides a seamless camera experience on both Android and iOS platforms.
 
+Este documento también está disponible en español: [README.es.md](README.es.md)
+
 ## Features
 
 - 📱 **Cross-platform**: Works on Android and iOS
 - 📸 **Camera Integration**: Direct camera access with photo capture
 - 🎨 **Customizable UI**: Custom dialogs and confirmation views
 - 🔒 **Permission Handling**: Smart permission management for both platforms
-- 📊 **Analytics Support**: Optional analytics integration (Firebase)
 - 🎯 **Easy Integration**: Simple API with Compose Multiplatform
 - 🔧 **Highly Configurable**: Extensive customization options
 
@@ -92,17 +95,18 @@ fun MyImagePicker() {
 - Custom permission dialogs
 - Settings navigation
 
-### Analytics Integration
-- Optional Firebase Analytics
-- Privacy-focused data collection
-- Custom analytics support
-- Performance metrics
-
 ### Customization
 - Custom UI themes
 - Personalized dialogs
 - Custom callbacks
 - Advanced configurations
+
+### Internationalization (i18n)
+- Multi-language support (English, Spanish, French)
+- Automatic language detection
+- Type-safe string resources
+- No external dependencies
+- **Automatic translations**: Permission dialogs and UI texts are automatically translated
 
 ## Gallery Selection & iOS Dialog Customization
 
@@ -135,9 +139,11 @@ See the [Integration Guide](INTEGRATION_GUIDE.md) and [Examples](EXAMPLES.md) fo
 ## Documentation
 
 - [Integration Guide](INTEGRATION_GUIDE.md) - Complete setup and integration guide
-- [Analytics Guide](ANALYTICS_GUIDE.md) - Analytics configuration and usage
 - [Customization Guide](CUSTOMIZATION_GUIDE.md) - UI and behavior customization
-- [Permission Guide](Permission_readme_English.md) - Permission handling details
+- [Internationalization Guide](I18N_GUIDE.md) - Multi-language support guide
+- [Permission Guide](PERMISSION.md) - Permission handling details
+- [Coverage Guide](COVERAGE_GUIDE.md) - Code coverage and testing guide
+- [Notifications Setup](NOTIFICATIONS_SETUP.md) - Discord notifications configuration
 - [API Reference](API_REFERENCE.md) - Complete API documentation
 - [Examples](EXAMPLES.md) - Code examples and use cases
 

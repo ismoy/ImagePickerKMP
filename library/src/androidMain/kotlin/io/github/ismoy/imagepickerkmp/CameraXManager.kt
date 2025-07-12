@@ -22,8 +22,8 @@ class CameraXManager (
         onError: (Exception) -> Unit
     ){
         cameraController.takePicture(
-            onImageCaptured = {imageFile->
-                imageProcessor.processImage(imageFile,onPhotoResult,onError)
+            onImageCaptured = { imageFile, cameraType ->
+                imageProcessor.processImage(imageFile, cameraType, onPhotoResult, onError)
             },
             onError = onError
         )

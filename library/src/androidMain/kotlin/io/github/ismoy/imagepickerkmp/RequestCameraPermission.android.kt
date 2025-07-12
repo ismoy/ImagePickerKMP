@@ -33,12 +33,7 @@ actual fun RequestCameraPermission(
     var showRationale by remember { mutableStateOf(false) }
     var permissionDeniedPermanently by remember { mutableStateOf(false) }
     var permissionDeniedCount by remember { mutableIntStateOf(0) }
-
-    if (permissionDeniedPermanently){
-        LaunchedEffect(Unit){
-            onPermissionPermanentlyDenied()
-        }
-    }
+    var hasCalledPermanentlyDenied by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -71,6 +66,7 @@ actual fun RequestCameraPermission(
             }
         }
     }
+    
     if (showRationale) {
         if (customDeniedDialog != null) {
             customDeniedDialog {
@@ -91,18 +87,25 @@ actual fun RequestCameraPermission(
         }
     }
 
-    if (permissionDeniedPermanently){
+    if (permissionDeniedPermanently && !hasCalledPermanentlyDenied){
         if (customSettingsDialog != null){
-            customSettingsDialog { openAppSettings(context) }
+            customSettingsDialog { 
+                openAppSettings(context)
+                hasCalledPermanentlyDenied = true
+                onPermissionPermanentlyDenied()
+            }
         }
         else {
             CustomPermissionDialog(
                 title = titleDialogConfig,
                 description = descriptionDialogConfig,
                 confirmationButtonText = btnDialogConfig,
-                onConfirm = { openAppSettings(context) }
+                onConfirm = { 
+                    openAppSettings(context)
+                    hasCalledPermanentlyDenied = true
+                    onPermissionPermanentlyDenied()
+                }
             )
         }
     }
-
 }

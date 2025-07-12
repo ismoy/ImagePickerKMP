@@ -1,17 +1,9 @@
 package io.github.ismoy.imagepickerkmp
 
 object Constant {
-    const val TITLE_DIALOG_CONFIG:String = "Camera permission required"
-    const val DESCRIPTION_DIALOG_CONFIG:String = "Camera permission is required to capture photos. Please grant it in settings"
-    const val BTN_DIALOG_CONFIG:String = "Open settings"
-    const val TITLE_DIALOG_DENIED:String = "Camera permission denied"
-    const val DESCRIPTION_DIALOG_DENIED:String = "Camera permission is required to capture photos. Please grant the permissions"
-    const val BTN_DIALOG_DENIED:String = "Grant permission"
-    const val PERMISSION_COUNTER:Int = 0
-    const val PERMISSION_PERMANENTLY_DENIED:String = "Camera permission permanently denied"
-    const val BTN_ACCEPT:String = "Accept"
-    const val BTN_RETRY:String = "Retry"
-    const val TITLE_IMAGE_CONFIRMATION:String = "Are you satisfied with the photo?"
-
-
+    // Mantenemos solo las constantes que no son strings para compatibilidad
+    const val PERMISSION_COUNTER: Int = 0
+    
+    // Los strings ahora se manejan a través del sistema de i18n
+    // Ver StringResource enum para todos los strings disponibles
 }

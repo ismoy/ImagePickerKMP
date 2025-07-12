@@ -18,7 +18,9 @@ import platform.UIKit.UIImageJPEGRepresentation
 object ImageProcessor {
 
     fun processImage(image: UIImage, quality: Double = 0.9): CameraPhotoResult {
+        // Convert UIImage to JPEG data
         val jpegData = convertToJPEG(image, quality)
+        // Save JPEG data to a temporary file
         val fileURL = saveImageToDisk(jpegData)
         return createCameraPhotoResult(image, fileURL)
     }
@@ -30,11 +32,13 @@ object ImageProcessor {
     }
 
     private fun convertToJPEG(image: UIImage, quality: Double): NSData {
+        // Convert UIImage to JPEG NSData
         return UIImageJPEGRepresentation(image, quality)
             ?: throw PhotoCaptureException("Failed to convert image to JPEG")
     }
 
     private fun saveImageToDisk(jpegData: NSData): NSURL {
+        // Save NSData to a temporary file and return its NSURL
         val fileManager = NSFileManager.defaultManager
         val tempDirectoryURL = fileManager.temporaryDirectory
         val fileName = "${NSUUID().UUIDString()}.jpg"

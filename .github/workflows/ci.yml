@@ -1,0 +1,174 @@
+name: CI
+
+on:
+  push:
+    branches: [ develop, main ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build
+        run: ./gradlew build --no-daemon
+
+      - name: Run tests
+        run: ./gradlew test --no-daemon
+
+      - name: Run ktlint
+        run: ./gradlew ktlintCheck --no-daemon
+
+      - name: Run detekt
+        run: ./gradlew detekt --no-daemon
+
+      - name: Generate JaCoCo coverage report
+        run: ./gradlew jacocoTestReport --no-daemon
+
+      - name: Verify coverage thresholds
+        run: ./gradlew jacocoTestCoverageVerification --no-daemon
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: library/build/reports/jacoco/jacocoTestReport/
+          retention-days: 7
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+      - name: Comment PR with coverage summary
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            try {
+              // Read the JaCoCo XML report to extract coverage data
+              const xmlPath = './library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml';
+              if (fs.existsSync(xmlPath)) {
+                const xmlContent = fs.readFileSync(xmlPath, 'utf8');
+                
+                // Extract coverage percentages using regex
+                const lineMatch = xmlContent.match(/LINE="(\d+\.?\d*)"/);
+                const branchMatch = xmlContent.match(/BRANCH="(\d+\.?\d*)"/);
+                
+                if (lineMatch && branchMatch) {
+                  const lineCoverage = parseFloat(lineMatch[1]);
+                  const branchCoverage = parseFloat(branchMatch[1]);
+                  
+                  const comment = `## 📊 Coverage Report
+                  
+                  **Line Coverage:** ${lineCoverage.toFixed(1)}%
+                  **Branch Coverage:** ${branchCoverage.toFixed(1)}%
+                  
+                  📈 View detailed report: [Codecov](https://codecov.io/gh/ismoy/ImagePickerKMP)
+                  
+                  ---
+                  *This report was generated automatically by CI*`;
+                  
+                  github.rest.issues.createComment({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: comment
+                  });
+                }
+              }
+            } catch (error) {
+              console.log('Could not generate coverage comment:', error.message);
+            }
+
+      - name: Notify coverage changes
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            try {
+              const xmlPath = './library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml';
+              if (fs.existsSync(xmlPath)) {
+                const xmlContent = fs.readFileSync(xmlPath, 'utf8');
+                const lineMatch = xmlContent.match(/LINE="(\d+\.?\d*)"/);
+                
+                if (lineMatch) {
+                  const coverage = parseFloat(lineMatch[1]);
+                  
+                  if (coverage < 20) {
+                    console.log('⚠️ Coverage is below 20%. Consider adding more tests.');
+                  } else if (coverage < 50) {
+                    console.log('📈 Coverage is improving. Keep adding tests!');
+                  } else {
+                    console.log('🎉 Great coverage! Keep it up!');
+                  }
+                }
+              }
+            } catch (error) {
+              console.log('Could not analyze coverage:', error.message);
+            }
+
+      - name: Notify Discord on Success
+        if: success()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            🎉 **Build Success** - ImagePickerKMP
+            
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** ${{ github.sha }}
+            **Author:** ${{ github.actor }}
+            
+            📊 **Coverage:** ${{ steps.coverage.outputs.percentage }}%
+            🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
+            
+            View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Notify Discord on Failure
+        if: failure()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            ❌ **Build Failed** - ImagePickerKMP
+            
+            **Branch:** ${{ github.ref_name }}
+            **Commit:** ${{ github.sha }}
+            **Author:** ${{ github.actor }}
+            
+            🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
+            
+            View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} 

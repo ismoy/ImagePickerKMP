@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Analytics integration support
+
 - Custom permission dialogs
 - Custom confirmation views
 - High-quality photo capture option
@@ -23,12 +23,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Linter and static analysis (ktlint, detekt) configuration
 - Example and documentation for internationalization
 - CI and coverage badges in README
+- **Internationalization (i18n) support**: Complete multi-language system with type-safe string resources
+- **Automatic language detection**: Strings adapt to device language automatically
+- **Support for English, Spanish, and French**: Ready-to-use translations for all three languages
+- **Extensible language system**: Easy to add new languages without external dependencies
+- **Automatic translations**: Permission dialogs and UI texts are now automatically translated by default
+- **Front camera orientation correction**: Automatic correction of front camera image orientation to fix mirrored/rotated photos
 
 ### Changed
 - Improved permission handling flow
 - Enhanced UI components
 - Better cross-platform compatibility
 - Preview image in confirmation now uses FIT_CENTER to avoid zoom on gallery images
+- Enhanced image processing with automatic orientation correction for front camera photos
 
 ### Fixed
 - iOS permission denial flow
@@ -36,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Memory leaks in photo processing
 - Permission dialog display issues
 - Disparador (capture button) always centered, gallery button does not push it
+- Front camera photos appearing mirrored or incorrectly oriented
 
 ## [1.0.0] - 2024-01-15
 
@@ -267,7 +275,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Version 1.1.0 (Planned)
 - **Features**:
-  - Advanced analytics integration
+  
   - Custom UI themes
   - Video capture support
   - Image filters and effects

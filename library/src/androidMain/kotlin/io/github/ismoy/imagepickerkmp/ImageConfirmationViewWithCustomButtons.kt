@@ -38,9 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import io.github.ismoy.imagepickerkmp.CameraPhotoHandler.PhotoResult
-import io.github.ismoy.imagepickerkmp.Constant.BTN_ACCEPT
-import io.github.ismoy.imagepickerkmp.Constant.BTN_RETRY
-import io.github.ismoy.imagepickerkmp.Constant.TITLE_IMAGE_CONFIRMATION
+import io.github.ismoy.imagepickerkmp.StringResource
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 
@@ -88,7 +86,7 @@ fun ImageConfirmationViewWithCustomButtons(
                        .aspectRatio(1f)){
                        AsyncImage(
                            model = result.uri,
-                           contentDescription = "Preview",
+                           contentDescription = stringResource(StringResource.PREVIEW_IMAGE_DESCRIPTION),
                            modifier = Modifier
                                .fillMaxSize()
                                .aspectRatio(1f)
@@ -108,7 +106,7 @@ fun ImageConfirmationViewWithCustomButtons(
                            ) {
                                Icon(
                                    imageVector = if (isHD) Icons.Default.Hd else Icons.Default.Sd,
-                                   contentDescription = if (isHD) "HD" else "SD",
+                                   contentDescription = if (isHD) stringResource(StringResource.HD_QUALITY_DESCRIPTION) else stringResource(StringResource.SD_QUALITY_DESCRIPTION),
                                    tint = resolvedIconColor
                                )
                            }
@@ -123,7 +121,7 @@ fun ImageConfirmationViewWithCustomButtons(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = TITLE_IMAGE_CONFIRMATION,
+                            text = stringResource(StringResource.IMAGE_CONFIRMATION_TITLE),
                             color = Color(0xFFCBD5E1),
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
@@ -145,11 +143,11 @@ fun ImageConfirmationViewWithCustomButtons(
                             ) {
                                 Icon(
                                     imageVector = galleryIcon ?: Icons.Default.Refresh,
-                                    contentDescription = BTN_RETRY,
+                                    contentDescription = stringResource(StringResource.RETRY_BUTTON),
                                     tint = resolvedIconColor,
                                     modifier = Modifier.padding(end = 4.dp)
                                 )
-                                Text(BTN_RETRY, color = resolvedIconColor, fontWeight = FontWeight.Bold)
+                                Text(stringResource(StringResource.RETRY_BUTTON), color = resolvedIconColor, fontWeight = FontWeight.Bold)
                             }
                             Button(
                                 onClick = { onConfirm(result) },
@@ -161,11 +159,11 @@ fun ImageConfirmationViewWithCustomButtons(
                             ) {
                                 Icon(
                                     imageVector = captureIcon ?: Icons.Default.Check,
-                                    contentDescription = BTN_ACCEPT,
+                                    contentDescription = stringResource(StringResource.ACCEPT_BUTTON),
                                     tint = resolvedIconColor,
                                     modifier = Modifier.padding(end = 4.dp)
                                 )
-                                Text(BTN_ACCEPT, color = resolvedIconColor, fontWeight = FontWeight.Bold)
+                                Text(stringResource(StringResource.ACCEPT_BUTTON), color = resolvedIconColor, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
