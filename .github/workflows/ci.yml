@@ -50,6 +50,23 @@ jobs:
       - name: Verify coverage thresholds
         run: ./gradlew jacocoTestCoverageVerification --no-daemon
 
+      - name: Parse coverage data
+        id: coverage
+        run: |
+          if [ -f "./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml" ]; then
+            # Extract line coverage percentage
+            LINE_COVERAGE=$(grep -o 'LINE="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*')
+            BRANCH_COVERAGE=$(grep -o 'BRANCH="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*')
+            
+            echo "line_coverage=$LINE_COVERAGE" >> $GITHUB_OUTPUT
+            echo "branch_coverage=$BRANCH_COVERAGE" >> $GITHUB_OUTPUT
+            echo "has_coverage=true" >> $GITHUB_OUTPUT
+          else
+            echo "line_coverage=0" >> $GITHUB_OUTPUT
+            echo "branch_coverage=0" >> $GITHUB_OUTPUT
+            echo "has_coverage=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Upload coverage artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -147,14 +164,18 @@ jobs:
           args: |
             🎉 **Build Success** - ImagePickerKMP
             
+            **Repository:** ${{ github.repository }}
             **Branch:** ${{ github.ref_name }}
             **Commit:** ${{ github.sha }}
             **Author:** ${{ github.actor }}
             
-            📊 **Coverage:** ${{ steps.coverage.outputs.percentage }}%
-            🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
+            ${{ steps.coverage.outputs.has_coverage == 'true' && format('📊 **Coverage Report:**\n• Line Coverage: {0}%\n• Branch Coverage: {1}%', steps.coverage.outputs.line_coverage, steps.coverage.outputs.branch_coverage) || '📊 **Coverage:** Not available' }}
             
-            View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            **Duration:** ${{ github.run_duration }}s
+            **Workflow:** ${{ github.workflow }}
+            
+            🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
+            🔗 **View Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       - name: Notify Discord on Failure
         if: failure()
@@ -165,10 +186,13 @@ jobs:
           args: |
             ❌ **Build Failed** - ImagePickerKMP
             
+            **Repository:** ${{ github.repository }}
             **Branch:** ${{ github.ref_name }}
             **Commit:** ${{ github.sha }}
             **Author:** ${{ github.actor }}
             
-            🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
+            **Duration:** ${{ github.run_duration }}s
+            **Workflow:** ${{ github.workflow }}
             
-            View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} 
+            🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
+            🔗 **View Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} 
