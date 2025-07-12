@@ -52,6 +52,14 @@ jobs:
         run: ./gradlew test --no-daemon --stacktrace --info
         continue-on-error: true
 
+      - name: Check test results
+        run: |
+          echo "=== Checking test results ==="
+          ls -la library/build/test-results/ || echo "No test results directory"
+          ls -la library/build/reports/tests/ || echo "No test reports directory"
+          echo "=== Test summary ==="
+          ./gradlew test --dry-run || echo "Could not run test dry-run"
+
       - name: Run ktlint with debug
         run: ./gradlew ktlintCheck --no-daemon --stacktrace --info
         continue-on-error: true
@@ -217,7 +225,7 @@ jobs:
             **Commit:** ${{ github.sha }}
             **Author:** ${{ github.actor }}
             
-            ${{ steps.coverage.outputs.has_coverage == 'true' && format('📊 **Coverage Report:**\n• Line Coverage: {0}%\n• Branch Coverage: {1}%', steps.coverage.outputs.line_coverage, steps.coverage.outputs.branch_coverage) || '📊 **Coverage:** Not available' }}
+            ${{ steps.coverage.outputs.has_coverage == 'true' && format('📊 **Coverage Report:**%0A• Line Coverage: {0}%%0A• Branch Coverage: {1}%', steps.coverage.outputs.line_coverage, steps.coverage.outputs.branch_coverage) || '📊 **Coverage:** Not available' }}
             
             **Duration:** ${{ github.run_duration }}s
             **Workflow:** ${{ github.workflow }}
