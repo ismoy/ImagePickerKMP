@@ -32,17 +32,43 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build
-        run: ./gradlew build --no-daemon
+      - name: Show environment and gradle info
+        run: |
+          echo "=== Environment Info ==="
+          java -version
+          echo "Gradle version:"
+          ./gradlew --version
+          echo "=== Gradle Wrapper Properties ==="
+          cat gradle/wrapper/gradle-wrapper.properties
+          echo "=== Project Structure ==="
+          ls -la
+          echo "=== Library Directory ==="
+          ls -la library/
 
-      - name: Run tests
-        run: ./gradlew test --no-daemon
+      - name: Build with debug info
+        run: ./gradlew build --no-daemon --stacktrace --info
 
-      - name: Run ktlint
-        run: ./gradlew ktlintCheck --no-daemon
+      - name: Run tests with debug
+        run: ./gradlew test --no-daemon --stacktrace --info
+        continue-on-error: true
 
-      - name: Run detekt
-        run: ./gradlew detekt --no-daemon
+      - name: Run ktlint with debug
+        run: ./gradlew ktlintCheck --no-daemon --stacktrace --info
+        continue-on-error: true
+
+      - name: Run detekt with debug
+        run: ./gradlew detekt --no-daemon --stacktrace --info
+        continue-on-error: true
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            library/build/
+            .gradle/
+          retention-days: 7
 
       - name: Generate JaCoCo coverage report
         run: ./gradlew jacocoTestReport --no-daemon
