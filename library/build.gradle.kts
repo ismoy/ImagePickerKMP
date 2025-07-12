@@ -45,7 +45,11 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         )
     )
     sourceDirectories.setFrom(files("src/commonMain/kotlin", "src/androidMain/kotlin"))
-    executionData.setFrom(files("$buildDir/jacoco/test.exec"))
+    executionData.setFrom(
+        fileTree("$buildDir") {
+            include("jacoco/*.exec")
+        }
+    )
 }
 
 // Configuración de verificación de cobertura

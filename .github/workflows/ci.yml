@@ -52,6 +52,13 @@ jobs:
         run: ./gradlew test --no-daemon --stacktrace --info
         continue-on-error: true
 
+      - name: Verify tests executed
+        run: |
+          echo "=== Verifying tests executed ==="
+          ./gradlew test --dry-run
+          echo "=== Test tasks available ==="
+          ./gradlew tasks --group="verification"
+
       - name: Check test results
         run: |
           echo "=== Checking test results ==="
@@ -227,7 +234,7 @@ jobs:
             
             ${{ steps.coverage.outputs.has_coverage == 'true' && format('📊 **Coverage Report:**%0A• Line Coverage: {0}%%0A• Branch Coverage: {1}%', steps.coverage.outputs.line_coverage, steps.coverage.outputs.branch_coverage) || '📊 **Coverage:** Not available' }}
             
-            **Duration:** ${{ github.run_duration }}s
+            **Duration:** ${{ github.event.workflow_run.duration }}s
             **Workflow:** ${{ github.workflow }}
             
             🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
