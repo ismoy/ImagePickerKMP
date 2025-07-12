@@ -114,21 +114,31 @@ jobs:
           if [ -f "./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml" ]; then
             echo "✅ JaCoCo XML report found"
             
-            # Extract coverage data from XML
-            LINE_COVERAGE=$(grep -o 'LINE="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*' || echo "0")
-            BRANCH_COVERAGE=$(grep -o 'BRANCH="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*' || echo "0")
+            # Extract coverage data from XML - look for the summary counter at the end
+            LINE_COVERAGE=$(grep -o 'type="LINE" missed="[^"]*" covered="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | tail -1 | sed 's/.*missed="\([^"]*\)" covered="\([^"]*\)".*/\2/' | sed 's/.*covered="\([^"]*\)".*/\1/' || echo "0")
+            BRANCH_COVERAGE=$(grep -o 'type="BRANCH" missed="[^"]*" covered="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | tail -1 | sed 's/.*missed="\([^"]*\)" covered="\([^"]*\)".*/\2/' | sed 's/.*covered="\([^"]*\)".*/\1/' || echo "0")
             
             # Extract total lines and covered lines for detailed info
-            TOTAL_LINES=$(grep -o 'LINE="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9]*' || echo "0")
-            COVERED_LINES=$(grep -o 'LINE="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9]*' || echo "0")
+            TOTAL_LINES=$(grep -o 'type="LINE" missed="[^"]*" covered="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | tail -1 | sed 's/.*missed="\([^"]*\)" covered="\([^"]*\)".*/\1/' || echo "0")
+            COVERED_LINES=$(grep -o 'type="LINE" missed="[^"]*" covered="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | tail -1 | sed 's/.*missed="\([^"]*\)" covered="\([^"]*\)".*/\2/' || echo "0")
             
-            echo "Line coverage: $LINE_COVERAGE%"
-            echo "Branch coverage: $BRANCH_COVERAGE%"
+            # Calculate percentage
+            if [ "$TOTAL_LINES" -gt 0 ] && [ "$COVERED_LINES" -ge 0 ]; then
+                TOTAL_WITH_COVERED=$((TOTAL_LINES + COVERED_LINES))
+                LINE_PERCENTAGE=$(echo "scale=1; $COVERED_LINES * 100 / $TOTAL_WITH_COVERED" | bc -l 2>/dev/null || echo "0")
+                BRANCH_PERCENTAGE=$(echo "scale=1; $BRANCH_COVERAGE * 100 / $TOTAL_WITH_COVERED" | bc -l 2>/dev/null || echo "0")
+            else
+                LINE_PERCENTAGE="0"
+                BRANCH_PERCENTAGE="0"
+            fi
+            
+            echo "Line coverage: $LINE_PERCENTAGE%"
+            echo "Branch coverage: $BRANCH_PERCENTAGE%"
             echo "Total lines: $TOTAL_LINES"
             echo "Covered lines: $COVERED_LINES"
             
-            echo "line_coverage=$LINE_COVERAGE" >> $GITHUB_OUTPUT
-            echo "branch_coverage=$BRANCH_COVERAGE" >> $GITHUB_OUTPUT
+            echo "line_coverage=$LINE_PERCENTAGE" >> $GITHUB_OUTPUT
+            echo "branch_coverage=$BRANCH_PERCENTAGE" >> $GITHUB_OUTPUT
             echo "total_lines=$TOTAL_LINES" >> $GITHUB_OUTPUT
             echo "covered_lines=$COVERED_LINES" >> $GITHUB_OUTPUT
             echo "has_coverage=true" >> $GITHUB_OUTPUT
