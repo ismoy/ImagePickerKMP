@@ -71,23 +71,45 @@ jobs:
           retention-days: 7
 
       - name: Generate JaCoCo coverage report
-        run: ./gradlew jacocoTestReport --no-daemon
+        run: ./gradlew jacocoTestReport --no-daemon --stacktrace --info
 
       - name: Verify coverage thresholds
-        run: ./gradlew jacocoTestCoverageVerification --no-daemon
+        run: ./gradlew jacocoTestCoverageVerification --no-daemon --stacktrace --info
+
+      - name: Check JaCoCo report generation
+        run: |
+          echo "=== Checking JaCoCo report generation ==="
+          ls -la library/build/reports/ || echo "No reports directory"
+          ls -la library/build/reports/jacoco/ || echo "No jacoco directory"
+          ls -la library/build/reports/jacoco/jacocoTestReport/ || echo "No jacocoTestReport directory"
+          if [ -f "./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml" ]; then
+            echo "✅ JaCoCo XML report exists"
+            ls -la "./library/build/reports/jacoco/jacocoTestReport/"
+          else
+            echo "❌ JaCoCo XML report missing"
+          fi
 
       - name: Parse coverage data
         id: coverage
         run: |
+          echo "=== Checking for JaCoCo report ==="
+          ls -la library/build/reports/jacoco/ || echo "No jacoco directory found"
+          ls -la library/build/reports/jacoco/jacocoTestReport/ || echo "No jacocoTestReport directory found"
+          
           if [ -f "./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml" ]; then
+            echo "✅ JaCoCo XML report found"
             # Extract line coverage percentage
-            LINE_COVERAGE=$(grep -o 'LINE="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*')
-            BRANCH_COVERAGE=$(grep -o 'BRANCH="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*')
+            LINE_COVERAGE=$(grep -o 'LINE="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*' || echo "0")
+            BRANCH_COVERAGE=$(grep -o 'BRANCH="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*' || echo "0")
+            
+            echo "Line coverage: $LINE_COVERAGE"
+            echo "Branch coverage: $BRANCH_COVERAGE"
             
             echo "line_coverage=$LINE_COVERAGE" >> $GITHUB_OUTPUT
             echo "branch_coverage=$BRANCH_COVERAGE" >> $GITHUB_OUTPUT
             echo "has_coverage=true" >> $GITHUB_OUTPUT
           else
+            echo "❌ JaCoCo XML report not found"
             echo "line_coverage=0" >> $GITHUB_OUTPUT
             echo "branch_coverage=0" >> $GITHUB_OUTPUT
             echo "has_coverage=false" >> $GITHUB_OUTPUT
