@@ -113,20 +113,31 @@ jobs:
           
           if [ -f "./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml" ]; then
             echo "✅ JaCoCo XML report found"
-            # Extract line coverage percentage
+            
+            # Extract coverage data from XML
             LINE_COVERAGE=$(grep -o 'LINE="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*' || echo "0")
             BRANCH_COVERAGE=$(grep -o 'BRANCH="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*' || echo "0")
             
-            echo "Line coverage: $LINE_COVERAGE"
-            echo "Branch coverage: $BRANCH_COVERAGE"
+            # Extract total lines and covered lines for detailed info
+            TOTAL_LINES=$(grep -o 'LINE="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9]*' || echo "0")
+            COVERED_LINES=$(grep -o 'LINE="[^"]*"' ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml | head -1 | grep -o '[0-9]*' || echo "0")
+            
+            echo "Line coverage: $LINE_COVERAGE%"
+            echo "Branch coverage: $BRANCH_COVERAGE%"
+            echo "Total lines: $TOTAL_LINES"
+            echo "Covered lines: $COVERED_LINES"
             
             echo "line_coverage=$LINE_COVERAGE" >> $GITHUB_OUTPUT
             echo "branch_coverage=$BRANCH_COVERAGE" >> $GITHUB_OUTPUT
+            echo "total_lines=$TOTAL_LINES" >> $GITHUB_OUTPUT
+            echo "covered_lines=$COVERED_LINES" >> $GITHUB_OUTPUT
             echo "has_coverage=true" >> $GITHUB_OUTPUT
           else
             echo "❌ JaCoCo XML report not found"
             echo "line_coverage=0" >> $GITHUB_OUTPUT
             echo "branch_coverage=0" >> $GITHUB_OUTPUT
+            echo "total_lines=0" >> $GITHUB_OUTPUT
+            echo "covered_lines=0" >> $GITHUB_OUTPUT
             echo "has_coverage=false" >> $GITHUB_OUTPUT
           fi
 
@@ -234,9 +245,8 @@ jobs:
             **Commit:** ${{ github.sha }}
             **Author:** ${{ github.actor }}
             
-            ${{ steps.coverage.outputs.has_coverage == 'true' && format('📊 **Coverage Report:**%0A• Line Coverage: {0}%%0A• Branch Coverage: {1}%', steps.coverage.outputs.line_coverage, steps.coverage.outputs.branch_coverage) || '📊 **Coverage:** Not available' }}
+            ${{ steps.coverage.outputs.has_coverage == 'true' && format('📊 **Coverage Report:**%0A• Line Coverage: {0}% ({1} of {2} lines)%0A• Branch Coverage: {3}%', steps.coverage.outputs.line_coverage, steps.coverage.outputs.covered_lines, steps.coverage.outputs.total_lines, steps.coverage.outputs.branch_coverage) || '📊 **Coverage:** Not available' }}
             
-            **Duration:** ${{ github.event.workflow_run.duration }}s
             **Workflow:** ${{ github.workflow }}
             
             🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
@@ -256,7 +266,6 @@ jobs:
             **Commit:** ${{ github.sha }}
             **Author:** ${{ github.actor }}
             
-            **Duration:** ${{ github.run_duration }}s
             **Workflow:** ${{ github.workflow }}
             
             🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
