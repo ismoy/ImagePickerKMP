@@ -10,7 +10,7 @@
 
 A modern, cross-platform image picker library for Kotlin Multiplatform (KMP) that provides a seamless camera experience on both Android and iOS platforms.
 
-Este documento también está disponible en español: [README.es.md](README.es.md)
+This document is also available in Spanish: [README.es.md](README.es.md)
 
 ## Features
 
@@ -81,60 +81,19 @@ fun MyImagePicker() {
 - Xcode 14+
 - Kotlin Multiplatform
 
-## Features in Detail
+## Platform-Specific Integration
 
-### Camera Integration
-- Direct camera access
-- Photo capture with preview
-- Custom confirmation dialogs
-- Image processing and optimization
+### Android Native (Jetpack Compose)
 
-### Permission Handling
-- Smart permission management
-- Platform-specific behavior
-- Custom permission dialogs
-- Settings navigation
+For detailed Android integration guide, see: [Android Integration Guide](INTEGRATION_GUIDE.md#android-native-jetpack-compose)
 
-### Customization
-- Custom UI themes
-- Personalized dialogs
-- Custom callbacks
-- Advanced configurations
+### iOS Native (Swift/SwiftUI)
 
-### Internationalization (i18n)
-- Multi-language support (English, Spanish, French)
-- Automatic language detection
-- Type-safe string resources
-- No external dependencies
-- **Automatic translations**: Permission dialogs and UI texts are automatically translated
+For detailed iOS integration guide, see: [iOS Integration Guide](INTEGRATION_GUIDE.md#ios-native-swiftswiftui)
 
-## Gallery Selection & iOS Dialog Customization
+### Kotlin Multiplatform/Compose Multiplatform
 
-### Multiplatform Gallery Support
-
-- Users can select images from the gallery on both Android and iOS.
-- On Android, a gallery icon appears in the camera UI (bottom left). On iOS, you can offer a dialog to choose between camera and gallery.
-
-### iOS Dialog Text Customization
-
-You can customize the dialog texts (title, take photo, select from gallery, cancel) on iOS:
-
-```kotlin
-ImagePickerLauncher(
-    context = ..., // platform context
-    onPhotoCaptured = { result -> /* ... */ },
-    onError = { exception -> /* ... */ },
-    dialogTitle = "Choose action", // iOS only
-    takePhotoText = "Camera",      // iOS only
-    selectFromGalleryText = "Gallery", // iOS only
-    cancelText = "Dismiss"         // iOS only
-)
-```
-
-- On Android, these parameters are ignored.
-- On iOS, if not provided, defaults are in English.
-
-See the [Integration Guide](INTEGRATION_GUIDE.md) and [Examples](EXAMPLES.md) for more details.
+For detailed KMP integration guide, see: [Kotlin Multiplatform Integration Guide](INTEGRATION_GUIDE.md#kotlin-multiplatformcompose-multiplatform)
 
 ## Documentation
 
