@@ -344,10 +344,10 @@ cd ImagePickerKMP
 ## Support
 
 ### Getting Help
-- **Documentation**: [README.md](README.md)
+- **Documentation**: [README.md](../README.md)
 - **Issues**: [GitHub Issues](https://github.com/ismoy/ImagePickerKMP/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions)
-- **Email**: support@imagepickerkmp.com
+- **Email**: belizairesmoy72@gmail.com
 
 ### Reporting Issues
 When reporting issues, please include:

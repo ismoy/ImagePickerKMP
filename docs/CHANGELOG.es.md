@@ -1,4 +1,4 @@
-This document is also available in English: [CHANGELOG.md](CHANGELOG.md)
+This document is also available in English: [CHANGELOG.md](docs/CHANGELOG.md)
 
 # Registro de Cambios
 
@@ -334,10 +334,10 @@ cd ImagePickerKMP
 ## Soporte
 
 ### Obtener Ayuda
-- **Documentación**: [README.es.md](README.es.md)
+- **Documentación**: [README.es.md](../README.es.md)
 - **Issues**: [GitHub Issues](https://github.com/ismoy/ImagePickerKMP/issues)
 - **Discusiones**: [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions)
-- **Email**: support@imagepickerkmp.com
+- **Email**: belizairesmoy72@gmail.com
 
 ### Reportar Problemas
 Al reportar problemas, por favor incluye:

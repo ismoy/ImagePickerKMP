@@ -1,4 +1,4 @@
-This document is also available in English: [CUSTOMIZATION_GUIDE.md](CUSTOMIZATION_GUIDE.md)
+This document is also available in English: [CUSTOMIZATION_GUIDE.md](docs/CUSTOMIZATION_GUIDE.md)
 
 # Guía de Personalización
 
@@ -882,6 +882,6 @@ Para problemas relacionados con personalización:
 4. **Accesibilidad**: Asegúrate de que las personalizaciones sean accesibles
 
 Para más información, consulta:
-- [Referencia de API](API_REFERENCE.es.md)
-- [Ejemplos](EXAMPLES.es.md)
-- [Guía de Integración](INTEGRATION_GUIDE.es.md) 
+- [Referencia de API](docs/API_REFERENCE.es.md)
+- [Ejemplos](docs/EXAMPLES.es.md)
+- [Guía de Integración](docs/INTEGRATION_GUIDE.es.md) 

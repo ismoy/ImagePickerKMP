@@ -1,4 +1,4 @@
-This document is also available in English: [ARCHITECTURE.md](ARCHITECTURE.md)
+This document is also available in English: [ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 # Guía de Arquitectura - ImagePickerKMP
 
@@ -76,8 +76,8 @@ Button(onClick = { stateHolder.capturePhoto(onPhotoResult, onError) })
 
 ## Referencias
 
-- [README.es.md](./README.es.md)
-- [API_REFERENCE.es.md](./API_REFERENCE.es.md)
+- [README.es.md](docs/./README.es.md)
+- [API_REFERENCE.es.md](docs/./API_REFERENCE.es.md)
 
 ---
 

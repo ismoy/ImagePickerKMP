@@ -1,4 +1,4 @@
-Este documento también está disponible en inglés: [API_REFERENCE.md](API_REFERENCE.md)
+Este documento también está disponible en inglés: [API_REFERENCE.md](docs/API_REFERENCE.md)
 
 # Referencia de API
 

@@ -511,9 +511,9 @@ We use [Semantic Versioning](https://semver.org/):
 
 ### Resources
 
-- **Documentation**: [README.md](README.md)
-- **API Reference**: [API_REFERENCE.md](API_REFERENCE.md)
-- **Examples**: [EXAMPLES.md](EXAMPLES.md)
+- **Documentation**: [README.md](../README.md)
+- **API Reference**: [API_REFERENCE.md](docs/API_REFERENCE.md)
+- **Examples**: [EXAMPLES.md](docs/EXAMPLES.md)
 - **Issues**: [GitHub Issues](https://github.com/ismoy/ImagePickerKMP/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions)
 
@@ -521,8 +521,8 @@ We use [Semantic Versioning](https://semver.org/):
 
 - **GitHub Issues**: For bugs and feature requests
 - **GitHub Discussions**: For questions and general discussion
-- **Email**: support@imagepickerkmp.com
-- **Slack**: Join our community Slack (invite link in README)
+- **Email**: belizairesmoy72@gmail.com
+- **Discord**: [Comunidad Discord](https://discord.com/channels/1393705692484993114/1393706133864190133)
 
 ### Mentorship
 

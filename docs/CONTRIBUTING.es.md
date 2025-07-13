@@ -1,4 +1,4 @@
-This document is also available in English: [CONTRIBUTING.md](CONTRIBUTING.md)
+This document is also available in English: [CONTRIBUTING.md](docs/CONTRIBUTING.md)
 
 # Guía de Contribución
 
@@ -519,9 +519,9 @@ Usamos [Semantic Versioning](https://semver.org/):
 
 ### Recursos
 
-- **Documentación**: [README.es.md](README.es.md)
-- **Referencia de API**: [API_REFERENCE.es.md](API_REFERENCE.es.md)
-- **Ejemplos**: [EXAMPLES.es.md](EXAMPLES.es.md)
+- **Documentación**: [README.es.md](docs/../README.es.md)
+- **Referencia de API**: [API_REFERENCE.es.md](docs/API_REFERENCE.es.md)
+- **Ejemplos**: [EXAMPLES.es.md](docs/EXAMPLES.es.md)
 - **Issues**: [GitHub Issues](https://github.com/ismoy/ImagePickerKMP/issues)
 - **Discusiones**: [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions)
 
@@ -529,8 +529,8 @@ Usamos [Semantic Versioning](https://semver.org/):
 
 - **GitHub Issues**: Para bugs y solicitudes de características
 - **GitHub Discussions**: Para preguntas y discusión general
-- **Email**: support@imagepickerkmp.com
-- **Slack**: Únete a nuestro Slack comunitario (enlace de invitación en README)
+- **Email**: belizairesmoy72@gmail.com
+- **Discord**: [Comunidad Discord](https://discord.com/channels/1393705692484993114/1393706133864190133)
 
 ### Mentoría
 

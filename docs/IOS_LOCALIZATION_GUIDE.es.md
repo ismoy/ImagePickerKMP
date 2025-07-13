@@ -1,4 +1,4 @@
-This document is also available in English: [IOS_LOCALIZATION_GUIDE.md](IOS_LOCALIZATION_GUIDE.md)
+This document is also available in English: [IOS_LOCALIZATION_GUIDE.md](docs/IOS_LOCALIZATION_GUIDE.md)
 
 # Guía de Localización para iOS - ImagePickerKMP
 

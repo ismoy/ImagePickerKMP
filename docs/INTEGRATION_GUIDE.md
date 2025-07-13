@@ -375,7 +375,7 @@ fun SharedImagePicker(
         
         if (showPicker) {
             ImagePickerLauncher(
-                context = if (Platform().isAndroid) LocalContext.current else null,
+                context = LocalContext.current,
                 onPhotoCaptured = { result ->
                     onPhotoCaptured(result)
                     showPicker = false
@@ -837,7 +837,8 @@ If you encounter issues during integration:
 3. **Create an issue**: Provide detailed information about your problem
 4. **Community support**: Ask questions in the community forums
 
-For more detailed information, refer to:
-- [API Reference](API_REFERENCE.md)
-- [Examples](EXAMPLES.md)
-- [Permission Guide](PERMISSION.md) 
+For more details, see [Customization Guide](docs/CUSTOMIZATION_GUIDE.md).
+
+See [API Reference](docs/API_REFERENCE.md) for complete documentation.
+
+See [Examples](docs/EXAMPLES.md) for more use cases. 
