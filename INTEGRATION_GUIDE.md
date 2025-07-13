@@ -375,7 +375,7 @@ fun SharedImagePicker(
         
         if (showPicker) {
             ImagePickerLauncher(
-                context = LocalContext.current,
+                context = if (Platform().isAndroid) LocalContext.current else null,
                 onPhotoCaptured = { result ->
                     onPhotoCaptured(result)
                     showPicker = false
