@@ -93,7 +93,7 @@ For detailed iOS integration guide, see: [iOS Integration Guide](INTEGRATION_GUI
 
 ### Kotlin Multiplatform/Compose Multiplatform
 
-For detailed KMP integration guide, see: [Kotlin Multiplatform Integration Guide](INTEGRATION_GUIDE.md#kotlin-multiplatformcompose-multiplatform)
+For detailed KMP integration guide, see: [Kotlin Multiplatform Integration Guide](INTEGRATION_GUIDE.md#kotlin-multiplatform--compose-multiplatform)
 
 ## Documentation
 
