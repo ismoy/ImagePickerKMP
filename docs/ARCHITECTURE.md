@@ -74,8 +74,8 @@ Button(onClick = { stateHolder.capturePhoto(onPhotoResult, onError) })
 
 ## Referencias
 
-- [README.md](./README.md)
-- [API_REFERENCE.md](./API_REFERENCE.md)
+- [README.md](../README.md)
+- [API_REFERENCE.md](docs/./API_REFERENCE.md)
 
 ---
 

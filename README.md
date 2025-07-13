@@ -1,16 +1,20 @@
 [![CI](https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg)](https://github.com/ismoy/ImagePickerKMP/actions)
 [![Code Coverage](https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg)](https://codecov.io/gh/ismoy/ImagePickerKMP)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-blue.svg)](https://kotlinlang.org)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-lightgrey.svg)](https://kotlinlang.org/docs/multiplatform.html)
-
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp)
+[![GitHub Repo stars](https://img.shields.io/github/stars/ismoy/ImagePickerKMP?style=social)](https://github.com/ismoy/ImagePickerKMP/stargazers)
+[![GitHub last commit](https://img.shields.io/github/last-commit/ismoy/ImagePickerKMP)](https://github.com/ismoy/ImagePickerKMP/commits/main)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ismoy/ImagePickerKMP/pulls)
+[![Discord](https://img.shields.io/discord/1393705692484993114.svg?label=Discord&logo=discord&color=7289da)](https://discord.com/channels/1393705692484993114/1393706133864190133)
 [![official project](http://jb.gg/badges/official.svg)](https://github.com/JetBrains#jetbrains-on-github)
 
 # ImagePickerKMP
 
 A modern, cross-platform image picker library for Kotlin Multiplatform (KMP) that provides a seamless camera experience on both Android and iOS platforms.
 
-This document is also available in Spanish: [README.es.md](README.es.md)
+Este documento también está disponible en español: [README.es.md](docs/README.es.md)
 
 ## Features
 
@@ -85,258 +89,46 @@ fun MyImagePicker() {
 
 ### Android Native (Jetpack Compose)
 
-For detailed Android integration guide, see: [Android Integration Guide](INTEGRATION_GUIDE.md#android-native-jetpack-compose)
+For detailed Android integration guide, see: [Android Integration Guide](docs/INTEGRATION_GUIDE.md#android-native-jetpack-compose)
 
 ### iOS Native (Swift/SwiftUI)
 
-For detailed iOS integration guide, see: [iOS Integration Guide](INTEGRATION_GUIDE.md#ios-native-swiftswiftui)
+For detailed iOS integration guide, see: [iOS Integration Guide](docs/INTEGRATION_GUIDE.md#ios-native-swiftswiftui)
 
 ### Kotlin Multiplatform/Compose Multiplatform
 
-For detailed KMP integration guide, see: [Kotlin Multiplatform Integration Guide](INTEGRATION_GUIDE.md#kotlin-multiplatform--compose-multiplatform)
+For detailed KMP integration guide, see: [Kotlin Multiplatform Integration Guide](docs/INTEGRATION_GUIDE.md#kotlin-multiplatform--compose-multiplatform)
 
 ## Documentation
 
-- [Integration Guide](INTEGRATION_GUIDE.md) - Complete setup and integration guide
-- [Customization Guide](CUSTOMIZATION_GUIDE.md) - UI and behavior customization
-- [Internationalization Guide](I18N_GUIDE.md) - Multi-language support guide
-- [Permission Guide](PERMISSION.md) - Permission handling details
-- [Coverage Guide](COVERAGE_GUIDE.md) - Code coverage and testing guide
-- [Notifications Setup](NOTIFICATIONS_SETUP.md) - Discord notifications configuration
-- [API Reference](API_REFERENCE.md) - Complete API documentation
-- [Examples](EXAMPLES.md) - Code examples and use cases
+- [Integration Guide](docs/INTEGRATION_GUIDE.md) - Complete setup and integration guide
+- [Customization Guide](docs/CUSTOMIZATION_GUIDE.md) - UI and behavior customization
+- [Internationalization Guide](docs/I18N_GUIDE.md) - Multi-language support guide
+- [Permissions Guide](docs/PERMISSION.md) - Permission handling details
+- [Coverage Guide](docs/COVERAGE_GUIDE.md) - Code coverage and testing guide
+- [Notifications Setup](docs/NOTIFICATIONS_SETUP.md) - Discord notifications setup
+- [API Reference](docs/API_REFERENCE.md) - Complete API documentation
+- [Examples](docs/EXAMPLES.md) - Code examples and use cases
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! See our [Contributing Guide](docs/CONTRIBUTING.md) for details.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](docs/LICENSE) file for details.
 
 ## Support
 
-- 📧 Email: support@imagepickerkmp.com
+- 📧 Email: belizairesmoy72@gmail.com
 - 🐛 Issues: [GitHub Issues](https://github.com/ismoy/ImagePickerKMP/issues)
 - 📖 Documentation: [Wiki](https://github.com/ismoy/ImagePickerKMP/wiki)
+- 💬 Discord: [Community Channel](https://discord.com/channels/1393705692484993114/1393706133864190133)
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for a complete list of changes and updates.
+See [CHANGELOG.md](docs/CHANGELOG.md) for a complete list of changes and updates.
 
 ---
 
 **Made with ❤️ for the Kotlin Multiplatform community**
-
-# Next steps
-- Share your library with the Kotlin Community in the `#feed` channel in the [Kotlin Slack](https://kotlinlang.slack.com/) (To sign up visit https://kotl.in/slack.)
-- Add [shield.io badges](https://shields.io/badges/maven-central-version) to your README.
-- Create a documentation site for your project using [Writerside](https://www.jetbrains.com/writerside/). 
-- Share API documentation for your project using [Dokka](https://kotl.in/dokka).
-- Add [Renovate](https://docs.renovatebot.com/) to automatically update dependencies.
-
-# Other resources
-* [Publishing via the Central Portal](https://central.sonatype.org/publish-ea/publish-ea-guide/)
-* [Gradle Maven Publish Plugin \- Publishing to Maven Central](https://vanniktech.github.io/gradle-maven-publish-plugin/central/)
-
-# ImagePickerKMP – Android Modern Camera Features
-
-## ✨ Nuevas funcionalidades
-
-### 1. Control de Flash Moderno
-- Botón en la parte superior central para alternar entre modos de flash: **Auto**, **On**, **Off**.
-- Iconos visuales (rayo, rayo con A, rayo tachado) para cada modo.
-- El flash se activa correctamente al capturar la foto (no solo linterna).
-
-### 2. Cambio de Cámara Frontal/Trasera
-- Botón circular en la parte inferior derecha para alternar entre cámara trasera y frontal.
-- Cambio instantáneo de la vista previa.
-
-### 3. Vista de Confirmación Moderna y Personalizable
-- Tarjeta elegante con la foto capturada, fondo oscuro, esquinas redondeadas.
-- Icono decorativo de HD/SD según la resolución.
-- Texto de pregunta y botones grandes con iconos (Retry/Accept).
-- **Totalmente personalizable**: puedes pasar tu propio Composable para la confirmación.
-- Textos por defecto en inglés, pero puedes personalizarlos fácilmente.
-
----
-
-## 🚀 Ejemplo de uso básico
-
-```kotlin
-ImagePickerLauncher(
-    context = context,
-    onPhotoCaptured = { result ->
-        // Handle photo result
-    },
-    onError = { exception ->
-        // Handle error
-    }
-)
-```
-
----
-
-## 🛠️ Ejemplo de uso avanzado: Personalización de la confirmación
-
-```kotlin
-ImagePickerLauncher(
-    context = context,
-    onPhotoCaptured = { result -> /* ... */ },
-    onError = { exception -> /* ... */ },
-    customConfirmationView = { result, onConfirm, onRetry ->
-        ImageConfirmationViewWithCustomButtons(
-            result = result,
-            onConfirm = onConfirm,
-            onRetry = onRetry,
-            questionText = "¿Estás satisfecho con la foto?",
-            retryText = "Reintentar",
-            acceptText = "Aceptar"
-        )
-    }
-)
-```
-
----
-
-## ⚙️ Parámetros relevantes
-
-- **customConfirmationView**: Permite reemplazar la UI de confirmación por cualquier Composable propio.
-- **questionText, retryText, acceptText**: Textos personalizables para la confirmación.
-- **Control de flash**: El usuario puede alternar el modo de flash en la UI.
-- **Cambio de cámara**: El usuario puede alternar entre cámara trasera y frontal en la UI.
-
----
-
-## 📋 Notas de integración
-- El sistema de permisos y la inicialización de la cámara están gestionados automáticamente.
-- El diseño es responsivo y moderno, pero puedes personalizar cualquier aspecto visual.
-- Los textos por defecto están en inglés, pero puedes localizarlos fácilmente.
-- Si necesitas aún más control, puedes pasar tu propio Composable a `customConfirmationView`.
-
----
-
-## 🧑‍💻 ¿Preguntas o feedback?
-¡No dudes en abrir un issue o PR para sugerencias y mejoras!
-
----
-
-## 🖼️ Ejemplo visual de la experiencia
-
-```
-┌───────────────────────────────┐
-│         [Flash Icon]         │
-│ ┌───────────────────────────┐ │
-│ │      Foto capturada       │ │
-│ │      (esquinas redondeadas)│ │
-│ └───────────────────────────┘ │
-│   [HD/SD Icon]               │
-│                             │
-│  Are you satisfied with the photo? │
-│                             │
-│ [⟳ Retry]   [✔ Accept]      │
-│                             │
-│         [Switch Camera]     │
-└───────────────────────────────┘
-```
-
-- El usuario puede alternar flash, cambiar cámara, y confirmar o reintentar la foto.
-- Todos los textos y botones son personalizables.
-
----
-
-## 🛠 Troubleshooting (Solución de problemas)
-
-### Problema: El flash no se activa
-- Asegúrate de no usar el modo ZERO_SHUTTER_LAG si quieres flash. Usa los modos "Balanced" o "High Quality".
-
-### Problema: No cambia a la cámara frontal
-- Verifica que el dispositivo tenga cámara frontal y permisos de cámara activos.
-
-### Problema: Los textos no aparecen en el idioma deseado
-- Usa los parámetros `questionText`, `retryText`, `acceptText` o pasa tu propio `customConfirmationView`.
-
-### Problema: Permisos de cámara
-- Asegúrate de declarar los permisos en el AndroidManifest y de solicitarlos correctamente en la app.
-
-### Problema: Personalización de UI
-- Usa el parámetro `customConfirmationView` para reemplazar toda la UI de confirmación por tu propio Composable.
-
----
-
-## Ejemplos visuales
-
-> **¡Contribuye!** Puedes agregar capturas de pantalla o GIFs mostrando:
-> - Selección de una imagen
-> - Selección múltiple desde galería
-> - Pantalla de confirmación
-> - Personalización de colores/iconos
->
-> Ejemplo:
->
-> ![Demo selección múltiple](images/demo_multiple_selection.gif)
->
-> Para agregar tus propios ejemplos, sube las imágenes/GIFs a la carpeta `images/` y enlázalos aquí.
-
----
-
-## Tabla de props/argumentos principales (`ImagePickerLauncher`)
-
-| Propiedad                | Tipo                                      | Default                | Descripción                                                                 |
-|--------------------------|-------------------------------------------|------------------------|-----------------------------------------------------------------------------|
-| `context`                | `Any?`                                   | -                      | Contexto de la Activity/UIViewController                                    |
-| `onPhotoCaptured`        | `(PhotoResult) -> Unit`                   | -                      | Callback cuando se toma una foto con la cámara                              |
-| `onPhotosSelected`       | `(List<PhotoResult>) -> Unit`             | -                      | Callback cuando se seleccionan imágenes de la galería                       |
-| `onError`                | `(Exception) -> Unit`                     | -                      | Callback para errores                                                       |
-| `preference`             | `CapturePhotoPreference?`                 | `FAST`                 | Preferencia de calidad/velocidad de captura                                 |
-| `dialogTitle`            | `String`                                  | "Seleccionar imagen"  | Título del diálogo inicial                                                  |
-| `takePhotoText`          | `String`                                  | "Tomar foto"           | Texto para la opción de cámara                                              |
-| `selectFromGalleryText`  | `String`                                  | "Seleccionar de galería"| Texto para la opción de galería                                             |
-| `cancelText`             | `String`                                  | "Cancelar"              | Texto para cancelar                                                         |
-| `allowMultiple`          | `Boolean`                                 | `false`                 | Permite seleccionar varias imágenes de la galería                           |
-| `mimeTypes`              | `List<String>`                            | `["image/*"]`          | Tipos MIME permitidos en la galería                                         |
-| `buttonColor`            | `Color?`                                  | `null`                  | Color de fondo de los botones                                               |
-| `iconColor`              | `Color?`                                  | `null`                  | Color de los iconos                                                         |
-| `buttonSize`             | `Dp?`                                     | `null`                  | Tamaño de los botones                                                       |
-| `layoutPosition`         | `String?`                                 | `null`                  | Personalización de layout                                                   |
-| `flashIcon`              | `ImageVector?`                            | `null`                  | Icono personalizado para el flash                                           |
-| `switchCameraIcon`       | `ImageVector?`                            | `null`                  | Icono personalizado para cambiar cámara                                     |
-| `captureIcon`            | `ImageVector?`                            | `null`                  | Icono personalizado para capturar                                           |
-| `galleryIcon`            | `ImageVector?`                            | `null`                  | Icono personalizado para galería                                            |
-| ...                      | ...                                       | ...                    | ...                                                                         |
-
-> Consulta la [API_REFERENCE.md](API_REFERENCE.md) para la lista completa y detalles avanzados.
-
----
-
-## Guía de migración (v2.x → v3.x)
-
-### Cambios importantes
-
-- **Selección múltiple**: El parámetro `onPhotoSelected` fue reemplazado por `onPhotosSelected: (List<PhotoResult>) -> Unit`.
-    - Ahora, siempre recibirás una lista, aunque solo se seleccione una imagen.
-    - Si usas selección simple, toma el primer elemento de la lista.
-- **Firma multiplataforma**: La API es coherente en Android/iOS. El callback de galería siempre es una lista.
-- **Personalización**: Se han añadido más props para personalizar colores, iconos y layout.
-
-### ¿Cómo migrar?
-
-- Cambia tu callback de galería:
-    ```kotlin
-    // Antes
-    GalleryPickerLauncher(
-        context = ...,
-        onPhotoSelected = { result -> ... },
-        ...
-    )
-    // Ahora
-    GalleryPickerLauncher(
-        context = ...,
-        onPhotosSelected = { results -> /* results es List<PhotoResult> */ },
-        ...
-    )
-    ```
-- Si usas `ImagePickerLauncher`, agrega el parámetro `onPhotosSelected` y adapta tu lógica para listas.
-- Consulta los ejemplos en [EXAMPLES.md](EXAMPLES.md).
-
----

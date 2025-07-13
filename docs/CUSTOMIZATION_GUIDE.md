@@ -880,6 +880,6 @@ For customization-related issues:
 4. **Accessibility**: Ensure customizations are accessible
 
 For more information, refer to:
-- [API Reference](API_REFERENCE.md)
-- [Examples](EXAMPLES.md)
-- [Integration Guide](INTEGRATION_GUIDE.md) 
+- [API Reference](docs/API_REFERENCE.md)
+- [Examples](docs/EXAMPLES.md)
+- [Integration Guide](docs/INTEGRATION_GUIDE.md) 

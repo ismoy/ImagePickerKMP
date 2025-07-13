@@ -1,8 +1,10 @@
+This document is also available in English: [I18N_GUIDE.md](docs/I18N_GUIDE.md)
+
 # Guía de Internacionalización (i18n) - ImagePickerKMP
 
 ## Resumen
 
-Esta implementación añade un sistema de internacionalización manual para la librería BelZSpeedScan, permitiendo a los desarrolladores mostrar textos en el idioma del dispositivo sin depender de librerías externas.
+Esta implementación añade un sistema de internacionalización manual para la librería ImagePickerKMP, permitiendo a los desarrolladores mostrar textos en el idioma del dispositivo sin depender de librerías externas.
 
 ## Características principales
 
@@ -159,8 +161,8 @@ Ejemplo para francés (`res/values-fr/strings.xml`):
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="camera_permission_required">Permission d\'appareil photo requise</string>
-    <string name="image_confirmation_title">Confirmer l\'image</string>
+    <string name="camera_permission_required">Permission d'appareil photo requise</string>
+    <string name="image_confirmation_title">Confirmer l'image</string>
     <!-- ... más traducciones -->
 </resources>
 ```
@@ -179,7 +181,7 @@ Ejemplo para francés (`fr.lproj/Localizable.strings`):
 /* ... más traducciones */
 ```
 
-**Ver [Guía de Localización para iOS](IOS_LOCALIZATION_GUIDE.md) para instrucciones detalladas.**
+**Ver [Guía de Localización para iOS](docs/IOS_LOCALIZATION_GUIDE.es.md) para instrucciones detalladas.**
 
 ## Añadir nuevos strings
 
@@ -246,7 +248,7 @@ stringResource(StringResource.CAMERA_PERMISSION_REQUIRED)
 5. **Sin dependencias**: No requiere librerías externas
 6. **Compatible**: Funciona con el patrón expect/actual de KMP
 
-## Troubleshooting
+## Solución de Problemas
 
 ### Problema: Los textos aparecen en inglés aunque el dispositivo esté en español
 

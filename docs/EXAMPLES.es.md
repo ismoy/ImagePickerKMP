@@ -1,21 +1,29 @@
-# Examples
+This document is also available in English: [EXAMPLES.md](docs/EXAMPLES.md)
 
-This document provides comprehensive examples for using ImagePickerKMP in various scenarios.
+# Ejemplos de uso - ImagePickerKMP
 
-## Table of Contents
+// TODO: Traducir el contenido detallado
 
-- [Basic Usage](#basic-usage)
-- [Advanced Customization](#advanced-customization)
-- [Permission Handling](#permission-handling)
-- [Gallery Selection](#gallery-selection)
+Consulta la versión en inglés para más ejemplos y casos de uso. 
 
-- [Internationalization (i18n)](#internationalization-i18n)
-- [Error Handling](#error-handling)
-- [Platform-Specific Examples](#platform-specific-examples)
+# Ejemplos
 
-## Basic Usage
+Este documento proporciona ejemplos completos para usar ImagePickerKMP en varios escenarios.
 
-### Simple Photo Capture
+## Tabla de Contenidos
+
+- [Uso Básico](#uso-básico)
+- [Personalización Avanzada](#personalización-avanzada)
+- [Manejo de Permisos](#manejo-de-permisos)
+- [Selección de Galería](#selección-de-galería)
+
+- [Internacionalización (i18n)](#internacionalización-i18n)
+- [Manejo de Errores](#manejo-de-errores)
+- [Ejemplos Específicos de Plataforma](#ejemplos-específicos-de-plataforma)
+
+## Uso Básico
+
+### Captura de Foto Simple
 
 ```kotlin
 @Composable
@@ -42,7 +50,7 @@ fun SimplePhotoCapture() {
 }
 ```
 
-### Custom Confirmation View
+### Vista de Confirmación Personalizada
 
 ```kotlin
 @Composable
@@ -65,9 +73,9 @@ fun CustomConfirmationExample() {
 }
 ```
 
-## Advanced Customization
+## Personalización Avanzada
 
-### Custom UI Colors and Icons
+### Colores e Iconos de UI Personalizados
 
 ```kotlin
 @Composable
@@ -87,7 +95,7 @@ fun CustomUIExample() {
 }
 ```
 
-### Custom Callbacks
+### Callbacks Personalizados
 
 ```kotlin
 @Composable
@@ -112,9 +120,9 @@ fun CustomCallbacksExample() {
 }
 ```
 
-## Permission Handling
+## Manejo de Permisos
 
-### Custom Permission Dialogs
+### Diálogos de Permiso Personalizados
 
 ```kotlin
 @Composable
@@ -124,20 +132,22 @@ fun CustomPermissionExample() {
         onPhotoCaptured = { result -> /* ... */ },
         onError = { exception -> /* ... */ },
         customPermissionHandler = { config ->
-            // Custom permission handling logic
+            // Lógica personalizada de permisos
             CustomPermissionDialog(
                 title = config.titleDialogConfig,
                 description = config.descriptionDialogConfig,
                 confirmationButtonText = config.btnDialogConfig,
                 onConfirm = {
-                    // Handle permission request
+                    // Manejar solicitud de permiso
                 }
             )
         }
     )
 }
+```
 
 // Ejemplo con traducciones automáticas
+```kotlin
 @Composable
 fun LocalizedPermissionExample() {
     val config = PermissionConfig.createLocalizedComposable()
@@ -153,14 +163,16 @@ fun LocalizedPermissionExample() {
                 description = config.descriptionDialogConfig,
                 confirmationButtonText = config.btnDialogConfig,
                 onConfirm = {
-                    // Handle permission request
+                    // Manejar solicitud de permiso
                 }
             )
         }
     )
 }
+```
 
 // Ejemplo de prueba del flujo de permisos
+```kotlin
 @Composable
 fun TestPermissionFlow() {
     var showPermissionTest by remember { mutableStateOf(false) }
@@ -189,9 +201,9 @@ fun TestPermissionFlow() {
 }
 ```
 
-## Gallery Selection
+## Selección de Galería
 
-### Single Image Selection
+### Selección de Imagen Única
 
 ```kotlin
 @Composable
@@ -220,7 +232,7 @@ fun GallerySelectionExample() {
 }
 ```
 
-### Multiple Image Selection
+### Selección Múltiple de Imágenes
 
 ```kotlin
 @Composable
@@ -252,28 +264,30 @@ fun MultipleGallerySelectionExample() {
 }
 ```
 
-## Internationalization (i18n)
 
-### Using Localized Strings
 
-The library now automatically uses localized strings based on the device language. All user-facing text is automatically translated:
+## Internacionalización (i18n)
+
+### Uso de Strings Localizados
+
+La librería ahora usa automáticamente strings localizados según el idioma del dispositivo. Todo el texto visible para el usuario se traduce automáticamente:
 
 ```kotlin
 @Composable
 fun InternationalizationExample() {
-    // The library automatically uses localized strings
+    // La librería usa automáticamente strings localizados
     ImagePickerLauncher(
         context = LocalContext.current,
         onPhotoCaptured = { result -> /* ... */ },
         onError = { exception -> /* ... */ }
-        // No need to specify text - it's automatically localized!
+        // ¡No necesitas especificar texto, se localiza automáticamente!
     )
 }
 ```
 
-### Custom Localized Strings
+### Strings Localizados Personalizados
 
-If you need to use localized strings in your own components:
+Si necesitas usar strings localizados en tus propios componentes:
 
 ```kotlin
 @Composable
@@ -292,37 +306,37 @@ fun CustomLocalizedComponent() {
 }
 ```
 
-### Adding New Languages
+### Añadir Nuevos Idiomas
 
-To add support for a new language (e.g., French):
+Para añadir soporte para un nuevo idioma (por ejemplo, francés):
 
-#### For Android
-Create `res/values-fr/strings.xml`:
+#### Para Android
+Crea `res/values-fr/strings.xml`:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="camera_permission_required">Permission d\'appareil photo requise</string>
+    <string name="camera_permission_required">Permission d'appareil photo requise</string>
     <string name="image_confirmation_title">Êtes-vous satisfait de la photo ?</string>
     <string name="accept_button">Accepter</string>
     <string name="retry_button">Réessayer</string>
-    <!-- Add all other strings... -->
+    <!-- Agrega el resto de los strings... -->
 </resources>
 ```
 
-#### For iOS
-Create `fr.lproj/Localizable.strings`:
+#### Para iOS
+Crea `fr.lproj/Localizable.strings`:
 ```
 "camera_permission_required" = "Permission d'appareil photo requise";
 "image_confirmation_title" = "Êtes-vous satisfait de la photo ?";
 "accept_button" = "Accepter";
 "retry_button" = "Réessayer";
-/* Add all other strings... */
+/* Agrega el resto de los strings... */
 ```
 
-### Available String Resources
+### Recursos de String Disponibles
 
 ```kotlin
-// Permission strings
+// Strings de permisos
 StringResource.CAMERA_PERMISSION_REQUIRED
 StringResource.CAMERA_PERMISSION_DESCRIPTION
 StringResource.OPEN_SETTINGS
@@ -331,32 +345,32 @@ StringResource.CAMERA_PERMISSION_DENIED_DESCRIPTION
 StringResource.GRANT_PERMISSION
 StringResource.CAMERA_PERMISSION_PERMANENTLY_DENIED
 
-// Confirmation strings
+// Strings de confirmación
 StringResource.IMAGE_CONFIRMATION_TITLE
 StringResource.ACCEPT_BUTTON
 StringResource.RETRY_BUTTON
 
-// Dialog strings
+// Strings de diálogos
 StringResource.SELECT_OPTION_DIALOG_TITLE
 StringResource.TAKE_PHOTO_OPTION
 StringResource.SELECT_FROM_GALLERY_OPTION
 StringResource.CANCEL_OPTION
 
-// Accessibility strings
+// Strings de accesibilidad
 StringResource.PREVIEW_IMAGE_DESCRIPTION
 StringResource.HD_QUALITY_DESCRIPTION
 StringResource.SD_QUALITY_DESCRIPTION
 
-// Error strings
+// Strings de error
 StringResource.INVALID_CONTEXT_ERROR
 StringResource.PHOTO_CAPTURE_ERROR
 StringResource.GALLERY_SELECTION_ERROR
 StringResource.PERMISSION_ERROR
 ```
 
-## Error Handling
+## Manejo de Errores
 
-### Comprehensive Error Handling
+### Manejo de Errores Completo
 
 ```kotlin
 @Composable
@@ -368,19 +382,19 @@ fun ErrorHandlingExample() {
             when (exception) {
                 is PhotoCaptureException -> {
                     println("Photo capture failed: ${exception.message}")
-                    // Show user-friendly error message
+                    // Mostrar mensaje de error amigable
                 }
                 is CameraPermissionException -> {
                     println("Camera permission denied: ${exception.message}")
-                    // Handle permission error
+                    // Manejar error de permisos
                 }
                 is GallerySelectionException -> {
                     println("Gallery selection failed: ${exception.message}")
-                    // Handle gallery error
+                    // Manejar error de galería
                 }
                 else -> {
                     println("Unknown error: ${exception.message}")
-                    // Handle generic error
+                    // Manejar error genérico
                 }
             }
         }
@@ -388,7 +402,7 @@ fun ErrorHandlingExample() {
 }
 ```
 
-### Custom Error Messages
+### Mensajes de Error Personalizados
 
 ```kotlin
 @Composable
@@ -404,21 +418,21 @@ fun CustomErrorMessagesExample() {
                 else -> getStringResource(StringResource.INVALID_CONTEXT_ERROR)
             }
             
-            // Show localized error message
+            // Mostrar mensaje de error localizado
             println("Error: $errorMessage")
         }
     )
 }
 ```
 
-## Platform-Specific Examples
+## Ejemplos Específicos de Plataforma
 
-### Android Native (Jetpack Compose)
+### Android Nativo (Jetpack Compose)
 
-#### Basic Android Implementation
+#### Implementación Básica de Android
 
 ```kotlin
-// build.gradle.kts (app level)
+// build.gradle.kts (nivel de app)
 dependencies {
     implementation("io.github.ismoy:imagepickerkmp:1.0.0")
     implementation("androidx.compose.ui:ui:1.4.0")
@@ -460,11 +474,11 @@ fun ImagePickerScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Display captured image
+        // Mostrar imagen capturada
         capturedImageUri?.let { uri ->
             AsyncImage(
                 model = uri,
-                contentDescription = "Captured photo",
+                contentDescription = "Foto capturada",
                 modifier = Modifier
                     .size(200.dp)
                     .clip(RoundedCornerShape(8.dp)),
@@ -473,7 +487,7 @@ fun ImagePickerScreen() {
             Spacer(modifier = Modifier.height(16.dp))
         }
         
-        // Camera button
+        // Botón de cámara
         Button(
             onClick = { showPicker = true },
             modifier = Modifier.padding(8.dp),
@@ -483,10 +497,10 @@ fun ImagePickerScreen() {
         ) {
             Icon(
                 imageVector = Icons.Default.Camera,
-                contentDescription = "Camera",
+                contentDescription = "Cámara",
                 modifier = Modifier.padding(end = 8.dp)
             )
-            Text("Take Photo")
+            Text("Tomar Foto")
         }
         
         if (showPicker) {
@@ -497,7 +511,7 @@ fun ImagePickerScreen() {
                     showPicker = false
                     Toast.makeText(
                         LocalContext.current,
-                        "Photo captured successfully!",
+                        "¡Foto capturada exitosamente!",
                         Toast.LENGTH_SHORT
                     ).show()
                 },
@@ -515,7 +529,7 @@ fun ImagePickerScreen() {
 }
 ```
 
-#### Advanced Android Features
+#### Funciones Avanzadas de Android
 
 ```kotlin
 @Composable
@@ -526,8 +540,8 @@ fun AdvancedAndroidImagePicker() {
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
-        // Quality selector
-        Text("Photo Quality:", style = MaterialTheme.typography.h6)
+        // Selector de calidad
+        Text("Calidad de Foto:", style = MaterialTheme.typography.h6)
         Row(
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
@@ -535,33 +549,33 @@ fun AdvancedAndroidImagePicker() {
                 selected = imageQuality == CapturePhotoPreference.FAST,
                 onClick = { imageQuality = CapturePhotoPreference.FAST }
             )
-            Text("Fast", modifier = Modifier.padding(start = 8.dp))
+            Text("Rápida", modifier = Modifier.padding(start = 8.dp))
             
             RadioButton(
                 selected = imageQuality == CapturePhotoPreference.BALANCED,
                 onClick = { imageQuality = CapturePhotoPreference.BALANCED }
             )
-            Text("Balanced", modifier = Modifier.padding(start = 8.dp))
+            Text("Equilibrada", modifier = Modifier.padding(start = 8.dp))
             
             RadioButton(
                 selected = imageQuality == CapturePhotoPreference.HIGH_QUALITY,
                 onClick = { imageQuality = CapturePhotoPreference.HIGH_QUALITY }
             )
-            Text("High Quality", modifier = Modifier.padding(start = 8.dp))
+            Text("Alta Calidad", modifier = Modifier.padding(start = 8.dp))
         }
         
         Button(
             onClick = { showPicker = true },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Take Photo with ${imageQuality.name} Quality")
+            Text("Tomar Foto con Calidad ${imageQuality.name}")
         }
         
         if (showPicker) {
             ImagePickerLauncher(
                 context = LocalContext.current,
                 onPhotoCaptured = { result ->
-                    // Process the captured photo
+                    // Procesar la foto capturada
                     processImage(result.uri)
                     showPicker = false
                 },
@@ -586,18 +600,18 @@ fun AdvancedAndroidImagePicker() {
 }
 
 private fun processImage(uri: Uri) {
-    // Image processing logic
-    println("Processing image: $uri")
+    // Lógica de procesamiento de imagen
+    println("Procesando imagen: $uri")
 }
 
 private fun handleError(exception: Exception) {
-    println("Error occurred: ${exception.message}")
+    println("Error ocurrido: ${exception.message}")
 }
 ```
 
-### iOS Native (Swift/SwiftUI)
+### iOS Nativo (Swift/SwiftUI)
 
-#### Basic iOS Implementation
+#### Implementación Básica de iOS
 
 ```swift
 // Podfile
@@ -619,7 +633,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                // Display captured image
+                // Mostrar imagen capturada
                 if let image = capturedImage {
                     Image(uiImage: image)
                         .resizable()
@@ -637,14 +651,14 @@ struct ContentView: View {
                         )
                 }
                 
-                // Camera button
+                // Botón de cámara
                 Button(action: {
                     showImagePicker = true
                 }) {
                     HStack {
                         Image(systemName: "camera")
                             .font(.system(size: 20))
-                        Text("Take Photo")
+                        Text("Tomar Foto")
                             .font(.headline)
                     }
                     .foregroundColor(.white)
@@ -656,21 +670,21 @@ struct ContentView: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle("Image Picker Demo")
+            .navigationTitle("Demo Image Picker")
             .sheet(isPresented: $showImagePicker) {
                 ImagePickerView(
                     onPhotoCaptured: { result in
-                        // Handle successful photo capture
-                        print("Photo captured: \(result.uri)")
+                        // Manejar captura exitosa
+                        print("Foto capturada: \(result.uri)")
                         showImagePicker = false
                         
-                        // Load the image
+                        // Cargar la imagen
                         if let url = URL(string: result.uri) {
                             loadImage(from: url)
                         }
                     },
                     onError: { error in
-                        // Handle errors
+                        // Manejar errores
                         print("Error: \(error.localizedDescription)")
                         alertMessage = error.localizedDescription
                         showingAlert = true
@@ -687,7 +701,7 @@ struct ContentView: View {
     }
     
     private func loadImage(from url: URL) {
-        // Load image from URL
+        // Cargar imagen desde URL
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let data = data, let image = UIImage(data: data) {
                 DispatchQueue.main.async {
@@ -709,26 +723,26 @@ struct ImagePickerView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let controller = UIViewController()
         
-        // Create ImagePickerKMP launcher
+        // Crear ImagePickerKMP launcher
         let imagePicker = ImagePickerLauncher(
-            context: nil, // iOS doesn't need context
+            context: nil, // iOS no necesita context
             onPhotoCaptured: onPhotoCaptured,
             onError: onError
         )
         
-        // Present the image picker
+        // Presentar el image picker
         controller.present(imagePicker, animated: true)
         
         return controller
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        // Update if needed
+        // Actualizar si es necesario
     }
 }
 ```
 
-#### Advanced iOS Features
+#### Funciones Avanzadas de iOS
 
 ```swift
 // AdvancedContentView.swift
@@ -741,19 +755,19 @@ struct AdvancedContentView: View {
     @State private var selectedQuality: PhotoQuality = .balanced
     
     enum PhotoQuality: String, CaseIterable {
-        case fast = "Fast"
-        case balanced = "Balanced"
-        case highQuality = "High Quality"
+        case fast = "Rápida"
+        case balanced = "Equilibrada"
+        case highQuality = "Alta Calidad"
     }
     
     var body: some View {
         VStack(spacing: 20) {
-            // Quality selector
+            // Selector de calidad
             VStack(alignment: .leading) {
-                Text("Photo Quality:")
+                Text("Calidad de Foto:")
                     .font(.headline)
                 
-                Picker("Quality", selection: $selectedQuality) {
+                Picker("Calidad", selection: $selectedQuality) {
                     ForEach(PhotoQuality.allCases, id: \.self) { quality in
                         Text(quality.rawValue).tag(quality)
                     }
@@ -762,7 +776,7 @@ struct AdvancedContentView: View {
             }
             .padding()
             
-            // Display captured image
+            // Mostrar imagen capturada
             if let image = capturedImage {
                 Image(uiImage: image)
                     .resizable()
@@ -771,14 +785,14 @@ struct AdvancedContentView: View {
                     .cornerRadius(8)
             }
             
-            // Camera button
+            // Botón de cámara
             Button(action: {
                 showImagePicker = true
             }) {
                 HStack {
                     Image(systemName: "camera")
                         .font(.system(size: 20))
-                    Text("Take Photo with \(selectedQuality.rawValue) Quality")
+                    Text("Tomar Foto con Calidad \(selectedQuality.rawValue)")
                         .font(.headline)
                 }
                 .foregroundColor(.white)
@@ -790,12 +804,12 @@ struct AdvancedContentView: View {
             Spacer()
         }
         .padding()
-        .navigationTitle("Advanced Image Picker")
+        .navigationTitle("Image Picker Avanzado")
         .sheet(isPresented: $showImagePicker) {
             AdvancedImagePickerView(
                 quality: selectedQuality,
                 onPhotoCaptured: { result in
-                    print("Photo captured with \(selectedQuality.rawValue) quality: \(result.uri)")
+                    print("Foto capturada con calidad \(selectedQuality.rawValue): \(result.uri)")
                     showImagePicker = false
                     loadImage(from: result.uri)
                 },
@@ -828,7 +842,7 @@ struct AdvancedImagePickerView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let controller = UIViewController()
         
-        // Create ImagePickerKMP launcher with custom configuration
+        // Crear ImagePickerKMP launcher con configuración personalizada
         let imagePicker = ImagePickerLauncher(
             context: nil,
             onPhotoCaptured: onPhotoCaptured,
@@ -842,7 +856,7 @@ struct AdvancedImagePickerView: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        // Update if needed
+        // Actualizar si es necesario
     }
     
     private func getPhotoPreference(for quality: PhotoQuality) -> CapturePhotoPreference {
@@ -860,13 +874,13 @@ struct AdvancedImagePickerView: UIViewControllerRepresentable {
 
 ### Kotlin Multiplatform / Compose Multiplatform
 
-#### Shared Module Configuration
+#### Configuración del Módulo Compartido
 
 ```kotlin
-// build.gradle.kts (shared module)
+// build.gradle.kts (módulo compartido)
 kotlin {
     android {
-        // Android configuration
+        // Configuración de Android
     }
     
     ios {
@@ -896,13 +910,13 @@ kotlin {
         
         iosMain {
             dependencies {
-                // iOS-specific dependencies if needed
+                // Dependencias específicas de iOS si son necesarias
             }
         }
     }
 }
 
-// CameraScreen.kt (shared module)
+// CameraScreen.kt (módulo compartido)
 package io.github.ismoy.belzspeedscan.core.camera.ui
 
 import androidx.compose.foundation.layout.Box
@@ -985,7 +999,7 @@ fun CameraScreen(context: Any?) {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    Text("Open Camera")
+                    Text("Abrir Cámara")
                 }
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -994,10 +1008,10 @@ fun CameraScreen(context: Any?) {
 }
 ```
 
-#### Android Implementation (KMP)
+#### Implementación de Android (KMP)
 
 ```kotlin
-// App.kt (Android app)
+// App.kt (aplicación Android)
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
@@ -1011,7 +1025,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface {
-                    // Pass the activity context to the shared component
+                    // Pasar el context de la actividad al componente compartido
                     CameraScreen(context = LocalContext.current)
                 }
             }
@@ -1019,7 +1033,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Alternative: Using LocalContext directly in the screen
+// Alternativa: Usar LocalContext directamente en la pantalla
 @Composable
 fun AndroidCameraScreen() {
     val context = LocalContext.current
@@ -1027,10 +1041,10 @@ fun AndroidCameraScreen() {
 }
 ```
 
-#### iOS Implementation (KMP)
+#### Implementación de iOS (KMP)
 
 ```kotlin
-// App.kt (iOS app)
+// App.kt (aplicación iOS)
 import SwiftUI
 import ComposeUI
 
@@ -1039,14 +1053,14 @@ struct ImagePickerApp: App {
     var body: some Scene {
         WindowGroup {
             ComposeView {
-                // Pass null context for iOS - the library handles it internally
+                // Pasar context null para iOS - la librería lo maneja internamente
                 CameraScreen(context = null)
             }
         }
     }
 }
 
-// Alternative: Using SwiftUI wrapper
+// Alternativa: Usar wrapper de SwiftUI
 struct CameraScreenWrapper: View {
     var body: some View {
         ComposeView {
@@ -1056,10 +1070,10 @@ struct CameraScreenWrapper: View {
 }
 ```
 
-#### Cross-Platform App Example
+#### Ejemplo de App Multiplataforma
 
 ```kotlin
-// App.kt (shared module)
+// App.kt (módulo compartido)
 @Composable
 fun ImagePickerApp() {
     MaterialTheme {
@@ -1067,28 +1081,28 @@ fun ImagePickerApp() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            // The same component works on both platforms
-            // The library handles platform differences internally
-            CameraScreen(context = null) // Context will be provided by the platform-specific app
+            // El mismo componente funciona en ambas plataformas
+            // La librería maneja las diferencias de plataforma internamente
+            CameraScreen(context = null) // El context será proporcionado por la aplicación específica de la plataforma
         }
     }
 }
 ```
 
-#### Key Benefits of This Approach
+#### Beneficios Clave de Este Enfoque
 
-1. **Single Codebase**: The same `CameraScreen` component works on both Android and iOS
-2. **Platform Abstraction**: The library handles platform-specific differences internally
-3. **Context Handling**: 
-   - Android: Pass `LocalContext.current` or `context` parameter
-   - iOS: Pass `null` - the library handles it automatically
-4. **No Platform Detection**: No need for manual platform detection in your code
-5. **Clean Architecture**: Platform-specific code is isolated in the app layer, not the shared component
+1. **Código Único**: El mismo componente `CameraScreen` funciona en Android e iOS
+2. **Abstracción de Plataforma**: La librería maneja las diferencias específicas de plataforma internamente
+3. **Manejo de Context**: 
+   - Android: Pasar `LocalContext.current` o parámetro `context`
+   - iOS: Pasar `null` - la librería lo maneja automáticamente
+4. **Sin Detección de Plataforma**: No es necesario detectar manualmente la plataforma en tu código
+5. **Arquitectura Limpia**: El código específico de plataforma está aislado en la capa de aplicación, no en el componente compartido
 
-This example shows:
-- Unified codebase for both platforms
-- Automatic platform handling by the library
-- Clean separation of concerns
-- Simplified development workflow
+Este ejemplo muestra:
+- Código base unificado para ambas plataformas
+- Manejo automático de plataforma por la librería
+- Separación limpia de responsabilidades
+- Flujo de desarrollo simplificado
 
-For more detailed examples and use cases, see the [Integration Guide](INTEGRATION_GUIDE.md) and [API Reference](API_REFERENCE.md). 
+Para más información, consulta [Guía de Integración](docs/INTEGRATION_GUIDE.es.md) y [Referencia de API](docs/API_REFERENCE.es.md). 

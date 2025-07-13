@@ -1,45 +1,43 @@
-This document is also available in English: [FAQ.md](FAQ.md)
+# Frequently Asked Questions (FAQ)
 
-# Preguntas Frecuentes (FAQ)
+Common questions and answers about ImagePickerKMP.
 
-Preguntas y respuestas comunes sobre ImagePickerKMP.
+## Table of Contents
 
-## Tabla de Contenidos
-
-- [Preguntas Generales](#preguntas-generales)
-- [Instalación y Configuración](#instalación-y-configuración)
-- [Uso e Implementación](#uso-e-implementación)
-- [Específico de Plataforma](#específico-de-plataforma)
-- [Solución de Problemas](#solución-de-problemas)
-- [Rendimiento y Optimización](#rendimiento-y-optimizacion)
-- [Personalización](#personalización)
+- [General Questions](#general-questions)
+- [Installation & Setup](#installation--setup)
+- [Usage & Implementation](#usage--implementation)
+- [Platform-Specific](#platform-specific)
+- [Troubleshooting](#troubleshooting)
+- [Performance & Optimization](#performance--optimization)
+- [Customization](#customization)
 
 - [Problemas Comunes](#problemas-comunes)
 
-## Preguntas Generales
+## General Questions
 
-### ¿Qué es ImagePickerKMP?
+### What is ImagePickerKMP?
 
-ImagePickerKMP es una librería moderna y multiplataforma para selección de imágenes en Kotlin Multiplatform (KMP) que proporciona integración de cámara para Android e iOS.
+ImagePickerKMP is a modern, cross-platform image picker library for Kotlin Multiplatform (KMP) that provides seamless camera integration for both Android and iOS platforms.
 
-**Características clave:**
-- Integración de cámara multiplataforma
-- Manejo inteligente de permisos
-- Componentes de UI personalizables
+**Key Features:**
+- Cross-platform camera integration
+- Smart permission handling
+- Customizable UI components
 
-- Captura de fotos de alta calidad
-- Manejo de errores completo
+- High-quality photo capture
+- Comprehensive error handling
 
-### ¿Qué plataformas son compatibles?
+### Which platforms are supported?
 
 - **Android**: API 21+ (Android 5.0+)
 - **iOS**: iOS 12.0+
-- **Kotlin Multiplatform**: Soporte completo
+- **Kotlin Multiplatform**: Full support
 
-### ¿Cuáles son los requisitos mínimos?
+### What are the minimum requirements?
 
 **Android:**
-- SDK mínimo: API 21
+- Minimum SDK: API 21
 - Kotlin: 1.8+
 - Compose Multiplatform: 1.4+
 
@@ -48,31 +46,31 @@ ImagePickerKMP es una librería moderna y multiplataforma para selección de im�
 - Xcode: 14+
 - Kotlin Multiplatform: 1.8+
 
-### ¿La librería es gratuita?
+### Is this library free to use?
 
-Sí, ImagePickerKMP es open-source y gratuita bajo la licencia MIT. Puedes usarla en proyectos personales y comerciales.
+Yes, ImagePickerKMP is open-source and free to use under the MIT License. You can use it in both personal and commercial projects.
 
-### ¿Cómo se compara con otras librerías de selección de imágenes?
+### How does it compare to other image picker libraries?
 
-**Ventajas:**
-- Multiplataforma con un solo código base
-- UI moderna con Compose Multiplatform
-- Manejo inteligente de permisos
-- Componentes personalizables
+**Advantages:**
+- Cross-platform with single codebase
+- Modern Compose Multiplatform UI
+- Smart permission handling
+- Customizable components
 
-- Desarrollo y soporte activo
+- Active development and support
 
-**Comparado con alternativas:**
-- Más moderna que CameraX (solo Android)
-- Más integrada que UIImagePickerController (solo iOS)
-- Mejor manejo de permisos que la mayoría
-- Ventaja multiplataforma sobre soluciones específicas
+**Compared to alternatives:**
+- More modern than CameraX (Android-only)
+- More integrated than UIImagePickerController (iOS-only)
+- Better permission handling than most alternatives
+- Cross-platform advantage over platform-specific solutions
 
-## Instalación y Configuración
+## Installation & Setup
 
-### ¿Cómo agrego ImagePickerKMP a mi proyecto?
+### How do I add ImagePickerKMP to my project?
 
-Agrega la dependencia en tu `build.gradle.kts`:
+Add the dependency to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
@@ -80,7 +78,7 @@ dependencies {
 }
 ```
 
-### ¿Qué permisos debo agregar?
+### What permissions do I need to add?
 
 **Android** (`AndroidManifest.xml`):
 ```xml
@@ -91,43 +89,43 @@ dependencies {
 **iOS** (`Info.plist`):
 ```xml
 <key>NSCameraUsageDescription</key>
-<string>Esta app necesita acceso a la cámara para capturar fotos</string>
+<string>This app needs camera access to capture photos</string>
 ```
 
-### ¿Debo configurar algo más?
+### Do I need to configure anything else?
 
-Para uso básico, no se requiere configuración adicional. La librería maneja la mayoría de la configuración automáticamente.
+For basic usage, no additional configuration is required. The library handles most setup automatically.
 
-Para funciones avanzadas, podrías necesitar:
-- Configurar temas personalizados
+For advanced features, you may need to:
+- Configure custom themes
 
-- Añadir diálogos de permisos personalizados
-- Configurar preferencias de captura de fotos
+- Add custom permission dialogs
+- Configure photo capture preferences
 
-### ¿Cómo configuro para desarrollo iOS?
+### How do I set up for iOS development?
 
-1. **Agrega a tu proyecto iOS**:
+1. **Add to your iOS project**:
    ```ruby
    # Podfile
    target 'YourApp' do
      use_frameworks!
-     pod 'ImagePickerKMP', :path => '../ruta/a/tu/libreria'
+     pod 'ImagePickerKMP', :path => '../path/to/your/library'
    end
    ```
 
-2. **Ejecuta pod install**:
+2. **Run pod install**:
    ```bash
    pod install
    ```
 
-3. **Importa en tu código iOS**:
+3. **Import in your iOS code**:
    ```swift
    import ImagePickerKMP
    ```
 
-## Uso e Implementación
+## Usage & Implementation
 
-### ¿Cuál es la implementación básica?
+### What's the basic implementation?
 
 ```kotlin
 @Composable
@@ -154,28 +152,28 @@ fun MyImagePicker() {
 }
 ```
 
-### ¿Cómo manejo los permisos?
+### How do I handle permissions?
 
-La librería maneja los permisos automáticamente, pero puedes personalizar el comportamiento:
+The library handles permissions automatically, but you can customize the behavior:
 
 ```kotlin
 @Composable
 fun CustomPermissionHandler() {
     RequestCameraPermission(
-        titleDialogConfig = "Permiso de cámara requerido",
-        descriptionDialogConfig = "Por favor habilita el acceso a la cámara",
-        btnDialogConfig = "Abrir ajustes",
+        titleDialogConfig = "Camera Permission Required",
+        descriptionDialogConfig = "Please enable camera access",
+        btnDialogConfig = "Open Settings",
         onPermissionPermanentlyDenied = {
-            // Manejar denegación permanente
+            // Handle permanent denial
         },
         onResult = { granted ->
-            // Manejar resultado de permiso
+            // Handle permission result
         }
     )
 }
 ```
 
-### ¿Cómo personalizo la UI?
+### How do I customize the UI?
 
 ```kotlin
 @Composable
@@ -183,22 +181,22 @@ fun CustomImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
         onPhotoCaptured = { result ->
-            // Manejar captura de foto
+            // Handle photo capture
         },
         onError = { exception ->
-            // Manejar errores
+            // Handle errors
         },
         customPermissionHandler = { config ->
-            // Diálogo de permisos personalizado
+            // Custom permission dialog
         },
         customConfirmationView = { result, onConfirm, onRetry ->
-            // Vista de confirmación personalizada
+            // Custom confirmation view
         }
     )
 }
 ```
 
-### ¿Cómo manejo diferentes calidades de foto?
+### How do I handle different photo qualities?
 
 ```kotlin
 @Composable
@@ -206,52 +204,52 @@ fun HighQualityImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
         onPhotoCaptured = { result ->
-            // Manejar foto de alta calidad
+            // Handle high quality photo
         },
         onError = { exception ->
-            // Manejar errores
+            // Handle errors
         },
         preference = CapturePhotoPreference.HIGH_QUALITY
     )
 }
 ```
 
-## Específico de Plataforma
+## Platform-Specific
 
-### ¿Hay diferencias entre Android y iOS?
+### Are there differences between Android and iOS?
 
-**Similitudes:**
-- Misma interfaz de API
-- Mismo manejo de permisos
-- Mismo manejo de errores
-- Mismas opciones de personalización
+**Similarities:**
+- Same API interface
+- Same permission handling
+- Same error handling
+- Same customization options
 
-**Diferencias:**
-- Android usa CameraX, iOS usa AVFoundation
-- El flujo de permisos es ligeramente diferente (iOS muestra ajustes tras la primera denegación)
-- Parámetro context (Android lo requiere, iOS usa null)
-- Algunas optimizaciones específicas de plataforma
+**Differences:**
+- Android uses CameraX, iOS uses AVFoundation
+- Permission flow slightly different (iOS shows settings immediately after first denial)
+- Context parameter (Android needs context, iOS uses null)
+- Some platform-specific optimizations
 
-### ¿Cómo manejo código específico de plataforma?
+### How do I handle platform-specific code?
 
 ```kotlin
 @Composable
 fun PlatformSpecificImagePicker() {
     ImagePickerLauncher(
-        context = LocalContext.current, // null para iOS
+        context = LocalContext.current, // null for iOS
         onPhotoCaptured = { result ->
-            // Manejo agnóstico de plataforma
+            // Platform-agnostic handling
         },
         onError = { exception ->
             when (exception) {
                 is CameraPermissionException -> {
-                    // Manejar errores de permisos
+                    // Handle permission errors
                 }
                 is PhotoCaptureException -> {
-                    // Manejar errores de captura
+                    // Handle capture errors
                 }
                 else -> {
-                    // Manejar otros errores
+                    // Handle other errors
                 }
             }
         }
@@ -259,57 +257,57 @@ fun PlatformSpecificImagePicker() {
 }
 ```
 
-### ¿Y las características específicas de iOS?
+### What about iOS-specific features?
 
-Las características específicas de iOS son gestionadas internamente por la librería. No necesitas escribir código específico para la mayoría de los casos.
+iOS-specific features are handled internally by the library. You don't need to write platform-specific code for most use cases.
 
-Para funciones avanzadas de iOS:
+For advanced iOS features:
 ```kotlin
-// Configuración específica de iOS
+// iOS-specific configuration
 @Composable
 fun IOSImagePicker() {
     ImagePickerLauncher(
-        context = null, // iOS no necesita context
+        context = null, // iOS doesn't need context
         onPhotoCaptured = { result ->
-            // Manejo específico de iOS
+            // iOS-specific handling
         },
         onError = { exception ->
-            // Manejo de errores específico de iOS
+            // iOS-specific error handling
         }
     )
 }
 ```
 
-## Solución de Problemas
+## Troubleshooting
 
-### La cámara no inicia. ¿Qué debo revisar?
+### The camera doesn't start. What should I check?
 
-1. **Permisos**: Asegúrate de que el permiso de cámara esté concedido
-2. **Hardware**: Verifica que el dispositivo tenga cámara
-3. **Contexto**: Asegúrate de pasar el context correcto (Android)
-4. **Ciclo de vida**: Verifica el estado del componente
-5. **Dependencias**: Revisa que todas las dependencias estén agregadas
+1. **Permissions**: Ensure camera permission is granted
+2. **Hardware**: Check if device has camera
+3. **Context**: Ensure proper context is passed (Android)
+4. **Lifecycle**: Check if component is in correct lifecycle state
+5. **Dependencies**: Verify all dependencies are properly added
 
-### El diálogo de permisos no aparece. ¿Qué pasa?
+### Permission dialog doesn't show. What's wrong?
 
-1. **Revisa el manifest**: Asegúrate de declarar el permiso de cámara
-2. **Revisa Info.plist**: Asegúrate de tener NSCameraUsageDescription (iOS)
-3. **Revisa la implementación**: Usa RequestCameraPermission
-4. **Revisa la plataforma**: Verifica la configuración específica
+1. **Check manifest**: Ensure camera permission is declared
+2. **Check Info.plist**: Ensure NSCameraUsageDescription is set (iOS)
+3. **Check implementation**: Ensure RequestCameraPermission is used
+4. **Check platform**: Verify platform-specific setup
 
-### Recibo un error "Camera not available". ¿Por qué?
+### I get a "Camera not available" error. Why?
 
-1. **Hardware**: El dispositivo puede no tener cámara
-2. **Permisos**: El permiso puede estar denegado
-3. **Cámara en uso**: Otra app puede estar usando la cámara
-4. **Simulador**: La cámara no está disponible en simulador (usa un dispositivo)
+1. **Hardware**: Device may not have camera
+2. **Permissions**: Camera permission may be denied
+3. **Camera in use**: Another app may be using camera
+4. **Simulator**: Camera not available in simulator (use device)
 
-### La app se cierra al tomar fotos. ¿Cómo lo soluciono?
+### The app crashes when taking photos. How do I fix it?
 
-1. **Memoria**: Usa compresión de imagen para fotos grandes
-2. **Ciclo de vida**: Maneja correctamente el ciclo de vida
-3. **Contexto**: Verifica la validez del context
-4. **Manejo de excepciones**: Añade manejo de errores adecuado
+1. **Memory issues**: Use image compression for large photos
+2. **Lifecycle issues**: Ensure proper lifecycle management
+3. **Context issues**: Check context validity
+4. **Exception handling**: Add proper error handling
 
 ```kotlin
 @Composable
@@ -318,40 +316,40 @@ fun RobustImagePicker() {
         context = LocalContext.current,
         onPhotoCaptured = { result ->
             try {
-                // Procesar foto de forma segura
+                // Process photo safely
                 processPhoto(result)
             } catch (e: Exception) {
-                // Manejar errores de procesamiento
-                showError("Error al procesar la foto: ${e.message}")
+                // Handle processing errors
+                showError("Failed to process photo: ${e.message}")
             }
         },
         onError = { exception ->
-            // Manejar errores de captura
-            showError("Error de cámara: ${exception.message}")
+            // Handle capture errors
+            showError("Camera error: ${exception.message}")
         }
     )
 }
 ```
 
-### ¿Cómo depuro problemas de permisos?
+### How do I debug permission issues?
 
 ```kotlin
-// Depurar estado de permisos
+// Debug permission status
 fun debugPermissions(context: Context) {
     val hasPermission = ContextCompat.checkSelfPermission(
         context,
         Manifest.permission.CAMERA
     ) == PackageManager.PERMISSION_GRANTED
     
-    println("Permiso de cámara concedido: $hasPermission")
+    println("Camera permission granted: $hasPermission")
 }
 ```
 
-## Rendimiento y Optimización
+## Performance & Optimization
 
-### ¿Cómo optimizo el uso de memoria?
+### How do I optimize memory usage?
 
-1. **Usa URIs en vez de Bitmaps**:
+1. **Use URIs instead of Bitmaps**:
 ```kotlin
 @Composable
 fun MemoryEfficientImagePicker() {
@@ -360,12 +358,12 @@ fun MemoryEfficientImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
         onPhotoCaptured = { result ->
-            // Guarda URI en vez de Bitmap
+            // Store URI instead of Bitmap
             imageUri = result.uri
         }
     )
     
-    // Carga la imagen solo cuando sea necesario
+    // Load image only when needed
     imageUri?.let { uri ->
         AsyncImage(
             model = uri,
@@ -375,23 +373,23 @@ fun MemoryEfficientImagePicker() {
 }
 ```
 
-2. **Usa compresión de imagen**:
+2. **Use image compression**:
 ```kotlin
 @Composable
 fun CompressedImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
         onPhotoCaptured = { result ->
-            // Comprime la imagen antes de procesar
+            // Compress image before processing
             val compressedImage = compressImage(result.uri, 80)
         }
     )
 }
 ```
 
-### ¿Cómo mejoro el tiempo de inicio de la cámara?
+### How do I improve camera startup time?
 
-1. **Usa preferencia FAST**:
+1. **Use FAST preference**:
 ```kotlin
 ImagePickerLauncher(
     context = LocalContext.current,
@@ -399,15 +397,15 @@ ImagePickerLauncher(
 )
 ```
 
-2. **Preinicializa la cámara**:
+2. **Pre-initialize camera**:
 ```kotlin
-// Preinicializa la cámara en background
+// Pre-initialize camera in background
 LaunchedEffect(Unit) {
     initializeCamera()
 }
 ```
 
-### ¿Cómo manejo fotos grandes?
+### How do I handle large photos?
 
 ```kotlin
 @Composable
@@ -416,10 +414,10 @@ fun LargePhotoHandler() {
         context = LocalContext.current,
         onPhotoCaptured = { result ->
             lifecycleScope.launch(Dispatchers.IO) {
-                // Procesa la foto grande en background
+                // Process large photo in background
                 val processedImage = processLargeImage(result.uri)
                 withContext(Dispatchers.Main) {
-                    // Actualiza la UI con la imagen procesada
+                    // Update UI with processed image
                 }
             }
         }
@@ -427,9 +425,9 @@ fun LargePhotoHandler() {
 }
 ```
 
-## Personalización
+## Customization
 
-### ¿Cómo creo diálogos de permisos personalizados?
+### How do I create custom permission dialogs?
 
 ```kotlin
 @Composable
@@ -457,7 +455,7 @@ fun CustomPermissionDialog(
 }
 ```
 
-### ¿Cómo creo vistas de confirmación personalizadas?
+### How do I create custom confirmation views?
 
 ```kotlin
 @Composable
@@ -469,14 +467,14 @@ fun CustomConfirmationView(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Vista previa de la foto
+        // Photo preview
         AsyncImage(
             model = result.uri,
             contentDescription = "Captured photo",
             modifier = Modifier.weight(1f)
         )
         
-        // Botones de acción
+        // Action buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -492,7 +490,7 @@ fun CustomConfirmationView(
 }
 ```
 
-### ¿Cómo aplico temas personalizados?
+### How do I apply custom themes?
 
 ```kotlin
 @Composable
@@ -508,10 +506,10 @@ fun ThemedImagePicker() {
         ImagePickerLauncher(
             context = LocalContext.current,
             onPhotoCaptured = { result ->
-                // Manejar captura de foto
+                // Handle photo capture
             },
             onError = { exception ->
-                // Manejar errores
+                // Handle errors
             }
         )
     }
@@ -569,41 +567,41 @@ No, la corrección está optimizada para:
 
 Actualmente la corrección es automática y no se puede desactivar, ya que mejora significativamente la experiencia del usuario. Si necesitas el comportamiento original, puedes procesar la imagen manualmente después de recibirla.
 
-## Preguntas Adicionales
+## Additional Questions
 
-### ¿Dónde puedo obtener ayuda?
+### Where can I get help?
 
-- **Documentación**: [README.es.md](README.es.md)
-- **Referencia de API**: [API_REFERENCE.es.md](API_REFERENCE.es.md)
-- **Ejemplos**: [EXAMPLES.es.md](EXAMPLES.es.md)
+- **Documentation**: [README.md](../README.md)
+- **API Reference**: [API_REFERENCE.md](docs/API_REFERENCE.md)
+- **Examples**: [EXAMPLES.md](docs/EXAMPLES.md)
 - **GitHub Issues**: [GitHub Issues](https://github.com/ismoy/ImagePickerKMP/issues)
-- **Discusiones**: [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions)
-- **Email**: support@imagepickerkmp.com
+- **Discussions**: [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions)
+- **Email**: belizairesmoy72@gmail.com
 
-### ¿Cómo reporto un bug?
+### How do I report a bug?
 
-1. **Busca issues existentes**: Verifica si ya fue reportado
-2. **Crea un nuevo issue**: Usa la plantilla de bug report
-3. **Proporciona detalles**: Incluye pasos para reproducir, info de entorno, logs
-4. **Da seguimiento**: Responde a preguntas de los maintainers
+1. **Search existing issues**: Check if the bug is already reported
+2. **Create new issue**: Use the bug report template
+3. **Provide details**: Include steps to reproduce, environment info, logs
+4. **Follow up**: Respond to maintainer questions
 
-### ¿Cómo solicito una característica?
+### How do I request a feature?
 
-1. **Busca issues existentes**: Verifica si ya fue solicitada
-2. **Crea una solicitud**: Usa la plantilla de feature request
-3. **Proporciona detalles**: Incluye caso de uso, implementación propuesta
-4. **Discute**: Participa en la comunidad
+1. **Search existing issues**: Check if the feature is already requested
+2. **Create feature request**: Use the feature request template
+3. **Provide details**: Include use case, proposed implementation
+4. **Discuss**: Engage in community discussions
 
-### ¿Cómo contribuyo?
+### How do I contribute?
 
-1. **Haz fork del repositorio**
-2. **Crea una rama de feature**
-3. **Haz tus cambios**
-4. **Añade tests**
-5. **Envía un pull request**
+1. **Fork the repository**
+2. **Create a feature branch**
+3. **Make your changes**
+4. **Add tests**
+5. **Submit a pull request**
 
-Consulta [CONTRIBUTING.es.md](CONTRIBUTING.es.md) para guías detalladas.
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines.
 
 ---
 
-**¿Aún tienes preguntas?** No dudes en preguntar en nuestras [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions) o contáctanos directamente. 
+**Still have questions?** Feel free to ask in our [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions) or contact us directly. 

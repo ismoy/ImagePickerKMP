@@ -1,4 +1,4 @@
-Este documento también está disponible en inglés: [PRIVACY_GUIDE.md](PRIVACY_GUIDE.md)
+Este documento también está disponible en inglés: [PRIVACY_GUIDE.md](docs/PRIVACY_GUIDE.md)
 
 # Guía de Privacidad
 

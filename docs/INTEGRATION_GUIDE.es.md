@@ -1,4 +1,4 @@
-This document is also available in English: [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)
+This document is also available in English: [INTEGRATION_GUIDE.md](docs/INTEGRATION_GUIDE.md)
 
 # Guía de Integración
 
@@ -894,7 +894,8 @@ Si encuentras problemas durante la integración:
 3. **Crea un issue**: Proporciona información detallada sobre tu problema
 4. **Soporte comunitario**: Pregunta en los foros de la comunidad
 
-Para más información detallada, consulta:
-- [Referencia de API](API_REFERENCE.es.md)
-- [Ejemplos](EXAMPLES.es.md)
-- [Guía de Permisos](PERMISSION.es.md) 
+Para más detalles, consulta [Guía de Personalización](docs/CUSTOMIZATION_GUIDE.es.md).
+
+Consulta [Referencia de API](docs/API_REFERENCE.es.md) para documentación completa.
+
+Consulta [Ejemplos](docs/EXAMPLES.es.md) para más casos de uso. 

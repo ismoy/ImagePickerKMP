@@ -867,6 +867,6 @@ For API-related issues:
 4. **Contact support**: Reach out for API-specific help
 
 For more information, refer to:
-- [Integration Guide](INTEGRATION_GUIDE.md)
-- [Examples](EXAMPLES.md)
-- [Customization Guide](CUSTOMIZATION_GUIDE.md) 
+- [Integration Guide](docs/INTEGRATION_GUIDE.md)
+- [Examples](docs/EXAMPLES.md)
+- [Customization Guide](docs/CUSTOMIZATION_GUIDE.md) 
