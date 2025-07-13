@@ -14,7 +14,7 @@
 
 A modern, cross-platform image picker library for Kotlin Multiplatform (KMP) that provides a seamless camera experience on both Android and iOS platforms.
 
-Este documento también está disponible en español: [README.es.md](docs/README.es.md)
+Este documento también está disponible en español: [README.es.md](README.es.md)
 
 ## Features
 
