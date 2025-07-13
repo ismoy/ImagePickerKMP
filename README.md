@@ -16,14 +16,14 @@
 
 
 
-
 # ImagePickerKMP
+**Cross‑platform Image Picker & Camera Library (Android & iOS)**  
+Built with **Kotlin Multiplatform** + **Compose Multiplatform** + **Kotlin/Native**.
 
-ImagePickerKMP – Cross‑platform Image Picker & Camera Library (Android & iOS) built with Kotlin Multiplatform + Compose Multiplatform.
 
 Este documento también está disponible en español: [README.es.md](README.es.md)
 
-## Features
+## Features – Camera, Image Picker & Gallery for Android & iOS
 
 - 📱 **Cross-platform**: Works on Android and iOS
 - 📸 **Camera Integration**: Direct camera access with photo capture
@@ -32,7 +32,7 @@ Este documento también está disponible en español: [README.es.md](README.es.m
 - 🎯 **Easy Integration**: Simple API with Compose Multiplatform
 - 🔧 **Highly Configurable**: Extensive customization options
 
-## Quick Start
+## Quick Start – Kotlin Multiplatform Image Picker Integration
 
 ### Installation
 
