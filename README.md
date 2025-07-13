@@ -9,10 +9,17 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ismoy/ImagePickerKMP/pulls)
 [![Discord](https://img.shields.io/discord/1393705692484993114.svg?label=Discord&logo=discord&color=7289da)](https://discord.com/channels/1393705692484993114/1393706133864190133)
 [![official project](http://jb.gg/badges/official.svg)](https://github.com/JetBrains#jetbrains-on-github)
+![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-green)
+![Android](https://img.shields.io/badge/Platform-Android-green)
+![iOS](https://img.shields.io/badge/Platform-iOS-blue)
+![Coverage Status](https://img.shields.io/codecov/c/github/ismoy/ImagePickerKMP)
+
+
+
 
 # ImagePickerKMP
 
-A modern, cross-platform image picker library for Kotlin Multiplatform (KMP) that provides a seamless camera experience on both Android and iOS platforms.
+ImagePickerKMP – Cross‑platform Image Picker & Camera Library (Android & iOS) built with Kotlin Multiplatform + Compose Multiplatform.
 
 Este documento también está disponible en español: [README.es.md](README.es.md)
 
