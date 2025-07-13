@@ -14,12 +14,26 @@
 ![iOS](https://img.shields.io/badge/Platform-iOS-blue)
 ![Coverage Status](https://img.shields.io/codecov/c/github/ismoy/ImagePickerKMP)
 
+## 🎥 Demo
 
+<video width="100%" autoplay loop muted playsinline>
+  <source src="https://user-images.githubusercontent.com/your-username/ImagePickerKMP/main/demo/demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+*Watch the demo above to see ImagePickerKMP in action - camera capture, gallery selection, and custom UI in action!*
+
+### 📱 Demo Features Showcased:
+- **📸 Camera Capture**: Direct camera access with flash control
+- **🔄 Camera Switching**: Seamless front/back camera toggle
+- **🎨 Custom UI**: Personalized confirmation dialogs
+- **📁 Gallery Selection**: Multi-image selection from gallery
+- **⚡ Performance**: Smooth, responsive interactions
+- **🔒 Permissions**: Smart permission handling
 
 # ImagePickerKMP
-**Cross‑platform Image Picker & Camera Library (Android & iOS)**  
+**Cross‑platform Image Picker & Camera Library (Android & iOS)**  
 Built with **Kotlin Multiplatform** + **Compose Multiplatform** + **Kotlin/Native**.
-
 
 Este documento también está disponible en español: [README.es.md](README.es.md)
 
@@ -79,6 +93,127 @@ fun MyImagePicker() {
 |----------|----------------|--------|
 | Android  | API 21+        | ✅     |
 | iOS      | iOS 12.0+      | ✅     |
+
+## Why Choose ImagePickerKMP?
+
+### 🆚 Comparison with Other Libraries
+
+| Feature | ImagePickerKMP | Peekaboo | KMPImagePicker |
+|---------|----------------|----------|----------------|
+| **Compose Multiplatform Support** | ✅ Native | ❌ Android only | ⚠️ Limited |
+| **UI Customization** | ✅ Full control | ⚠️ Basic | ⚠️ Basic |
+| **Unified Permissions** | ✅ Smart handling | ❌ Manual | ⚠️ Platform-specific |
+| **Error Handling** | ✅ Comprehensive | ⚠️ Basic | ⚠️ Basic |
+| **Camera Integration** | ✅ Direct access | ✅ Direct access | ⚠️ Gallery only |
+| **Gallery Support** | ✅ Multi-select | ✅ Multi-select | ✅ Multi-select |
+| **Cross-platform API** | ✅ Single codebase | ❌ Platform-specific | ⚠️ Partial |
+
+### 🎯 Key Advantages
+
+- **🔄 Compose Multiplatform Native**: Built specifically for Compose Multiplatform, ensuring consistent behavior across platforms
+- **🎨 Full UI Customization**: Complete control over dialogs, confirmation views, and camera UI
+- **🔒 Smart Permission Management**: Unified permission handling with intelligent fallbacks
+- **⚡ Performance Optimized**: Efficient image processing and memory management
+- **🛠️ Developer Friendly**: Simple API with comprehensive error handling
+
+### 💡 Real-World Use Case
+
+Here's a practical example showing camera capture with preview and upload:
+
+```kotlin
+@Composable
+fun AdvancedImagePicker() {
+    var showPicker by remember { mutableStateOf(false) }
+    var capturedImage by remember { mutableStateOf<PhotoResult?>(null) }
+    var isUploading by remember { mutableStateOf(false) }
+    
+    if (showPicker) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            onPhotoCaptured = { result ->
+                capturedImage = result
+                showPicker = false
+                // Auto-upload the captured image
+                uploadImage(result)
+            },
+            onError = { exception ->
+                when (exception) {
+                    is CameraPermissionException -> {
+                        // Handle permission denied
+                        showPermissionDialog()
+                    }
+                    is PhotoCaptureException -> {
+                        // Handle capture errors
+                        showErrorDialog("Failed to capture photo")
+                    }
+                    else -> {
+                        // Handle other errors
+                        showErrorDialog(exception.message ?: "Unknown error")
+                    }
+                }
+                showPicker = false
+            },
+            customConfirmationView = { result, onConfirm, onRetry ->
+                // Custom confirmation UI
+                ImageConfirmationViewWithCustomButtons(
+                    result = result,
+                    onConfirm = onConfirm,
+                    onRetry = onRetry,
+                    questionText = "Use this photo?",
+                    retryText = "Retake",
+                    acceptText = "Use Photo"
+                )
+            }
+        )
+    }
+    
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Display captured image
+        capturedImage?.let { photo ->
+            AsyncImage(
+                model = photo.uri,
+                contentDescription = "Captured photo",
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+            
+            if (isUploading) {
+                CircularProgressIndicator()
+                Text("Uploading...")
+            }
+        }
+        
+        Button(
+            onClick = { showPicker = true },
+            enabled = !isUploading
+        ) {
+            Icon(Icons.Default.Camera, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("Take Photo")
+        }
+    }
+}
+
+private fun uploadImage(photoResult: PhotoResult) {
+    // Example upload implementation
+    lifecycleScope.launch(Dispatchers.IO) {
+        try {
+            // Upload logic here
+            withContext(Dispatchers.Main) {
+                // Show success message
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                // Show error message
+            }
+        }
+    }
+}
+```
 
 ## Requirements
 

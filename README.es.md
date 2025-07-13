@@ -9,14 +9,35 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ismoy/ImagePickerKMP/pulls)
 [![Discord](https://img.shields.io/discord/1393705692484993114.svg?label=Discord&logo=discord&color=7289da)](https://discord.com/channels/1393705692484993114/1393706133864190133)
 [![official project](http://jb.gg/badges/official.svg)](https://github.com/JetBrains#jetbrains-on-github)
+![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-green)
+![Android](https://img.shields.io/badge/Platform-Android-green)
+![iOS](https://img.shields.io/badge/Platform-iOS-blue)
+![Coverage Status](https://img.shields.io/codecov/c/github/ismoy/ImagePickerKMP)
+
+## 🎥 Demo
+
+<video width="100%" autoplay loop muted playsinline>
+  <source src="https://user-images.githubusercontent.com/your-username/ImagePickerKMP/main/demo/demo.mp4" type="video/mp4">
+  Tu navegador no soporta el elemento de video.
+</video>
+
+*¡Mira el demo de arriba para ver ImagePickerKMP en acción - captura de cámara, selección de galería y UI personalizada en funcionamiento!*
+
+### 📱 Funcionalidades Mostradas en el Demo:
+- **📸 Captura de Cámara**: Acceso directo a la cámara con control de flash
+- **🔄 Cambio de Cámara**: Alternancia fluida entre cámara frontal y trasera
+- **🎨 UI Personalizada**: Diálogos de confirmación personalizados
+- **📁 Selección de Galería**: Selección múltiple de imágenes desde la galería
+- **⚡ Rendimiento**: Interacciones suaves y responsivas
+- **🔒 Permisos**: Manejo inteligente de permisos
 
 # ImagePickerKMP
-
-Una librería moderna y multiplataforma para selección de imágenes y cámara en Kotlin Multiplatform (KMP), con experiencia nativa en Android e iOS.
+**Librería Multiplataforma de Selección de Imágenes y Cámara (Android e iOS)**  
+Construida con **Kotlin Multiplatform** + **Compose Multiplatform** + **Kotlin/Native**.
 
 Este documento también está disponible en inglés: [README.md](README.md)
 
-## Características
+## Características – Cámara, Selector de Imágenes y Galería para Android e iOS
 
 - 📱 **Multiplataforma**: Funciona en Android y iOS
 - 📸 **Integración de cámara**: Acceso directo a la cámara y captura de fotos
@@ -25,7 +46,7 @@ Este documento también está disponible en inglés: [README.md](README.md)
 - 🎯 **Fácil integración**: API simple con Compose Multiplatform
 - 🔧 **Altamente configurable**: Muchas opciones de personalización
 
-## Inicio rápido
+## Inicio Rápido – Integración de Selector de Imágenes Kotlin Multiplatform
 
 ### Instalación
 
@@ -72,6 +93,127 @@ fun MiImagePicker() {
 |------------|----------------|--------|
 | Android    | API 21+        | ✅     |
 | iOS        | iOS 12.0+      | ✅     |
+
+## ¿Por qué elegir ImagePickerKMP?
+
+### 🆚 Comparación con Otras Librerías
+
+| Característica | ImagePickerKMP | Peekaboo | KMPImagePicker |
+|----------------|----------------|----------|----------------|
+| **Soporte Compose Multiplatform** | ✅ Nativo | ❌ Solo Android | ⚠️ Limitado |
+| **Personalización de UI** | ✅ Control total | ⚠️ Básico | ⚠️ Básico |
+| **Permisos Unificados** | ✅ Manejo inteligente | ❌ Manual | ⚠️ Específico por plataforma |
+| **Manejo de Errores** | ✅ Integral | ⚠️ Básico | ⚠️ Básico |
+| **Integración de Cámara** | ✅ Acceso directo | ✅ Acceso directo | ⚠️ Solo galería |
+| **Soporte de Galería** | ✅ Selección múltiple | ✅ Selección múltiple | ✅ Selección múltiple |
+| **API Multiplataforma** | ✅ Código único | ❌ Específico por plataforma | ⚠️ Parcial |
+
+### 🎯 Ventajas Clave
+
+- **🔄 Nativo de Compose Multiplatform**: Construido específicamente para Compose Multiplatform, garantizando comportamiento consistente en todas las plataformas
+- **🎨 Personalización Completa de UI**: Control total sobre diálogos, vistas de confirmación y UI de cámara
+- **🔒 Manejo Inteligente de Permisos**: Gestión unificada de permisos con alternativas inteligentes
+- **⚡ Optimizado para Rendimiento**: Procesamiento eficiente de imágenes y gestión de memoria
+- **🛠️ Amigable para Desarrolladores**: API simple con manejo integral de errores
+
+### 💡 Caso de Uso Real
+
+Aquí tienes un ejemplo práctico mostrando captura de cámara con vista previa y subida:
+
+```kotlin
+@Composable
+fun SelectorAvanzado() {
+    var mostrarSelector by remember { mutableStateOf(false) }
+    var imagenCapturada by remember { mutableStateOf<PhotoResult?>(null) }
+    var subiendo by remember { mutableStateOf(false) }
+    
+    if (mostrarSelector) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            onPhotoCaptured = { result ->
+                imagenCapturada = result
+                mostrarSelector = false
+                // Subir automáticamente la imagen capturada
+                subirImagen(result)
+            },
+            onError = { exception ->
+                when (exception) {
+                    is CameraPermissionException -> {
+                        // Manejar permiso denegado
+                        mostrarDialogoPermisos()
+                    }
+                    is PhotoCaptureException -> {
+                        // Manejar errores de captura
+                        mostrarDialogoError("Error al capturar foto")
+                    }
+                    else -> {
+                        // Manejar otros errores
+                        mostrarDialogoError(exception.message ?: "Error desconocido")
+                    }
+                }
+                mostrarSelector = false
+            },
+            customConfirmationView = { result, onConfirm, onRetry ->
+                // UI de confirmación personalizada
+                ImageConfirmationViewWithCustomButtons(
+                    result = result,
+                    onConfirm = onConfirm,
+                    onRetry = onRetry,
+                    questionText = "¿Usar esta foto?",
+                    retryText = "Volver a tomar",
+                    acceptText = "Usar Foto"
+                )
+            }
+        )
+    }
+    
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Mostrar imagen capturada
+        imagenCapturada?.let { foto ->
+            AsyncImage(
+                model = foto.uri,
+                contentDescription = "Foto capturada",
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+            
+            if (subiendo) {
+                CircularProgressIndicator()
+                Text("Subiendo...")
+            }
+        }
+        
+        Button(
+            onClick = { mostrarSelector = true },
+            enabled = !subiendo
+        ) {
+            Icon(Icons.Default.Camera, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("Tomar Foto")
+        }
+    }
+}
+
+private fun subirImagen(photoResult: PhotoResult) {
+    // Ejemplo de implementación de subida
+    lifecycleScope.launch(Dispatchers.IO) {
+        try {
+            // Lógica de subida aquí
+            withContext(Dispatchers.Main) {
+                // Mostrar mensaje de éxito
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                // Mostrar mensaje de error
+            }
+        }
+    }
+}
+```
 
 ## Requisitos
 
@@ -131,6 +273,4 @@ Consulta [CHANGELOG.es.md](docs/CHANGELOG.es.md) para una lista completa de camb
 
 ---
 
-**Hecho con ❤️ para la comunidad Kotlin Multiplatform**
-
-[![Discord](https://img.shields.io/discord/1393705692484993114.svg?label=Discord&logo=discord&color=7289da)](https://discord.com/channels/1393705692484993114/1393706133864190133) 
+**Hecho con ❤️ para la comunidad Kotlin Multiplatform** 
