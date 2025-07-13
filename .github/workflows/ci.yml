@@ -241,26 +241,61 @@ jobs:
               console.log('Could not analyze coverage:', error.message);
             }
 
+      - name: Generate Discord message
+        id: discord_message
+        run: |
+          if [ "${{ steps.coverage.outputs.has_coverage }}" == "true" ]; then
+            COVERAGE_TEXT="📊 **Coverage Report:**
+          • Line Coverage: ${{ steps.coverage.outputs.line_coverage }}% (${{ steps.coverage.outputs.covered_lines }} of ${{ steps.coverage.outputs.total_lines }} lines)
+          • Branch Coverage: ${{ steps.coverage.outputs.branch_coverage }}%"
+          else
+            COVERAGE_TEXT="📊 **Coverage:** Not available"
+          fi
+          
+          MESSAGE="🎉 **Build Success** - ImagePickerKMP
+
+          **Repository:** ${{ github.repository }}
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Author:** ${{ github.actor }}
+
+          $COVERAGE_TEXT
+
+          **Workflow:** ${{ github.workflow }}
+
+          🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
+          🔗 **View Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo "$MESSAGE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Notify Discord on Success
         if: success()
         uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
-          args: |
-            🎉 **Build Success** - ImagePickerKMP
-            
-            **Repository:** ${{ github.repository }}
-            **Branch:** ${{ github.ref_name }}
-            **Commit:** ${{ github.sha }}
-            **Author:** ${{ github.actor }}
-            
-            ${{ steps.coverage.outputs.has_coverage == 'true' && format('📊 **Coverage Report:**%0A• Line Coverage: {0}% ({1} of {2} lines)%0A• Branch Coverage: {3}%', steps.coverage.outputs.line_coverage, steps.coverage.outputs.covered_lines, steps.coverage.outputs.total_lines, steps.coverage.outputs.branch_coverage) || '📊 **Coverage:** Not available' }}
-            
-            **Workflow:** ${{ github.workflow }}
-            
-            🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
-            🔗 **View Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          args: ${{ steps.discord_message.outputs.message }}
+
+      - name: Generate Discord failure message
+        id: discord_failure_message
+        run: |
+          MESSAGE="❌ **Build Failed** - ImagePickerKMP
+
+          **Repository:** ${{ github.repository }}
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Author:** ${{ github.actor }}
+
+          **Workflow:** ${{ github.workflow }}
+
+          🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
+          🔗 **View Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo "$MESSAGE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Notify Discord on Failure
         if: failure()
@@ -268,15 +303,4 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
-          args: |
-            ❌ **Build Failed** - ImagePickerKMP
-            
-            **Repository:** ${{ github.repository }}
-            **Branch:** ${{ github.ref_name }}
-            **Commit:** ${{ github.sha }}
-            **Author:** ${{ github.actor }}
-            
-            **Workflow:** ${{ github.workflow }}
-            
-            🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
-            🔗 **View Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} 
+          args: ${{ steps.discord_failure_message.outputs.message }} 
