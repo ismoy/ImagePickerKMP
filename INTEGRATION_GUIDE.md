@@ -309,10 +309,13 @@ struct ImagePickerView: UIViewControllerRepresentable {
 
 ### Kotlin Multiplatform / Compose Multiplatform
 
-For cross-platform apps using KMP/CMP:
+For cross-platform apps using KMP/CMP with a single UI for both platforms:
+
+#### 1. Add Dependencies
+
+In your `build.gradle.kts` (shared module):
 
 ```kotlin
-// build.gradle.kts (shared module)
 kotlin {
     android {
         // Android configuration
@@ -330,42 +333,39 @@ kotlin {
         commonMain {
             dependencies {
                 implementation("io.github.ismoy:imagepickerkmp:1.0.0")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
-            }
-        }
-        
-        androidMain {
-            dependencies {
-                implementation("androidx.compose.ui:ui:1.4.0")
-                implementation("androidx.compose.material:material:1.4.0")
             }
         }
     }
 }
+```
 
-// SharedImagePicker.kt (shared module)
+#### 2. Add Permissions
+
+**Android**: In your `androidMain/AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-feature android:name="android.hardware.camera" android:required="true" />
+```
+
+**iOS**: In your `iosMain/Info.plist`:
+
+```xml
+<key>NSCameraUsageDescription</key>
+<string>This app needs camera access to capture photos</string>
+```
+
+#### 3. Shared Implementation
+
+Create a shared composable in your `commonMain`:
+
+```kotlin
+// commonMain/kotlin/YourPackage/SharedImagePicker.kt
 @Composable
 fun SharedImagePicker(
     onPhotoCaptured: (PhotoResult) -> Unit,
     onError: (Exception) -> Unit
 ) {
-    // Platform-specific context
-    val context = if (Platform().isAndroid) {
-        LocalContext.current
-    } else {
-        null // iOS doesn't need context
-    }
-    
-    ImagePickerLauncher(
-        context = context,
-        onPhotoCaptured = onPhotoCaptured,
-        onError = onError
-    )
-}
-
-// Android implementation
-@Composable
-fun AndroidImagePicker() {
     var showPicker by remember { mutableStateOf(false) }
     
     Column {
@@ -374,38 +374,14 @@ fun AndroidImagePicker() {
         }
         
         if (showPicker) {
-            SharedImagePicker(
+            ImagePickerLauncher(
+                context = LocalContext.current,
                 onPhotoCaptured = { result ->
-                    println("Photo captured on Android: ${result.uri}")
+                    onPhotoCaptured(result)
                     showPicker = false
                 },
                 onError = { exception ->
-                    println("Error on Android: ${exception.message}")
-                    showPicker = false
-                }
-            )
-        }
-    }
-}
-
-// iOS implementation (in Kotlin)
-@Composable
-fun IOSImagePicker() {
-    var showPicker by remember { mutableStateOf(false) }
-    
-    Column {
-        Button(onClick = { showPicker = true }) {
-            Text("Take Photo")
-        }
-        
-        if (showPicker) {
-            SharedImagePicker(
-                onPhotoCaptured = { result ->
-                    println("Photo captured on iOS: ${result.uri}")
-                    showPicker = false
-                },
-                onError = { exception ->
-                    println("Error on iOS: ${exception.message}")
+                    onError(exception)
                     showPicker = false
                 }
             )
@@ -413,6 +389,61 @@ fun IOSImagePicker() {
     }
 }
 ```
+
+#### 4. Usage in Your App
+
+```kotlin
+// commonMain/kotlin/YourPackage/YourApp.kt
+@Composable
+fun YourApp() {
+    MaterialTheme {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("Welcome to Your App")
+            
+            SharedImagePicker(
+                onPhotoCaptured = { result ->
+                    println("Photo captured: ${result.uri}")
+                    // Handle the captured photo
+                },
+                onError = { exception ->
+                    println("Error: ${exception.message}")
+                    // Handle errors
+                }
+            )
+        }
+    }
+}
+```
+
+#### 5. Platform-Specific Entry Points
+
+**Android**: In your `androidMain/AndroidActivity.kt`:
+
+```kotlin
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            YourApp()
+        }
+    }
+}
+```
+
+**iOS**: In your `iosMain/IOSApp.kt`:
+
+```kotlin
+@Composable
+fun IOSApp() {
+    YourApp()
+}
+```
+
+This approach provides a single UI that works on both platforms with the same codebase.
 
 ## Advanced Configuration
 
