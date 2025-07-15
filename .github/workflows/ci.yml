@@ -325,4 +325,45 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Run Detekt
-        run: ./gradlew detekt --no-daemon --stacktrace 
+        id: detekt_run
+        run: ./gradlew detekt --no-daemon --stacktrace
+      - name: Count Detekt issues
+        id: detekt_issues
+        run: |
+          DETEKT_REPORT=library/build/reports/detekt/detekt.xml
+          if [ -f "$DETEKT_REPORT" ]; then
+            ISSUES=$(grep -c '<error ' "$DETEKT_REPORT" || echo 0)
+          else
+            ISSUES=0
+          fi
+          echo "issues=$ISSUES" >> $GITHUB_OUTPUT
+      - name: Notify Discord on Detekt Success
+        if: success()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            ✅ **Detekt Success** - ImagePickerKMP
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+            Workflow: ${{ github.workflow }}
+            Detekt Issues: ${{ steps.detekt_issues.outputs.issues }}
+            🔗 View Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: Notify Discord on Detekt Failure
+        if: failure()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            ❌ **Detekt Failed** - ImagePickerKMP
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+            Workflow: ${{ github.workflow }}
+            Detekt Issues: ${{ steps.detekt_issues.outputs.issues }}
+            🔗 View Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} 
