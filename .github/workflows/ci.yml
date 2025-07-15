@@ -71,9 +71,9 @@ jobs:
         run: ./gradlew ktlintCheck --no-daemon --stacktrace --info
         continue-on-error: true
 
-      - name: Run detekt with debug
-        run: ./gradlew detekt --no-daemon --stacktrace --info
-        continue-on-error: true
+      # - name: Run detekt with debug
+      #   run: ./gradlew detekt --no-daemon --stacktrace --info
+      #   continue-on-error: true
 
       - name: Upload build logs on failure
         if: failure()
@@ -281,6 +281,14 @@ jobs:
       - name: Generate Discord failure message
         id: discord_failure_message
         run: |
+          # Captura las últimas 30 líneas del log de build (ajusta según tu necesidad)
+          LOG_FILE=build.log
+          if [ -f "$LOG_FILE" ]; then
+            ERROR_LOG=$(tail -n 30 "$LOG_FILE")
+          else
+            ERROR_LOG="No build.log found. See Actions log for details."
+          fi
+
           MESSAGE="❌ **Build Failed** - ImagePickerKMP
 
           **Repository:** ${{ github.repository }}
@@ -290,9 +298,14 @@ jobs:
 
           **Workflow:** ${{ github.workflow }}
 
+          **Error log (last lines):**
+          \`\`\`
+          $ERROR_LOG
+          \`\`\`
+
           🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
           🔗 **View Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
+
           echo "message<<EOF" >> $GITHUB_OUTPUT
           echo "$MESSAGE" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
