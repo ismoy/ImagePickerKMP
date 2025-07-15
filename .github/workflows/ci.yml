@@ -336,7 +336,10 @@ jobs:
           else
             ISSUES=0
           fi
-          echo "issues=$ISSUES" >> $GITHUB_OUTPUT
+          echo "DEBUG: ISSUES=$ISSUES"
+          echo "DEBUG: GITHUB_OUTPUT=$GITHUB_OUTPUT"
+          echo "issues=${ISSUES}" >> "$GITHUB_OUTPUT"
+        shell: bash
       - name: Notify Discord on Detekt Success
         if: success()
         uses: Ilshidur/action-discord@master
