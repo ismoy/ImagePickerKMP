@@ -1,0 +1,67 @@
+name: Detekt
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  detekt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Run Detekt
+        id: detekt_run
+        run: ./gradlew detekt --no-daemon --stacktrace
+      - name: Count Detekt issues
+        id: detekt_issues
+        run: |
+          DETEKT_REPORT=library/build/reports/detekt/detekt.xml
+          ISSUES=0
+          if [ -f "$DETEKT_REPORT" ]; then
+            COUNT=$(grep -c '<error ' "$DETEKT_REPORT" 2>/dev/null || true)
+            if [[ "$COUNT" =~ ^[0-9]+$ ]]; then
+              ISSUES=$COUNT
+            fi
+          fi
+          echo "DEBUG: ISSUES=$ISSUES"
+          echo "DEBUG: GITHUB_OUTPUT=$GITHUB_OUTPUT"
+          echo "issues=${ISSUES}" >> "$GITHUB_OUTPUT"
+        shell: bash
+      - name: Notify Discord on Detekt Success
+        if: success()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            ✅ **Detekt Success** - ImagePickerKMP
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+            Workflow: ${{ github.workflow }}
+            Detekt Issues: ${{ steps.detekt_issues.outputs.issues }}
+            🔗 View Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: Notify Discord on Detekt Failure
+        if: failure()
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            ❌ **Detekt Failed** - ImagePickerKMP
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+            Workflow: ${{ github.workflow }}
+            Detekt Issues: ${{ steps.detekt_issues.outputs.issues }}
+            🔗 View Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} 
