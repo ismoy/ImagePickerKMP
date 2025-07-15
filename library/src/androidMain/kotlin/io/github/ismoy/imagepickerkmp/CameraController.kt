@@ -13,13 +13,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
+/**
+ * Controls camera operations such as starting, stopping, capturing photos, and switching cameras.
+ *
+ * This class manages the camera lifecycle and configuration for photo capture.
+ */
 class CameraController(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner
 ) {
+    /**
+     * Enum representing the available flash modes for the camera.
+     */
     enum class FlashMode {
         AUTO, ON, OFF
     }
+    /**
+     * Enum representing the available camera types (front or back).
+     */
     enum class CameraType {
         BACK, FRONT
     }
@@ -60,7 +71,7 @@ class CameraController(
                 imageCapture
             )
         } catch (exc: Exception) {
-            throw PhotoCaptureException("Failed to bind camera use cases: ${exc.message}")
+            throw PhotoCaptureException("Failed to bind camera use cases: \\${exc}")
         }
     }
 

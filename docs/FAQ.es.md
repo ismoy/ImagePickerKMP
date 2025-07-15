@@ -180,21 +180,30 @@ fun CustomPermissionHandler() {
 ```kotlin
 @Composable
 fun CustomImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Manejar captura de foto
-        },
-        onError = { exception ->
-            // Manejar errores
-        },
-        customPermissionHandler = { config ->
-            // Diálogo de permisos personalizado
-        },
-        customConfirmationView = { result, onConfirm, onRetry ->
-            // Vista de confirmación personalizada
-        }
-    )
+    var showPicker by remember { mutableStateOf(false) }
+    if (showPicker) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result -> showPicker = false },
+                onError = { exception -> showPicker = false },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    preference = CapturePhotoPreference.HIGH_QUALITY,
+                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                        customPermissionHandler = { config ->
+                            // Manejo personalizado de permisos
+                        },
+                        customConfirmationView = { result, onConfirm, onRetry ->
+                            // Vista de confirmación personalizada
+                        }
+                    )
+                )
+            )
+        )
+    }
+    Button(onClick = { showPicker = true }) {
+        Text("Tomar foto")
+    }
 }
 ```
 
@@ -517,8 +526,6 @@ fun ThemedImagePicker() {
     }
 }
 ```
-
-
 
 ## Problemas Comunes
 

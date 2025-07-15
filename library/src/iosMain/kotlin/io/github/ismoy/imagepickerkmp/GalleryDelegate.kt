@@ -8,6 +8,11 @@ import platform.UIKit.UIImagePickerControllerOriginalImage
 import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.darwin.NSObject
 
+/**
+ * Delegate for handling UIImagePickerController events and photo selection results on iOS.
+ *
+ * This class processes selected images from the gallery and communicates results or errors to the caller.
+ */
 class GalleryDelegate(
     private val onPhotoSelected: (PhotoResult) -> Unit,
     private val onError: (Exception) -> Unit
@@ -44,4 +49,4 @@ class GalleryDelegate(
     private fun dismissPicker(picker: UIImagePickerController) {
         picker.dismissViewControllerAnimated(true, completion = null)
     }
-} 
+}

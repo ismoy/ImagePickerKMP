@@ -1,3 +1,4 @@
+
 package io.github.ismoy.imagepickerkmp
 
 import androidx.compose.runtime.Composable
@@ -16,14 +17,7 @@ import platform.AVFoundation.authorizationStatusForMediaType
 
 @Composable
 actual fun RequestCameraPermission(
-    titleDialogConfig: String,
-    descriptionDialogConfig: String,
-    btnDialogConfig: String,
-    titleDialogDenied: String,
-    descriptionDialogDenied: String,
-    btnDialogDenied: String,
-    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
-    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
+    dialogConfig: CameraPermissionDialogConfig,
     onPermissionPermanentlyDenied: () -> Unit,
     onResult: (Boolean) -> Unit,
     customPermissionHandler: (() -> Unit)?
@@ -55,13 +49,13 @@ actual fun RequestCameraPermission(
     }
 
     if (showDialog && isPermissionDeniedPermanently) {
-        if (customSettingsDialog != null) {
-            customSettingsDialog { openSettings() }
+        if (dialogConfig.customSettingsDialog != null) {
+            dialogConfig.customSettingsDialog { openSettings() }
         } else {
             CustomPermissionDialog(
-                title = titleDialogDenied,
-                description = descriptionDialogDenied,
-                confirmationButtonText = btnDialogDenied,
+                title = dialogConfig.titleDialogDenied,
+                description = dialogConfig.descriptionDialogDenied,
+                confirmationButtonText = dialogConfig.btnDialogDenied,
                 onConfirm = {
                     openSettings()
                     showDialog = false

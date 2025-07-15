@@ -1,3 +1,4 @@
+
 package io.github.ismoy.imagepickerkmp
 
 import androidx.compose.foundation.background
@@ -35,47 +36,37 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import io.github.ismoy.imagepickerkmp.CameraPhotoHandler.PhotoResult
-import io.github.ismoy.imagepickerkmp.StringResource
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.Dp
 
+@Suppress("EndOfSentenceFormat","LongMethod","FunctionNaming")
 @Composable
 fun ImageConfirmationViewWithCustomButtons(
     result: PhotoResult,
     onConfirm: (PhotoResult) -> Unit,
     onRetry: () -> Unit,
     customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    buttonColor: Color? = null,
-    iconColor: Color? = null,
-    buttonSize: Dp? = null,
-    layoutPosition: String? = null,
-    flashIcon: ImageVector? = null,
-    switchCameraIcon: ImageVector? = null,
-    captureIcon: ImageVector? = null,
-    galleryIcon: ImageVector? = null
+    uiConfig: UiConfig = UiConfig()
 ) {
     if (customConfirmationView != null) {
         customConfirmationView(result, onConfirm, onRetry)
         return
     }
-    val resolvedButtonColor = buttonColor ?: Color(0xFF2D3748)
-    val resolvedIconColor = iconColor ?: Color.White
-    val resolvedButtonSize = buttonSize ?: 48.dp
+    val resolvedButtonColor = uiConfig.buttonColor ?: ImagePickerUiConstants.ConfirmationCardBackgroundColor
+    val resolvedIconColor = uiConfig.iconColor ?: ImagePickerUiConstants.ConfirmationCardIconColor
+    val resolvedButtonSize = uiConfig.buttonSize ?: ImagePickerUiConstants.ConfirmationCardButtonSize
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF1A202C))
-            .padding(horizontal = 16.dp),
+            .background(ImagePickerUiConstants.ConfirmationCardDialogBackground)
+            .padding(horizontal = ImagePickerUiConstants.ConfirmationCardDialogHorizontalPadding),
         contentAlignment = Alignment.Center
     ) {
         Card(
                 modifier = Modifier
-                    .widthIn(max = 400.dp),
-                shape = RoundedCornerShape(32.dp),
-                elevation = 16.dp,
+                    .widthIn(max = ImagePickerUiConstants.ConfirmationCardMaxWidth),
+                shape = RoundedCornerShape(ImagePickerUiConstants.ConfirmationCardCornerRadius),
+                elevation = ImagePickerUiConstants.DefaultCardElevation,
                 backgroundColor = resolvedButtonColor
             ) {
                 Column(modifier = Modifier
@@ -83,21 +74,23 @@ fun ImageConfirmationViewWithCustomButtons(
                     horizontalAlignment = Alignment.CenterHorizontally) {
                    Box(modifier = Modifier
                        .fillMaxWidth()
-                       .aspectRatio(1f)){
+                       .aspectRatio(ImagePickerUiConstants.ConfirmationCardImageAspectRatio)){
                        AsyncImage(
                            model = result.uri,
                            contentDescription = stringResource(StringResource.PREVIEW_IMAGE_DESCRIPTION),
                            modifier = Modifier
                                .fillMaxSize()
-                               .aspectRatio(1f)
-                               .clip(RoundedCornerShape(topStart = 32.dp,topEnd = 32.dp)),
+                               .aspectRatio(ImagePickerUiConstants.ConfirmationCardImageAspectRatio)
+                               .clip(RoundedCornerShape(topStart = ImagePickerUiConstants.ConfirmationCardCornerRadius,
+                                   topEnd = ImagePickerUiConstants.ConfirmationCardCornerRadius)),
                            contentScale = ContentScale.Crop
                        )
                        val isHD = result.width >= 1280 && result.height >= 720
                        Column( modifier = Modifier
                            .align(Alignment.TopEnd)
-                           .padding(16.dp),
-                           verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                           .padding(ImagePickerUiConstants.ConfirmationCardPadding),
+                           verticalArrangement = Arrangement
+                               .spacedBy(ImagePickerUiConstants.ConfirmationCardButtonSpacing)) {
                            IconButton(
                                onClick = {},
                                modifier = Modifier
@@ -106,64 +99,77 @@ fun ImageConfirmationViewWithCustomButtons(
                            ) {
                                Icon(
                                    imageVector = if (isHD) Icons.Default.Hd else Icons.Default.Sd,
-                                   contentDescription = if (isHD) stringResource(StringResource.HD_QUALITY_DESCRIPTION) else stringResource(StringResource.SD_QUALITY_DESCRIPTION),
+                                   contentDescription = if (isHD) stringResource(StringResource.HD_QUALITY_DESCRIPTION)
+                                   else stringResource(StringResource.SD_QUALITY_DESCRIPTION),
                                    tint = resolvedIconColor
                                )
                            }
                        }
                    }
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(ImagePickerUiConstants.ConfirmationCardSpacerHeight))
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(resolvedButtonColor)
-                            .padding(horizontal = 24.dp, vertical = 30.dp),
+                            .padding(horizontal = ImagePickerUiConstants.ConfirmationCardPadding,
+                                vertical = ImagePickerUiConstants.ConfirmationCardPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = stringResource(StringResource.IMAGE_CONFIRMATION_TITLE),
-                            color = Color(0xFFCBD5E1),
-                            fontSize = 22.sp,
+                            color = ImagePickerUiConstants.ConfirmationCardTitleColor,
+                            fontSize = ImagePickerUiConstants.ConfirmationCardTitleFontSize,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
                         )
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier
+                            .height(ImagePickerUiConstants.ConfirmationCardButtonSpacing.plus(4.dp)))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+                            horizontalArrangement = Arrangement
+                                .spacedBy(ImagePickerUiConstants.ConfirmationCardButtonSpacing,
+                                    Alignment.CenterHorizontally)
                         ) {
                             Button(
                                 onClick = onRetry,
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFE53935)),
+                                colors = ButtonDefaults.
+                                buttonColors(backgroundColor = ImagePickerUiConstants.ConfirmationCardRetryButtonColor),
                                 shape = CircleShape,
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(resolvedButtonSize)
                             ) {
                                 Icon(
-                                    imageVector = galleryIcon ?: Icons.Default.Refresh,
+                                    imageVector = uiConfig.galleryIcon ?: Icons.Default.Refresh,
                                     contentDescription = stringResource(StringResource.RETRY_BUTTON),
                                     tint = resolvedIconColor,
-                                    modifier = Modifier.padding(end = 4.dp)
+                                    modifier = Modifier
+                                        .padding(end = ImagePickerUiConstants.ConfirmationCardButtonIconPadding)
                                 )
-                                Text(stringResource(StringResource.RETRY_BUTTON), color = resolvedIconColor, fontWeight = FontWeight.Bold)
+                                Text(stringResource(StringResource.RETRY_BUTTON), color = resolvedIconColor,
+                                    fontWeight = ImagePickerUiConstants.ConfirmationCardButtonTextFontWeight)
                             }
                             Button(
                                 onClick = { onConfirm(result) },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF43A047)),
+                                colors = ButtonDefaults
+                                    .buttonColors(backgroundColor = ImagePickerUiConstants
+                                        .ConfirmationCardAcceptButtonColor),
                                 shape = CircleShape,
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(resolvedButtonSize)
                             ) {
                                 Icon(
-                                    imageVector = captureIcon ?: Icons.Default.Check,
+                                    imageVector = Icons.Default.Check,
                                     contentDescription = stringResource(StringResource.ACCEPT_BUTTON),
                                     tint = resolvedIconColor,
-                                    modifier = Modifier.padding(end = 4.dp)
+                                    modifier = Modifier
+                                        .padding(end = ImagePickerUiConstants.ConfirmationCardButtonIconPadding)
                                 )
-                                Text(stringResource(StringResource.ACCEPT_BUTTON), color = resolvedIconColor, fontWeight = FontWeight.Bold)
+                                Text(stringResource(StringResource.ACCEPT_BUTTON),
+                                    color = resolvedIconColor,
+                                    fontWeight = ImagePickerUiConstants.ConfirmationCardButtonTextFontWeight)
                             }
                         }
                     }

@@ -29,50 +29,27 @@ actual fun GalleryPickerLauncher(
         return
     }
 
+    GalleryPickerLauncherContent(
+        context = context,
+        onPhotosSelected = onPhotosSelected,
+        onError = onError,
+        allowMultiple = allowMultiple,
+        mimeTypes = mimeTypes
+    )
+}
+
+@Composable
+private fun GalleryPickerLauncherContent(
+    context: ComponentActivity,
+    onPhotosSelected: (List<PhotoResult>) -> Unit,
+    onError: (Exception) -> Unit,
+    allowMultiple: Boolean,
+    mimeTypes: List<String>
+) {
     var shouldLaunch by remember { mutableStateOf(false) }
 
-    val singlePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            try {
-                kotlinx.coroutines.CoroutineScope(Dispatchers.Main).launch {
-                    processSelectedImage(context, uri, {
-                        onPhotosSelected(listOf(it))
-                    }, onError)
-                }
-            } catch (e: Exception) {
-                onError(e)
-            }
-        }
-    }
-
-    val multiplePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents()
-    ) { uris: List<Uri> ->
-        if (uris.isNotEmpty()) {
-            try {
-                kotlinx.coroutines.CoroutineScope(Dispatchers.Main).launch {
-                    val results = mutableListOf<PhotoResult>()
-                    for (uri in uris) {
-                        try {
-                            val result = processSelectedImageSuspend(context, uri)
-                            if (result != null) results.add(result)
-                        } catch (e: Exception) {
-                            // Si una imagen falla, continúa con las demás
-                        }
-                    }
-                    if (results.isNotEmpty()) {
-                        onPhotosSelected(results)
-                    } else {
-                        onError(Exception(getStringResource(StringResource.GALLERY_SELECTION_ERROR)))
-                    }
-                }
-            } catch (e: Exception) {
-                onError(e)
-            }
-        }
-    }
+    val singlePickerLauncher = rememberSinglePickerLauncher(context, onPhotosSelected, onError)
+    val multiplePickerLauncher = rememberMultiplePickerLauncher(context, onPhotosSelected, onError)
 
     LaunchedEffect(shouldLaunch) {
         if (shouldLaunch) {
@@ -92,6 +69,59 @@ actual fun GalleryPickerLauncher(
 
     LaunchedEffect(Unit) {
         shouldLaunch = true
+    }
+}
+
+@Composable
+private fun rememberSinglePickerLauncher(
+    context: Context,
+    onPhotosSelected: (List<PhotoResult>) -> Unit,
+    onError: (Exception) -> Unit
+) = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.GetContent()
+) { uri: Uri? ->
+    if (uri != null) {
+        try {
+            kotlinx.coroutines.CoroutineScope(Dispatchers.Main).launch {
+                processSelectedImage(context, uri, {
+                    onPhotosSelected(listOf(it))
+                }, onError)
+            }
+        } catch (e: Exception) {
+            onError(e)
+        }
+    }
+}
+
+@Composable
+private fun rememberMultiplePickerLauncher(
+    context: Context,
+    onPhotosSelected: (List<PhotoResult>) -> Unit,
+    onError: (Exception) -> Unit
+) = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.GetMultipleContents()
+) { uris: List<Uri> ->
+    if (uris.isNotEmpty()) {
+        try {
+            kotlinx.coroutines.CoroutineScope(Dispatchers.Main).launch {
+                val results = mutableListOf<PhotoResult>()
+                for (uri in uris) {
+                    try {
+                        val result = processSelectedImageSuspend(context, uri)
+                        if (result != null) results.add(result)
+                    } catch (e: Exception) {
+                        onError(e)
+                    }
+                }
+                if (results.isNotEmpty()) {
+                    onPhotosSelected(results)
+                } else {
+                    onError(Exception(getStringResource(StringResource.GALLERY_SELECTION_ERROR)))
+                }
+            }
+        } catch (e: Exception) {
+            onError(e)
+        }
     }
 }
 
@@ -125,6 +155,7 @@ private suspend fun processSelectedImageSuspend(
                 null
             }
         } catch (e: Exception) {
+            println("Error processing selected image: \\${e.message}")
             null
         }
     }
@@ -170,17 +201,21 @@ private suspend fun processSelectedImage(
 }
 
 private fun getFileName(context: Context, uri: Uri): String? {
-    return try {
-        val cursor = context.contentResolver.query(uri, null, null, null, null)
-        cursor?.use {
-            if (it.moveToFirst()) {
-                val displayNameIndex = it.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
-                if (displayNameIndex != -1) {
-                    it.getString(displayNameIndex)
-                } else null
-            } else null
-        }
+    var result: String? = null
+    val cursor = try {
+        context.contentResolver.query(uri, null, null, null, null)
     } catch (e: Exception) {
+        println("Error querying file name: \\${e.message}")
         null
     }
-} 
+    cursor?.use {
+        if (it.moveToFirst()) {
+            val displayNameIndex = it.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+            if (displayNameIndex != -1) {
+                result = it.getString(displayNameIndex)
+            }
+        }
+    }
+    return result
+}
+

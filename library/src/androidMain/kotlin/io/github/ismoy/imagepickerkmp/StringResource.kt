@@ -40,10 +40,12 @@ private fun getAndroidStringResId(id: StringResource): Int =
 internal fun getStringResource(id: StringResource): String {
     return when (id) {
         StringResource.CAMERA_PERMISSION_REQUIRED -> "Camera permission required"
-        StringResource.CAMERA_PERMISSION_DESCRIPTION -> "Camera permission is required to capture photos. Please grant it in settings"
+        StringResource.CAMERA_PERMISSION_DESCRIPTION -> "Camera permission is required to capture photos." +
+                " Please grant it in settings"
         StringResource.OPEN_SETTINGS -> "Open settings"
         StringResource.CAMERA_PERMISSION_DENIED -> "Camera permission denied"
-        StringResource.CAMERA_PERMISSION_DENIED_DESCRIPTION -> "Camera permission is required to capture photos. Please grant the permissions"
+        StringResource.CAMERA_PERMISSION_DENIED_DESCRIPTION -> "Camera permission is required to" +
+                " capture photos. Please grant the permissions"
         StringResource.GRANT_PERMISSION -> "Grant permission"
         StringResource.CAMERA_PERMISSION_PERMANENTLY_DENIED -> "Camera permission permanently denied"
         StringResource.IMAGE_CONFIRMATION_TITLE -> "Are you satisfied with the photo?"

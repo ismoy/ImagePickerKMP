@@ -882,4 +882,33 @@ For customization-related issues:
 For more information, refer to:
 - [API Reference](docs/API_REFERENCE.md)
 - [Examples](docs/EXAMPLES.md)
-- [Integration Guide](docs/INTEGRATION_GUIDE.md) 
+- [Integration Guide](docs/INTEGRATION_GUIDE.md)
+
+```kotlin
+@Composable
+fun CustomImagePicker() {
+    var showPicker by remember { mutableStateOf(false) }
+    if (showPicker) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result -> showPicker = false },
+                onError = { exception -> showPicker = false },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    preference = CapturePhotoPreference.HIGH_QUALITY,
+                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                        customPermissionHandler = { config ->
+                            // Custom permission handling
+                        },
+                        customConfirmationView = { result, onConfirm, onRetry ->
+                            // Custom confirmation view
+                        }
+                    )
+                )
+            )
+        )
+    }
+    Button(onClick = { showPicker = true }) {
+        Text("Take Photo")
+    }
+} 

@@ -6,161 +6,191 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import io.github.ismoy.imagepickerkmp.CameraPhotoHandler.PhotoResult
 import platform.Foundation.setValue
 import platform.UIKit.UIAlertAction
 import platform.UIKit.UIAlertController
 import platform.UIKit.UIAlertControllerStyleActionSheet
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.Dp
-import io.github.ismoy.imagepickerkmp.StringResource
+
+@Suppress("FunctionNaming")
 @Composable
 actual fun ImagePickerLauncher(
     context: Any?,
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onPhotosSelected: ((List<GalleryPhotoHandler.PhotoResult>) -> Unit)?,
-    onError: (Exception) -> Unit,
-    customPermissionHandler: ((PermissionConfig) -> Unit)?,
-    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?,
-    preference: CapturePhotoPreference?,
-    dialogTitle: String,
-    takePhotoText: String,
-    selectFromGalleryText: String,
-    cancelText: String,
-    buttonColor: Color?,
-    iconColor: Color?,
-    buttonSize: Dp?,
-    layoutPosition: String?,
-    flashIcon: ImageVector?,
-    switchCameraIcon: ImageVector?,
-    captureIcon: ImageVector?,
-    galleryIcon: ImageVector?,
-    onCameraReady: (() -> Unit)?,
-    onCameraSwitch: (() -> Unit)?,
-    onPermissionError: ((Exception) -> Unit)?,
-    onGalleryOpened: (() -> Unit)?,
-    allowMultiple: Boolean,
-    mimeTypes: List<String>
+    config: ImagePickerConfig
 ) {
-    // Debug: Probar localización
-    LaunchedEffect(Unit) {
-        testLocalization()
-    }
-    
-    // Forzar textos en inglés para iOS
-    val englishDialogTitle = "Select option"
-    val englishTakePhotoText = "Take photo"
-    val englishSelectFromGalleryText = "Select from gallery"
-    val englishCancelText = "Cancel"
-    
     var showDialog by remember { mutableStateOf(true) }
     var askCameraPermission by remember { mutableStateOf(false) }
     var launchCamera by remember { mutableStateOf(false) }
     var launchGallery by remember { mutableStateOf(false) }
 
+    handleImagePickerState(
+        showDialog = showDialog,
+        askCameraPermission = askCameraPermission,
+        launchCamera = launchCamera,
+        launchGallery = launchGallery,
+        config = config,
+        onDismissDialog = { showDialog = false },
+        onRequestCameraPermission = { askCameraPermission = true },
+        onRequestGallery = { launchGallery = true },
+        onCameraPermissionGranted = {
+            askCameraPermission = false
+            launchCamera = true
+        },
+        onCameraPermissionDenied = { askCameraPermission = false },
+        onCameraFinished = { launchCamera = false },
+        onGalleryFinished = { launchGallery = false }
+    )
+}
+@Suppress("LongParameterList","LongMethod")
+@Composable
+private fun handleImagePickerState(
+    showDialog: Boolean,
+    askCameraPermission: Boolean,
+    launchCamera: Boolean,
+    launchGallery: Boolean,
+    config: ImagePickerConfig,
+    onDismissDialog: () -> Unit,
+    onRequestCameraPermission: () -> Unit,
+    onRequestGallery: () -> Unit,
+    onCameraPermissionGranted: () -> Unit,
+    onCameraPermissionDenied: () -> Unit,
+    onCameraFinished: () -> Unit,
+    onGalleryFinished: () -> Unit
+) {
     if (showDialog) {
-        LaunchedEffect(Unit) {
-            val rootVC = ViewControllerProvider.getRootViewController() ?: return@LaunchedEffect
-            val alert = UIAlertController.alertControllerWithTitle(
-                title = englishDialogTitle,
-                message = null,
-                preferredStyle = UIAlertControllerStyleActionSheet
-            )
-            alert.addAction(
-                UIAlertAction.actionWithTitle(
-                    title = englishTakePhotoText,
-                    style = 0,
-                    handler = {
-                        showDialog = false
-                        askCameraPermission = true
-                    }
-                )
-            )
-            alert.addAction(
-                UIAlertAction.actionWithTitle(
-                    title = englishSelectFromGalleryText,
-                    style = 0,
-                    handler = {
-                        showDialog = false
-                        launchGallery = true
-                    }
-                )
-            )
-            val spacerAction = UIAlertAction.actionWithTitle(
-                title = " ",
-                style = 0,
-                handler = null
-            )
-            spacerAction.setValue(false, forKey = "enabled")
-            alert.addAction(spacerAction)
-            alert.addAction(
-                UIAlertAction.actionWithTitle(
-                    title = englishCancelText,
-                    style = 1,
-                    handler = {
-                        showDialog = false
-                    }
-                )
-            )
-            rootVC.presentViewController(alert, animated = true, completion = null)
-        }
+        showImagePickerDialog(
+            onTakePhoto = {
+                onDismissDialog()
+                onRequestCameraPermission()
+            },
+            onSelectFromGallery = {
+                onDismissDialog()
+                onRequestGallery()
+            },
+            onCancel = onDismissDialog
+        )
     }
 
     if (askCameraPermission) {
-        // Forzar textos en inglés para los diálogos de permisos
-        RequestCameraPermission(
-            titleDialogConfig = "Camera permission required",
-            descriptionDialogConfig = "Camera permission is required to capture photos. Please grant it in settings",
-            btnDialogConfig = "Grant permission",
-            titleDialogDenied = "Camera permission denied",
-            descriptionDialogDenied = "Camera permission is required to capture photos. Please grant the permissions",
-            btnDialogDenied = "Open settings",
-            customDeniedDialog = null,
-            customSettingsDialog = null,
-            onPermissionPermanentlyDenied = {},
-            onResult = { granted ->
-                askCameraPermission = false
-                if (granted) {
-                    launchCamera = true
-                }
-            },
-            customPermissionHandler = null
+        handleCameraPermission(
+            onGranted = onCameraPermissionGranted,
+            onDenied = onCameraPermissionDenied
         )
     }
 
     if (launchCamera) {
-        LaunchedEffect(Unit) {
-            PhotoCaptureOrchestrator.launchCamera(
-                onPhotoCaptured = { result ->
-                    onPhotoCaptured(result)
-                },
-                onError = { exception ->
-                    onError(exception)
-                }
-            )
-            launchCamera = false
-        }
+        launchCameraInternal(
+            onPhotoCaptured = config.onPhotoCaptured,
+            onError = config.onError,
+            onFinish = onCameraFinished
+        )
     }
 
     if (launchGallery) {
-        LaunchedEffect(Unit) {
-            GalleryPickerOrchestrator.launchGallery(
-                onPhotoSelected = { result ->
-                    onPhotosSelected?.invoke(listOf(result))
-                    onPhotoCaptured(
-                        PhotoResult(
-                            uri = result.uri,
-                            width = result.width,
-                            height = result.height
-                        )
+        launchGalleryInternal(
+            onPhotoSelected = { result ->
+                config.onPhotosSelected?.invoke(listOf(result))
+                config.onPhotoCaptured(
+                    CameraPhotoHandler.PhotoResult(
+                        uri = result.uri,
+                        width = result.width,
+                        height = result.height
                     )
-                },
-                onError = { exception ->
-                    onError(exception)
-                }
-            )
-            launchGallery = false
-        }
+                )
+            },
+            onError = config.onError,
+            onFinish = onGalleryFinished
+        )
+    }
+}
+
+@Composable
+private fun showImagePickerDialog(
+    onTakePhoto: () -> Unit,
+    onSelectFromGallery: () -> Unit,
+    onCancel: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        val rootVC = ViewControllerProvider.getRootViewController() ?: return@LaunchedEffect
+        val alert = UIAlertController.alertControllerWithTitle(
+            title = "Select option",
+            message = null,
+            preferredStyle = UIAlertControllerStyleActionSheet
+        )
+        alert.addAction(
+            UIAlertAction.actionWithTitle("Take photo", 0) { onTakePhoto() }
+        )
+        alert.addAction(
+            UIAlertAction.actionWithTitle("Select from gallery", 0) { onSelectFromGallery() }
+        )
+        val spacerAction = UIAlertAction.actionWithTitle(" ", 0, null)
+        spacerAction.setValue(false, forKey = "enabled")
+        alert.addAction(spacerAction)
+        alert.addAction(
+            UIAlertAction.actionWithTitle("Cancel", 1) { onCancel() }
+        )
+        rootVC.presentViewController(alert, animated = true, completion = null)
+    }
+}
+
+@Composable
+private fun handleCameraPermission(
+    onGranted: () -> Unit,
+    onDenied: () -> Unit
+) {
+    val dialogConfig = CameraPermissionDialogConfig(
+        titleDialogConfig = "Camera permission required",
+        descriptionDialogConfig = "Camera permission is required to capture photos. Please grant it in settings",
+        btnDialogConfig = "Grant permission",
+        titleDialogDenied = "Camera permission denied",
+        descriptionDialogDenied = "Camera permission is required to capture photos. Please grant the permissions",
+        btnDialogDenied = "Open settings",
+        customDeniedDialog = null,
+        customSettingsDialog = null
+    )
+    RequestCameraPermission(
+        dialogConfig = dialogConfig,
+        onPermissionPermanentlyDenied = {},
+        onResult = { granted -> if (granted) onGranted() else onDenied() },
+        customPermissionHandler = null
+    )
+}
+
+@Composable
+private fun launchCameraInternal(
+    onPhotoCaptured: (CameraPhotoHandler.PhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    onFinish: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        PhotoCaptureOrchestrator.launchCamera(
+            onPhotoCaptured = {
+                onPhotoCaptured(it)
+                onFinish()
+            },
+            onError = {
+                onError(it)
+                onFinish()
+            }
+        )
+    }
+}
+
+@Composable
+private fun launchGalleryInternal(
+    onPhotoSelected: (GalleryPhotoHandler.PhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    onFinish: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        GalleryPickerOrchestrator.launchGallery(
+            onPhotoSelected = {
+                onPhotoSelected(it)
+                onFinish()
+            },
+            onError = {
+                onError(it)
+                onFinish()
+            }
+        )
     }
 }

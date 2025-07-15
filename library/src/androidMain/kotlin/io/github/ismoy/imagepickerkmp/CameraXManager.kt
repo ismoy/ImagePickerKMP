@@ -4,6 +4,11 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.camera.view.PreviewView
 
+/**
+ * High-level manager for camera operations, providing an interface to start, stop, and control the camera.
+ *
+ * This class abstracts camera control and image processing for use in Compose UI.
+ */
 class CameraXManager (
     context: Context,
     activity: ComponentActivity
@@ -39,5 +44,5 @@ class CameraXManager (
     }
 
     val flashModes: List<CameraController.FlashMode>
-        get() = CameraController.FlashMode.values().toList()
+        get() = CameraController.FlashMode.entries
 }

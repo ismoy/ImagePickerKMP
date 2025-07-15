@@ -104,16 +104,18 @@ fun SimpleImagePicker() {
     if (showPicker) {
         ImagePickerLauncher(
             context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Manejar captura exitosa
-                println("Photo captured: ${result.uri}")
-                showPicker = false
-            },
-            onError = { exception ->
-                // Manejar errores
-                println("Error: ${exception.message}")
-                showPicker = false
-            }
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    // Manejar captura exitosa
+                    println("Photo captured: ${result.uri}")
+                    showPicker = false
+                },
+                onError = { exception ->
+                    // Manejar errores
+                    println("Error: ${exception.message}")
+                    showPicker = false
+                }
+            )
         )
     }
     
@@ -133,27 +135,33 @@ fun CustomImagePicker() {
     if (showPicker) {
         ImagePickerLauncher(
             context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Manejar captura
-                showPicker = false
-            },
-            onError = { exception ->
-                // Manejar errores
-                showPicker = false
-            },
-            customPermissionHandler = { config ->
-                // Manejo personalizado de permisos
-                println("Custom permission config: ${config.titleDialogConfig}")
-            },
-            customConfirmationView = { result, onConfirm, onRetry ->
-                // Vista de confirmación personalizada
-                CustomConfirmationDialog(
-                    result = result,
-                    onConfirm = onConfirm,
-                    onRetry = onRetry
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    // Manejar captura
+                    showPicker = false
+                },
+                onError = { exception ->
+                    // Manejar errores
+                    showPicker = false
+                },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    preference = CapturePhotoPreference.HIGH_QUALITY,
+                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                        customPermissionHandler = { config ->
+                            // Manejo personalizado de permisos
+                            println("Custom permission config: ${config.titleDialogConfig}")
+                        },
+                        customConfirmationView = { result, onConfirm, onRetry ->
+                            // Vista de confirmación personalizada
+                            CustomConfirmationDialog(
+                                result = result,
+                                onConfirm = onConfirm,
+                                onRetry = onRetry
+                            )
+                        }
+                    )
                 )
-            },
-            preference = CapturePhotoPreference.HIGH_QUALITY
+            )
         )
     }
     
@@ -515,14 +523,33 @@ fun SharedImagePicker(
         if (showPicker) {
             ImagePickerLauncher(
                 context = LocalContext.current,
-                onPhotoCaptured = { result ->
-                    onPhotoCaptured(result)
-                    showPicker = false
-                },
-                onError = { exception ->
-                    onError(exception)
-                    showPicker = false
-                }
+                config = ImagePickerConfig(
+                    onPhotoCaptured = { result ->
+                        onPhotoCaptured(result)
+                        showPicker = false
+                    },
+                    onError = { exception ->
+                        onError(exception)
+                        showPicker = false
+                    },
+                    cameraCaptureConfig = CameraCaptureConfig(
+                        preference = CapturePhotoPreference.HIGH_QUALITY,
+                        permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                            customPermissionHandler = { config ->
+                                // Manejo personalizado de permisos
+                                println("Custom permission config: ${config.titleDialogConfig}")
+                            },
+                            customConfirmationView = { result, onConfirm, onRetry ->
+                                // Vista de confirmación personalizada
+                                CustomConfirmationDialog(
+                                    result = result,
+                                    onConfirm = onConfirm,
+                                    onRetry = onRetry
+                                )
+                            }
+                        )
+                    )
+                )
             )
         }
     }
@@ -583,319 +610,3 @@ fun IOSApp() {
 ```
 
 Este enfoque proporciona una sola UI que funciona en ambas plataformas con el mismo código base.
-        onPhotoCaptured = onPhotoCaptured,
-        onError = onError
-    )
-}
-
-// Implementación de Android
-@Composable
-fun AndroidImagePicker() {
-    var showPicker by remember { mutableStateOf(false) }
-    
-    Column {
-        Button(onClick = { showPicker = true }) {
-            Text("Tomar Foto")
-        }
-        
-        if (showPicker) {
-            SharedImagePicker(
-                onPhotoCaptured = { result ->
-                    println("Foto capturada en Android: ${result.uri}")
-                    showPicker = false
-                },
-                onError = { exception ->
-                    println("Error en Android: ${exception.message}")
-                    showPicker = false
-                }
-            )
-        }
-    }
-}
-
-// Implementación de iOS (en Kotlin)
-@Composable
-fun IOSImagePicker() {
-    var showPicker by remember { mutableStateOf(false) }
-    
-    Column {
-        Button(onClick = { showPicker = true }) {
-            Text("Tomar Foto")
-        }
-        
-        if (showPicker) {
-            SharedImagePicker(
-                onPhotoCaptured = { result ->
-                    println("Foto capturada en iOS: ${result.uri}")
-                    showPicker = false
-                },
-                onError = { exception ->
-                    println("Error en iOS: ${exception.message}")
-                    showPicker = false
-                }
-            )
-        }
-    }
-}
-```
-
-## Solución de Problemas
-
-### Problemas comunes
-
-#### 1. Permiso denegado
-
-**Problema**: Permiso de cámara denegado y no aparece diálogo de reintento.
-
-**Solución**: Asegúrate de usar el componente `RequestCameraPermission`:
-
-```kotlin
-@Composable
-fun RequestCameraPermission(
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit
-) {
-    // La implementación maneja diferencias de plataforma
-}
-```
-
-#### 2. La cámara no inicia
-
-**Problema**: La cámara no inicia tras conceder el permiso.
-
-**Solución**: Verifica permisos y hardware de cámara:
-
-```kotlin
-// Verifica si hay cámara disponible
-val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-val cameraIds = cameraManager.cameraIdList
-if (cameraIds.isNotEmpty()) {
-    // Hay cámara disponible
-}
-```
-
-#### 3. Errores de build en iOS
-
-**Problema**: El build de iOS falla con errores de linking.
-
-**Solución**: Asegúrate de configurar correctamente el framework:
-
-```kotlin
-kotlin {
-    ios {
-        binaries {
-            framework {
-                baseName = "ImagePickerKMP"
-                isStatic = false
-            }
-        }
-    }
-}
-```
-
-#### 4. Problemas de memoria
-
-**Problema**: La app se cierra por problemas de memoria con imágenes grandes.
-
-**Solución**: Implementa compresión de imagen:
-
-```kotlin
-@Composable
-fun ImagePickerWithCompression() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Comprime la imagen antes de procesar
-            val compressedImage = compressImage(result.uri)
-        }
-    )
-}
-```
-
-### Consejos de depuración
-
-1. **Habilita logs**:
-```kotlin
-// Añade logs para rastrear problemas
-ImagePickerLauncher(
-    context = LocalContext.current,
-    onPhotoCaptured = { result ->
-        Log.d("ImagePicker", "Photo captured: ${result.uri}")
-    },
-    onError = { exception ->
-        Log.e("ImagePicker", "Error: ${exception.message}", exception)
-    }
-)
-```
-
-2. **Verifica permisos**:
-```kotlin
-// Depura el estado de permisos
-fun checkCameraPermission(context: Context): Boolean {
-    return ContextCompat.checkSelfPermission(
-        context, 
-        Manifest.permission.CAMERA
-    ) == PackageManager.PERMISSION_GRANTED
-}
-```
-
-3. **Prueba en diferentes dispositivos**:
-- Prueba en dispositivos físicos, no solo emuladores
-- Prueba en diferentes versiones de Android
-- Prueba en diferentes versiones de iOS
-
-## Migración desde otras librerías
-
-### Desde CameraX
-
-```kotlin
-// Implementación antigua con CameraX
-class CameraXImplementation {
-    fun startCamera() {
-        // Código CameraX
-    }
-}
-
-// Nueva implementación con ImagePickerKMP
-@Composable
-fun ImagePickerKMPImplementation() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Manejar captura
-        },
-        onError = { exception ->
-            // Manejar errores
-        }
-    )
-}
-```
-
-### Desde UIImagePickerController (iOS)
-
-```swift
-// Implementación antigua con UIImagePickerController
-let imagePicker = UIImagePickerController()
-imagePicker.sourceType = .camera
-present(imagePicker, animated: true)
-
-// Nueva implementación con ImagePickerKMP
-@Composable
-fun ImagePickerKMPImplementation() {
-    ImagePickerLauncher(
-        context = null,
-        onPhotoCaptured = { result ->
-            // Manejar captura
-        },
-        onError = { exception ->
-            // Manejar errores
-        }
-    )
-}
-```
-
-## Buenas Prácticas
-
-### 1. Manejo de errores
-
-```kotlin
-@Composable
-fun RobustImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            try {
-                // Procesar foto de forma segura
-                processPhoto(result)
-            } catch (e: Exception) {
-                // Manejar errores de procesamiento
-                showError("Error al procesar la foto: ${e.message}")
-            }
-        },
-        onError = { exception ->
-            when (exception) {
-                is CameraPermissionException -> {
-                    showPermissionError()
-                }
-                is PhotoCaptureException -> {
-                    showCaptureError()
-                }
-                else -> {
-                    showGenericError()
-                }
-            }
-        }
-    )
-}
-```
-
-### 2. Gestión de memoria
-
-```kotlin
-@Composable
-fun MemoryEfficientImagePicker() {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Guarda URI en vez de Bitmap para ahorrar memoria
-            imageUri = result.uri
-        },
-        onError = { exception ->
-            // Manejar errores
-        }
-    )
-    
-    // Carga la imagen solo cuando sea necesario
-    imageUri?.let { uri ->
-        AsyncImage(
-            model = uri,
-            contentDescription = "Captured photo"
-        )
-    }
-}
-```
-
-### 3. Experiencia de usuario
-
-```kotlin
-@Composable
-fun UserFriendlyImagePicker() {
-    var isLoading by remember { mutableStateOf(false) }
-    
-    if (isLoading) {
-        CircularProgressIndicator()
-    } else {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                isLoading = true
-                // Procesar foto
-                processPhoto(result) {
-                    isLoading = false
-                }
-            },
-            onError = { exception ->
-                // Mostrar mensaje de error amigable
-                showSnackbar("No se pudo capturar la foto. Intenta de nuevo.")
-            }
-        )
-    }
-}
-```
-
-## Soporte
-
-Si encuentras problemas durante la integración:
-
-1. **Revisa la documentación**: Consulta esta guía y otros documentos
-2. **Busca issues**: Revisa problemas similares en el repositorio de GitHub
-3. **Crea un issue**: Proporciona información detallada sobre tu problema
-4. **Soporte comunitario**: Pregunta en los foros de la comunidad
-
-Para más detalles, consulta [Guía de Personalización](docs/CUSTOMIZATION_GUIDE.es.md).
-
-Consulta [Referencia de API](docs/API_REFERENCE.es.md) para documentación completa.
-
-Consulta [Ejemplos](docs/EXAMPLES.es.md) para más casos de uso. 

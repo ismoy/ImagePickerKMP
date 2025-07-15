@@ -8,7 +8,11 @@ import platform.UIKit.UIImagePickerControllerOriginalImage
 import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.darwin.NSObject
 
-
+/**
+ * Delegate for handling UIImagePickerController events and photo capture results on iOS.
+ *
+ * This class processes captured images and communicates results or errors to the caller.
+ */
 class CameraDelegate(
     private val onPhotoCaptured: (PhotoResult) -> Unit,
     private val onError: (Exception) -> Unit

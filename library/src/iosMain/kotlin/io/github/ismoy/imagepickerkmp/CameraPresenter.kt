@@ -5,6 +5,11 @@ import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UIViewController
 import io.github.ismoy.imagepickerkmp.CameraPhotoHandler.PhotoResult
 
+/**
+ * Presents the camera interface on iOS and handles photo capture results.
+ *
+ * This object manages the presentation and delegation of the camera view controller.
+ */
 object CameraPresenter {
 
     private var cameraDelegate: CameraDelegate? = null

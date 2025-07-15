@@ -2,6 +2,11 @@ package io.github.ismoy.imagepickerkmp
 
 import io.github.ismoy.imagepickerkmp.GalleryPhotoHandler.PhotoResult
 
+/**
+ * Orchestrates the presentation and handling of the gallery picker on iOS.
+ *
+ * Provides a method to launch the gallery and handle photo selection or errors.
+ */
 object GalleryPickerOrchestrator {
     fun launchGallery(
         onPhotoSelected: (PhotoResult) -> Unit,
@@ -18,4 +23,4 @@ object GalleryPickerOrchestrator {
             onError(Exception("Failed to launch gallery: ${e.message}"))
         }
     }
-} 
+}

@@ -28,82 +28,113 @@ import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun CustomPermissionDialog(
-    title:String,
-    description:String,
-    confirmationButtonText:String,
-    onConfirm: () -> Unit){
+    title: String,
+    description: String,
+    confirmationButtonText: String,
+    onConfirm: () -> Unit
+) {
     Dialog(
         onDismissRequest = {},
         properties = DialogProperties(
             dismissOnClickOutside = false,
             dismissOnBackPress = true
         )
-    ){
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(8.dp)
+    ) {
+        DialogContent(
+            title = title,
+            description = description,
+            confirmationButtonText = confirmationButtonText,
+            onConfirm = onConfirm
+        )
+    }
+}
 
-                )
-        ){
-            Column(modifier = Modifier
+@Composable
+private fun DialogContent(
+    title: String,
+    description: String,
+    confirmationButtonText: String,
+    onConfirm: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(8.dp)
+            )
+    ) {
+        Column(
+            modifier = Modifier
                 .padding(24.dp)
                 .background(color = Color.White),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            DialogTitle(title)
+            Spacer(modifier = Modifier.height(8.dp))
+            DialogDescription(description)
+            Spacer(modifier = Modifier.height(24.dp))
+            DialogButtons(confirmationButtonText, onConfirm)
+        }
+    }
+}
 
-                Text(
-                    text = title,
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        textAlign = TextAlign.Center
-                    )
+@Composable
+private fun DialogTitle(title: String) {
+    Text(
+        text = title,
+        style = TextStyle(
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            textAlign = TextAlign.Center
+        )
+    )
+}
+
+@Composable
+private fun DialogDescription(description: String) {
+    Text(
+        text = description,
+        style = TextStyle(
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            color = Color.Gray,
+            textAlign = TextAlign.Center
+        )
+    )
+}
+
+@Composable
+private fun DialogButtons(
+    confirmationButtonText: String,
+    onConfirm: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        OutlinedButton(
+            onClick = onConfirm,
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = Color.Black
+            ),
+            border = BorderStroke(
+                1.dp,
+                color = Color.Blue
+            ),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .weight(1f)
+                .height(48.dp)
+        ) {
+            Text(
+                text = confirmationButtonText,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = description,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.Gray,
-                        textAlign = TextAlign.Center
-                    )
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                Row(modifier = Modifier
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-
-                    OutlinedButton(
-                        onClick = onConfirm,
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = Color.Black
-                        ),
-                        border = BorderStroke(
-                            1.dp,
-                            color = Color.Blue
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp)
-
-                        ){
-                        Text(
-                            text = confirmationButtonText,
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        )
-                    }
-
-                }
-
-            }
+            )
         }
     }
 }

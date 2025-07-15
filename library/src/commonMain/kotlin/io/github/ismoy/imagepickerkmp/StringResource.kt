@@ -3,13 +3,8 @@ package io.github.ismoy.imagepickerkmp
 import androidx.compose.runtime.Composable
 
 /**
- * Enum class que define todos los identificadores de strings utilizados en la librería.
- * Esto evita errores con textos hardcodeados y proporciona type safety.
- * 
- * Idiomas soportados:
- * - Inglés (en)
- * - Español (es) 
- * - Francés (fr)
+ * Enum that defines all string resources used in the ImagePicker library.
+ * This allows for type-safe and centralized string management.
  */
 enum class StringResource {
     CAMERA_PERMISSION_REQUIRED,
@@ -19,6 +14,7 @@ enum class StringResource {
     CAMERA_PERMISSION_DENIED_DESCRIPTION,
     GRANT_PERMISSION,
     CAMERA_PERMISSION_PERMANENTLY_DENIED,
+
     IMAGE_CONFIRMATION_TITLE,
     ACCEPT_BUTTON,
     RETRY_BUTTON,
