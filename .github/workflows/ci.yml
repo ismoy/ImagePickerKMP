@@ -331,10 +331,12 @@ jobs:
         id: detekt_issues
         run: |
           DETEKT_REPORT=library/build/reports/detekt/detekt.xml
+          ISSUES=0
           if [ -f "$DETEKT_REPORT" ]; then
-            ISSUES=$(grep -c '<error ' "$DETEKT_REPORT" || echo 0)
-          else
-            ISSUES=0
+            COUNT=$(grep -c '<error ' "$DETEKT_REPORT" 2>/dev/null || true)
+            if [[ "$COUNT" =~ ^[0-9]+$ ]]; then
+              ISSUES=$COUNT
+            fi
           fi
           echo "DEBUG: ISSUES=$ISSUES"
           echo "DEBUG: GITHUB_OUTPUT=$GITHUB_OUTPUT"
