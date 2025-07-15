@@ -1,3 +1,4 @@
+
 package io.github.ismoy.imagepickerkmp
 
 import android.Manifest
@@ -13,18 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import io.github.ismoy.imagepickerkmp.Constant.PERMISSION_COUNTER
+
 
 @Composable
 actual fun RequestCameraPermission(
-    titleDialogConfig: String,
-    descriptionDialogConfig: String,
-    btnDialogConfig: String,
-    titleDialogDenied: String,
-    descriptionDialogDenied: String,
-    btnDialogDenied: String,
-    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
-    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
+    dialogConfig: CameraPermissionDialogConfig,
     onPermissionPermanentlyDenied: () -> Unit,
     onResult: (Boolean) -> Unit,
     customPermissionHandler: (() -> Unit)?
@@ -66,30 +60,29 @@ actual fun RequestCameraPermission(
             }
         }
     }
-    
     if (showRationale) {
-        if (customDeniedDialog != null) {
-            customDeniedDialog {
+        if (dialogConfig.customDeniedDialog != null) {
+            dialogConfig.customDeniedDialog {
                 showRationale = false
                 permissionLauncher.launch(Manifest.permission.CAMERA)
             }
         } else {
             CustomPermissionDialog(
-                title = titleDialogDenied,
-                description = descriptionDialogDenied,
-                confirmationButtonText = btnDialogDenied,
+                title = dialogConfig.titleDialogDenied,
+                description = dialogConfig.descriptionDialogDenied,
+                confirmationButtonText = dialogConfig.btnDialogDenied,
                 onConfirm = {
                     showRationale = false
                     permissionLauncher.launch(Manifest.permission.CAMERA)
                 }
-
             )
         }
     }
 
     if (permissionDeniedPermanently && !hasCalledPermanentlyDenied){
-        if (customSettingsDialog != null){
-            customSettingsDialog { 
+        if (dialogConfig.customSettingsDialog != null){
+            dialogConfig.customSettingsDialog {
+
                 openAppSettings(context)
                 hasCalledPermanentlyDenied = true
                 onPermissionPermanentlyDenied()
@@ -97,10 +90,11 @@ actual fun RequestCameraPermission(
         }
         else {
             CustomPermissionDialog(
-                title = titleDialogConfig,
-                description = descriptionDialogConfig,
-                confirmationButtonText = btnDialogConfig,
-                onConfirm = { 
+                title = dialogConfig.titleDialogConfig,
+                description = dialogConfig.descriptionDialogConfig,
+                confirmationButtonText = dialogConfig.btnDialogConfig,
+                onConfirm = {
+
                     openAppSettings(context)
                     hasCalledPermanentlyDenied = true
                     onPermissionPermanentlyDenied()

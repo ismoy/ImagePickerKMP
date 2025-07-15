@@ -11,8 +11,179 @@ style:
   active: true
   MagicNumber:
     active: true
-    ignoreNumbers: ['-1', '0', '1', '2']
-  MagicString:
+    ignoreNumbers: ['-1', '0', '1', '2', '100', '1000']
+    ignoreHashCodeFunction: true
+    ignorePropertyDeclaration: true
+    ignoreLocalVariableDeclaration: true
+  MaxLineLength:
+    active: true
+    maxLineLength: 120
+  TrailingWhitespace:
+    active: true
+  UnusedImports:
+    active: true
+  ExpressionBodySyntax:
+    active: true
+  ReturnCount:
+    active: true
+    max: 2
+  ThrowsCount:
+    active: true
+    max: 2
+  MaxChainedCallsOnSameLine:
+    active: true
+    maxChainedCalls: 3
+  NewLineAtEndOfFile:
     active: true
 
- 
+complexity:
+  active: true
+  LongMethod:
+    active: true
+    threshold: 100
+  LargeClass:
+    active: true
+    threshold: 600
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 15
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 15
+    thresholdInClasses: 10
+    thresholdInObjects: 10
+    thresholdInInterfaces: 10
+  NestedBlockDepth:
+    active: true
+    threshold: 4
+  StringLiteralDuplication:
+    active: true
+    threshold: 3
+
+potential-bugs:
+  active: true
+  EqualsWithHashCodeExist:
+    active: true
+  ExplicitGarbageCollectionCall:
+    active: true
+  ImplicitUnitReturnType:
+    active: true
+  LateinitUsage:
+    active: true
+  UnsafeCallOnNullableType:
+    active: true
+  UnsafeCast:
+    active: true
+  UnnecessarySafeCall:
+    active: true
+  UnreachableCode:
+    active: true
+  IteratorHasNextCallsNextMethod:
+    active: true
+  IteratorNotThrowingNoSuchElementException:
+    active: true
+
+comments:
+  active: true
+  CommentOverPrivateFunction:
+    active: true
+  EndOfSentenceFormat:
+    active: true
+    endOfSentenceFormat: '[.?!]([ \t\n\r]+|$)'
+  UndocumentedPublicClass:
+    active: true
+  UndocumentedPublicFunction:
+    active: false
+
+performance:
+  active: true
+  ForEachOnRange:
+    active: true
+  SpreadOperator:
+    active: true
+  UnnecessaryTemporaryInstantiation:
+    active: true
+  ArrayPrimitive:
+    active: true
+  UnnecessaryPartOfBinaryExpression:
+    active: true
+
+empty-blocks:
+  active: true
+  EmptyCatchBlock:
+    active: true
+  EmptyClassBlock:
+    active: true
+  EmptyDefaultConstructor:
+    active: true
+  EmptyDoWhileBlock:
+    active: true
+  EmptyElseBlock:
+    active: true
+  EmptyFinallyBlock:
+    active: true
+  EmptyForBlock:
+    active: true
+  EmptyFunctionBlock:
+    active: true
+  EmptyIfBlock:
+    active: true
+  EmptyInitBlock:
+    active: true
+  EmptySecondaryConstructor:
+    active: true
+  EmptyTryBlock:
+    active: true
+  EmptyWhenBlock:
+    active: true
+  EmptyWhileBlock:
+    active: true
+
+naming:
+  active: true
+  ClassNaming:
+    active: true
+    classPattern: '[A-Z][a-zA-Z0-9]*'
+  FunctionNaming:
+    active: true
+    functionPattern: '[a-z][a-zA-Z0-9]*'
+    excludeClassPattern: ''
+    ignoreAnnotated:
+      - Composable
+
+  VariableNaming:
+    active: true
+    variablePattern: '[a-z][A-Za-z0-9]*'
+    excludeClassPattern: ''
+  EnumNaming:
+    active: true
+    enumEntryPattern: '[A-Z][_A-Z0-9]*'
+  PackageNaming:
+    active: true
+    packagePattern: '^[a-z]+(\.[a-z][a-z0-9]*)*$'
+
+coroutines:
+  active: true
+  RedundantSuspendModifier:
+    active: true
+  SuspendFunWithFlowReturnType:
+    active: true
+
+exceptions:
+  active: true
+  ExceptionRaisedInUnexpectedLocation:
+    active: true
+  InstanceOfCheckForException:
+    active: true
+  NotImplementedDeclaration:
+    active: true
+  PrintStackTrace:
+    active: true
+  RethrowCaughtException:
+    active: true
+  SwallowedException:
+    active: true
+  TooGenericExceptionCaught:
+    active: false
+  TooGenericExceptionThrown:
+    active: true

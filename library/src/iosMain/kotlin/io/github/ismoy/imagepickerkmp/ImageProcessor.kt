@@ -14,6 +14,12 @@ import platform.Foundation.writeToURL
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
 
+/**
+ * Handles image processing operations for iOS, including conversion, saving, and result creation.
+ *
+ * Provides methods to process images from the camera or gallery, convert them to JPEG,
+ * save them to disk, and return result data classes for use in the library.
+ */
 @OptIn(ExperimentalForeignApi::class)
 object ImageProcessor {
 
@@ -85,6 +91,7 @@ object ImageProcessor {
             val attrs = fileManager.attributesOfItemAtPath(fileURL.path!!, null)
             (attrs?.get("NSFileSize") as? NSNumber)?.longValue
         } catch (e: Exception) {
+            println("Error getting file size: \\${e.message}")
             null
         }
     }

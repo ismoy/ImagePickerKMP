@@ -102,16 +102,18 @@ fun SimpleImagePicker() {
     if (showPicker) {
         ImagePickerLauncher(
             context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Handle successful photo capture
-                println("Photo captured: ${result.uri}")
-                showPicker = false
-            },
-            onError = { exception ->
-                // Handle errors
-                println("Error: ${exception.message}")
-                showPicker = false
-            }
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    // Handle successful photo capture
+                    println("Photo captured: ${result.uri}")
+                    showPicker = false
+                },
+                onError = { exception ->
+                    // Handle errors
+                    println("Error: ${exception.message}")
+                    showPicker = false
+                }
+            )
         )
     }
     
@@ -131,27 +133,33 @@ fun CustomImagePicker() {
     if (showPicker) {
         ImagePickerLauncher(
             context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Handle photo capture
-                showPicker = false
-            },
-            onError = { exception ->
-                // Handle errors
-                showPicker = false
-            },
-            customPermissionHandler = { config ->
-                // Custom permission handling
-                println("Custom permission config: ${config.titleDialogConfig}")
-            },
-            customConfirmationView = { result, onConfirm, onRetry ->
-                // Custom confirmation view
-                CustomConfirmationDialog(
-                    result = result,
-                    onConfirm = onConfirm,
-                    onRetry = onRetry
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    // Handle photo capture
+                    showPicker = false
+                },
+                onError = { exception ->
+                    // Handle errors
+                    showPicker = false
+                },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    preference = CapturePhotoPreference.HIGH_QUALITY,
+                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                        customPermissionHandler = { config ->
+                            // Custom permission handling
+                            println("Custom permission config: ${config.titleDialogConfig}")
+                        },
+                        customConfirmationView = { result, onConfirm, onRetry ->
+                            // Custom confirmation view
+                            CustomConfirmationDialog(
+                                result = result,
+                                onConfirm = onConfirm,
+                                onRetry = onRetry
+                            )
+                        }
+                    )
                 )
-            },
-            preference = CapturePhotoPreference.HIGH_QUALITY
+            )
         )
     }
     
@@ -376,14 +384,33 @@ fun SharedImagePicker(
         if (showPicker) {
             ImagePickerLauncher(
                 context = LocalContext.current,
-                onPhotoCaptured = { result ->
-                    onPhotoCaptured(result)
-                    showPicker = false
-                },
-                onError = { exception ->
-                    onError(exception)
-                    showPicker = false
-                }
+                config = ImagePickerConfig(
+                    onPhotoCaptured = { result ->
+                        onPhotoCaptured(result)
+                        showPicker = false
+                    },
+                    onError = { exception ->
+                        onError(exception)
+                        showPicker = false
+                    },
+                    cameraCaptureConfig = CameraCaptureConfig(
+                        preference = CapturePhotoPreference.HIGH_QUALITY,
+                        permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                            customPermissionHandler = { config ->
+                                // Custom permission handling
+                                println("Custom permission config: ${config.titleDialogConfig}")
+                            },
+                            customConfirmationView = { result, onConfirm, onRetry ->
+                                // Custom confirmation view
+                                CustomConfirmationDialog(
+                                    result = result,
+                                    onConfirm = onConfirm,
+                                    onRetry = onRetry
+                                )
+                            }
+                        )
+                    )
+                )
             )
         }
     }

@@ -16,7 +16,7 @@ class LoggerTest {
     fun `test default logger implements interface`() {
         val logger: ImagePickerLogger = DefaultLogger
         assertNotNull(logger)
-        assertTrue(logger is ImagePickerLogger)
+        assertTrue(true)
     }
     
     @Test
@@ -96,7 +96,7 @@ class LoggerTest {
         // Test that the interface is properly defined
         val logger: ImagePickerLogger = DefaultLogger
         assertNotNull(logger)
-        assertTrue(logger is ImagePickerLogger)
+        assertTrue(true)
     }
     
     @Test

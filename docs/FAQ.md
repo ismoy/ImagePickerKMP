@@ -178,21 +178,30 @@ fun CustomPermissionHandler() {
 ```kotlin
 @Composable
 fun CustomImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Handle photo capture
-        },
-        onError = { exception ->
-            // Handle errors
-        },
-        customPermissionHandler = { config ->
-            // Custom permission dialog
-        },
-        customConfirmationView = { result, onConfirm, onRetry ->
-            // Custom confirmation view
-        }
-    )
+    var showPicker by remember { mutableStateOf(false) }
+    if (showPicker) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result -> showPicker = false },
+                onError = { exception -> showPicker = false },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    preference = CapturePhotoPreference.HIGH_QUALITY,
+                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                        customPermissionHandler = { config ->
+                            // Custom permission handling
+                        },
+                        customConfirmationView = { result, onConfirm, onRetry ->
+                            // Custom confirmation view
+                        }
+                    )
+                )
+            )
+        )
+    }
+    Button(onClick = { showPicker = true }) {
+        Text("Take Photo")
+    }
 }
 ```
 

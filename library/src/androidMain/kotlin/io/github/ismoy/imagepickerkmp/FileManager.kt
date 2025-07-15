@@ -8,6 +8,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Utility class for managing file operations related to image capture and storage.
+ *
+ * Provides methods to create image files and convert files to URI strings.
+ */
 class FileManager(private val context: Context) {
 
     fun createImageFile(): File {
@@ -16,7 +21,6 @@ class FileManager(private val context: Context) {
         return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
     }
 
-    fun fileToUriString(file: File): String {
-        return Uri.fromFile(file).toString()
-    }
+    fun fileToUriString(file: File): String = Uri.fromFile(file).toString()
+
 }

@@ -636,34 +636,40 @@ fun CompleteCustomImagePicker() {
     if (showPicker) {
         ImagePickerLauncher(
             context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Manejar captura exitosa
-                showPicker = false
-                processAndSavePhoto(result)
-            },
-            onError = { exception ->
-                // Manejar errores
-                showPicker = false
-                showErrorDialog(exception)
-            },
-            customPermissionHandler = { config ->
-                // Manejo de permisos personalizado
-                CustomPermissionDialog(
-                    title = config.titleDialogConfig,
-                    description = config.descriptionDialogConfig,
-                    onConfirm = { requestPermission() },
-                    onDismiss = { showPicker = false }
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    // Manejar captura exitosa
+                    showPicker = false
+                    processAndSavePhoto(result)
+                },
+                onError = { exception ->
+                    // Manejar errores
+                    showPicker = false
+                    showErrorDialog(exception)
+                },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    preference = CapturePhotoPreference.HIGH_QUALITY,
+                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                        customPermissionHandler = { config ->
+                            // Manejo de permisos personalizado
+                            CustomPermissionDialog(
+                                title = config.titleDialogConfig,
+                                description = config.descriptionDialogConfig,
+                                onConfirm = { requestPermission() },
+                                onDismiss = { showPicker = false }
+                            )
+                        },
+                        customConfirmationView = { result, onConfirm, onRetry ->
+                            // Vista de confirmación personalizada
+                            CustomConfirmationView(
+                                result = result,
+                                onConfirm = { onConfirm(result) },
+                                onRetry = { onRetry() }
+                            )
+                        }
+                    )
                 )
-            },
-            customConfirmationView = { result, onConfirm, onRetry ->
-                // Vista de confirmación personalizada
-                CustomConfirmationView(
-                    result = result,
-                    onConfirm = { onConfirm(result) },
-                    onRetry = { onRetry() }
-                )
-            },
-            preference = CapturePhotoPreference.HIGH_QUALITY
+            )
         )
     }
     
@@ -701,30 +707,37 @@ fun BrandedImagePicker() {
     ) {
         ImagePickerLauncher(
             context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Lógica específica de marca
-                trackBrandEvent("photo_captured")
-                processPhotoWithBranding(result)
-            },
-            onError = { exception ->
-                // Mensajería de error específica de marca
-                showBrandedErrorDialog(exception)
-            },
-            customPermissionHandler = { config ->
-                // Diálogo de permisos con marca
-                BrandedPermissionDialog(
-                    config = config,
-                    onConfirm = { requestPermission() }
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    // Lógica específica de marca
+                    trackBrandEvent("photo_captured")
+                    processPhotoWithBranding(result)
+                },
+                onError = { exception ->
+                    // Mensajería de error específica de marca
+                    showBrandedErrorDialog(exception)
+                },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    preference = CapturePhotoPreference.HIGH_QUALITY,
+                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                        customPermissionHandler = { config ->
+                            // Diálogo de permisos con marca
+                            BrandedPermissionDialog(
+                                config = config,
+                                onConfirm = { requestPermission() }
+                            )
+                        },
+                        customConfirmationView = { result, onConfirm, onRetry ->
+                            // Vista de confirmación con marca
+                            BrandedConfirmationView(
+                                result = result,
+                                onConfirm = { onConfirm(result) },
+                                onRetry = { onRetry() }
+                            )
+                        }
+                    )
                 )
-            },
-            customConfirmationView = { result, onConfirm, onRetry ->
-                // Vista de confirmación con marca
-                BrandedConfirmationView(
-                    result = result,
-                    onConfirm = { onConfirm(result) },
-                    onRetry = { onRetry() }
-                )
-            }
+            )
         )
     }
 }
@@ -737,15 +750,19 @@ fun BrandedImagePicker() {
 fun MinimalImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Manejo simple de la foto
-            savePhoto(result)
-        },
-        onError = { exception ->
-            // Manejo simple de errores
-            showToast(exception.message)
-        }
-        // Usa los componentes de UI por defecto
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                // Manejo simple de la foto
+                savePhoto(result)
+            },
+            onError = { exception ->
+                // Manejo simple de errores
+                showToast(exception.message)
+            },
+            cameraCaptureConfig = CameraCaptureConfig(
+                preference = CapturePhotoPreference.HIGH_QUALITY
+            )
+        )
     )
 }
 ```
@@ -763,12 +780,17 @@ fun ConsistentImagePicker() {
     MaterialTheme(colors = appTheme.colors) {
         ImagePickerLauncher(
             context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Handle photo capture
-            },
-            onError = { exception ->
-                // Handle errors
-            }
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    // Handle photo capture
+                },
+                onError = { exception ->
+                    // Handle errors
+                },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    preference = CapturePhotoPreference.HIGH_QUALITY
+                )
+            )
         )
     }
 }
@@ -781,20 +803,27 @@ fun ConsistentImagePicker() {
 fun AccessibleImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Handle photo capture
-        },
-        onError = { exception ->
-            // Handle errors
-        },
-        customConfirmationView = { result, onConfirm, onRetry ->
-            // Vista de confirmación accesible
-            AccessibleConfirmationView(
-                result = result,
-                onConfirm = { onConfirm(result) },
-                onRetry = { onRetry() }
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                // Handle photo capture
+            },
+            onError = { exception ->
+                // Handle errors
+            },
+            cameraCaptureConfig = CameraCaptureConfig(
+                preference = CapturePhotoPreference.HIGH_QUALITY,
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    customConfirmationView = { result, onConfirm, onRetry ->
+                        // Vista de confirmación accesible
+                        AccessibleConfirmationView(
+                            result = result,
+                            onConfirm = { onConfirm(result) },
+                            onRetry = { onRetry() }
+                        )
+                    }
+                )
             )
-        }
+        )
     )
 }
 ```
@@ -808,16 +837,21 @@ fun PerformantImagePicker() {
     
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Procesar foto en background
-            lifecycleScope.launch(Dispatchers.IO) {
-                val processed = processPhoto(result)
-                processedResult.value = processed
-            }
-        },
-        onError = { exception ->
-            // Manejar errores
-        }
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                // Procesar foto en background
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val processed = processPhoto(result)
+                    processedResult.value = processed
+                }
+            },
+            onError = { exception ->
+                // Manejar errores
+            },
+            cameraCaptureConfig = CameraCaptureConfig(
+                preference = CapturePhotoPreference.HIGH_QUALITY
+            )
+        )
     )
     
     // Mostrar resultado procesado
@@ -849,10 +883,15 @@ ImagePickerKMP incluye **corrección automática de orientación** que:
 // No necesitas hacer nada especial
 ImagePickerLauncher(
     context = LocalContext.current,
-    onPhotoCaptured = { result ->
-        // La imagen ya viene corregida automáticamente
-        // Tu cabeza aparecerá en la dirección correcta
-    }
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            // La imagen ya viene corregida automáticamente
+            // Tu cabeza aparecerá en la dirección correcta
+        },
+        cameraCaptureConfig = CameraCaptureConfig(
+            preference = CapturePhotoPreference.HIGH_QUALITY
+        )
+    )
 )
 ```
 

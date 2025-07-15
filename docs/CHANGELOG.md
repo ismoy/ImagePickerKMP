@@ -45,6 +45,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Disparador (capture button) always centered, gallery button does not push it
 - Front camera photos appearing mirrored or incorrectly oriented
 
+### Documentation
+
+- Thoroughly updated all Markdown documentation files to ensure all usage examples of `ImagePickerLauncher`, `GalleryPickerLauncher`, and related components reflect the current, real API.
+- Replaced all outdated examples using the old API (with top-level callbacks and handlers) with the correct pattern: all configuration and handlers are now shown nested inside `config = ImagePickerConfig(...)`, with custom handlers further nested as required.
+- Ensured all documentation in both English and Spanish is fully synchronized and accurate.
+
 ## [1.0.0] - 2025-01-15
 
 ### Added

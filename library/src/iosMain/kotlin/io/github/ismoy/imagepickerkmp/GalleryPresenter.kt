@@ -5,6 +5,11 @@ import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UIViewController
 import io.github.ismoy.imagepickerkmp.GalleryPhotoHandler.PhotoResult
 
+/**
+ * Presents the gallery picker interface on iOS and handles photo selection results.
+ *
+ * This object manages the presentation and delegation of the gallery view controller.
+ */
 object GalleryPresenter {
     private var galleryDelegate: GalleryDelegate? = null
 
@@ -42,4 +47,4 @@ object GalleryPresenter {
             delegate = galleryDelegate
         }
     }
-} 
+}

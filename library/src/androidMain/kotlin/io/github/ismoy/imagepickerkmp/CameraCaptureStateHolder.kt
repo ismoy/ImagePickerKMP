@@ -1,18 +1,22 @@
 package io.github.ismoy.imagepickerkmp
 
-import android.content.Context
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.github.ismoy.imagepickerkmp.ImagePickerUiConstants.DELAY_TO_TAKE_PHOTO
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
+/**
+ * Holds and manages the state for camera capture operations, including flash mode, loading state,
+ * and camera switching.
+ *
+ * This class coordinates camera actions and state updates for the UI.
+ */
 class CameraCaptureStateHolder(
-    private val context: Context,
     private val cameraManager: CameraXManager,
     private val previewView: PreviewView,
     private val preference: CapturePhotoPreference,
@@ -25,10 +29,13 @@ class CameraCaptureStateHolder(
     var showFlashOverlay by mutableStateOf(false)
         private set
     val flashModes: List<CameraController.FlashMode> = cameraManager.flashModes
-
     private var cameraJob: Job? = null
 
-    fun startCamera(onError: (Exception) -> Unit) {
+    fun startCamera(
+        onError: (Exception) -> Unit,
+        onCameraReady: (() -> Unit)? = null,
+        onPermissionError: ((Exception) -> Unit)? = null
+    ) {
         cameraJob?.cancel()
         cameraJob = coroutineScope.launch {
             try {
@@ -36,19 +43,29 @@ class CameraCaptureStateHolder(
                 cameraManager.setFlashMode(flashMode)
                 cameraManager.startCamera(previewView, preference)
                 isLoading = false
+                onCameraReady?.invoke()
             } catch (e: Exception) {
                 isLoading = false
-                onError(e)
+                if (e.message?.contains("permission", ignoreCase = true) == true ||
+                    e.message?.contains("camera", ignoreCase = true) == true) {
+                    onPermissionError?.invoke(e)
+                } else {
+                    onError(e)
+                }
             }
         }
     }
 
-    fun switchCamera(onError: (Exception) -> Unit) {
+    fun switchCamera(
+        onError: (Exception) -> Unit,
+        onCameraSwitch: (() -> Unit)? = null
+    ) {
         cameraJob?.cancel()
         cameraJob = coroutineScope.launch {
             try {
                 cameraManager.switchCamera()
                 cameraManager.startCamera(previewView, preference)
+                onCameraSwitch?.invoke()
             } catch (e: Exception) {
                 onError(e)
             }
@@ -69,13 +86,8 @@ class CameraCaptureStateHolder(
         showFlashOverlay = true
         cameraManager.takePicture(onPhotoResult, onError)
         coroutineScope.launch {
-            kotlinx.coroutines.delay(120)
+            delay(DELAY_TO_TAKE_PHOTO)
             showFlashOverlay = false
         }
     }
-
-    fun stopCamera() {
-        cameraJob?.cancel()
-        cameraManager.stopCamera()
-    }
-} 
+}

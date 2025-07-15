@@ -47,6 +47,12 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Disparador (botón de captura) siempre centrado, botón de galería no lo empuja
 - Fotos de cámara frontal apareciendo espejadas o incorrectamente orientadas
 
+### Documentación
+
+- Actualización exhaustiva de todos los archivos de documentación en Markdown para asegurar que todos los ejemplos de uso de `ImagePickerLauncher`, `GalleryPickerLauncher` y componentes relacionados reflejen la API real y actual.
+- Se reemplazaron todos los ejemplos obsoletos que usaban la API antigua (callbacks y handlers como parámetros sueltos) por el patrón correcto: toda la configuración y handlers ahora se muestran anidados dentro de `config = ImagePickerConfig(...)`, con handlers personalizados anidados según corresponda.
+- Se garantizó que toda la documentación, tanto en inglés como en español, esté completamente sincronizada y sea precisa.
+
 ## [1.0.0] - 2024-01-15
 
 ### Añadido

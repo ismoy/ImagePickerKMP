@@ -9,6 +9,7 @@ plugins {
     id("com.vanniktech.maven.publish") version "0.30.0"
     id("maven-publish")
     id("jacoco")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 jacoco {
@@ -52,7 +53,6 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     )
 }
 
-// Configuración de verificación de cobertura
 tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
     dependsOn("jacocoTestReport")
     violationRules {
@@ -152,6 +152,7 @@ kotlin {
             tasks.withType<ProcessResources> {
                 duplicatesStrategy = DuplicatesStrategy.INCLUDE
             }
+            resources.srcDir("src/commonMain/resources")
             dependencies {}
         }
         
@@ -225,17 +226,11 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-val mavenCentralUsername: String? = project.findProperty("MAVEN_CENTRAL_USERNAME") as String?
-val mavenCentralPassword: String? = project.findProperty("MAVEN_CENTRAL_PASSWORD") as String?
-val signingKeyId: String? = project.findProperty("SIGNING_KEY_ID") as String?
-val signingPassword: String? = project.findProperty("SIGNING_PASSWORD") as String?
-val signingSecretKeyRingFile: String? = project.findProperty("SIGNING_SECRET_KEY_RING_FILE") as String?
-
 mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.0"
+        version = "1.0.21"
     )
     pom {
         name.set("ImagePickerKMP")
@@ -296,4 +291,28 @@ afterEvaluate {
 dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("junit:junit:4.13.2")
+}
+
+// Detekt configuration
+detekt {
+    config.setFrom(files("${rootProject.projectDir}/detekt.yml"))
+    source.setFrom(
+        files(
+            "src/commonMain/kotlin",
+            "src/androidMain/kotlin",
+            "src/iosMain/kotlin"
+        )
+    )
+    buildUponDefaultConfig = true
+    allRules = false
+    disableDefaultRuleSets = false
+    debug = false
+    parallel = true
+    ignoreFailures = false
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        txt.enabled = true
+        sarif.enabled = true
+    }
 }

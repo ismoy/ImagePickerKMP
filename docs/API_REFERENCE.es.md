@@ -25,12 +25,12 @@ La funcionalidad de captura de foto en ImagePickerKMP permite a los desarrollado
 ```kotlin
 ImagePickerLauncher(
     context = context,
-    onPhotoCaptured = { result ->
-        // Aquí recibes el resultado de la foto (uri, width, height)
-    },
-    onError = { exception ->
-        // Manejo de errores
-    }
+        onPhotoCaptured = { result ->
+            // Aquí recibes el resultado de la foto (uri, width, height)
+        },
+        onError = { exception ->
+            // Manejo de errores
+        }
 )
 ```
 
@@ -41,18 +41,18 @@ ImagePickerLauncher(
 ```kotlin
 ImagePickerLauncher(
     context = context,
-    onPhotoCaptured = { result -> /* ... */ },
-    onError = { exception -> /* ... */ },
-    customConfirmationView = { result, onConfirm, onRetry ->
-        ImageConfirmationViewWithCustomButtons(
-            result = result,
-            onConfirm = onConfirm,
-            onRetry = onRetry,
-            questionText = "¿Estás satisfecho con la foto?",
-            retryText = "Reintentar",
-            acceptText = "Aceptar"
-        )
-    }
+        onPhotoCaptured = { result -> /* ... */ },
+        onError = { exception -> /* ... */ },
+                customConfirmationView = { result, onConfirm, onRetry ->
+                    ImageConfirmationViewWithCustomButtons(
+                        result = result,
+                        onConfirm = onConfirm,
+                        onRetry = onRetry,
+                        questionText = "¿Estás satisfecho con la foto?",
+                        retryText = "Reintentar",
+                        acceptText = "Aceptar"
+                    )
+                }
 )
 ```
 
@@ -107,11 +107,11 @@ La funcionalidad de galería en ImagePickerKMP permite a los desarrolladores int
 ```kotlin
 ImagePickerLauncher(
     context = context,
-    onPhotoCaptured = { result ->
-        // Aquí recibes el resultado de la imagen seleccionada (uri, width, height)
-    },
-    onError = { exception ->
-        // Manejo de errores
+        onPhotoCaptured = { result ->
+            // Aquí recibes el resultado de la imagen seleccionada (uri, width, height)
+        },
+        onError = { exception ->
+            // Manejo de errores
     },
     // No es necesario customConfirmationView si solo quieres la galería estándar
 )
@@ -124,17 +124,17 @@ ImagePickerLauncher(
 ```kotlin
 ImagePickerLauncher(
     context = context,
-    onPhotoCaptured = { result -> /* ... */ },
-    onError = { exception -> /* ... */ },
-    customConfirmationView = { result, onConfirm, onRetry ->
-        MyCustomGalleryConfirmation(
-            result = result,
-            onConfirm = onConfirm,
-            onRetry = onRetry,
-            questionText = "¿Quieres usar esta imagen?",
-            retryText = "Elegir otra",
-            acceptText = "Usar imagen"
-        )
+        onPhotoCaptured = { result -> /* ... */ },
+        onError = { exception -> /* ... */ },
+            customConfirmationView = { result, onConfirm, onRetry ->
+                MyCustomGalleryConfirmation(
+                    result = result,
+                    onConfirm = onConfirm,
+                    onRetry = onRetry,
+                    questionText = "¿Quieres usar esta imagen?",
+                    retryText = "Elegir otra",
+                    acceptText = "Usar imagen"
+                )
     },
     // Puedes agregar parámetros para selección múltiple o filtros si tu implementación lo soporta
 )
@@ -210,12 +210,12 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
     )
 }
 ```
@@ -512,13 +512,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -764,13 +764,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -1016,13 +1016,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -1268,13 +1268,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -1520,13 +1520,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -1772,13 +1772,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -2024,13 +2024,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -2276,13 +2276,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -2528,13 +2528,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -2780,13 +2780,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -3032,13 +3032,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
@@ -3284,13 +3284,13 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
+            onPhotoCaptured = { result ->
+                println("Photo captured: ${result.uri}")
+            },
+            onError = { exception ->
+                println("Error: ${exception.message}")
+            }
+        )
 }
 ```
 
