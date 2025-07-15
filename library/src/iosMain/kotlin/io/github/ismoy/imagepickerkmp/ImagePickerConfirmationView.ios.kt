@@ -7,6 +7,5 @@ import androidx.compose.runtime.Composable
 actual fun BoxScope.ImagePickerConfirmationView(
     result: CameraPhotoHandler.PhotoResult,
     onConfirm: (CameraPhotoHandler.PhotoResult) -> Unit,
-    onRetry: () -> Unit
-) {
-}
+    onRetry: () -> Unit,
+){}

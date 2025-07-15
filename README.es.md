@@ -7,12 +7,14 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/ismoy/ImagePickerKMP?style=social)](https://github.com/ismoy/ImagePickerKMP/stargazers)
 [![GitHub last commit](https://img.shields.io/github/last-commit/ismoy/ImagePickerKMP)](https://github.com/ismoy/ImagePickerKMP/commits/main)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ismoy/ImagePickerKMP/pulls)
-[![Discord](https://img.shields.io/discord/1393705692484993114.svg?label=Discord&logo=discord&color=7289da)](https://discord.com/channels/1393705692484993114/1393706133864190133)
+[![Discord](https://img.shields.io/discord/1393705692484993114.svg?label=Discord&logo=discord&color=7289da)](https://discord.gg/EjSQTeyh)
 [![official project](http://jb.gg/badges/official.svg)](https://github.com/JetBrains#jetbrains-on-github)
 ![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-green)
 ![Android](https://img.shields.io/badge/Platform-Android-green)
 ![iOS](https://img.shields.io/badge/Platform-iOS-blue)
 ![Coverage Status](https://img.shields.io/codecov/c/github/ismoy/ImagePickerKMP)
+[![Detekt](https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main)](https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml)
+[![Detekt Issues](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ismoy/c18082f28a33af515885ed319e2fec4c/raw/detekt-issues.json&label=Detekt%20Issues)](https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml)
 
 ## 🎥 Demo
 
@@ -64,25 +66,117 @@ dependencies {
 @Composable
 fun MiImagePicker() {
     var mostrarPicker by remember { mutableStateOf(false) }
-    
+    var imagenCapturada by remember { mutableStateOf<PhotoResult?>(null) }
+
     if (mostrarPicker) {
         ImagePickerLauncher(
             context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Manejar la foto capturada
-                println("Foto capturada: ${result.uri}")
-                mostrarPicker = false
-            },
-            onError = { exception ->
-                // Manejar errores
-                println("Error: ${exception.message}")
-                mostrarPicker = false
-            }
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    // Manejar la foto capturada
+                    imagenCapturada = result
+                    mostrarPicker = false
+                },
+                onError = { exception ->
+                    // Manejar errores
+                    mostrarPicker = false
+                }
+            )
         )
     }
-    
+
     Button(onClick = { mostrarPicker = true }) {
         Text("Tomar foto")
+    }
+}
+```
+
+### 💡 Caso de Uso Real
+
+Aquí tienes un ejemplo práctico mostrando captura de cámara con vista previa y subida:
+
+```kotlin
+@Composable
+fun SelectorAvanzado() {
+    var mostrarSelector by remember { mutableStateOf(false) }
+    var imagenCapturada by remember { mutableStateOf<PhotoResult?>(null) }
+    var subiendo by remember { mutableStateOf(false) }
+
+    if (mostrarSelector) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    imagenCapturada = result
+                    mostrarSelector = false
+                    subirImagen(result)
+                },
+                onError = { exception ->
+                    mostrarSelector = false
+                    // Manejo de errores personalizado aquí
+                },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                        customConfirmationView = { result, onConfirm, onRetry ->
+                            ImageConfirmationViewWithCustomButtons(
+                                result = result,
+                                onConfirm = onConfirm,
+                                onRetry = onRetry,
+                                questionText = "¿Usar esta foto?",
+                                retryText = "Volver a tomar",
+                                acceptText = "Usar Foto"
+                            )
+                        }
+                    )
+                )
+            )
+        )
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Mostrar imagen capturada
+        imagenCapturada?.let { foto ->
+            AsyncImage(
+                model = foto.uri,
+                contentDescription = "Foto capturada",
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+
+            if (subiendo) {
+                CircularProgressIndicator()
+                Text("Subiendo...")
+            }
+        }
+
+        Button(
+            onClick = { mostrarSelector = true },
+            enabled = !subiendo
+        ) {
+            Icon(Icons.Default.Camera, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("Tomar Foto")
+        }
+    }
+}
+
+private fun subirImagen(photoResult: PhotoResult) {
+    // Ejemplo de implementación de subida
+    lifecycleScope.launch(Dispatchers.IO) {
+        try {
+            // Lógica de subida aquí
+            withContext(Dispatchers.Main) {
+                // Mostrar mensaje de éxito
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                // Mostrar mensaje de error
+            }
+        }
     }
 }
 ```
@@ -115,105 +209,6 @@ fun MiImagePicker() {
 - **🔒 Manejo Inteligente de Permisos**: Gestión unificada de permisos con alternativas inteligentes
 - **⚡ Optimizado para Rendimiento**: Procesamiento eficiente de imágenes y gestión de memoria
 - **🛠️ Amigable para Desarrolladores**: API simple con manejo integral de errores
-
-### 💡 Caso de Uso Real
-
-Aquí tienes un ejemplo práctico mostrando captura de cámara con vista previa y subida:
-
-```kotlin
-@Composable
-fun SelectorAvanzado() {
-    var mostrarSelector by remember { mutableStateOf(false) }
-    var imagenCapturada by remember { mutableStateOf<PhotoResult?>(null) }
-    var subiendo by remember { mutableStateOf(false) }
-    
-    if (mostrarSelector) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                imagenCapturada = result
-                mostrarSelector = false
-                // Subir automáticamente la imagen capturada
-                subirImagen(result)
-            },
-            onError = { exception ->
-                when (exception) {
-                    is CameraPermissionException -> {
-                        // Manejar permiso denegado
-                        mostrarDialogoPermisos()
-                    }
-                    is PhotoCaptureException -> {
-                        // Manejar errores de captura
-                        mostrarDialogoError("Error al capturar foto")
-                    }
-                    else -> {
-                        // Manejar otros errores
-                        mostrarDialogoError(exception.message ?: "Error desconocido")
-                    }
-                }
-                mostrarSelector = false
-            },
-            customConfirmationView = { result, onConfirm, onRetry ->
-                // UI de confirmación personalizada
-                ImageConfirmationViewWithCustomButtons(
-                    result = result,
-                    onConfirm = onConfirm,
-                    onRetry = onRetry,
-                    questionText = "¿Usar esta foto?",
-                    retryText = "Volver a tomar",
-                    acceptText = "Usar Foto"
-                )
-            }
-        )
-    }
-    
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Mostrar imagen capturada
-        imagenCapturada?.let { foto ->
-            AsyncImage(
-                model = foto.uri,
-                contentDescription = "Foto capturada",
-                modifier = Modifier
-                    .size(200.dp)
-                    .clip(RoundedCornerShape(8.dp))
-            )
-            
-            if (subiendo) {
-                CircularProgressIndicator()
-                Text("Subiendo...")
-            }
-        }
-        
-        Button(
-            onClick = { mostrarSelector = true },
-            enabled = !subiendo
-        ) {
-            Icon(Icons.Default.Camera, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text("Tomar Foto")
-        }
-    }
-}
-
-private fun subirImagen(photoResult: PhotoResult) {
-    // Ejemplo de implementación de subida
-    lifecycleScope.launch(Dispatchers.IO) {
-        try {
-            // Lógica de subida aquí
-            withContext(Dispatchers.Main) {
-                // Mostrar mensaje de éxito
-            }
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                // Mostrar mensaje de error
-            }
-        }
-    }
-}
-```
 
 ## Requisitos
 
@@ -265,7 +260,7 @@ Este proyecto está licenciado bajo la Licencia MIT - consulta el archivo [LICEN
 - 📧 Email: belizairesmoy72@gmail.com
 - 🐛 Issues: [GitHub Issues](https://github.com/ismoy/ImagePickerKMP/issues)
 - 📖 Documentación: [Wiki](https://github.com/ismoy/ImagePickerKMP/wiki)
-- 💬 Discord: [Canal de la comunidad](https://discord.com/channels/1393705692484993114/1393706133864190133)
+- 💬 Discord: [Canal de la comunidad](https://discord.gg/EjSQTeyh)
 
 ## Changelog
 

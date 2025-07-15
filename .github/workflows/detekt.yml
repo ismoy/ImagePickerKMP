@@ -1,0 +1,66 @@
+name: Detekt
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  detekt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run Detekt
+        id: detekt
+        run: ./gradlew detekt --no-daemon --stacktrace
+
+      - name: Check for Detekt issues
+        id: check_issues
+        run: |
+          DETEKT_REPORT=library/build/reports/detekt/detekt.xml
+          if [ -f "$DETEKT_REPORT" ]; then
+            ISSUES=$(grep -c '<error ' "$DETEKT_REPORT" || echo 0)
+            echo "Detekt issues: $ISSUES"
+            echo "issues=$ISSUES" >> $GITHUB_OUTPUT
+            if [ "$ISSUES" -gt 0 ]; then
+              exit 1
+            fi
+          else
+            echo "No Detekt report found."
+            exit 1
+          fi
+
+      - name: Notify Discord on failure
+        if: failure()
+        uses: Ilshidur/action-discord@master
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: |
+            ❌ Detekt failed in ${{ github.repository }} on ${{ github.ref }}
+            Author: ${{ github.actor }}
+            Commit: ${{ github.sha }}
+            See details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Update Detekt issues badge (Gist)
+        if: always()
+        run: |
+          GIST_ID=c18082f28a33af515885ed319e2fec4c
+          GIST_FILE=detekt-issues.json
+          ISSUES="${{ steps.check_issues.outputs.issues }}"
+          echo "{ \"issues\": $ISSUES }" > $GIST_FILE
+          curl -X PATCH "https://api.github.com/gists/$GIST_ID" \
+            -H "Authorization: token ${{ secrets.GIST_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"files\": { \"$GIST_FILE\": { \"content\": \"$(cat $GIST_FILE)\" } } }" 
