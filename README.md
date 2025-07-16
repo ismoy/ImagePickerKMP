@@ -19,7 +19,7 @@
 ## 🎥 Demo
 
 <video width="100%" autoplay loop muted playsinline>
-  <source src="https://user-images.githubusercontent.com/your-username/ImagePickerKMP/main/demo/demo.mp4" type="video/mp4">
+  <source src="https://user-images.githubusercontent.com/ismoy/ImagePickerKMP/main/demo/demo.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
@@ -179,27 +179,60 @@ private fun uploadImage(photoResult: PhotoResult) {
         }
     }
 }
+```
+
+### Gallery Picker Usage
+
+You can also allow users to pick images directly from the gallery:
+
+```kotlin
+@Composable
+fun MyGalleryPicker() {
+    var showGalleryPicker by remember { mutableStateOf(false) }
+    var selectedImages by remember { mutableStateOf<List<PhotoResult>>(emptyList()) }
+
+    if (showGalleryPicker) {
+        GalleryPickerLauncher(
+            context = LocalContext.current,
+            onPhotosSelected = { results ->
+                selectedImages = results
+                showGalleryPicker = false
+            },
+            onError = { exception ->
+                // Handle errors
+                showGalleryPicker = false
+            },
+            allowMultiple = true // or false for single selection
+        )
+    }
+
+    Button(onClick = { showGalleryPicker = true }) {
+        Text("Pick from Gallery")
+    }
+}
+```
 
 ## Platform Support
 
-| Platform | Minimum Version | Status |
-|----------|----------------|--------|
-| Android  | API 21+        | ✅     |
-| iOS      | iOS 12.0+      | ✅     |
+| Platform                | Minimum Version | Status |
+|-------------------------|----------------|--------|
+| Android                 | API 21+        | ✅     |
+| iOS                     | iOS 12.0+      | ✅     |
+| Compose Multiplatform   | 1.5.0+         | ✅     |
 
 ## Why Choose ImagePickerKMP?
 
 ### 🆚 Comparison with Other Libraries
 
-| Feature | ImagePickerKMP | Peekaboo | KMPImagePicker |
-|---------|----------------|----------|----------------|
-| **Compose Multiplatform Support** | ✅ Native | ❌ Android only | ⚠️ Limited |
-| **UI Customization** | ✅ Full control | ⚠️ Basic | ⚠️ Basic |
-| **Unified Permissions** | ✅ Smart handling | ❌ Manual | ⚠️ Platform-specific |
-| **Error Handling** | ✅ Comprehensive | ⚠️ Basic | ⚠️ Basic |
-| **Camera Integration** | ✅ Direct access | ✅ Direct access | ⚠️ Gallery only |
-| **Gallery Support** | ✅ Multi-select | ✅ Multi-select | ✅ Multi-select |
-| **Cross-platform API** | ✅ Single codebase | ❌ Platform-specific | ⚠️ Partial |
+| Feature                        | ImagePickerKMP | Peekaboo        | KMPImagePicker   |
+|--------------------------------|----------------|-----------------|------------------|
+| **Compose Multiplatform Support** | ✅ Native      | ❌ Android only  | ⚠️ Limited       |
+| **UI Customization**           | ✅ Full control | ⚠️ Basic         | ⚠️ Basic         |
+| **Unified Permissions**        | ✅ Smart handling | ❌ Manual      | ⚠️ Platform-specific |
+| **Error Handling**             | ✅ Comprehensive | ⚠️ Basic        | ⚠️ Basic         |
+| **Camera Integration**         | ✅ Direct access | ✅ Direct access | ⚠️ Gallery only  |
+| **Gallery Support**            | ✅ Multi-select  | ✅ Multi-select  | ✅ Multi-select   |
+| **Cross-platform API**         | ✅ Single codebase | ❌ Platform-specific | ⚠️ Partial  |
 
 ### 🎯 Key Advantages
 

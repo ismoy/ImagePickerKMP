@@ -38,7 +38,7 @@ Before contributing, ensure you have:
 ```bash
 # Fork the repository on GitHub
 # Then clone your fork
-git clone https://github.com/YOUR_USERNAME/ImagePickerKMP.git
+git clone https://github.com/ismoy/ImagePickerKMP.git
 cd ImagePickerKMP
 ```
 
@@ -182,6 +182,16 @@ actual fun requestCameraPermission(context: Context): Boolean {
     return AVCaptureDevice.authorizationStatus(for: .video) == .authorized
 }
 ```
+
+### Static Analysis
+
+Before submitting a pull request, please run static analysis to ensure your code meets the project's quality standards:
+
+```sh
+./gradlew detekt
+```
+
+Fix any issues reported by Detekt before submitting your PR.
 
 ## Testing
 

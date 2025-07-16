@@ -25,12 +25,12 @@ La funcionalidad de captura de foto en ImagePickerKMP permite a los desarrollado
 ```kotlin
 ImagePickerLauncher(
     context = context,
-        onPhotoCaptured = { result ->
-            // Aquí recibes el resultado de la foto (uri, width, height)
-        },
-        onError = { exception ->
-            // Manejo de errores
-        }
+    onPhotoCaptured = { result ->
+        // Aquí recibes el resultado de la foto (uri, width, height)
+    },
+    onError = { exception ->
+        // Manejo de errores
+    }
 )
 ```
 
@@ -41,18 +41,18 @@ ImagePickerLauncher(
 ```kotlin
 ImagePickerLauncher(
     context = context,
-        onPhotoCaptured = { result -> /* ... */ },
-        onError = { exception -> /* ... */ },
-                customConfirmationView = { result, onConfirm, onRetry ->
-                    ImageConfirmationViewWithCustomButtons(
-                        result = result,
-                        onConfirm = onConfirm,
-                        onRetry = onRetry,
-                        questionText = "¿Estás satisfecho con la foto?",
-                        retryText = "Reintentar",
-                        acceptText = "Aceptar"
-                    )
-                }
+    onPhotoCaptured = { result -> /* ... */ },
+    onError = { exception -> /* ... */ },
+    customConfirmationView = { result, onConfirm, onRetry ->
+        ImageConfirmationViewWithCustomButtons(
+            result = result,
+            onConfirm = onConfirm,
+            onRetry = onRetry,
+            questionText = "¿Estás satisfecho con la foto?",
+            retryText = "Reintentar",
+            acceptText = "Aceptar"
+        )
+    }
 )
 ```
 
@@ -107,11 +107,11 @@ La funcionalidad de galería en ImagePickerKMP permite a los desarrolladores int
 ```kotlin
 ImagePickerLauncher(
     context = context,
-        onPhotoCaptured = { result ->
-            // Aquí recibes el resultado de la imagen seleccionada (uri, width, height)
-        },
-        onError = { exception ->
-            // Manejo de errores
+    onPhotoCaptured = { result ->
+        // Aquí recibes el resultado de la imagen seleccionada (uri, width, height)
+    },
+    onError = { exception ->
+        // Manejo de errores
     },
     // No es necesario customConfirmationView si solo quieres la galería estándar
 )
@@ -124,17 +124,17 @@ ImagePickerLauncher(
 ```kotlin
 ImagePickerLauncher(
     context = context,
-        onPhotoCaptured = { result -> /* ... */ },
-        onError = { exception -> /* ... */ },
-            customConfirmationView = { result, onConfirm, onRetry ->
-                MyCustomGalleryConfirmation(
-                    result = result,
-                    onConfirm = onConfirm,
-                    onRetry = onRetry,
-                    questionText = "¿Quieres usar esta imagen?",
-                    retryText = "Elegir otra",
-                    acceptText = "Usar imagen"
-                )
+    onPhotoCaptured = { result -> /* ... */ },
+    onError = { exception -> /* ... */ },
+    customConfirmationView = { result, onConfirm, onRetry ->
+        MyCustomGalleryConfirmation(
+            result = result,
+            onConfirm = onConfirm,
+            onRetry = onRetry,
+            questionText = "¿Quieres usar esta imagen?",
+            retryText = "Elegir otra",
+            acceptText = "Usar imagen"
+        )
     },
     // Puedes agregar parámetros para selección múltiple o filtros si tu implementación lo soporta
 )
@@ -210,12 +210,12 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
     )
 }
 ```
@@ -512,13 +512,97 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
+}
+```
+
+### RequestCameraPermission
+
+Composable para gestionar permisos de cámara.
+
+```kotlin
+@Composable
+fun RequestCameraPermission(
+    titleDialogConfig: String,
+    descriptionDialogConfig: String,
+    btnDialogConfig: String,
+    titleDialogDenied: String,
+    descriptionDialogDenied: String,
+    btnDialogDenied: String,
+    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
+    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
+    onPermissionPermanentlyDenied: () -> Unit,
+    onResult: (Boolean) -> Unit,
+    customPermissionHandler: (() -> Unit)?
+)
+```
+
+#### Parámetros
+
+- `titleDialogConfig: String` - Título para el diálogo de ajustes
+- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
+- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
+- `titleDialogDenied: String` - Título para el diálogo de reintento
+- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
+- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
+- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
+
+### ImagePickerConfig
+
+Representa la configuración general de ImagePickerKMP.
+
+```kotlin
+data class ImagePickerConfig(
+    val imagePickerLauncher: ImagePickerLauncher,
+    val requestCameraPermission: RequestCameraPermission
+)
+```
+
+### ImagePickerLauncher
+
+La función composable principal para lanzar el selector de imágenes.
+
+```kotlin
+@Composable
+fun ImagePickerLauncher(
+    context: Any?,
+    onPhotoCaptured: (PhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
+    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
+    preference: CapturePhotoPreference? = null
+)
+```
+
+#### Parámetros
+
+- `context: Any?` - Contexto para Android, null para iOS
+- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
+- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
+- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
+- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
+- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
+
+#### Ejemplo
+
+```kotlin
+@Composable
+fun MyImagePicker() {
+    ImagePickerLauncher(
+        context = LocalContext.current,
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
 }
 ```
 
@@ -764,13 +848,97 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
+}
+```
+
+### RequestCameraPermission
+
+Composable para gestionar permisos de cámara.
+
+```kotlin
+@Composable
+fun RequestCameraPermission(
+    titleDialogConfig: String,
+    descriptionDialogConfig: String,
+    btnDialogConfig: String,
+    titleDialogDenied: String,
+    descriptionDialogDenied: String,
+    btnDialogDenied: String,
+    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
+    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
+    onPermissionPermanentlyDenied: () -> Unit,
+    onResult: (Boolean) -> Unit,
+    customPermissionHandler: (() -> Unit)?
+)
+```
+
+#### Parámetros
+
+- `titleDialogConfig: String` - Título para el diálogo de ajustes
+- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
+- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
+- `titleDialogDenied: String` - Título para el diálogo de reintento
+- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
+- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
+- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
+
+### ImagePickerConfig
+
+Representa la configuración general de ImagePickerKMP.
+
+```kotlin
+data class ImagePickerConfig(
+    val imagePickerLauncher: ImagePickerLauncher,
+    val requestCameraPermission: RequestCameraPermission
+)
+```
+
+### ImagePickerLauncher
+
+La función composable principal para lanzar el selector de imágenes.
+
+```kotlin
+@Composable
+fun ImagePickerLauncher(
+    context: Any?,
+    onPhotoCaptured: (PhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
+    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
+    preference: CapturePhotoPreference? = null
+)
+```
+
+#### Parámetros
+
+- `context: Any?` - Contexto para Android, null para iOS
+- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
+- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
+- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
+- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
+- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
+
+#### Ejemplo
+
+```kotlin
+@Composable
+fun MyImagePicker() {
+    ImagePickerLauncher(
+        context = LocalContext.current,
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
 }
 ```
 
@@ -1016,13 +1184,97 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
+}
+```
+
+### RequestCameraPermission
+
+Composable para gestionar permisos de cámara.
+
+```kotlin
+@Composable
+fun RequestCameraPermission(
+    titleDialogConfig: String,
+    descriptionDialogConfig: String,
+    btnDialogConfig: String,
+    titleDialogDenied: String,
+    descriptionDialogDenied: String,
+    btnDialogDenied: String,
+    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
+    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
+    onPermissionPermanentlyDenied: () -> Unit,
+    onResult: (Boolean) -> Unit,
+    customPermissionHandler: (() -> Unit)?
+)
+```
+
+#### Parámetros
+
+- `titleDialogConfig: String` - Título para el diálogo de ajustes
+- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
+- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
+- `titleDialogDenied: String` - Título para el diálogo de reintento
+- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
+- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
+- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
+
+### ImagePickerConfig
+
+Representa la configuración general de ImagePickerKMP.
+
+```kotlin
+data class ImagePickerConfig(
+    val imagePickerLauncher: ImagePickerLauncher,
+    val requestCameraPermission: RequestCameraPermission
+)
+```
+
+### ImagePickerLauncher
+
+La función composable principal para lanzar el selector de imágenes.
+
+```kotlin
+@Composable
+fun ImagePickerLauncher(
+    context: Any?,
+    onPhotoCaptured: (PhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
+    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
+    preference: CapturePhotoPreference? = null
+)
+```
+
+#### Parámetros
+
+- `context: Any?` - Contexto para Android, null para iOS
+- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
+- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
+- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
+- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
+- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
+
+#### Ejemplo
+
+```kotlin
+@Composable
+fun MyImagePicker() {
+    ImagePickerLauncher(
+        context = LocalContext.current,
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
 }
 ```
 
@@ -1268,13 +1520,97 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
+}
+```
+
+### RequestCameraPermission
+
+Composable para gestionar permisos de cámara.
+
+```kotlin
+@Composable
+fun RequestCameraPermission(
+    titleDialogConfig: String,
+    descriptionDialogConfig: String,
+    btnDialogConfig: String,
+    titleDialogDenied: String,
+    descriptionDialogDenied: String,
+    btnDialogDenied: String,
+    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
+    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
+    onPermissionPermanentlyDenied: () -> Unit,
+    onResult: (Boolean) -> Unit,
+    customPermissionHandler: (() -> Unit)?
+)
+```
+
+#### Parámetros
+
+- `titleDialogConfig: String` - Título para el diálogo de ajustes
+- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
+- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
+- `titleDialogDenied: String` - Título para el diálogo de reintento
+- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
+- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
+- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
+
+### ImagePickerConfig
+
+Representa la configuración general de ImagePickerKMP.
+
+```kotlin
+data class ImagePickerConfig(
+    val imagePickerLauncher: ImagePickerLauncher,
+    val requestCameraPermission: RequestCameraPermission
+)
+```
+
+### ImagePickerLauncher
+
+La función composable principal para lanzar el selector de imágenes.
+
+```kotlin
+@Composable
+fun ImagePickerLauncher(
+    context: Any?,
+    onPhotoCaptured: (PhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
+    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
+    preference: CapturePhotoPreference? = null
+)
+```
+
+#### Parámetros
+
+- `context: Any?` - Contexto para Android, null para iOS
+- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
+- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
+- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
+- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
+- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
+
+#### Ejemplo
+
+```kotlin
+@Composable
+fun MyImagePicker() {
+    ImagePickerLauncher(
+        context = LocalContext.current,
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
 }
 ```
 
@@ -1520,13 +1856,97 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
+}
+```
+
+### RequestCameraPermission
+
+Composable para gestionar permisos de cámara.
+
+```kotlin
+@Composable
+fun RequestCameraPermission(
+    titleDialogConfig: String,
+    descriptionDialogConfig: String,
+    btnDialogConfig: String,
+    titleDialogDenied: String,
+    descriptionDialogDenied: String,
+    btnDialogDenied: String,
+    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
+    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
+    onPermissionPermanentlyDenied: () -> Unit,
+    onResult: (Boolean) -> Unit,
+    customPermissionHandler: (() -> Unit)?
+)
+```
+
+#### Parámetros
+
+- `titleDialogConfig: String` - Título para el diálogo de ajustes
+- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
+- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
+- `titleDialogDenied: String` - Título para el diálogo de reintento
+- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
+- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
+- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
+
+### ImagePickerConfig
+
+Representa la configuración general de ImagePickerKMP.
+
+```kotlin
+data class ImagePickerConfig(
+    val imagePickerLauncher: ImagePickerLauncher,
+    val requestCameraPermission: RequestCameraPermission
+)
+```
+
+### ImagePickerLauncher
+
+La función composable principal para lanzar el selector de imágenes.
+
+```kotlin
+@Composable
+fun ImagePickerLauncher(
+    context: Any?,
+    onPhotoCaptured: (PhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
+    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
+    preference: CapturePhotoPreference? = null
+)
+```
+
+#### Parámetros
+
+- `context: Any?` - Contexto para Android, null para iOS
+- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
+- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
+- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
+- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
+- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
+
+#### Ejemplo
+
+```kotlin
+@Composable
+fun MyImagePicker() {
+    ImagePickerLauncher(
+        context = LocalContext.current,
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
 }
 ```
 
@@ -1772,13 +2192,97 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
+}
+```
+
+### RequestCameraPermission
+
+Composable para gestionar permisos de cámara.
+
+```kotlin
+@Composable
+fun RequestCameraPermission(
+    titleDialogConfig: String,
+    descriptionDialogConfig: String,
+    btnDialogConfig: String,
+    titleDialogDenied: String,
+    descriptionDialogDenied: String,
+    btnDialogDenied: String,
+    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
+    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
+    onPermissionPermanentlyDenied: () -> Unit,
+    onResult: (Boolean) -> Unit,
+    customPermissionHandler: (() -> Unit)?
+)
+```
+
+#### Parámetros
+
+- `titleDialogConfig: String` - Título para el diálogo de ajustes
+- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
+- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
+- `titleDialogDenied: String` - Título para el diálogo de reintento
+- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
+- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
+- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
+
+### ImagePickerConfig
+
+Representa la configuración general de ImagePickerKMP.
+
+```kotlin
+data class ImagePickerConfig(
+    val imagePickerLauncher: ImagePickerLauncher,
+    val requestCameraPermission: RequestCameraPermission
+)
+```
+
+### ImagePickerLauncher
+
+La función composable principal para lanzar el selector de imágenes.
+
+```kotlin
+@Composable
+fun ImagePickerLauncher(
+    context: Any?,
+    onPhotoCaptured: (PhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
+    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
+    preference: CapturePhotoPreference? = null
+)
+```
+
+#### Parámetros
+
+- `context: Any?` - Contexto para Android, null para iOS
+- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
+- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
+- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
+- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
+- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
+
+#### Ejemplo
+
+```kotlin
+@Composable
+fun MyImagePicker() {
+    ImagePickerLauncher(
+        context = LocalContext.current,
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
 }
 ```
 
@@ -2024,13 +2528,97 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
+}
+```
+
+### RequestCameraPermission
+
+Composable para gestionar permisos de cámara.
+
+```kotlin
+@Composable
+fun RequestCameraPermission(
+    titleDialogConfig: String,
+    descriptionDialogConfig: String,
+    btnDialogConfig: String,
+    titleDialogDenied: String,
+    descriptionDialogDenied: String,
+    btnDialogDenied: String,
+    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
+    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
+    onPermissionPermanentlyDenied: () -> Unit,
+    onResult: (Boolean) -> Unit,
+    customPermissionHandler: (() -> Unit)?
+)
+```
+
+#### Parámetros
+
+- `titleDialogConfig: String` - Título para el diálogo de ajustes
+- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
+- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
+- `titleDialogDenied: String` - Título para el diálogo de reintento
+- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
+- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
+- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
+
+### ImagePickerConfig
+
+Representa la configuración general de ImagePickerKMP.
+
+```kotlin
+data class ImagePickerConfig(
+    val imagePickerLauncher: ImagePickerLauncher,
+    val requestCameraPermission: RequestCameraPermission
+)
+```
+
+### ImagePickerLauncher
+
+La función composable principal para lanzar el selector de imágenes.
+
+```kotlin
+@Composable
+fun ImagePickerLauncher(
+    context: Any?,
+    onPhotoCaptured: (PhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
+    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
+    preference: CapturePhotoPreference? = null
+)
+```
+
+#### Parámetros
+
+- `context: Any?` - Contexto para Android, null para iOS
+- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
+- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
+- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
+- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
+- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
+
+#### Ejemplo
+
+```kotlin
+@Composable
+fun MyImagePicker() {
+    ImagePickerLauncher(
+        context = LocalContext.current,
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
 }
 ```
 
@@ -2276,13 +2864,97 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
+}
+```
+
+### RequestCameraPermission
+
+Composable para gestionar permisos de cámara.
+
+```kotlin
+@Composable
+fun RequestCameraPermission(
+    titleDialogConfig: String,
+    descriptionDialogConfig: String,
+    btnDialogConfig: String,
+    titleDialogDenied: String,
+    descriptionDialogDenied: String,
+    btnDialogDenied: String,
+    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
+    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
+    onPermissionPermanentlyDenied: () -> Unit,
+    onResult: (Boolean) -> Unit,
+    customPermissionHandler: (() -> Unit)?
+)
+```
+
+#### Parámetros
+
+- `titleDialogConfig: String` - Título para el diálogo de ajustes
+- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
+- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
+- `titleDialogDenied: String` - Título para el diálogo de reintento
+- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
+- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
+- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
+
+### ImagePickerConfig
+
+Representa la configuración general de ImagePickerKMP.
+
+```kotlin
+data class ImagePickerConfig(
+    val imagePickerLauncher: ImagePickerLauncher,
+    val requestCameraPermission: RequestCameraPermission
+)
+```
+
+### ImagePickerLauncher
+
+La función composable principal para lanzar el selector de imágenes.
+
+```kotlin
+@Composable
+fun ImagePickerLauncher(
+    context: Any?,
+    onPhotoCaptured: (PhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
+    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
+    preference: CapturePhotoPreference? = null
+)
+```
+
+#### Parámetros
+
+- `context: Any?` - Contexto para Android, null para iOS
+- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
+- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
+- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
+- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
+- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
+
+#### Ejemplo
+
+```kotlin
+@Composable
+fun MyImagePicker() {
+    ImagePickerLauncher(
+        context = LocalContext.current,
+        onPhotoCaptured = { result ->
+            println("Photo captured: ${result.uri}")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        }
+    )
 }
 ```
 
@@ -2528,90 +3200,6 @@ fun ImagePickerLauncher(
 fun MyImagePicker() {
     ImagePickerLauncher(
         context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
-}
-```
-
-### RequestCameraPermission
-
-Composable para gestionar permisos de cámara.
-
-```kotlin
-@Composable
-fun RequestCameraPermission(
-    titleDialogConfig: String,
-    descriptionDialogConfig: String,
-    btnDialogConfig: String,
-    titleDialogDenied: String,
-    descriptionDialogDenied: String,
-    btnDialogDenied: String,
-    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
-    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit,
-    customPermissionHandler: (() -> Unit)?
-)
-```
-
-#### Parámetros
-
-- `titleDialogConfig: String` - Título para el diálogo de ajustes
-- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
-- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
-- `titleDialogDenied: String` - Título para el diálogo de reintento
-- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
-- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
-- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
-
-### ImagePickerConfig
-
-Representa la configuración general de ImagePickerKMP.
-
-```kotlin
-data class ImagePickerConfig(
-    val imagePickerLauncher: ImagePickerLauncher,
-    val requestCameraPermission: RequestCameraPermission
-)
-```
-
-### ImagePickerLauncher
-
-La función composable principal para lanzar el selector de imágenes.
-
-```kotlin
-@Composable
-fun ImagePickerLauncher(
-    context: Any?,
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onError: (Exception) -> Unit,
-    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    preference: CapturePhotoPreference? = null
-)
-```
-
-#### Parámetros
-
-- `context: Any?` - Contexto para Android, null para iOS
-- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
-- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
-- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
-- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
-- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
-
-#### Ejemplo
-
-```kotlin
-@Composable
-fun MyImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
         onPhotoCaptured = { result ->
             println("Photo captured: ${result.uri}")
         },
@@ -2703,594 +3291,6 @@ fun MyImagePicker() {
             println("Error: ${exception.message}")
         }
     )
-}
-```
-
-### RequestCameraPermission
-
-Composable para gestionar permisos de cámara.
-
-```kotlin
-@Composable
-fun RequestCameraPermission(
-    titleDialogConfig: String,
-    descriptionDialogConfig: String,
-    btnDialogConfig: String,
-    titleDialogDenied: String,
-    descriptionDialogDenied: String,
-    btnDialogDenied: String,
-    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
-    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit,
-    customPermissionHandler: (() -> Unit)?
-)
-```
-
-#### Parámetros
-
-- `titleDialogConfig: String` - Título para el diálogo de ajustes
-- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
-- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
-- `titleDialogDenied: String` - Título para el diálogo de reintento
-- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
-- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
-- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
-
-### ImagePickerConfig
-
-Representa la configuración general de ImagePickerKMP.
-
-```kotlin
-data class ImagePickerConfig(
-    val imagePickerLauncher: ImagePickerLauncher,
-    val requestCameraPermission: RequestCameraPermission
-)
-```
-
-### ImagePickerLauncher
-
-La función composable principal para lanzar el selector de imágenes.
-
-```kotlin
-@Composable
-fun ImagePickerLauncher(
-    context: Any?,
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onError: (Exception) -> Unit,
-    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    preference: CapturePhotoPreference? = null
-)
-```
-
-#### Parámetros
-
-- `context: Any?` - Contexto para Android, null para iOS
-- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
-- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
-- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
-- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
-- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
-
-#### Ejemplo
-
-```kotlin
-@Composable
-fun MyImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
-}
-```
-
-### RequestCameraPermission
-
-Composable para gestionar permisos de cámara.
-
-```kotlin
-@Composable
-fun RequestCameraPermission(
-    titleDialogConfig: String,
-    descriptionDialogConfig: String,
-    btnDialogConfig: String,
-    titleDialogDenied: String,
-    descriptionDialogDenied: String,
-    btnDialogDenied: String,
-    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
-    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit,
-    customPermissionHandler: (() -> Unit)?
-)
-```
-
-#### Parámetros
-
-- `titleDialogConfig: String` - Título para el diálogo de ajustes
-- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
-- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
-- `titleDialogDenied: String` - Título para el diálogo de reintento
-- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
-- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
-- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
-
-### ImagePickerConfig
-
-Representa la configuración general de ImagePickerKMP.
-
-```kotlin
-data class ImagePickerConfig(
-    val imagePickerLauncher: ImagePickerLauncher,
-    val requestCameraPermission: RequestCameraPermission
-)
-```
-
-### ImagePickerLauncher
-
-La función composable principal para lanzar el selector de imágenes.
-
-```kotlin
-@Composable
-fun ImagePickerLauncher(
-    context: Any?,
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onError: (Exception) -> Unit,
-    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    preference: CapturePhotoPreference? = null
-)
-```
-
-#### Parámetros
-
-- `context: Any?` - Contexto para Android, null para iOS
-- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
-- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
-- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
-- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
-- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
-
-#### Ejemplo
-
-```kotlin
-@Composable
-fun MyImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
-}
-```
-
-### RequestCameraPermission
-
-Composable para gestionar permisos de cámara.
-
-```kotlin
-@Composable
-fun RequestCameraPermission(
-    titleDialogConfig: String,
-    descriptionDialogConfig: String,
-    btnDialogConfig: String,
-    titleDialogDenied: String,
-    descriptionDialogDenied: String,
-    btnDialogDenied: String,
-    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
-    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit,
-    customPermissionHandler: (() -> Unit)?
-)
-```
-
-#### Parámetros
-
-- `titleDialogConfig: String` - Título para el diálogo de ajustes
-- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
-- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
-- `titleDialogDenied: String` - Título para el diálogo de reintento
-- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
-- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
-- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
-
-### ImagePickerConfig
-
-Representa la configuración general de ImagePickerKMP.
-
-```kotlin
-data class ImagePickerConfig(
-    val imagePickerLauncher: ImagePickerLauncher,
-    val requestCameraPermission: RequestCameraPermission
-)
-```
-
-### ImagePickerLauncher
-
-La función composable principal para lanzar el selector de imágenes.
-
-```kotlin
-@Composable
-fun ImagePickerLauncher(
-    context: Any?,
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onError: (Exception) -> Unit,
-    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    preference: CapturePhotoPreference? = null
-)
-```
-
-#### Parámetros
-
-- `context: Any?` - Contexto para Android, null para iOS
-- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
-- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
-- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
-- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
-- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
-
-#### Ejemplo
-
-```kotlin
-@Composable
-fun MyImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
-}
-```
-
-### RequestCameraPermission
-
-Composable para gestionar permisos de cámara.
-
-```kotlin
-@Composable
-fun RequestCameraPermission(
-    titleDialogConfig: String,
-    descriptionDialogConfig: String,
-    btnDialogConfig: String,
-    titleDialogDenied: String,
-    descriptionDialogDenied: String,
-    btnDialogDenied: String,
-    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
-    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit,
-    customPermissionHandler: (() -> Unit)?
-)
-```
-
-#### Parámetros
-
-- `titleDialogConfig: String` - Título para el diálogo de ajustes
-- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
-- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
-- `titleDialogDenied: String` - Título para el diálogo de reintento
-- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
-- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
-- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
-
-### ImagePickerConfig
-
-Representa la configuración general de ImagePickerKMP.
-
-```kotlin
-data class ImagePickerConfig(
-    val imagePickerLauncher: ImagePickerLauncher,
-    val requestCameraPermission: RequestCameraPermission
-)
-```
-
-### ImagePickerLauncher
-
-La función composable principal para lanzar el selector de imágenes.
-
-```kotlin
-@Composable
-fun ImagePickerLauncher(
-    context: Any?,
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onError: (Exception) -> Unit,
-    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    preference: CapturePhotoPreference? = null
-)
-```
-
-#### Parámetros
-
-- `context: Any?` - Contexto para Android, null para iOS
-- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
-- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
-- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
-- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
-- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
-
-#### Ejemplo
-
-```kotlin
-@Composable
-fun MyImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
-}
-```
-
-### RequestCameraPermission
-
-Composable para gestionar permisos de cámara.
-
-```kotlin
-@Composable
-fun RequestCameraPermission(
-    titleDialogConfig: String,
-    descriptionDialogConfig: String,
-    btnDialogConfig: String,
-    titleDialogDenied: String,
-    descriptionDialogDenied: String,
-    btnDialogDenied: String,
-    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
-    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit,
-    customPermissionHandler: (() -> Unit)?
-)
-```
-
-#### Parámetros
-
-- `titleDialogConfig: String` - Título para el diálogo de ajustes
-- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
-- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
-- `titleDialogDenied: String` - Título para el diálogo de reintento
-- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
-- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
-- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
-
-### ImagePickerConfig
-
-Representa la configuración general de ImagePickerKMP.
-
-```kotlin
-data class ImagePickerConfig(
-    val imagePickerLauncher: ImagePickerLauncher,
-    val requestCameraPermission: RequestCameraPermission
-)
-```
-
-### ImagePickerLauncher
-
-La función composable principal para lanzar el selector de imágenes.
-
-```kotlin
-@Composable
-fun ImagePickerLauncher(
-    context: Any?,
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onError: (Exception) -> Unit,
-    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    preference: CapturePhotoPreference? = null
-)
-```
-
-#### Parámetros
-
-- `context: Any?` - Contexto para Android, null para iOS
-- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
-- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
-- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
-- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
-- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
-
-#### Ejemplo
-
-```kotlin
-@Composable
-fun MyImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
-}
-```
-
-### RequestCameraPermission
-
-Composable para gestionar permisos de cámara.
-
-```kotlin
-@Composable
-fun RequestCameraPermission(
-    titleDialogConfig: String,
-    descriptionDialogConfig: String,
-    btnDialogConfig: String,
-    titleDialogDenied: String,
-    descriptionDialogDenied: String,
-    btnDialogDenied: String,
-    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
-    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit,
-    customPermissionHandler: (() -> Unit)?
-)
-```
-
-#### Parámetros
-
-- `titleDialogConfig: String` - Título para el diálogo de ajustes
-- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
-- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
-- `titleDialogDenied: String` - Título para el diálogo de reintento
-- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
-- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
-- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
-
-### ImagePickerConfig
-
-Representa la configuración general de ImagePickerKMP.
-
-```kotlin
-data class ImagePickerConfig(
-    val imagePickerLauncher: ImagePickerLauncher,
-    val requestCameraPermission: RequestCameraPermission
-)
-```
-
-### ImagePickerLauncher
-
-La función composable principal para lanzar el selector de imágenes.
-
-```kotlin
-@Composable
-fun ImagePickerLauncher(
-    context: Any?,
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onError: (Exception) -> Unit,
-    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    preference: CapturePhotoPreference? = null
-)
-```
-
-#### Parámetros
-
-- `context: Any?` - Contexto para Android, null para iOS
-- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
-- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
-- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
-- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
-- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
-
-#### Ejemplo
-
-```kotlin
-@Composable
-fun MyImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        }
-    )
-}
-```
-
-### RequestCameraPermission
-
-Composable para gestionar permisos de cámara.
-
-```kotlin
-@Composable
-fun RequestCameraPermission(
-    titleDialogConfig: String,
-    descriptionDialogConfig: String,
-    btnDialogConfig: String,
-    titleDialogDenied: String,
-    descriptionDialogDenied: String,
-    btnDialogDenied: String,
-    customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?,
-    customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?,
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit,
-    customPermissionHandler: (() -> Unit)?
-)
-```
-
-#### Parámetros
-
-- `titleDialogConfig: String` - Título para el diálogo de ajustes
-- `descriptionDialogConfig: String` - Descripción para el diálogo de ajustes
-- `btnDialogConfig: String` - Texto del botón para el diálogo de ajustes
-- `titleDialogDenied: String` - Título para el diálogo de reintento
-- `descriptionDialogDenied: String` - Descripción para el diálogo de reintento
-- `btnDialogDenied: String` - Texto del botón para el diálogo de reintento
-- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo de reintento personalizado
-
-### ImagePickerConfig
-
-Representa la configuración general de ImagePickerKMP.
-
-```kotlin
-data class ImagePickerConfig(
-    val imagePickerLauncher: ImagePickerLauncher,
-    val requestCameraPermission: RequestCameraPermission
-)
-```
-
-### ImagePickerLauncher
-
-La función composable principal para lanzar el selector de imágenes.
-
-```kotlin
-@Composable
-fun ImagePickerLauncher(
-    context: Any?,
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onError: (Exception) -> Unit,
-    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    preference: CapturePhotoPreference? = null
-)
-```
-
-#### Parámetros
-
-- `context: Any?` - Contexto para Android, null para iOS
-- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback cuando se captura una foto
-- `onError: (Exception) -> Unit` - Callback cuando ocurre un error
-- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
-- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
-- `preference: CapturePhotoPreference?` - Preferencias de captura de foto
-
-#### Ejemplo
-
-```kotlin
-@Composable
-fun MyImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-            }
-        )
 }
 ```
 

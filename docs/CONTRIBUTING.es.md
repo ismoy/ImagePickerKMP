@@ -46,7 +46,7 @@ Antes de contribuir, asegúrate de tener:
 ```bash
 # Haz fork del repositorio en GitHub
 # Luego clona tu fork
-git clone https://github.com/TU_USUARIO/ImagePickerKMP.git
+git clone https://github.com/ismoy/ImagePickerKMP.git
 cd ImagePickerKMP
 ```
 
@@ -190,6 +190,16 @@ actual fun requestCameraPermission(context: Context): Boolean {
     return AVCaptureDevice.authorizationStatus(for: .video) == .authorized
 }
 ```
+
+### Análisis Estático
+
+Antes de enviar un pull request, ejecuta el análisis estático para asegurarte de que tu código cumple con los estándares de calidad del proyecto:
+
+```sh
+./gradlew detekt
+```
+
+Corrige cualquier problema reportado por Detekt antes de enviar tu PR.
 
 ## Testing
 

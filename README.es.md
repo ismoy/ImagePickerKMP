@@ -19,7 +19,7 @@
 ## 🎥 Demo
 
 <video width="100%" autoplay loop muted playsinline>
-  <source src="https://user-images.githubusercontent.com/your-username/ImagePickerKMP/main/demo/demo.mp4" type="video/mp4">
+  <source src="https://user-images.githubusercontent.com/ismoy/ImagePickerKMP/main/demo/demo.mp4" type="video/mp4">
   Tu navegador no soporta el elemento de video.
 </video>
 
@@ -181,12 +181,45 @@ private fun subirImagen(photoResult: PhotoResult) {
 }
 ```
 
+### Uso del Selector de Galería
+
+También puedes permitir que los usuarios seleccionen imágenes directamente desde la galería:
+
+```kotlin
+@Composable
+fun MiSelectorGaleria() {
+    var mostrarGaleria by remember { mutableStateOf(false) }
+    var imagenesSeleccionadas by remember { mutableStateOf<List<PhotoResult>>(emptyList()) }
+
+    if (mostrarGaleria) {
+        GalleryPickerLauncher(
+            context = LocalContext.current,
+            onPhotosSelected = { resultados ->
+                imagenesSeleccionadas = resultados
+                mostrarGaleria = false
+            },
+            onError = { exception ->
+                // Manejar errores
+                mostrarGaleria = false
+            },
+            allowMultiple = true // o false para selección simple
+        )
+    }
+
+    Button(onClick = { mostrarGaleria = true }) {
+        Text("Seleccionar de la galería")
+    }
+}
+```
+
 ## Compatibilidad de plataformas
 
-| Plataforma | Versión mínima | Estado |
-|------------|----------------|--------|
-| Android    | API 21+        | ✅     |
-| iOS        | iOS 12.0+      | ✅     |
+
+| Platform                | Minimum Version | Status |
+|-------------------------|----------------|--------|
+| Android                 | API 21+        | ✅     |
+| iOS                     | iOS 12.0+      | ✅     |
+| Compose Multiplatform   | 1.5.0+         | ✅     |
 
 ## ¿Por qué elegir ImagePickerKMP?
 
