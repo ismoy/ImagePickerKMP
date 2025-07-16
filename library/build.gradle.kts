@@ -234,11 +234,12 @@ mavenPublishing{
     )
     pom {
         name.set("ImagePickerKMP")
-        description.set("BelZSpeedScan is a comprehensive multiplatform barcode and QR code scanning" +
-                " library for Android and iOS. It features optimized camera handling, automatic " +
-                "distance adjustment, support for codes with reflective surfaces, and customizable " +
-                "UI components with Compose. Easily integrate high-performance code scanning into " +
-                "your Kotlin Multiplatform, Android, or iOS applications with a unified API.")
+        description.set(
+            "ImagePickerKMP is a modern Kotlin Multiplatform library for image picking and camera capture, " +
+                    "designed for Android and iOS. It offers seamless integration with Jetpack Compose and SwiftUI, " +
+                    "customizable UI components, automatic permission handling, and a unified API. " +
+                    "Add high-quality camera and gallery features to your KMP app with minimal effort."
+        )
         inceptionYear.set("2025")
         url.set("https://github.com/ismoy/ImagePickerKMP")
         licenses {
