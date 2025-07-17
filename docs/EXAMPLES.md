@@ -226,6 +226,8 @@ fun TestPermissionFlow() {
 
 ## Gallery Selection
 
+> **Note:** You do not need to request gallery permissions manually. The library automatically handles permission requests and user flows for both Android and iOS, providing a native experience on each platform.
+
 ### Single Image Selection
 
 ```kotlin
@@ -235,11 +237,11 @@ fun GallerySelectionExample() {
 
     if (showGallery) {
         GalleryPickerLauncher(
-            context = LocalContext.current,
+            context = LocalContext.current, // Android only; ignored on iOS
             onPhotosSelected = { results -> showGallery = false },
             onError = { showGallery = false },
             allowMultiple = false,
-            mimeTypes = listOf("image/*")
+            mimeTypes = listOf("image/*") // Optional
         )
     }
 
@@ -258,11 +260,11 @@ fun MultipleGallerySelectionExample() {
 
     if (showGallery) {
         GalleryPickerLauncher(
-            context = LocalContext.current,
+            context = LocalContext.current, // Android only; ignored on iOS
             onPhotosSelected = { results -> showGallery = false },
             onError = { showGallery = false },
             allowMultiple = true,
-            mimeTypes = listOf("image/jpeg", "image/png")
+            mimeTypes = listOf("image/jpeg", "image/png") // Optional
         )
     }
 
@@ -271,6 +273,12 @@ fun MultipleGallerySelectionExample() {
     }
 }
 ```
+
+- On **Android**, the user will see the system gallery picker, and permissions are requested automatically if needed.
+- On **iOS**, the native gallery picker is used. On iOS 14+, multiple selection is supported. The system handles permissions and limited access natively.
+- The callback `onPhotosSelected` always receives a list, even for single selection.
+- You can use `allowMultiple` to enable or disable multi-image selection.
+- The `mimeTypes` parameter is optional and lets you filter selectable file types.
 
 ## Internationalization (i18n)
 

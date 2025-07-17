@@ -8,7 +8,7 @@ class StringResourceTest {
     @Test
     fun `test string resource enum has expected count`() {
         // Verify that we have all expected string resources
-        val expectedCount = 21 // Ajusta este número si cambias el enum
+        val expectedCount = 27 // Ajusta este número si cambias el enum
         assertEquals(expectedCount, StringResource.values().size, 
             "StringResource enum should have exactly $expectedCount values")
     }
@@ -46,7 +46,13 @@ class StringResourceTest {
             StringResource.INVALID_CONTEXT_ERROR,
             StringResource.PHOTO_CAPTURE_ERROR,
             StringResource.GALLERY_SELECTION_ERROR,
-            StringResource.PERMISSION_ERROR
+            StringResource.PERMISSION_ERROR,
+            StringResource.GALLERY_PERMISSION_REQUIRED,
+            StringResource.GALLERY_PERMISSION_DESCRIPTION,
+            StringResource.GALLERY_PERMISSION_DENIED,
+            StringResource.GALLERY_PERMISSION_DENIED_DESCRIPTION,
+            StringResource.GALLERY_GRANT_PERMISSION,
+            StringResource.GALLERY_BTN_SETTINGS
         )
         
         assertEquals(expectedValues.size, StringResource.values().size,

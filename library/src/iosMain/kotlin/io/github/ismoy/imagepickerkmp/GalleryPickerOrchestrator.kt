@@ -10,7 +10,8 @@ import io.github.ismoy.imagepickerkmp.GalleryPhotoHandler.PhotoResult
 object GalleryPickerOrchestrator {
     fun launchGallery(
         onPhotoSelected: (PhotoResult) -> Unit,
-        onError: (Exception) -> Unit
+        onError: (Exception) -> Unit,
+        allowMultiple: Boolean = false
     ) {
         try {
             val rootViewController = ViewControllerProvider.getRootViewController()
@@ -18,7 +19,11 @@ object GalleryPickerOrchestrator {
                 onError(Exception("Could not find root view controller"))
                 return
             }
-            GalleryPresenter.presentGallery(rootViewController, onPhotoSelected, onError)
+            if (allowMultiple) {
+                PHPickerPresenter.presentGallery(rootViewController, onPhotoSelected, onError)
+            } else {
+                GalleryPresenter.presentGallery(rootViewController, onPhotoSelected, onError)
+            }
         } catch (e: Exception) {
             onError(Exception("Failed to launch gallery: ${e.message}"))
         }

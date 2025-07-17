@@ -230,7 +230,7 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.21"
+        version = "1.0.0"
     )
     pom {
         name.set("ImagePickerKMP")
@@ -266,7 +266,7 @@ afterEvaluate {
         repositories {
             maven {
                 name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/ismoy/BelZSpeedScan")
+                url = uri("https://github.com/ismoy/ImagePickerKMP")
                 credentials {
                     username = System.getenv("GITHUB_ACTOR") ?: ""
                     password = System.getenv("GITHUB_TOKEN") ?: ""

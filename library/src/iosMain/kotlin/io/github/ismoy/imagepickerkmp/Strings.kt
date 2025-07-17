@@ -26,7 +26,14 @@ private val defaultStringsMap: Map<String, String> by lazy {
 internal actual fun stringResource(id: StringResource): String = getDefaultString(id)
 
 private fun getDefaultString(id: StringResource): String {
-    val key = id.name.lowercase()
-    return defaultStringsMap[key]
-        ?: error("Missing default string for key: $key")
+    val key = when (id) {
+        StringResource.GALLERY_PERMISSION_REQUIRED -> "gallery_permission_required"
+        StringResource.GALLERY_PERMISSION_DESCRIPTION -> "gallery_permission_description"
+        StringResource.GALLERY_PERMISSION_DENIED -> "gallery_permission_denied"
+        StringResource.GALLERY_PERMISSION_DENIED_DESCRIPTION -> "gallery_permission_denied_description"
+        StringResource.GALLERY_GRANT_PERMISSION -> "grant_gallery_permission"
+        StringResource.GALLERY_BTN_SETTINGS -> "gallery_btn_settings"
+        else -> id.name.lowercase()
+    }
+    return defaultStringsMap[key] ?: id.name.replace("_", " ").replaceFirstChar { it.uppercase() }
 }

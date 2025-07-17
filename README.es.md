@@ -185,6 +185,8 @@ private fun subirImagen(photoResult: PhotoResult) {
 
 También puedes permitir que los usuarios seleccionen imágenes directamente desde la galería:
 
+> **Nota:** No necesitas solicitar permisos de galería manualmente. La librería gestiona automáticamente la solicitud de permisos y el flujo de usuario tanto en Android como en iOS, proporcionando una experiencia nativa en cada plataforma.
+
 ```kotlin
 @Composable
 fun MiSelectorGaleria() {
@@ -193,7 +195,7 @@ fun MiSelectorGaleria() {
 
     if (mostrarGaleria) {
         GalleryPickerLauncher(
-            context = LocalContext.current,
+            context = LocalContext.current, // Solo Android; ignorado en iOS
             onPhotosSelected = { resultados ->
                 imagenesSeleccionadas = resultados
                 mostrarGaleria = false
@@ -203,6 +205,7 @@ fun MiSelectorGaleria() {
                 mostrarGaleria = false
             },
             allowMultiple = true // o false para selección simple
+            // mimeTypes = listOf("image/jpeg", "image/png") // Opcional: filtrar por tipo
         )
     }
 
@@ -211,6 +214,12 @@ fun MiSelectorGaleria() {
     }
 }
 ```
+
+- En **Android**, el usuario verá el selector de galería del sistema y los permisos se solicitan automáticamente si es necesario.
+- En **iOS**, se usa el selector nativo de galería. En iOS 14+ se soporta selección múltiple. El sistema gestiona permisos y acceso limitado de forma nativa.
+- El callback `onPhotosSelected` siempre recibe una lista, incluso para selección simple.
+- Puedes usar `allowMultiple` para habilitar o deshabilitar la selección múltiple de imágenes.
+- El parámetro `mimeTypes` es opcional y permite filtrar los tipos de archivos seleccionables.
 
 ## Compatibilidad de plataformas
 

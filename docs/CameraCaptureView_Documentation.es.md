@@ -112,9 +112,37 @@ El `CameraCaptureView` maneja tres estados principales:
 - Soporta vistas de confirmación personalizadas
 
 ### GalleryPickerLauncher
-- Maneja selección de fotos de galería
+- Maneja la selección de fotos de galería
 - Soporta selección múltiple de fotos
-- Integra con galería del sistema
+- Se integra con la galería del sistema
+
+> **Nota:** No necesitas solicitar permisos de galería manualmente. La librería gestiona automáticamente la solicitud de permisos y el flujo de usuario tanto en Android como en iOS, proporcionando una experiencia nativa en cada plataforma.
+
+**Detalles por plataforma:**
+- En **Android**, se usa el selector de galería del sistema y los permisos se solicitan automáticamente si es necesario.
+- En **iOS**, se usa el selector nativo de galería. En iOS 14+ se soporta selección múltiple. El sistema gestiona permisos y acceso limitado de forma nativa.
+- El callback `onPhotosSelected` siempre recibe una lista, incluso para selección simple.
+- Usa `allowMultiple` para habilitar o deshabilitar la selección múltiple de imágenes.
+- El parámetro `mimeTypes` es opcional y permite filtrar los tipos de archivos seleccionables.
+
+#### Ejemplo
+```kotlin
+@Composable
+fun MiSelectorGaleria() {
+    var mostrarGaleria by remember { mutableStateOf(false) }
+    if (mostrarGaleria) {
+        GalleryPickerLauncher(
+            context = LocalContext.current, // Solo Android
+            onPhotosSelected = { resultados -> mostrarGaleria = false },
+            onError = { mostrarGaleria = false },
+            allowMultiple = true
+        )
+    }
+    Button(onClick = { mostrarGaleria = true }) {
+        Text("Seleccionar de la galería")
+    }
+}
+```
 
 ## Ejemplos de Uso
 
