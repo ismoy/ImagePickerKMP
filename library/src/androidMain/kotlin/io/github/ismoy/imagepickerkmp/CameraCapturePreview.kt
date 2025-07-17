@@ -56,7 +56,6 @@ fun CameraCapturePreview(
     val resolvedIconColor = previewConfig.uiConfig.iconColor ?: Color.White
     val resolvedButtonSize = previewConfig.uiConfig.buttonSize ?: 56.dp
     val captureButtonSize = previewConfig.captureButtonSize
-
     LaunchedEffect(Unit) {
         stateHolder.startCamera(
             onError = onError,

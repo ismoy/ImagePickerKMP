@@ -31,7 +31,13 @@ private val androidStringResMap = mapOf(
     StringResource.INVALID_CONTEXT_ERROR to R.string.invalid_context_error,
     StringResource.PHOTO_CAPTURE_ERROR to R.string.photo_capture_error,
     StringResource.GALLERY_SELECTION_ERROR to R.string.gallery_selection_error,
-    StringResource.PERMISSION_ERROR to R.string.permission_error
+    StringResource.PERMISSION_ERROR to R.string.permission_error,
+    StringResource.GALLERY_PERMISSION_REQUIRED to R.string.gallery_permission_required,
+    StringResource.GALLERY_PERMISSION_DESCRIPTION to R.string.gallery_permission_description,
+    StringResource.GALLERY_PERMISSION_DENIED to R.string.gallery_permission_denied,
+    StringResource.GALLERY_PERMISSION_DENIED_DESCRIPTION to R.string.gallery_permission_denied_description,
+    StringResource.GALLERY_GRANT_PERMISSION to R.string.gallery_grant_permission,
+    StringResource.GALLERY_BTN_SETTINGS to R.string.gallery_btn_settings
 )
 private fun getAndroidStringResId(id: StringResource): Int =
     androidStringResMap[id] ?: error("Missing Android string resource mapping for $id")
@@ -62,5 +68,14 @@ internal fun getStringResource(id: StringResource): String {
         StringResource.PHOTO_CAPTURE_ERROR -> "Photo capture failed"
         StringResource.GALLERY_SELECTION_ERROR -> "Gallery selection failed"
         StringResource.PERMISSION_ERROR -> "Permission error occurred"
+        StringResource.GALLERY_PERMISSION_REQUIRED -> "Storage permission required"
+        StringResource.GALLERY_PERMISSION_DESCRIPTION -> "Access to storage is required to select " +
+                "images from your gallery. Please grant the permission."
+        StringResource.GALLERY_PERMISSION_DENIED -> "Storage permission denied"
+        StringResource.GALLERY_PERMISSION_DENIED_DESCRIPTION -> "Storage permission is required " +
+                "to select images. Please enable it in app settings."
+        StringResource.GALLERY_GRANT_PERMISSION -> "Grant permission"
+        StringResource.GALLERY_BTN_SETTINGS -> "Open settings"
+
     }
 }

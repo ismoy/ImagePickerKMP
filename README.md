@@ -185,6 +185,8 @@ private fun uploadImage(photoResult: PhotoResult) {
 
 You can also allow users to pick images directly from the gallery:
 
+> **Note:** You do not need to request gallery permissions manually. The library automatically handles permission requests and user flows for both Android and iOS, providing a native experience on each platform.
+
 ```kotlin
 @Composable
 fun MyGalleryPicker() {
@@ -193,7 +195,7 @@ fun MyGalleryPicker() {
 
     if (showGalleryPicker) {
         GalleryPickerLauncher(
-            context = LocalContext.current,
+            context = LocalContext.current, // Android only; ignored on iOS
             onPhotosSelected = { results ->
                 selectedImages = results
                 showGalleryPicker = false
@@ -203,6 +205,7 @@ fun MyGalleryPicker() {
                 showGalleryPicker = false
             },
             allowMultiple = true // or false for single selection
+            // mimeTypes = listOf("image/jpeg", "image/png") // Optional: filter by type
         )
     }
 
@@ -211,6 +214,12 @@ fun MyGalleryPicker() {
     }
 }
 ```
+
+- On **Android**, the user will see the system gallery picker, and permissions are requested automatically if needed.
+- On **iOS**, the native gallery picker is used. On iOS 14+, multiple selection is supported. The system handles permissions and limited access natively.
+- The callback `onPhotosSelected` always receives a list, even for single selection.
+- You can use `allowMultiple` to enable or disable multi-image selection.
+- The `mimeTypes` parameter is optional and lets you filter selectable file types.
 
 ## Platform Support
 

@@ -8,7 +8,13 @@
     <string name="camera_permission_denied_description">Camera permission is required to capture photos. Please grant the permissions</string>
     <string name="grant_permission">Grant permission</string>
     <string name="camera_permission_permanently_denied">Camera permission permanently denied</string>
-    
+    <string name="gallery_permission_required">Storage permission required</string>
+    <string name="gallery_permission_description">Access to storage is required to select images from your gallery. Please grant the permission.</string>
+    <string name="gallery_permission_denied">Storage permission denied</string>
+    <string name="gallery_permission_denied_description">Storage permission is required to select images. Please enable it in app settings.</string>
+    <string name="gallery_grant_permission">Grant permission</string>
+    <string name="gallery_btn_settings">Open settings</string>
+
     <!-- Image Confirmation -->
     <string name="image_confirmation_title">Are you satisfied with the photo?</string>
     <string name="accept_button">Accept</string>

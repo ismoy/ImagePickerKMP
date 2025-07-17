@@ -238,6 +238,8 @@ fun TestPermissionFlow() {
 
 ## Selección de Galería
 
+> **Nota:** No necesitas solicitar permisos de galería manualmente. La librería gestiona automáticamente la solicitud de permisos y el flujo de usuario tanto en Android como en iOS, proporcionando una experiencia nativa en cada plataforma.
+
 ### Selección de Imagen Única
 
 ```kotlin
@@ -247,16 +249,16 @@ fun GallerySelectionExample() {
 
     if (showGallery) {
         GalleryPickerLauncher(
-            context = LocalContext.current,
+            context = LocalContext.current, // Solo Android; ignorado en iOS
             onPhotosSelected = { results -> showGallery = false },
             onError = { showGallery = false },
             allowMultiple = false,
-            mimeTypes = listOf("image/*")
+            mimeTypes = listOf("image/*") // Opcional
         )
     }
 
     Button(onClick = { showGallery = true }) {
-        Text("Select from Gallery")
+        Text("Seleccionar de la galería")
     }
 }
 ```
@@ -270,19 +272,25 @@ fun MultipleGallerySelectionExample() {
 
     if (showGallery) {
         GalleryPickerLauncher(
-            context = LocalContext.current,
+            context = LocalContext.current, // Solo Android; ignorado en iOS
             onPhotosSelected = { results -> showGallery = false },
             onError = { showGallery = false },
             allowMultiple = true,
-            mimeTypes = listOf("image/jpeg", "image/png")
+            mimeTypes = listOf("image/jpeg", "image/png") // Opcional
         )
     }
 
     Button(onClick = { showGallery = true }) {
-        Text("Select Multiple Images")
+        Text("Seleccionar múltiples imágenes")
     }
 }
 ```
+
+- En **Android**, el usuario verá el selector de galería del sistema y los permisos se solicitan automáticamente si es necesario.
+- En **iOS**, se usa el selector nativo de galería. En iOS 14+ se soporta selección múltiple. El sistema gestiona permisos y acceso limitado de forma nativa.
+- El callback `onPhotosSelected` siempre recibe una lista, incluso para selección simple.
+- Puedes usar `allowMultiple` para habilitar o deshabilitar la selección múltiple de imágenes.
+- El parámetro `mimeTypes` es opcional y permite filtrar los tipos de archivos seleccionables.
 
 ## Internacionalización (i18n)
 

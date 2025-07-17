@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@Suppress("ReturnCount")
 @Composable
 actual fun GalleryPickerLauncher(
     context: Any?,
@@ -29,13 +30,38 @@ actual fun GalleryPickerLauncher(
         return
     }
 
-    GalleryPickerLauncherContent(
-        context = context,
-        onPhotosSelected = onPhotosSelected,
-        onError = onError,
-        allowMultiple = allowMultiple,
-        mimeTypes = mimeTypes
-    )
+    var hasPermission by remember { mutableStateOf(false) }
+    var permissionChecked by remember { mutableStateOf(false) }
+
+    if (!permissionChecked) {
+        RequestGalleryPermission(
+            onGranted = {
+                hasPermission = true
+                permissionChecked = true
+            },
+            onLimited = {
+                hasPermission = true
+                permissionChecked = true
+            },
+            onDenied = {
+                hasPermission = false
+                permissionChecked = true
+            },
+            customDeniedDialog = null,
+            dialogConfig = defaultGalleryPermissionDialogConfig()
+        )
+        return
+    }
+
+    if (hasPermission) {
+        GalleryPickerLauncherContent(
+            context = context,
+            onPhotosSelected = onPhotosSelected,
+            onError = onError,
+            allowMultiple = allowMultiple,
+            mimeTypes = mimeTypes
+        )
+    }
 }
 
 @Composable

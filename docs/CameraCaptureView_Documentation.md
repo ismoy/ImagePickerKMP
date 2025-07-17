@@ -116,6 +116,34 @@ The `CameraCaptureView` manages three main states:
 - Supports multiple photo selection
 - Integrates with system gallery
 
+> **Note:** You do not need to request gallery permissions manually. The library automatically handles permission requests and user flows for both Android and iOS, providing a native experience on each platform.
+
+**Platform details:**
+- On **Android**, the system gallery picker is used and permissions are requested automatically if needed.
+- On **iOS**, the native gallery picker is used. On iOS 14+, multiple selection is supported. The system handles permissions and limited access natively.
+- The callback `onPhotosSelected` always receives a list, even for single selection.
+- Use `allowMultiple` to enable or disable multi-image selection.
+- The `mimeTypes` parameter is optional and lets you filter selectable file types.
+
+#### Example
+```kotlin
+@Composable
+fun MyGalleryPicker() {
+    var showGallery by remember { mutableStateOf(false) }
+    if (showGallery) {
+        GalleryPickerLauncher(
+            context = LocalContext.current, // Android only
+            onPhotosSelected = { results -> showGallery = false },
+            onError = { showGallery = false },
+            allowMultiple = true
+        )
+    }
+    Button(onClick = { showGallery = true }) {
+        Text("Pick from Gallery")
+    }
+}
+```
+
 ## Usage Examples
 
 ### Basic Camera Capture

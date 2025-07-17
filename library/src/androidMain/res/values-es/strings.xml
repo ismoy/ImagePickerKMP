@@ -8,6 +8,12 @@
     <string name="camera_permission_denied_description">El permiso de cámara es necesario para capturar fotos. Por favor, concede los permisos</string>
     <string name="grant_permission">Conceder permiso</string>
     <string name="camera_permission_permanently_denied">Permiso de cámara denegado permanentemente</string>
+    <string name="gallery_permission_required">Permiso de almacenamiento requerido</string>
+    <string name="gallery_permission_description">Se requiere acceso al almacenamiento para seleccionar imágenes de tu galería. Por favor, concede el permiso.</string>
+    <string name="gallery_permission_denied">Permiso de almacenamiento denegado</string>
+    <string name="gallery_permission_denied_description">Se requiere el permiso de almacenamiento para seleccionar imágenes. Por favor, actívalo en la configuración de la aplicación.</string>
+    <string name="gallery_grant_permission">Conceder permiso</string>
+    <string name="gallery_btn_settings">Abrir configuración</string>
     
     <!-- Image Confirmation -->
     <string name="image_confirmation_title">¿Estás satisfecho con la foto?</string>

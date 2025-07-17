@@ -2,12 +2,11 @@ package io.github.ismoy.imagepickerkmp
 
 import androidx.compose.runtime.Composable
 
-@Suppress("EmptyFunctionBlock")
 @Composable
-actual fun RequestGalleryPermission(
+expect fun RequestGalleryPermission(
     onGranted: () -> Unit,
-    onLimited: () -> Unit,
+    onLimited: () -> Unit = {},
     onDenied: () -> Unit,
-    customDeniedDialog: @Composable (() -> Unit)?,
+    customDeniedDialog: (@Composable (() -> Unit))? = null,
     dialogConfig: CameraPermissionDialogConfig
-)  {}
+)

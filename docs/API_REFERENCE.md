@@ -1068,4 +1068,52 @@ For API-related issues:
 For more information, refer to:
 - [Integration Guide](docs/INTEGRATION_GUIDE.md)
 - [Examples](docs/EXAMPLES.md)
-- [Customization Guide](docs/CUSTOMIZATION_GUIDE.md) 
+- [Customization Guide](docs/CUSTOMIZATION_GUIDE.md)
+
+### GalleryPickerLauncher
+
+A composable for launching the system gallery picker to select one or more images.
+
+> **Note:** You do not need to request gallery permissions manually. The library automatically handles permission requests and user flows for both Android and iOS, providing a native experience on each platform.
+
+#### Function Signature
+```kotlin
+@Composable
+fun GalleryPickerLauncher(
+    context: Any?, // Android only; ignored on iOS
+    onPhotosSelected: (List<PhotoResult>) -> Unit,
+    onError: (Exception) -> Unit,
+    allowMultiple: Boolean = false,
+    mimeTypes: List<String> = listOf("image/*")
+)
+```
+
+#### Parameters
+- `context: Any?` – Android context (ignored on iOS)
+- `onPhotosSelected: (List<PhotoResult>) -> Unit` – Callback with the selected images (always a list, even for single selection)
+- `onError: (Exception) -> Unit` – Callback for error handling
+- `allowMultiple: Boolean` – Allow multiple image selection (default: false)
+- `mimeTypes: List<String>` – Optional list of MIME types to filter selectable files (default: all images)
+
+#### Platform Behavior
+- **Android:** Uses the system gallery picker. Permissions are requested automatically if needed.
+- **iOS:** Uses the native gallery picker. On iOS 14+, multiple selection is supported. The system handles permissions and limited access natively.
+
+#### Example
+```kotlin
+@Composable
+fun MyGalleryPicker() {
+    var showGallery by remember { mutableStateOf(false) }
+    if (showGallery) {
+        GalleryPickerLauncher(
+            context = LocalContext.current, // Android only
+            onPhotosSelected = { results -> showGallery = false },
+            onError = { showGallery = false },
+            allowMultiple = true
+        )
+    }
+    Button(onClick = { showGallery = true }) {
+        Text("Pick from Gallery")
+    }
+}
+``` 
