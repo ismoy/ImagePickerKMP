@@ -16,12 +16,9 @@
 [![Detekt](https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main)](https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml)
 [![Detekt Issues](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ismoy/c18082f28a33af515885ed319e2fec4c/raw/detekt-issues.json&label=Detekt%20Issues)](https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml)
 
-## 🎥 Demo
+## 🎥 Demo **Android** And **IOS**
 
-<video width="100%" autoplay loop muted playsinline>
-  <source src="https://user-images.githubusercontent.com/ismoy/ImagePickerKMP/main/demo/demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[![Demo ImagePickerKMP](https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/demo_video_library.gif)](https://github.com/ismoy/ImagePickerKMP/blob/develop/demo_video_library.gif)
 
 *Watch the demo above to see ImagePickerKMP in action - camera capture, gallery selection, and custom UI in action!*
 
