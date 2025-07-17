@@ -31,6 +31,11 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - **Sistema de idiomas extensible**: Fácil añadir nuevos idiomas sin dependencias externas
 - **Traducciones automáticas**: Los diálogos de permisos y textos de UI ahora se traducen automáticamente por defecto
 - **Corrección de orientación de cámara frontal**: Corrección automática de la orientación de imágenes de cámara frontal para arreglar fotos espejadas/rotadas
+- Manejo automático de permisos de galería: `GalleryPickerLauncher` ahora gestiona los permisos de galería automáticamente en Android e iOS, sin necesidad de solicitud manual.
+- Diálogo personalizado de permisos de galería (Android): Se añadió un diálogo específico y localizable para permisos de galería, separado del de cámara.
+- Selección múltiple de imágenes en iOS: Implementada usando `PHPickerViewController` (iOS 14+), reemplazando el picker antiguo de una sola imagen.
+- Nuevos tests instrumentados y unitarios: Se añadieron y reactivaron pruebas para cubrir los nuevos flujos de permisos y selección múltiple.
+- Mejoras de localización: Nuevos textos y traducciones para los diálogos de permisos de galería.
 
 ### Cambiado
 - Mejorado el flujo de manejo de permisos
@@ -38,6 +43,8 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Mejor compatibilidad multiplataforma
 - La imagen de preview en confirmación ahora usa FIT_CENTER para evitar zoom en imágenes de galería
 - Procesamiento de imágenes mejorado con corrección automática de orientación para fotos de cámara frontal
+- Flujo de permisos en iOS: Ahora el permiso de galería se solicita directamente desde el sistema, sin diálogos previos personalizados, siguiendo el comportamiento nativo.
+- Refactor de lógica de permisos: El manejo de permisos de galería y cámara ahora es más consistente y multiplataforma.
 
 ### Arreglado
 - Flujo de denegación de permisos en iOS
@@ -46,12 +53,17 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Problemas de visualización de diálogos de permisos
 - Disparador (botón de captura) siempre centrado, botón de galería no lo empuja
 - Fotos de cámara frontal apareciendo espejadas o incorrectamente orientadas
+- Errores de texto en diálogos: El diálogo de galería ya no muestra textos de cámara.
+- Bugs de selección múltiple: Corregidos errores de rendimiento y crashes al seleccionar muchas imágenes en iOS.
+- Errores de threading y casting: Solucionados problemas de concurrencia y conversiones de tipos en la selección de imágenes.
 
 ### Documentación
 
 - Actualización exhaustiva de todos los archivos de documentación en Markdown para asegurar que todos los ejemplos de uso de `ImagePickerLauncher`, `GalleryPickerLauncher` y componentes relacionados reflejen la API real y actual.
 - Se reemplazaron todos los ejemplos obsoletos que usaban la API antigua (callbacks y handlers como parámetros sueltos) por el patrón correcto: toda la configuración y handlers ahora se muestran anidados dentro de `config = ImagePickerConfig(...)`, con handlers personalizados anidados según corresponda.
 - Se garantizó que toda la documentación, tanto en inglés como en español, esté completamente sincronizada y sea precisa.
+- Todos los ejemplos y guías actualizados para reflejar el nuevo manejo automático de permisos y la selección múltiple en iOS.
+- Notas añadidas sobre diferencias de plataforma en el comportamiento de permisos y selección (Android vs iOS).
 
 ## [1.0.0] - 2024-01-15
 

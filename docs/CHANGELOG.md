@@ -29,6 +29,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Extensible language system**: Easy to add new languages without external dependencies
 - **Automatic translations**: Permission dialogs and UI texts are now automatically translated by default
 - **Front camera orientation correction**: Automatic correction of front camera image orientation to fix mirrored/rotated photos
+- Automatic gallery permission handling: `GalleryPickerLauncher` now manages gallery permissions automatically on both Android and iOS, no manual request needed.
+- Custom gallery permission dialog (Android): Added a dedicated, localizable dialog for gallery permissions, separate from the camera dialog.
+- Multi-image selection on iOS: Implemented using `PHPickerViewController` (iOS 14+), replacing the old single-image picker.
+- New instrumented and unit tests: Added and re-enabled tests to cover new permission flows and multi-image selection.
+- Improved localization: New strings and translations for gallery permission dialogs.
 
 ### Changed
 - Improved permission handling flow
@@ -36,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Better cross-platform compatibility
 - Preview image in confirmation now uses FIT_CENTER to avoid zoom on gallery images
 - Enhanced image processing with automatic orientation correction for front camera photos
+- iOS gallery permission flow: Now requests permission directly via the system dialog, with no pre-permission custom dialog, matching native iOS behavior.
+- Refactored permission logic: Gallery and camera permission handling is now more consistent and cross-platform.
 
 ### Fixed
 - iOS permission denial flow
@@ -44,12 +51,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Permission dialog display issues
 - Disparador (capture button) always centered, gallery button does not push it
 - Front camera photos appearing mirrored or incorrectly oriented
+- Dialog text errors: Gallery permission dialog no longer shows camera texts.
+- Multi-image selection bugs: Fixed performance issues and crashes when selecting many images on iOS.
+- Threading and casting errors: Resolved concurrency and type conversion issues in image selection.
 
 ### Documentation
 
 - Thoroughly updated all Markdown documentation files to ensure all usage examples of `ImagePickerLauncher`, `GalleryPickerLauncher`, and related components reflect the current, real API.
 - Replaced all outdated examples using the old API (with top-level callbacks and handlers) with the correct pattern: all configuration and handlers are now shown nested inside `config = ImagePickerConfig(...)`, with custom handlers further nested as required.
 - Ensured all documentation in both English and Spanish is fully synchronized and accurate.
+- All examples and guides updated to reflect new automatic permission handling and multi-image selection on iOS.
+- Added notes on platform differences for permission and selection behavior (Android vs iOS).
 
 ## [1.0.0] - 2025-01-15
 
