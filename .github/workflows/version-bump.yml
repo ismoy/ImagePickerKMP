@@ -1,0 +1,61 @@
+name: Version Bump
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current version
+        id: current_version
+        run: |
+          CURRENT_VERSION=$(grep 'version = ' library/build.gradle.kts | sed 's/.*version = "\(.*\)".*/\1/')
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        id: new_version
+        run: |
+          CURRENT_VERSION=${{ steps.current_version.outputs.current_version }}
+          IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+          PATCH_VERSION=${VERSION_PARTS[2]}
+          NEW_PATCH=$((PATCH_VERSION + 1))
+          NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$NEW_PATCH"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
+
+      - name: Update version in build.gradle.kts
+        run: |
+          sed -i "s/version = \"${{ steps.current_version.outputs.current_version }}\"/version = \"${{ steps.new_version.outputs.new_version }}\"/" library/build.gradle.kts
+
+      - name: Commit and push version bump
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add library/build.gradle.kts
+          git commit -m "chore: bump version to ${{ steps.new_version.outputs.new_version }}"
+          git push origin main
+
+      - name: Notify Discord on Version Bump
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            🔄 **Version Bumped** - ImagePickerKMP
+            
+            **Old Version:** ${{ steps.current_version.outputs.current_version }}
+            **New Version:** ${{ steps.new_version.outputs.new_version }}
+            **Repository:** ${{ github.repository }}
+            **Commit:** ${{ github.sha }}
+            **Author:** ${{ github.actor }}
+            
+            📝 **Version updated in build.gradle.kts**
+            
+            🔗 **View Changes:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }} 

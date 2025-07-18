@@ -1,0 +1,79 @@
+name: Notifications
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion != 'skipped' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download workflow artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+          path: ./coverage
+
+      - name: Parse coverage data
+        id: coverage
+        run: |
+          if [ -f "./coverage/jacocoTestReport.xml" ]; then
+            # Extract line coverage percentage
+            LINE_COVERAGE=$(grep -o 'LINE="[^"]*"' ./coverage/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*')
+            BRANCH_COVERAGE=$(grep -o 'BRANCH="[^"]*"' ./coverage/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*')
+            
+            echo "line_coverage=$LINE_COVERAGE" >> $GITHUB_OUTPUT
+            echo "branch_coverage=$BRANCH_COVERAGE" >> $GITHUB_OUTPUT
+            echo "has_coverage=true" >> $GITHUB_OUTPUT
+          else
+            echo "line_coverage=0" >> $GITHUB_OUTPUT
+            echo "branch_coverage=0" >> $GITHUB_OUTPUT
+            echo "has_coverage=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Notify Discord with detailed info
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            ${{ github.event.workflow_run.conclusion == 'success' && '🎉' || '❌' }} **ImagePickerKMP Build ${{ github.event.workflow_run.conclusion == 'success' && 'Success' || 'Failed' }}**
+            
+            **Repository:** ${{ github.repository }}
+            **Branch:** ${{ github.event.workflow_run.head_branch }}
+            **Commit:** ${{ github.event.workflow_run.head_sha }}
+            **Triggered by:** ${{ github.event.workflow_run.actor.login }}
+            
+            ${{ steps.coverage.outputs.has_coverage == 'true' && format('📊 **Coverage Report:**\n• Line Coverage: {0}%\n• Branch Coverage: {1}%', steps.coverage.outputs.line_coverage, steps.coverage.outputs.branch_coverage) || '📊 **Coverage:** Not available' }}
+            
+            **Duration:** ${{ github.event.workflow_run.duration }}s
+            **Workflow:** ${{ github.event.workflow_run.name }}
+            
+            🔗 **View Details:** ${{ github.event.workflow_run.html_url }}
+
+      - name: Notify Discord on coverage threshold
+        if: steps.coverage.outputs.has_coverage == 'true' && github.event.workflow_run.conclusion == 'success'
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            📊 **Coverage Alert** - ImagePickerKMP
+            
+            **Line Coverage:** ${{ steps.coverage.outputs.line_coverage }}%
+            **Branch Coverage:** ${{ steps.coverage.outputs.branch_coverage }}%
+            
+            ${{ steps.coverage.outputs.line_coverage < 20 && '⚠️ **Low Coverage Alert!** Consider adding more tests.' || '' }}
+            ${{ steps.coverage.outputs.line_coverage >= 20 && steps.coverage.outputs.line_coverage < 50 && '📈 **Coverage Improving!** Keep adding tests!' || '' }}
+            ${{ steps.coverage.outputs.line_coverage >= 50 && '🎉 **Excellent Coverage!** Great job!' || '' }}
+            
+            **Branch:** ${{ github.event.workflow_run.head_branch }}
+            **Commit:** ${{ github.event.workflow_run.head_sha }}
+            
+            🔗 **View Details:** ${{ github.event.workflow_run.html_url }} 

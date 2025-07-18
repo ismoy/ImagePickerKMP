@@ -1,0 +1,30 @@
+/* Camera Permissions */
+"camera_permission_required" = "Permiso de cámara requerido";
+"camera_permission_description" = "El permiso de cámara es necesario para capturar fotos. Por favor, concédelo en la configuración";
+"open_settings" = "Abrir configuración";
+"camera_permission_denied" = "Permiso de cámara denegado";
+"camera_permission_denied_description" = "El permiso de cámara es necesario para capturar fotos. Por favor, concede los permisos";
+"grant_permission" = "Conceder permiso";
+"camera_permission_permanently_denied" = "Permiso de cámara denegado permanentemente";
+
+/* Image Confirmation */
+"image_confirmation_title" = "¿Estás satisfecho con la foto?";
+"accept_button" = "Aceptar";
+"retry_button" = "Reintentar";
+
+/* Selection Dialogs */
+"select_option_dialog_title" = "Seleccionar opción";
+"take_photo_option" = "Tomar foto";
+"select_from_gallery_option" = "Seleccionar de galería";
+"cancel_option" = "Cancelar";
+
+/* Accessibility */
+"preview_image_description" = "Vista previa";
+"hd_quality_description" = "HD";
+"sd_quality_description" = "SD";
+
+/* Errors */
+"invalid_context_error" = "Contexto inválido. Debe ser ComponentActivity";
+"photo_capture_error" = "Error al capturar la foto";
+"gallery_selection_error" = "Error al seleccionar de la galería";
+"permission_error" = "Error de permisos"; 
