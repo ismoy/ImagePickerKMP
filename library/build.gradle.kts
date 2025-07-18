@@ -244,8 +244,8 @@ mavenPublishing{
         url.set("https://github.com/ismoy/ImagePickerKMP")
         licenses {
             license {
-                name.set("The Apache Software License, Version 2.0")
-                url.set("https://github.com/ismoy/ImagePickerKMP/blob/main/LICENSE")
+                name.set("MIT License")
+                url.set("https://github.com/ismoy/ImagePickerKMP/tree/develop?tab=License-1-ov-file")
             }
         }
         developers {
