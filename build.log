@@ -1,0 +1,1160 @@
+Initialized native services in: /Volumes/MacBook_Externo/MacBook_Externo/.gradle/native
+Initialized jansi services in: /Volumes/MacBook_Externo/MacBook_Externo/.gradle/native
+Received JVM installation metadata from '/Volumes/MacBook_Externo/MacBook_Externo/Library/Java/JavaVirtualMachines/ms-17.0.15/Contents/Home': {JAVA_HOME=/Volumes/MacBook_Externo/MacBook_Externo/Library/Java/JavaVirtualMachines/ms-17.0.15/Contents/Home, JAVA_VERSION=17.0.15, JAVA_VENDOR=Microsoft, RUNTIME_NAME=OpenJDK Runtime Environment, RUNTIME_VERSION=17.0.15+6-LTS, VM_NAME=OpenJDK 64-Bit Server VM, VM_VERSION=17.0.15+6-LTS, VM_VENDOR=Microsoft, OS_ARCH=aarch64}
+The client will now receive all logging from the daemon (pid: 22780). The daemon log file: /Volumes/MacBook_Externo/MacBook_Externo/.gradle/daemon/8.7/daemon-22780.out.log
+Starting 66th build in daemon [uptime: 3 hrs 34 mins 33.751 secs, performance: 98%, GC rate: 0.00/s, heap usage: 0% of 2 GiB]
+Using 10 worker leases.
+Now considering [/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP] as hierarchies to watch
+Watching the file system is configured to be enabled if available
+File system watching is active
+Starting Build
+Settings evaluated using settings file '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/settings.gradle.kts'.
+Using local directory build cache for the root build (location = /Volumes/MacBook_Externo/MacBook_Externo/.gradle/caches/build-cache-1, removeUnusedEntriesAfter = 7 days).
+Projects loaded. Root project using build file '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/build.gradle.kts'.
+Included projects: [root project 'ImagePickerKMP', project ':library']
+
+> Configure project :
+Evaluating root project 'ImagePickerKMP' using build file '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/build.gradle.kts'.
+Transforming gradle-8.5.2.jar (com.android.tools.build:gradle:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming gradle-settings-api-8.5.2.jar (com.android.tools.build:gradle-settings-api:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming lint-model-31.5.2.jar (com.android.tools.lint:lint-model:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming builder-8.5.2.jar (com.android.tools.build:builder:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming manifest-merger-31.5.2.jar (com.android.tools.build:manifest-merger:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming sdk-common-31.5.2.jar (com.android.tools:sdk-common:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming sdklib-31.5.2.jar (com.android.tools:sdklib:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming repository-31.5.2.jar (com.android.tools:repository:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming aaptcompiler-8.5.2.jar (com.android.tools.build:aaptcompiler:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming tracker-31.5.2.jar (com.android.tools.analytics-library:tracker:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming shared-31.5.2.jar (com.android.tools.analytics-library:shared:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming databinding-compiler-common-8.5.2.jar (androidx.databinding:databinding-compiler-common:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming android-test-plugin-host-emulator-control-proto-31.5.2.jar (com.android.tools.utp:android-test-plugin-host-emulator-control-proto:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming android-test-plugin-host-retention-proto-31.5.2.jar (com.android.tools.utp:android-test-plugin-host-retention-proto:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming builder-model-8.5.2.jar (com.android.tools.build:builder-model:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming gradle-api-8.5.2.jar (com.android.tools.build:gradle-api:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming builder-test-api-8.5.2.jar (com.android.tools.build:builder-test-api:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming ddmlib-31.5.2.jar (com.android.tools.ddms:ddmlib:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming layoutlib-api-31.5.2.jar (com.android.tools.layoutlib:layoutlib-api:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming dvlib-31.5.2.jar (com.android.tools:dvlib:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming common-31.5.2.jar (com.android.tools:common:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-stdlib-jdk8-1.9.20.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jetifier-processor-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta10) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jetifier-core-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-core:1.0.0-beta10) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-reflect-1.9.22.jar (org.jetbrains.kotlin:kotlin-reflect:1.9.22) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-stdlib-jdk7-1.9.20.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-stdlib-1.9.22.jar (org.jetbrains.kotlin:kotlin-stdlib:1.9.22) with ExternalDependencyInstrumentingArtifactTransform
+Transforming annotations-13.0.jar (org.jetbrains:annotations:13.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming compose-compiler-gradle-plugin-2.1.21-gradle85.jar (org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-gradle-plugin-model-2.1.21.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-model:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming fus-statistics-gradle-plugin-2.1.21-gradle85.jar (org.jetbrains.kotlin:fus-statistics-gradle-plugin:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-gradle-plugin-api-2.1.21.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-api:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-gradle-plugin-api-2.1.21-gradle85.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-api:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-gradle-plugin-2.1.21-gradle85.jar (org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming ktlint-gradle-13.0.0.jar (org.jlleitschuh.gradle:ktlint-gradle:13.0.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming detekt-gradle-plugin-1.23.8.jar (io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.8) with ExternalDependencyInstrumentingArtifactTransform
+Transforming bundletool-1.16.0.jar (com.android.tools.build:bundletool:1.16.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming aapt2-proto-8.5.2-11315950.jar (com.android.tools.build:aapt2-proto:8.5.2-11315950) with ExternalDependencyInstrumentingArtifactTransform
+Transforming crash-31.5.2.jar (com.android.tools.analytics-library:crash:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming lint-typedef-remover-31.5.2.jar (com.android.tools.lint:lint-typedef-remover:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming databinding-common-8.5.2.jar (androidx.databinding:databinding-common:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming baseLibrary-8.5.2.jar (com.android.databinding:baseLibrary:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming android-device-provider-ddmlib-proto-31.5.2.jar (com.android.tools.utp:android-device-provider-ddmlib-proto:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming android-device-provider-gradle-proto-31.5.2.jar (com.android.tools.utp:android-device-provider-gradle-proto:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming android-test-plugin-host-additional-test-output-proto-31.5.2.jar (com.android.tools.utp:android-test-plugin-host-additional-test-output-proto:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming android-test-plugin-host-coverage-proto-31.5.2.jar (com.android.tools.utp:android-test-plugin-host-coverage-proto:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming android-test-plugin-host-logcat-proto-31.5.2.jar (com.android.tools.utp:android-test-plugin-host-logcat-proto:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming android-test-plugin-host-apk-installer-proto-31.5.2.jar (com.android.tools.utp:android-test-plugin-host-apk-installer-proto:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming android-test-plugin-result-listener-gradle-proto-31.5.2.jar (com.android.tools.utp:android-test-plugin-result-listener-gradle-proto:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming transform-api-2.0.0-deprecated-use-gradle-api.jar (com.android.tools.build:transform-api:2.0.0-deprecated-use-gradle-api) with ExternalDependencyInstrumentingArtifactTransform
+Transforming httpmime-4.5.6.jar (org.apache.httpcomponents:httpmime:4.5.6) with ExternalDependencyInstrumentingArtifactTransform
+Transforming commons-io-2.17.0.jar (commons-io:commons-io:2.17.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming asm-commons-9.6.jar (org.ow2.asm:asm-commons:9.6) with ExternalDependencyInstrumentingArtifactTransform
+Transforming asm-util-9.6.jar (org.ow2.asm:asm-util:9.6) with ExternalDependencyInstrumentingArtifactTransform
+Transforming asm-analysis-9.6.jar (org.ow2.asm:asm-analysis:9.6) with ExternalDependencyInstrumentingArtifactTransform
+Transforming asm-tree-9.6.jar (org.ow2.asm:asm-tree:9.6) with ExternalDependencyInstrumentingArtifactTransform
+Transforming asm-9.6.jar (org.ow2.asm:asm:9.6) with ExternalDependencyInstrumentingArtifactTransform
+Transforming apkzlib-8.5.2.jar (com.android.tools.build:apkzlib:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming bcpkix-jdk18on-1.77.jar (org.bouncycastle:bcpkix-jdk18on:1.77) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jaxb-runtime-2.3.2.jar (org.glassfish.jaxb:jaxb-runtime:2.3.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jopt-simple-4.9.jar (net.sf.jopt-simple:jopt-simple:4.9) with ExternalDependencyInstrumentingArtifactTransform
+Transforming javapoet-1.10.0.jar (com.squareup:javapoet:1.10.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming protobuf-java-util-3.22.3.jar (com.google.protobuf:protobuf-java-util:3.22.3) with ExternalDependencyInstrumentingArtifactTransform
+Transforming grpc-protobuf-1.57.0.jar (io.grpc:grpc-protobuf:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming tink-1.7.0.jar (com.google.crypto.tink:tink:1.7.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming protos-31.5.2.jar (com.android.tools.analytics-library:protos:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming proto-google-common-protos-2.17.0.jar (com.google.api.grpc:proto-google-common-protos:2.17.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming protobuf-java-3.22.3.jar (com.google.protobuf:protobuf-java:3.22.3) with ExternalDependencyInstrumentingArtifactTransform
+Transforming grpc-netty-1.57.0.jar (io.grpc:grpc-netty:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming grpc-core-1.57.0.jar (io.grpc:grpc-core:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-build-statistics-2.1.21.jar (org.jetbrains.kotlin:kotlin-build-statistics:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming gson-2.11.0.jar (com.google.code.gson:gson:2.11.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming grpc-stub-1.57.0.jar (io.grpc:grpc-stub:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming core-proto-0.0.9-alpha02.jar (com.google.testing.platform:core-proto:0.0.9-alpha02) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kxml2-2.3.0.jar (net.sf.kxml:kxml2:2.3.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming tensorflow-lite-metadata-0.1.0-rc2.jar (org.tensorflow:tensorflow-lite-metadata:0.1.0-rc2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming flatbuffers-java-1.12.0.jar (com.google.flatbuffers:flatbuffers-java:1.12.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-gradle-plugin-idea-proto-2.1.21.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-idea-proto:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-gradle-plugin-idea-2.1.21.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-idea:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-klib-commonizer-api-2.1.21.jar (org.jetbrains.kotlin:kotlin-klib-commonizer-api:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-util-klib-metadata-2.1.21.jar (org.jetbrains.kotlin:kotlin-util-klib-metadata:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-compiler-runner-2.1.21.jar (org.jetbrains.kotlin:kotlin-compiler-runner:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming semver-1.1.1.jar (net.swiftzer.semver:semver:1.1.1) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jimfs-1.1.jar (com.google.jimfs:jimfs:1.1) with ExternalDependencyInstrumentingArtifactTransform
+Transforming grpc-context-1.57.0.jar (io.grpc:grpc-context:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming grpc-protobuf-lite-1.57.0.jar (io.grpc:grpc-protobuf-lite:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming grpc-api-1.57.0.jar (io.grpc:grpc-api:1.57.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming guava-32.0.1-jre.jar (com.google.guava:guava:32.0.1-jre) with ExternalDependencyInstrumentingArtifactTransform
+Transforming dagger-2.28.3.jar (com.google.dagger:dagger:2.28.3) with ExternalDependencyInstrumentingArtifactTransform
+Transforming javax.inject-1.jar (javax.inject:javax.inject:1) with ExternalDependencyInstrumentingArtifactTransform
+Transforming bcutil-jdk18on-1.77.jar (org.bouncycastle:bcutil-jdk18on:1.77) with ExternalDependencyInstrumentingArtifactTransform
+Transforming bcprov-jdk18on-1.77.jar (org.bouncycastle:bcprov-jdk18on:1.77) with ExternalDependencyInstrumentingArtifactTransform
+Transforming trove4j-1.0.20200330.jar (org.jetbrains.intellij.deps:trove4j:1.0.20200330) with ExternalDependencyInstrumentingArtifactTransform
+Transforming commons-compress-1.21.jar (org.apache.commons:commons-compress:1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming httpclient-4.5.14.jar (org.apache.httpcomponents:httpclient:4.5.14) with ExternalDependencyInstrumentingArtifactTransform
+Transforming httpcore-4.4.16.jar (org.apache.httpcomponents:httpcore:4.4.16) with ExternalDependencyInstrumentingArtifactTransform
+Transforming javax.activation-1.2.0.jar (com.sun.activation:javax.activation:1.2.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming signflinger-8.5.2.jar (com.android:signflinger:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming zipflinger-8.5.2.jar (com.android:zipflinger:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming annotations-31.5.2.jar (com.android.tools:annotations:31.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jna-platform-5.6.0.jar (net.java.dev.jna:jna-platform:5.6.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming juniversalchardet-1.0.3.jar (com.googlecode.juniversalchardet:juniversalchardet:1.0.3) with ExternalDependencyInstrumentingArtifactTransform
+Transforming javax.annotation-api-1.3.2.jar (javax.annotation:javax.annotation-api:1.3.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming stax-ex-1.8.1.jar (org.jvnet.staxex:stax-ex:1.8.1) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jakarta.xml.bind-api-2.3.2.jar (jakarta.xml.bind:jakarta.xml.bind-api:2.3.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming txw2-2.3.2.jar (org.glassfish.jaxb:txw2:2.3.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming istack-commons-runtime-3.0.8.jar (com.sun.istack:istack-commons-runtime:3.0.8) with ExternalDependencyInstrumentingArtifactTransform
+Transforming FastInfoset-1.2.16.jar (com.sun.xml.fastinfoset:FastInfoset:1.2.16) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jakarta.activation-api-1.2.1.jar (jakarta.activation:jakarta.activation-api:1.2.1) with ExternalDependencyInstrumentingArtifactTransform
+Transforming auto-value-annotations-1.6.2.jar (com.google.auto.value:auto-value-annotations:1.6.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming error_prone_annotations-2.27.0.jar (com.google.errorprone:error_prone_annotations:2.27.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jose4j-0.9.5.jar (org.bitbucket.b_c:jose4j:0.9.5) with ExternalDependencyInstrumentingArtifactTransform
+Transforming slf4j-api-1.7.30.jar (org.slf4j:slf4j-api:1.7.30) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jdom2-2.0.6.jar (org.jdom:jdom2:2.0.6) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jsr305-3.0.2.jar (com.google.code.findbugs:jsr305:3.0.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming j2objc-annotations-2.8.jar (com.google.j2objc:j2objc-annotations:2.8) with ExternalDependencyInstrumentingArtifactTransform
+Transforming annotations-4.1.1.4.jar (com.google.android:annotations:4.1.1.4) with ExternalDependencyInstrumentingArtifactTransform
+Transforming animal-sniffer-annotations-1.23.jar (org.codehaus.mojo:animal-sniffer-annotations:1.23) with ExternalDependencyInstrumentingArtifactTransform
+Transforming perfmark-api-0.26.0.jar (io.perfmark:perfmark-api:0.26.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-codec-http2-4.1.93.Final.jar (io.netty:netty-codec-http2:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-handler-proxy-4.1.93.Final.jar (io.netty:netty-handler-proxy:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-codec-http-4.1.93.Final.jar (io.netty:netty-codec-http:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-handler-4.1.93.Final.jar (io.netty:netty-handler:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-transport-native-unix-common-4.1.93.Final.jar (io.netty:netty-transport-native-unix-common:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+Transforming checker-qual-3.33.0.jar (org.checkerframework:checker-qual:3.33.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming commons-codec-1.11.jar (commons-codec:commons-codec:1.11) with ExternalDependencyInstrumentingArtifactTransform
+Transforming apksig-8.5.2.jar (com.android.tools.build:apksig:8.5.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming javawriter-2.5.0.jar (com.squareup:javawriter:2.5.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-gradle-plugin-annotations-2.1.21.jar (org.jetbrains.kotlin:kotlin-gradle-plugin-annotations:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-native-utils-2.1.21.jar (org.jetbrains.kotlin:kotlin-native-utils:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-tooling-core-2.1.21.jar (org.jetbrains.kotlin:kotlin-tooling-core:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-build-tools-api-2.1.21.jar (org.jetbrains.kotlin:kotlin-build-tools-api:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-util-klib-2.1.21.jar (org.jetbrains.kotlin:kotlin-util-klib:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-util-io-2.1.21.jar (org.jetbrains.kotlin:kotlin-util-io:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-daemon-client-2.1.21.jar (org.jetbrains.kotlin:kotlin-daemon-client:2.1.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlinx-coroutines-core-jvm-1.8.0.jar (org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming failureaccess-1.0.1.jar (com.google.guava:failureaccess:1.0.1) with ExternalDependencyInstrumentingArtifactTransform
+Transforming listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar (com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava) with ExternalDependencyInstrumentingArtifactTransform
+Transforming commons-logging-1.2.jar (commons-logging:commons-logging:1.2) with ExternalDependencyInstrumentingArtifactTransform
+Transforming jna-5.6.0.jar (net.java.dev.jna:jna:5.6.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-codec-socks-4.1.93.Final.jar (io.netty:netty-codec-socks:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-codec-4.1.93.Final.jar (io.netty:netty-codec:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-transport-4.1.93.Final.jar (io.netty:netty-transport:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-buffer-4.1.93.Final.jar (io.netty:netty-buffer:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-resolver-4.1.93.Final.jar (io.netty:netty-resolver:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+Transforming netty-common-4.1.93.Final.jar (io.netty:netty-common:4.1.93.Final) with ExternalDependencyInstrumentingArtifactTransform
+
+> Configure project :library
+Evaluating project ':library' using build file '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/build.gradle.kts'.
+Transforming gradle-maven-publish-plugin-0.30.0.jar (com.vanniktech:gradle-maven-publish-plugin:0.30.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming central-portal-0.30.0.jar (com.vanniktech:central-portal:0.30.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming nexus-0.30.0.jar (com.vanniktech:nexus:0.30.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming converter-moshi-2.11.0.jar (com.squareup.retrofit2:converter-moshi:2.11.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming converter-scalars-2.11.0.jar (com.squareup.retrofit2:converter-scalars:2.11.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming retrofit-2.11.0.jar (com.squareup.retrofit2:retrofit:2.11.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming okhttp-4.12.0.jar (com.squareup.okhttp3:okhttp:4.12.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming moshi-1.15.1.jar (com.squareup.moshi:moshi:1.15.1) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-stdlib-jdk8-1.8.21.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-stdlib-jdk7-1.8.21.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.21) with ExternalDependencyInstrumentingArtifactTransform
+Transforming okio-jvm-3.7.0.jar (com.squareup.okio:okio-jvm:3.7.0) with ExternalDependencyInstrumentingArtifactTransform
+Transforming kotlin-stdlib-1.9.22.jar (org.jetbrains.kotlin:kotlin-stdlib:1.9.22) with ExternalDependencyInstrumentingArtifactTransform
+Transforming annotations-13.0.jar (org.jetbrains:annotations:13.0) with ExternalDependencyInstrumentingArtifactTransform
+Using Kotlin Gradle Plugin gradle85 variant
+Using default execution profile
+Loading gradle.local.properties
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Leaving platform-specific artifactId: library-android
+Configured publication: androidRelease, artifactId: library-android
+Leaving platform-specific artifactId: imagepickerkmp-iosarm64
+Configured publication: iosArm64, artifactId: imagepickerkmp-iosarm64
+Leaving platform-specific artifactId: imagepickerkmp-iossimulatorarm64
+Configured publication: iosSimulatorArm64, artifactId: imagepickerkmp-iossimulatorarm64
+Leaving platform-specific artifactId: imagepickerkmp-iosx64
+Configured publication: iosX64, artifactId: imagepickerkmp-iosx64
+Configured publication: kotlinMultiplatform, artifactId: imagepickerkmp
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+All projects evaluated.
+Task name matched 'build'
+Selected primary task 'build' from project :
+Tasks to be executed: [task ':library:checkKotlinGradlePluginConfigurationErrors', task ':library:transformCommonMainDependenciesMetadata', task ':library:compileCommonMainKotlinMetadata', task ':library:generateProjectStructureMetadata', task ':library:metadataCommonMainProcessResources', task ':library:metadataCommonMainClasses', task ':library:allMetadataJar', task ':library:preBuild', task ':library:preDebugBuild', task ':library:mergeDebugJniLibFolders', task ':library:mergeDebugNativeLibs', task ':library:stripDebugDebugSymbols', task ':library:copyDebugJniLibsProjectAndLocalJars', task ':library:generateDebugResValues', task ':library:generateDebugResources', task ':library:packageDebugResources', task ':library:parseDebugLocalResources', task ':library:generateDebugRFile', task ':library:compileDebugKotlinAndroid', task ':library:extractDebugAnnotations', task ':library:extractDeepLinksForAarDebug', task ':library:javaPreCompileDebug', task ':library:compileDebugJavaWithJavac', task ':library:mergeDebugGeneratedProguardFiles', task ':library:mergeDebugConsumerProguardFiles', task ':library:mergeDebugShaders', task ':library:compileDebugShaders', task ':library:debugAssetsCopyForAGP', task ':library:generateDebugAssets', task ':library:packageDebugAssets', task ':library:prepareDebugArtProfile', task ':library:prepareLintJarForPublish', task ':library:processDebugManifest', task ':library:processDebugJavaRes', task ':library:mergeDebugJavaResource', task ':library:syncDebugLibJars', task ':library:writeDebugAarMetadata', task ':library:bundleDebugAar', task ':library:assembleDebug', task ':library:preReleaseBuild', task ':library:mergeReleaseJniLibFolders', task ':library:mergeReleaseNativeLibs', task ':library:stripReleaseDebugSymbols', task ':library:copyReleaseJniLibsProjectAndLocalJars', task ':library:generateReleaseResValues', task ':library:extractDeepLinksForAarRelease', task ':library:generateReleaseResources', task ':library:packageReleaseResources', task ':library:parseReleaseLocalResources', task ':library:generateReleaseRFile', task ':library:compileReleaseKotlinAndroid', task ':library:extractReleaseAnnotations', task ':library:javaPreCompileRelease', task ':library:compileReleaseJavaWithJavac', task ':library:mergeReleaseGeneratedProguardFiles', task ':library:mergeReleaseConsumerProguardFiles', task ':library:mergeReleaseShaders', task ':library:compileReleaseShaders', task ':library:generateReleaseAssets', task ':library:releaseAssetsCopyForAGP', task ':library:packageReleaseAssets', task ':library:prepareReleaseArtProfile', task ':library:processReleaseManifest', task ':library:processReleaseJavaRes', task ':library:mergeReleaseJavaResource', task ':library:syncReleaseLibJars', task ':library:writeReleaseAarMetadata', task ':library:bundleReleaseAar', task ':library:mapReleaseSourceSetPaths', task ':library:mergeReleaseResources', task ':library:verifyReleaseResources', task ':library:assembleRelease', task ':library:commonizeNativeDistribution', task ':library:transformNativeMainCInteropDependenciesMetadata', task ':library:transformNativeMainDependenciesMetadata', task ':library:compileNativeMainKotlinMetadata', task ':library:metadataNativeMainProcessResources', task ':library:metadataNativeMainClasses', task ':library:transformAppleMainCInteropDependenciesMetadata', task ':library:transformAppleMainDependenciesMetadata', task ':library:compileAppleMainKotlinMetadata', task ':library:metadataAppleMainProcessResources', task ':library:metadataAppleMainClasses', task ':library:transformIosMainCInteropDependenciesMetadata', task ':library:transformIosMainDependenciesMetadata', task ':library:compileIosMainKotlinMetadata', task ':library:compileKotlinIosArm64', task ':library:compileKotlinIosSimulatorArm64', task ':library:compileKotlinIosX64', task ':library:iosArm64ProcessResources', task ':library:iosArm64MainKlibrary', task ':library:compileTestKotlinIosArm64', task ':library:iosSimulatorArm64ProcessResources', task ':library:iosSimulatorArm64MainKlibrary', task ':library:compileTestKotlinIosSimulatorArm64', task ':library:iosX64ProcessResources', task ':library:iosX64MainKlibrary', task ':library:compileTestKotlinIosX64', task ':library:metadataIosMainProcessResources', task ':library:metadataIosMainClasses', task ':library:iosArm64MetadataElements', task ':library:iosSimulatorArm64MetadataElements', task ':library:iosX64MetadataElements', task ':library:linkDebugFrameworkIosArm64', task ':library:linkDebugFrameworkIosX64', task ':library:linkDebugFrameworkIosFat', task ':library:linkDebugFrameworkIosSimulatorArm64', task ':library:linkReleaseFrameworkIosArm64', task ':library:linkReleaseFrameworkIosX64', task ':library:linkReleaseFrameworkIosFat', task ':library:linkReleaseFrameworkIosSimulatorArm64', task ':library:assemble', task ':library:linkDebugTestIosSimulatorArm64', task ':library:iosSimulatorArm64Test', task ':library:linkDebugTestIosX64', task ':library:iosX64Test', task ':library:bundleLibRuntimeToJarDebug', task ':library:bundleLibCompileToJarDebug', task ':library:preDebugUnitTestBuild', task ':library:checkDebugUnitTestAarMetadata', task ':library:compileDebugLibraryResources', task ':library:generateDebugUnitTestResValues', task ':library:mapDebugUnitTestSourceSetPaths', task ':library:generateDebugUnitTestResources', task ':library:mergeDebugUnitTestResources', task ':library:extractDeepLinksDebug', task ':library:processDebugUnitTestManifest', task ':library:processDebugUnitTestResources', task ':library:compileDebugUnitTestKotlinAndroid', task ':library:javaPreCompileDebugUnitTest', task ':library:compileDebugUnitTestJavaWithJavac', task ':library:mergeDebugAssets', task ':library:generateDebugUnitTestAssets', task ':library:mergeDebugUnitTestAssets', task ':library:packageDebugUnitTestForUnitTest', task ':library:generateDebugUnitTestConfig', task ':library:processDebugUnitTestJavaRes', task ':library:testDebugUnitTest', task ':library:bundleLibRuntimeToJarRelease', task ':library:bundleLibCompileToJarRelease', task ':library:preReleaseUnitTestBuild', task ':library:checkReleaseUnitTestAarMetadata', task ':library:compileReleaseLibraryResources', task ':library:generateReleaseUnitTestResValues', task ':library:mapReleaseUnitTestSourceSetPaths', task ':library:generateReleaseUnitTestResources', task ':library:mergeReleaseUnitTestResources', task ':library:extractDeepLinksRelease', task ':library:processReleaseUnitTestManifest', task ':library:processReleaseUnitTestResources', task ':library:compileReleaseUnitTestKotlinAndroid', task ':library:javaPreCompileReleaseUnitTest', task ':library:compileReleaseUnitTestJavaWithJavac', task ':library:mergeReleaseAssets', task ':library:generateReleaseUnitTestAssets', task ':library:mergeReleaseUnitTestAssets', task ':library:packageReleaseUnitTestForUnitTest', task ':library:generateReleaseUnitTestConfig', task ':library:processReleaseUnitTestJavaRes', task ':library:testReleaseUnitTest', task ':library:test', task ':library:jacocoTestReport', task ':library:allTests', task ':library:detekt', task ':library:bundleDebugLocalLintAar', task ':library:createFullJarDebug', task ':library:preDebugAndroidTestBuild', task ':library:generateDebugAndroidTestResValues', task ':library:writeDebugLintModelMetadata', task ':library:generateDebugAndroidTestLintModel', task ':library:extractProguardFiles', task ':library:generateDebugLintReportModel', task ':library:generateDebugUnitTestLintModel', task ':library:lintAnalyzeDebug', task ':library:lintAnalyzeDebugAndroidTest', task ':library:lintAnalyzeDebugUnitTest', task ':library:lintReportDebug', task ':library:lintDebug', task ':library:lint', task ':library:check', task ':library:build']
+Tasks that were excluded: []
+work action Parameters of ExtractAarTransform (Thread[Execution worker,5,main]) started.
+Resolve mutations for :library:checkKotlinGradlePluginConfigurationErrors (Thread[Execution worker,5,main]) started.
+:library:checkKotlinGradlePluginConfigurationErrors (Thread[Execution worker,5,main]) started.
+
+> Task :library:checkKotlinGradlePluginConfigurationErrors SKIPPED
+Skipping task ':library:checkKotlinGradlePluginConfigurationErrors' as task onlyIf 'errorDiagnostics are present' is false.
+Resolve mutations for :library:transformCommonMainDependenciesMetadata (Thread[Execution worker,5,main]) started.
+Build f01b97bc-eab6-4700-8fa4-e0c5a4c31976 is started
+:library:transformCommonMainDependenciesMetadata (Thread[Execution worker,5,main]) started.
+
+> Task :library:transformCommonMainDependenciesMetadata UP-TO-DATE
+Transforming material-1.8.2.jar (org.jetbrains.compose.material:material:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming material-ripple-1.8.2.jar (org.jetbrains.compose.material:material-ripple:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming coil-compose-metadata-3.2.0.jar (io.coil-kt.coil3:coil-compose:3.2.0) with ProjectStructureMetadataTransformAction
+Transforming coil-compose-core-metadata-3.2.0.jar (io.coil-kt.coil3:coil-compose-core:3.2.0) with ProjectStructureMetadataTransformAction
+Transforming foundation-1.8.2.jar (org.jetbrains.compose.foundation:foundation:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming animation-1.8.2.jar (org.jetbrains.compose.animation:animation:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming animation-core-1.8.2.jar (org.jetbrains.compose.animation:animation-core:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming foundation-layout-1.8.2.jar (org.jetbrains.compose.foundation:foundation-layout:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming ui-1.8.2.jar (org.jetbrains.compose.ui:ui:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming ui-backhandler-metadata-1.8.2.jar (org.jetbrains.compose.ui:ui-backhandler:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming lifecycle-runtime-compose-2.8.4.jar (org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.8.4) with ProjectStructureMetadataTransformAction
+Transforming ui-text-1.8.2.jar (org.jetbrains.compose.ui:ui-text:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming runtime-saveable-1.8.2.jar (org.jetbrains.compose.runtime:runtime-saveable:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming ui-graphics-1.8.2.jar (org.jetbrains.compose.ui:ui-graphics:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming ui-unit-1.8.2.jar (org.jetbrains.compose.ui:ui-unit:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming ui-geometry-1.8.2.jar (org.jetbrains.compose.ui:ui-geometry:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming runtime-1.8.2.jar (org.jetbrains.compose.runtime:runtime:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming lifecycle-runtime-2.8.4.jar (org.jetbrains.androidx.lifecycle:lifecycle-runtime:2.8.4) with ProjectStructureMetadataTransformAction
+Transforming lifecycle-common-2.8.4.jar (org.jetbrains.androidx.lifecycle:lifecycle-common:2.8.4) with ProjectStructureMetadataTransformAction
+Transforming lifecycle-viewmodel-2.8.4.jar (org.jetbrains.androidx.lifecycle:lifecycle-viewmodel:2.8.4) with ProjectStructureMetadataTransformAction
+Transforming coil-metadata-3.2.0.jar (io.coil-kt.coil3:coil:3.2.0) with ProjectStructureMetadataTransformAction
+Transforming coil-core-metadata-3.2.0.jar (io.coil-kt.coil3:coil-core:3.2.0) with ProjectStructureMetadataTransformAction
+Transforming skiko-metadata-0.9.4.2.jar (org.jetbrains.skiko:skiko:0.9.4.2) with ProjectStructureMetadataTransformAction
+Transforming kotlinx-coroutines-core-metadata-1.10.2.jar (org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2) with ProjectStructureMetadataTransformAction
+Transforming ui-util-1.8.2.jar (org.jetbrains.compose.ui:ui-util:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming collection-1.8.2.jar (org.jetbrains.compose.collection-internal:collection:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming atomicfu-metadata-0.23.2.jar (org.jetbrains.kotlinx:atomicfu:0.23.2) with ProjectStructureMetadataTransformAction
+Transforming annotation-1.8.2.jar (org.jetbrains.compose.annotation-internal:annotation:1.8.2) with ProjectStructureMetadataTransformAction
+Transforming collection-metadata-1.5.0.jar (androidx.collection:collection:1.5.0) with ProjectStructureMetadataTransformAction
+Transforming core-common-2.2.0.jar (androidx.arch.core:core-common:2.2.0) with ProjectStructureMetadataTransformAction
+Transforming annotation-metadata-1.9.1.jar (androidx.annotation:annotation:1.9.1) with ProjectStructureMetadataTransformAction
+Transforming okio-metadata-3.11.0.jar (com.squareup.okio:okio:3.11.0) with ProjectStructureMetadataTransformAction
+Transforming kotlin-stdlib-2.1.21-all.jar (org.jetbrains.kotlin:kotlin-stdlib:2.1.21) with ProjectStructureMetadataTransformAction
+Transforming ui-uikit-metadata-1.8.2.jar (org.jetbrains.compose.ui:ui-uikit:1.8.2) with ProjectStructureMetadataTransformAction
+Caching disabled for task ':library:transformCommonMainDependenciesMetadata' because:
+  Metadata Dependency Transformation Task doesn't benefit from caching as it doesn't have heavy load
+Skipping task ':library:transformCommonMainDependenciesMetadata' as it is up-to-date.
+Resolve mutations for :library:compileCommonMainKotlinMetadata (Thread[Execution worker,5,main]) started.
+:library:compileCommonMainKotlinMetadata (Thread[Execution worker,5,main]) started.
+Resolve mutations for :library:generateProjectStructureMetadata (Thread[Execution worker Thread 8,5,main]) started.
+:library:generateProjectStructureMetadata (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:generateProjectStructureMetadata UP-TO-DATE
+Caching disabled for task ':library:generateProjectStructureMetadata' because:
+  Caching has been disabled for the task
+Skipping task ':library:generateProjectStructureMetadata' as it is up-to-date.
+Resolve mutations for :library:metadataCommonMainProcessResources (Thread[Execution worker Thread 8,5,main]) started.
+:library:metadataCommonMainProcessResources (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:metadataCommonMainProcessResources NO-SOURCE
+Skipping task ':library:metadataCommonMainProcessResources' as it has no source files and no previous output files.
+Resolve mutations for :library:preBuild (Thread[Execution worker Thread 8,5,main]) started.
+:library:preBuild (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:preBuild UP-TO-DATE
+Skipping task ':library:preBuild' as it has no actions.
+Resolve mutations for :library:preDebugBuild (Thread[Execution worker Thread 8,5,main]) started.
+:library:preDebugBuild (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:preDebugBuild UP-TO-DATE
+Skipping task ':library:preDebugBuild' as it has no actions.
+Resolve mutations for :library:mergeDebugJniLibFolders (Thread[Execution worker Thread 8,5,main]) started.
+:library:mergeDebugJniLibFolders (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:mergeDebugJniLibFolders UP-TO-DATE
+Caching disabled for task ':library:mergeDebugJniLibFolders' because:
+  Simple merging task
+Skipping task ':library:mergeDebugJniLibFolders' as it is up-to-date.
+Resolve mutations for :library:mergeDebugNativeLibs (Thread[Execution worker Thread 8,5,main]) started.
+:library:mergeDebugNativeLibs (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:mergeDebugNativeLibs NO-SOURCE
+Skipping task ':library:mergeDebugNativeLibs' as it has no source files and no previous output files.
+Resolve mutations for :library:stripDebugDebugSymbols (Thread[Execution worker Thread 8,5,main]) started.
+:library:stripDebugDebugSymbols (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:stripDebugDebugSymbols NO-SOURCE
+Skipping task ':library:stripDebugDebugSymbols' as it has no source files and no previous output files.
+Resolve mutations for :library:copyDebugJniLibsProjectAndLocalJars (Thread[Execution worker Thread 8,5,main]) started.
+:library:copyDebugJniLibsProjectAndLocalJars (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+Caching disabled for task ':library:copyDebugJniLibsProjectAndLocalJars' because:
+  Caching has been disabled for the task
+Skipping task ':library:copyDebugJniLibsProjectAndLocalJars' as it is up-to-date.
+Resolve mutations for :library:generateDebugResValues (Thread[Execution worker Thread 8,5,main]) started.
+:library:generateDebugResValues (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:generateDebugResValues UP-TO-DATE
+Build cache key for task ':library:generateDebugResValues' is 0b2b1526ed0261946a79a7caed10899d
+Skipping task ':library:generateDebugResValues' as it is up-to-date.
+Resolve mutations for :library:generateDebugResources (Thread[Execution worker Thread 8,5,main]) started.
+:library:generateDebugResources (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:generateDebugResources UP-TO-DATE
+Build cache key for task ':library:generateDebugResources' is 6733f0d7d98f0c1f6eefc4df0fd33732
+Skipping task ':library:generateDebugResources' as it is up-to-date.
+Resolve mutations for :library:packageDebugResources (Thread[Execution worker Thread 8,5,main]) started.
+:library:packageDebugResources (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:packageDebugResources UP-TO-DATE
+Build cache key for task ':library:packageDebugResources' is 7fd8979f724ef75967772e4ef2d284d5
+Skipping task ':library:packageDebugResources' as it is up-to-date.
+work action resolve packageDebugResources (project :library) (Thread[Execution worker Thread 8,5,main]) started.
+Resolve mutations for :library:parseDebugLocalResources (Thread[Execution worker Thread 8,5,main]) started.
+:library:parseDebugLocalResources (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:parseDebugLocalResources UP-TO-DATE
+Transforming android.jar with PlatformAttrTransform
+Transforming android.jar with PlatformAttrTransform
+Build cache key for task ':library:parseDebugLocalResources' is 006a5089d73d31d63a10a706e1e4e6dd
+Skipping task ':library:parseDebugLocalResources' as it is up-to-date.
+Resolve mutations for :library:generateDebugRFile (Thread[Execution worker Thread 8,5,main]) started.
+:library:generateDebugRFile (Thread[Execution worker Thread 8,5,main]) started.
+
+> Task :library:generateDebugRFile UP-TO-DATE
+Transforming android.jar with PlatformAttrTransform
+Build cache key for task ':library:generateDebugRFile' is f5de54f304150af3c6be1f5c7098bb55
+Skipping task ':library:generateDebugRFile' as it is up-to-date.
+work action resolve package-aware-r.txt (project :library) (Thread[Execution worker Thread 8,5,main]) started.
+Resolve mutations for :library:compileDebugKotlinAndroid (Thread[Execution worker Thread 8,5,main]) started.
+:library:compileDebugKotlinAndroid (Thread[Execution worker Thread 8,5,main]) started.
+Resolve mutations for :library:extractDeepLinksForAarDebug (Thread[Execution worker Thread 5,5,main]) started.
+:library:extractDeepLinksForAarDebug (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:extractDeepLinksForAarDebug UP-TO-DATE
+Build cache key for task ':library:extractDeepLinksForAarDebug' is 66fec9a5ca22c7b9d6a8e759e8f702cf
+Skipping task ':library:extractDeepLinksForAarDebug' as it is up-to-date.
+Resolve mutations for :library:javaPreCompileDebug (Thread[Execution worker Thread 5,5,main]) started.
+:library:javaPreCompileDebug (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:javaPreCompileDebug UP-TO-DATE
+Build cache key for task ':library:javaPreCompileDebug' is a0112758a8478fe2f2ef08bb52c4aeec
+Skipping task ':library:javaPreCompileDebug' as it is up-to-date.
+Resolve mutations for :library:mergeDebugShaders (Thread[Execution worker Thread 5,5,main]) started.
+:library:mergeDebugShaders (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:mergeDebugShaders UP-TO-DATE
+Caching disabled for task ':library:mergeDebugShaders' because:
+  Simple merging task
+Skipping task ':library:mergeDebugShaders' as it is up-to-date.
+Resolve mutations for :library:compileDebugShaders (Thread[Execution worker Thread 5,5,main]) started.
+:library:compileDebugShaders (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:compileDebugShaders NO-SOURCE
+Skipping task ':library:compileDebugShaders' as it has no source files and no previous output files.
+Resolve mutations for :library:debugAssetsCopyForAGP (Thread[Execution worker Thread 5,5,main]) started.
+:library:debugAssetsCopyForAGP (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:debugAssetsCopyForAGP NO-SOURCE
+Skipping task ':library:debugAssetsCopyForAGP' as it has no source files and no previous output files.
+Resolve mutations for :library:generateDebugAssets (Thread[Execution worker Thread 5,5,main]) started.
+:library:generateDebugAssets (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:generateDebugAssets UP-TO-DATE
+Skipping task ':library:generateDebugAssets' as it has no actions.
+Resolve mutations for :library:packageDebugAssets (Thread[Execution worker Thread 6,5,main]) started.
+:library:packageDebugAssets (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :library:packageDebugAssets UP-TO-DATE
+Caching disabled for task ':library:packageDebugAssets' because:
+  Simple merging task
+Skipping task ':library:packageDebugAssets' as it is up-to-date.
+work action resolve out (project :library) (Thread[Execution worker Thread 6,5,main]) started.
+Resolve mutations for :library:prepareDebugArtProfile (Thread[Execution worker Thread 6,5,main]) started.
+:library:prepareDebugArtProfile (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :library:prepareDebugArtProfile UP-TO-DATE
+Caching disabled for task ':library:prepareDebugArtProfile' because:
+  Caching has been disabled for the task
+Skipping task ':library:prepareDebugArtProfile' as it is up-to-date.
+Resolve mutations for :library:prepareLintJarForPublish (Thread[Execution worker Thread 6,5,main]) started.
+:library:prepareLintJarForPublish (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :library:prepareLintJarForPublish UP-TO-DATE
+Caching disabled for task ':library:prepareLintJarForPublish' because:
+  Caching has been disabled for the task
+Skipping task ':library:prepareLintJarForPublish' as it is up-to-date.
+work action resolve lint.jar (project :library) (Thread[Execution worker Thread 6,5,main]) started.
+work action resolve lint.jar (project :library) (Thread[Execution worker Thread 5,5,main]) started.
+Resolve mutations for :library:processDebugManifest (Thread[Execution worker Thread 5,5,main]) started.
+:library:processDebugManifest (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:processDebugManifest UP-TO-DATE
+Build cache key for task ':library:processDebugManifest' is f2352711f149620652309528b2345d62
+Skipping task ':library:processDebugManifest' as it is up-to-date.
+work action resolve AndroidManifest.xml (project :library) (Thread[Execution worker Thread 5,5,main]) started.
+Resolve mutations for :library:writeDebugAarMetadata (Thread[Execution worker Thread 5,5,main]) started.
+:library:writeDebugAarMetadata (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:writeDebugAarMetadata UP-TO-DATE
+Caching disabled for task ':library:writeDebugAarMetadata' because:
+  Caching has been disabled for the task
+Skipping task ':library:writeDebugAarMetadata' as it is up-to-date.
+work action resolve aar-metadata.properties (project :library) (Thread[Execution worker Thread 5,5,main]) started.
+Resolve mutations for :library:preReleaseBuild (Thread[Execution worker Thread 5,5,main]) started.
+:library:preReleaseBuild (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:preReleaseBuild UP-TO-DATE
+Skipping task ':library:preReleaseBuild' as it has no actions.
+Resolve mutations for :library:mergeReleaseJniLibFolders (Thread[Execution worker Thread 5,5,main]) started.
+:library:mergeReleaseJniLibFolders (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:mergeReleaseJniLibFolders UP-TO-DATE
+Caching disabled for task ':library:mergeReleaseJniLibFolders' because:
+  Simple merging task
+Skipping task ':library:mergeReleaseJniLibFolders' as it is up-to-date.
+Resolve mutations for :library:mergeReleaseNativeLibs (Thread[Execution worker Thread 5,5,main]) started.
+:library:mergeReleaseNativeLibs (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :library:mergeReleaseNativeLibs NO-SOURCE
+Skipping task ':library:mergeReleaseNativeLibs' as it has no source files and no previous output files.
+Resolve mutations for :library:stripReleaseDebugSymbols (Thread[Execution worker Thread 5,5,main]) started.
+:library:stripReleaseDebugSymbols (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :library:stripReleaseDebugSymbols NO-SOURCE
+Skipping task ':library:stripReleaseDebugSymbols' as it has no source files and no previous output files.
+Resolve mutations for :library:copyReleaseJniLibsProjectAndLocalJars (Thread[Execution worker Thread 3,5,main]) started.
+:library:copyReleaseJniLibsProjectAndLocalJars (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :library:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+Caching disabled for task ':library:copyReleaseJniLibsProjectAndLocalJars' because:
+  Caching has been disabled for the task
+Skipping task ':library:copyReleaseJniLibsProjectAndLocalJars' as it is up-to-date.
+Resolve mutations for :library:generateReleaseResValues (Thread[Execution worker Thread 3,5,main]) started.
+:library:generateReleaseResValues (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :library:generateReleaseResValues UP-TO-DATE
+Build cache key for task ':library:generateReleaseResValues' is 0b2b1526ed0261946a79a7caed10899d
+Skipping task ':library:generateReleaseResValues' as it is up-to-date.
+Resolve mutations for :library:extractDeepLinksForAarRelease (Thread[Execution worker Thread 3,5,main]) started.
+:library:extractDeepLinksForAarRelease (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :library:extractDeepLinksForAarRelease UP-TO-DATE
+Build cache key for task ':library:extractDeepLinksForAarRelease' is 66fec9a5ca22c7b9d6a8e759e8f702cf
+Skipping task ':library:extractDeepLinksForAarRelease' as it is up-to-date.
+Resolve mutations for :library:generateReleaseResources (Thread[Execution worker Thread 3,5,main]) started.
+:library:generateReleaseResources (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :library:generateReleaseResources UP-TO-DATE
+Build cache key for task ':library:generateReleaseResources' is 552785ed2cec7cda4fc60b69b9c1b7b3
+Skipping task ':library:generateReleaseResources' as it is up-to-date.
+Resolve mutations for :library:packageReleaseResources (Thread[Execution worker Thread 3,5,main]) started.
+:library:packageReleaseResources (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :library:packageReleaseResources UP-TO-DATE
+Build cache key for task ':library:packageReleaseResources' is d9a589be46de0b2a70be94a257c41775
+Skipping task ':library:packageReleaseResources' as it is up-to-date.
+work action resolve packageReleaseResources (project :library) (Thread[Execution worker Thread 3,5,main]) started.
+Resolve mutations for :library:parseReleaseLocalResources (Thread[Execution worker Thread 3,5,main]) started.
+:library:parseReleaseLocalResources (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :library:parseReleaseLocalResources UP-TO-DATE
+Transforming android.jar with PlatformAttrTransform
+Transforming android.jar with PlatformAttrTransform
+Build cache key for task ':library:parseReleaseLocalResources' is 006a5089d73d31d63a10a706e1e4e6dd
+Skipping task ':library:parseReleaseLocalResources' as it is up-to-date.
+Resolve mutations for :library:generateReleaseRFile (Thread[Execution worker Thread 3,5,main]) started.
+:library:generateReleaseRFile (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :library:generateReleaseRFile UP-TO-DATE
+Transforming android.jar with PlatformAttrTransform
+Build cache key for task ':library:generateReleaseRFile' is f5de54f304150af3c6be1f5c7098bb55
+Skipping task ':library:generateReleaseRFile' as it is up-to-date.
+work action resolve package-aware-r.txt (project :library) (Thread[Execution worker Thread 3,5,main]) started.
+Resolve mutations for :library:compileReleaseKotlinAndroid (Thread[Execution worker Thread 3,5,main]) started.
+:library:compileReleaseKotlinAndroid (Thread[Execution worker Thread 3,5,main]) started.
+Resolve mutations for :library:javaPreCompileRelease (Thread[included builds,5,main]) started.
+:library:javaPreCompileRelease (Thread[included builds,5,main]) started.
+
+> Task :library:javaPreCompileRelease UP-TO-DATE
+Build cache key for task ':library:javaPreCompileRelease' is a0112758a8478fe2f2ef08bb52c4aeec
+Skipping task ':library:javaPreCompileRelease' as it is up-to-date.
+Resolve mutations for :library:mergeReleaseShaders (Thread[included builds,5,main]) started.
+:library:mergeReleaseShaders (Thread[included builds,5,main]) started.
+
+> Task :library:mergeReleaseShaders UP-TO-DATE
+Caching disabled for task ':library:mergeReleaseShaders' because:
+  Simple merging task
+Skipping task ':library:mergeReleaseShaders' as it is up-to-date.
+Resolve mutations for :library:compileReleaseShaders (Thread[included builds,5,main]) started.
+:library:compileReleaseShaders (Thread[included builds,5,main]) started.
+
+> Task :library:compileReleaseShaders NO-SOURCE
+Skipping task ':library:compileReleaseShaders' as it has no source files and no previous output files.
+Resolve mutations for :library:generateReleaseAssets (Thread[included builds,5,main]) started.
+:library:generateReleaseAssets (Thread[included builds,5,main]) started.
+
+> Task :library:generateReleaseAssets UP-TO-DATE
+Skipping task ':library:generateReleaseAssets' as it has no actions.
+Resolve mutations for :library:releaseAssetsCopyForAGP (Thread[included builds,5,main]) started.
+:library:releaseAssetsCopyForAGP (Thread[included builds,5,main]) started.
+
+> Task :library:releaseAssetsCopyForAGP NO-SOURCE
+Skipping task ':library:releaseAssetsCopyForAGP' as it has no source files and no previous output files.
+Resolve mutations for :library:packageReleaseAssets (Thread[included builds,5,main]) started.
+:library:packageReleaseAssets (Thread[included builds,5,main]) started.
+
+> Task :library:packageReleaseAssets UP-TO-DATE
+Caching disabled for task ':library:packageReleaseAssets' because:
+  Simple merging task
+Skipping task ':library:packageReleaseAssets' as it is up-to-date.
+work action resolve out (project :library) (Thread[included builds,5,main]) started.
+Resolve mutations for :library:prepareReleaseArtProfile (Thread[included builds,5,main]) started.
+:library:prepareReleaseArtProfile (Thread[included builds,5,main]) started.
+
+> Task :library:prepareReleaseArtProfile UP-TO-DATE
+Caching disabled for task ':library:prepareReleaseArtProfile' because:
+  Caching has been disabled for the task
+Skipping task ':library:prepareReleaseArtProfile' as it is up-to-date.
+Resolve mutations for :library:processReleaseManifest (Thread[included builds,5,main]) started.
+:library:processReleaseManifest (Thread[included builds,5,main]) started.
+
+> Task :library:processReleaseManifest UP-TO-DATE
+Build cache key for task ':library:processReleaseManifest' is f2352711f149620652309528b2345d62
+Skipping task ':library:processReleaseManifest' as it is up-to-date.
+work action resolve AndroidManifest.xml (project :library) (Thread[included builds,5,main]) started.
+Resolve mutations for :library:writeReleaseAarMetadata (Thread[included builds,5,main]) started.
+:library:writeReleaseAarMetadata (Thread[included builds,5,main]) started.
+
+> Task :library:writeReleaseAarMetadata UP-TO-DATE
+Caching disabled for task ':library:writeReleaseAarMetadata' because:
+  Caching has been disabled for the task
+Skipping task ':library:writeReleaseAarMetadata' as it is up-to-date.
+work action resolve aar-metadata.properties (project :library) (Thread[included builds,5,main]) started.
+Resolve mutations for :library:mapReleaseSourceSetPaths (Thread[included builds,5,main]) started.
+:library:mapReleaseSourceSetPaths (Thread[included builds,5,main]) started.
+
+> Task :library:compileCommonMainKotlinMetadata FAILED
+Build cache key for task ':library:compileCommonMainKotlinMetadata' is c59de4cfdf636543dccd1b4a57c071f2
+Task ':library:compileCommonMainKotlinMetadata' is not up-to-date because:
+  Task has failed previously.
+The input changes require a full rebuild for incremental task ':library:compileCommonMainKotlinMetadata'.
+Finished executing kotlin compiler using DAEMON strategy
+
+> Task :library:mapReleaseSourceSetPaths UP-TO-DATE
+Transforming accompanist-permissions-0.37.3.aar (com.google.accompanist:accompanist-permissions:0.37.3) with JetifyTransform
+Transforming accompanist-permissions-0.37.3.aar (com.google.accompanist:accompanist-permissions:0.37.3) with ExtractAarTransform
+Transforming accompanist-permissions-0.37.3.aar (com.google.accompanist:accompanist-permissions:0.37.3) with AarTransform
+Transforming coil-compose-release.aar (io.coil-kt.coil3:coil-compose-android:3.2.0) with JetifyTransform
+Transforming coil-compose-release.aar (io.coil-kt.coil3:coil-compose-android:3.2.0) with ExtractAarTransform
+Transforming coil-compose-release.aar (io.coil-kt.coil3:coil-compose-android:3.2.0) with AarTransform
+Transforming coil-compose-core-release.aar (io.coil-kt.coil3:coil-compose-core-android:3.2.0) with JetifyTransform
+Transforming coil-compose-core-release.aar (io.coil-kt.coil3:coil-compose-core-android:3.2.0) with ExtractAarTransform
+Transforming coil-compose-core-release.aar (io.coil-kt.coil3:coil-compose-core-android:3.2.0) with AarTransform
+Transforming material-icons-core-release.aar (androidx.compose.material:material-icons-core-android:1.5.4) with JetifyTransform
+Transforming material-icons-core-release.aar (androidx.compose.material:material-icons-core-android:1.5.4) with ExtractAarTransform
+Transforming material-icons-core-release.aar (androidx.compose.material:material-icons-core-android:1.5.4) with AarTransform
+Transforming material-icons-extended-release.aar (androidx.compose.material:material-icons-extended-android:1.5.4) with JetifyTransform
+Transforming material-icons-extended-release.aar (androidx.compose.material:material-icons-extended-android:1.5.4) with ExtractAarTransform
+Transforming material-icons-extended-release.aar (androidx.compose.material:material-icons-extended-android:1.5.4) with AarTransform
+Transforming material-release.aar (androidx.compose.material:material-android:1.8.2) with JetifyTransform
+Transforming material-release.aar (androidx.compose.material:material-android:1.8.2) with ExtractAarTransform
+Transforming material-release.aar (androidx.compose.material:material-android:1.8.2) with AarTransform
+Transforming foundation-layout-release.aar (androidx.compose.foundation:foundation-layout-android:1.8.2) with JetifyTransform
+Transforming foundation-layout-release.aar (androidx.compose.foundation:foundation-layout-android:1.8.2) with ExtractAarTransform
+Transforming foundation-layout-release.aar (androidx.compose.foundation:foundation-layout-android:1.8.2) with AarTransform
+Transforming material-ripple-release.aar (androidx.compose.material:material-ripple-android:1.8.2) with JetifyTransform
+Transforming material-ripple-release.aar (androidx.compose.material:material-ripple-android:1.8.2) with ExtractAarTransform
+Transforming material-ripple-release.aar (androidx.compose.material:material-ripple-android:1.8.2) with AarTransform
+Transforming foundation-release.aar (androidx.compose.foundation:foundation-android:1.8.2) with JetifyTransform
+Transforming foundation-release.aar (androidx.compose.foundation:foundation-android:1.8.2) with ExtractAarTransform
+Transforming foundation-release.aar (androidx.compose.foundation:foundation-android:1.8.2) with AarTransform
+Transforming animation-core-release.aar (androidx.compose.animation:animation-core-android:1.8.2) with JetifyTransform
+Transforming animation-core-release.aar (androidx.compose.animation:animation-core-android:1.8.2) with ExtractAarTransform
+Transforming animation-core-release.aar (androidx.compose.animation:animation-core-android:1.8.2) with AarTransform
+Transforming animation-release.aar (androidx.compose.animation:animation-android:1.8.2) with JetifyTransform
+Transforming animation-release.aar (androidx.compose.animation:animation-android:1.8.2) with ExtractAarTransform
+Transforming animation-release.aar (androidx.compose.animation:animation-android:1.8.2) with AarTransform
+Transforming ui-util-release.aar (androidx.compose.ui:ui-util-android:1.8.3) with JetifyTransform
+Transforming ui-util-release.aar (androidx.compose.ui:ui-util-android:1.8.3) with ExtractAarTransform
+Transforming ui-util-release.aar (androidx.compose.ui:ui-util-android:1.8.3) with AarTransform
+Transforming ui-unit-release.aar (androidx.compose.ui:ui-unit-android:1.8.3) with JetifyTransform
+Transforming ui-unit-release.aar (androidx.compose.ui:ui-unit-android:1.8.3) with ExtractAarTransform
+Transforming ui-unit-release.aar (androidx.compose.ui:ui-unit-android:1.8.3) with AarTransform
+Transforming ui-text-release.aar (androidx.compose.ui:ui-text-android:1.8.3) with JetifyTransform
+Transforming ui-text-release.aar (androidx.compose.ui:ui-text-android:1.8.3) with ExtractAarTransform
+Transforming ui-text-release.aar (androidx.compose.ui:ui-text-android:1.8.3) with AarTransform
+Transforming ui-graphics-release.aar (androidx.compose.ui:ui-graphics-android:1.8.3) with JetifyTransform
+Transforming ui-graphics-release.aar (androidx.compose.ui:ui-graphics-android:1.8.3) with ExtractAarTransform
+Transforming ui-graphics-release.aar (androidx.compose.ui:ui-graphics-android:1.8.3) with AarTransform
+Transforming ui-geometry-release.aar (androidx.compose.ui:ui-geometry-android:1.8.3) with JetifyTransform
+Transforming ui-geometry-release.aar (androidx.compose.ui:ui-geometry-android:1.8.3) with ExtractAarTransform
+Transforming ui-geometry-release.aar (androidx.compose.ui:ui-geometry-android:1.8.3) with AarTransform
+Transforming ui-tooling-preview-release.aar (androidx.compose.ui:ui-tooling-preview-android:1.8.3) with JetifyTransform
+Transforming ui-tooling-preview-release.aar (androidx.compose.ui:ui-tooling-preview-android:1.8.3) with ExtractAarTransform
+Transforming ui-tooling-preview-release.aar (androidx.compose.ui:ui-tooling-preview-android:1.8.3) with AarTransform
+Transforming ui-release.aar (androidx.compose.ui:ui-android:1.8.3) with JetifyTransform
+Transforming ui-release.aar (androidx.compose.ui:ui-android:1.8.3) with ExtractAarTransform
+Transforming ui-release.aar (androidx.compose.ui:ui-android:1.8.3) with AarTransform
+Transforming accompanist-drawablepainter-0.37.3.aar (com.google.accompanist:accompanist-drawablepainter:0.37.3) with JetifyTransform
+Transforming camera-video-1.4.2.aar (androidx.camera:camera-video:1.4.2) with JetifyTransform
+Transforming accompanist-drawablepainter-0.37.3.aar (com.google.accompanist:accompanist-drawablepainter:0.37.3) with ExtractAarTransform
+Transforming camera-video-1.4.2.aar (androidx.camera:camera-video:1.4.2) with ExtractAarTransform
+Transforming accompanist-drawablepainter-0.37.3.aar (com.google.accompanist:accompanist-drawablepainter:0.37.3) with AarTransform
+Transforming camera-video-1.4.2.aar (androidx.camera:camera-video:1.4.2) with AarTransform
+Transforming camera-lifecycle-1.4.2.aar (androidx.camera:camera-lifecycle:1.4.2) with JetifyTransform
+Transforming camera-lifecycle-1.4.2.aar (androidx.camera:camera-lifecycle:1.4.2) with ExtractAarTransform
+Transforming camera-lifecycle-1.4.2.aar (androidx.camera:camera-lifecycle:1.4.2) with AarTransform
+Transforming camera-camera2-1.4.2.aar (androidx.camera:camera-camera2:1.4.2) with JetifyTransform
+Transforming camera-camera2-1.4.2.aar (androidx.camera:camera-camera2:1.4.2) with ExtractAarTransform
+Transforming camera-camera2-1.4.2.aar (androidx.camera:camera-camera2:1.4.2) with AarTransform
+Transforming camera-core-1.4.2.aar (androidx.camera:camera-core:1.4.2) with JetifyTransform
+Transforming camera-core-1.4.2.aar (androidx.camera:camera-core:1.4.2) with ExtractAarTransform
+Transforming camera-core-1.4.2.aar (androidx.camera:camera-core:1.4.2) with AarTransform
+Transforming camera-view-1.4.2.aar (androidx.camera:camera-view:1.4.2) with JetifyTransform
+Transforming camera-view-1.4.2.aar (androidx.camera:camera-view:1.4.2) with ExtractAarTransform
+Transforming camera-view-1.4.2.aar (androidx.camera:camera-view:1.4.2) with AarTransform
+Transforming coil-release.aar (io.coil-kt.coil3:coil-android:3.2.0) with JetifyTransform
+Transforming coil-release.aar (io.coil-kt.coil3:coil-android:3.2.0) with ExtractAarTransform
+Transforming coil-release.aar (io.coil-kt.coil3:coil-android:3.2.0) with AarTransform
+Transforming coil-core-release.aar (io.coil-kt.coil3:coil-core-android:3.2.0) with JetifyTransform
+Transforming coil-core-release.aar (io.coil-kt.coil3:coil-core-android:3.2.0) with ExtractAarTransform
+Transforming coil-core-release.aar (io.coil-kt.coil3:coil-core-android:3.2.0) with AarTransform
+Transforming appcompat-resources-1.7.0.aar (androidx.appcompat:appcompat-resources:1.7.0) with JetifyTransform
+Transforming appcompat-resources-1.7.0.aar (androidx.appcompat:appcompat-resources:1.7.0) with ExtractAarTransform
+Transforming appcompat-resources-1.7.0.aar (androidx.appcompat:appcompat-resources:1.7.0) with AarTransform
+Transforming activity-1.10.1.aar (androidx.activity:activity:1.10.1) with JetifyTransform
+Transforming fragment-1.5.4.aar (androidx.fragment:fragment:1.5.4) with JetifyTransform
+Transforming fragment-1.5.4.aar (androidx.fragment:fragment:1.5.4) with ExtractAarTransform
+Transforming activity-1.10.1.aar (androidx.activity:activity:1.10.1) with ExtractAarTransform
+Transforming fragment-1.5.4.aar (androidx.fragment:fragment:1.5.4) with AarTransform
+Transforming appcompat-1.7.0.aar (androidx.appcompat:appcompat:1.7.0) with JetifyTransform
+Transforming appcompat-1.7.0.aar (androidx.appcompat:appcompat:1.7.0) with ExtractAarTransform
+Transforming activity-1.10.1.aar (androidx.activity:activity:1.10.1) with AarTransform
+Transforming activity-ktx-1.10.1.aar (androidx.activity:activity-ktx:1.10.1) with JetifyTransform
+Transforming appcompat-1.7.0.aar (androidx.appcompat:appcompat:1.7.0) with AarTransform
+Transforming activity-ktx-1.10.1.aar (androidx.activity:activity-ktx:1.10.1) with ExtractAarTransform
+Transforming activity-ktx-1.10.1.aar (androidx.activity:activity-ktx:1.10.1) with AarTransform
+Transforming activity-compose-1.10.1.aar (androidx.activity:activity-compose:1.10.1) with JetifyTransform
+Transforming activity-compose-1.10.1.aar (androidx.activity:activity-compose:1.10.1) with ExtractAarTransform
+Transforming activity-compose-1.10.1.aar (androidx.activity:activity-compose:1.10.1) with AarTransform
+Transforming savedstate-ktx-1.2.1.aar (androidx.savedstate:savedstate-ktx:1.2.1) with JetifyTransform
+Transforming savedstate-ktx-1.2.1.aar (androidx.savedstate:savedstate-ktx:1.2.1) with ExtractAarTransform
+Transforming savedstate-ktx-1.2.1.aar (androidx.savedstate:savedstate-ktx:1.2.1) with AarTransform
+Transforming savedstate-1.2.1.aar (androidx.savedstate:savedstate:1.2.1) with JetifyTransform
+Transforming savedstate-1.2.1.aar (androidx.savedstate:savedstate:1.2.1) with ExtractAarTransform
+Transforming savedstate-1.2.1.aar (androidx.savedstate:savedstate:1.2.1) with AarTransform
+Transforming emoji2-views-helper-1.4.0.aar (androidx.emoji2:emoji2-views-helper:1.4.0) with JetifyTransform
+Transforming emoji2-views-helper-1.4.0.aar (androidx.emoji2:emoji2-views-helper:1.4.0) with ExtractAarTransform
+Transforming lifecycle-runtime-ktx-release.aar (androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7) with JetifyTransform
+Transforming emoji2-views-helper-1.4.0.aar (androidx.emoji2:emoji2-views-helper:1.4.0) with AarTransform
+Transforming lifecycle-runtime-ktx-release.aar (androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7) with ExtractAarTransform
+Transforming lifecycle-process-2.8.7.aar (androidx.lifecycle:lifecycle-process:2.8.7) with JetifyTransform
+Transforming lifecycle-runtime-ktx-release.aar (androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7) with AarTransform
+Transforming lifecycle-process-2.8.7.aar (androidx.lifecycle:lifecycle-process:2.8.7) with ExtractAarTransform
+Transforming emoji2-1.4.0.aar (androidx.emoji2:emoji2:1.4.0) with JetifyTransform
+Transforming lifecycle-process-2.8.7.aar (androidx.lifecycle:lifecycle-process:2.8.7) with AarTransform
+Transforming emoji2-1.4.0.aar (androidx.emoji2:emoji2:1.4.0) with ExtractAarTransform
+Transforming emoji2-1.4.0.aar (androidx.emoji2:emoji2:1.4.0) with AarTransform
+Transforming core-ktx-1.15.0.aar (androidx.core:core-ktx:1.15.0) with JetifyTransform
+Transforming core-ktx-1.15.0.aar (androidx.core:core-ktx:1.15.0) with ExtractAarTransform
+Transforming autofill-1.0.0.aar (androidx.autofill:autofill:1.0.0) with JetifyTransform
+Transforming core-ktx-1.15.0.aar (androidx.core:core-ktx:1.15.0) with AarTransform
+Transforming autofill-1.0.0.aar (androidx.autofill:autofill:1.0.0) with ExtractAarTransform
+Transforming graphics-path-1.0.1.aar (androidx.graphics:graphics-path:1.0.1) with JetifyTransform
+Transforming customview-poolingcontainer-1.0.0.aar (androidx.customview:customview-poolingcontainer:1.0.0) with JetifyTransform
+Transforming autofill-1.0.0.aar (androidx.autofill:autofill:1.0.0) with AarTransform
+Transforming customview-poolingcontainer-1.0.0.aar (androidx.customview:customview-poolingcontainer:1.0.0) with ExtractAarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with JetifyTransform
+Transforming vectordrawable-1.1.0.aar (androidx.vectordrawable:vectordrawable:1.1.0) with JetifyTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with ExtractAarTransform
+Transforming drawerlayout-1.0.0.aar (androidx.drawerlayout:drawerlayout:1.0.0) with JetifyTransform
+Transforming vectordrawable-1.1.0.aar (androidx.vectordrawable:vectordrawable:1.1.0) with ExtractAarTransform
+Transforming vectordrawable-animated-1.1.0.aar (androidx.vectordrawable:vectordrawable-animated:1.1.0) with JetifyTransform
+Transforming graphics-path-1.0.1.aar (androidx.graphics:graphics-path:1.0.1) with ExtractAarTransform
+Transforming vectordrawable-animated-1.1.0.aar (androidx.vectordrawable:vectordrawable-animated:1.1.0) with ExtractAarTransform
+Transforming viewpager-1.0.0.aar (androidx.viewpager:viewpager:1.0.0) with JetifyTransform
+Transforming vectordrawable-1.1.0.aar (androidx.vectordrawable:vectordrawable:1.1.0) with AarTransform
+Transforming drawerlayout-1.0.0.aar (androidx.drawerlayout:drawerlayout:1.0.0) with ExtractAarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with AarTransform
+Transforming loader-1.0.0.aar (androidx.loader:loader:1.0.0) with JetifyTransform
+Transforming customview-poolingcontainer-1.0.0.aar (androidx.customview:customview-poolingcontainer:1.0.0) with AarTransform
+Transforming customview-1.0.0.aar (androidx.customview:customview:1.0.0) with JetifyTransform
+Transforming lifecycle-runtime-release.aar (androidx.lifecycle:lifecycle-runtime-android:2.8.7) with JetifyTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with JetifyTransform
+Transforming loader-1.0.0.aar (androidx.loader:loader:1.0.0) with ExtractAarTransform
+Transforming drawerlayout-1.0.0.aar (androidx.drawerlayout:drawerlayout:1.0.0) with AarTransform
+Transforming viewpager-1.0.0.aar (androidx.viewpager:viewpager:1.0.0) with ExtractAarTransform
+Transforming vectordrawable-animated-1.1.0.aar (androidx.vectordrawable:vectordrawable-animated:1.1.0) with AarTransform
+Transforming graphics-path-1.0.1.aar (androidx.graphics:graphics-path:1.0.1) with AarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with JetifyTransform
+Transforming viewpager-1.0.0.aar (androidx.viewpager:viewpager:1.0.0) with AarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with ExtractAarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with JetifyTransform
+Transforming loader-1.0.0.aar (androidx.loader:loader:1.0.0) with AarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with ExtractAarTransform
+Transforming lifecycle-runtime-release.aar (androidx.lifecycle:lifecycle-runtime-android:2.8.7) with ExtractAarTransform
+Transforming customview-1.0.0.aar (androidx.customview:customview:1.0.0) with ExtractAarTransform
+Transforming lifecycle-runtime-release.aar (androidx.lifecycle:lifecycle-runtime-android:2.8.7) with AarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with AarTransform
+Transforming lifecycle-livedata-core-ktx-2.8.7.aar (androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7) with JetifyTransform
+Transforming lifecycle-livedata-core-ktx-2.8.7.aar (androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7) with ExtractAarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with JetifyTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with ExtractAarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with AarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with JetifyTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with JetifyTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with ExtractAarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with AarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with ExtractAarTransform
+Transforming vectordrawable-1.1.0.aar (androidx.vectordrawable:vectordrawable:1.1.0) with JetifyTransform
+Transforming lifecycle-livedata-core-ktx-2.8.7.aar (androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7) with AarTransform
+Transforming customview-1.0.0.aar (androidx.customview:customview:1.0.0) with AarTransform
+Transforming lifecycle-livedata-core-2.8.7.aar (androidx.lifecycle:lifecycle-livedata-core:2.8.7) with JetifyTransform
+Transforming vectordrawable-1.1.0.aar (androidx.vectordrawable:vectordrawable:1.1.0) with ExtractAarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with AarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with AarTransform
+Transforming customview-1.0.0.aar (androidx.customview:customview:1.0.0) with JetifyTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with ExtractAarTransform
+Transforming customview-1.0.0.aar (androidx.customview:customview:1.0.0) with ExtractAarTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with AarTransform
+Transforming vectordrawable-1.1.0.aar (androidx.vectordrawable:vectordrawable:1.1.0) with AarTransform
+Transforming lifecycle-livedata-core-2.8.7.aar (androidx.lifecycle:lifecycle-livedata-core:2.8.7) with ExtractAarTransform
+Transforming customview-1.0.0.aar (androidx.customview:customview:1.0.0) with AarTransform
+Transforming lifecycle-livedata-core-2.8.7.aar (androidx.lifecycle:lifecycle-livedata-core:2.8.7) with AarTransform
+Transforming lifecycle-runtime-compose-release.aar (androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7) with JetifyTransform
+Transforming lifecycle-runtime-compose-release.aar (androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7) with ExtractAarTransform
+Transforming lifecycle-runtime-compose-release.aar (androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7) with AarTransform
+Transforming lifecycle-viewmodel-savedstate-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7) with JetifyTransform
+Transforming lifecycle-viewmodel-savedstate-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7) with ExtractAarTransform
+Transforming lifecycle-viewmodel-savedstate-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7) with AarTransform
+Transforming lifecycle-livedata-2.8.7.aar (androidx.lifecycle:lifecycle-livedata:2.8.7) with JetifyTransform
+Transforming lifecycle-livedata-2.8.7.aar (androidx.lifecycle:lifecycle-livedata:2.8.7) with ExtractAarTransform
+Transforming lifecycle-livedata-2.8.7.aar (androidx.lifecycle:lifecycle-livedata:2.8.7) with AarTransform
+Transforming lifecycle-viewmodel-release.aar (androidx.lifecycle:lifecycle-viewmodel-android:2.8.7) with JetifyTransform
+Transforming lifecycle-viewmodel-release.aar (androidx.lifecycle:lifecycle-viewmodel-android:2.8.7) with ExtractAarTransform
+Transforming lifecycle-viewmodel-release.aar (androidx.lifecycle:lifecycle-viewmodel-android:2.8.7) with AarTransform
+Transforming lifecycle-viewmodel-ktx-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7) with JetifyTransform
+Transforming lifecycle-viewmodel-ktx-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7) with ExtractAarTransform
+Transforming lifecycle-viewmodel-ktx-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7) with AarTransform
+Transforming lifecycle-viewmodel-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel:2.8.7) with JetifyTransform
+Transforming runtime-saveable-release.aar (androidx.compose.runtime:runtime-saveable-android:1.8.3) with JetifyTransform
+Transforming lifecycle-livedata-2.8.7.aar (androidx.lifecycle:lifecycle-livedata:2.8.7) with JetifyTransform
+Transforming runtime-saveable-release.aar (androidx.compose.runtime:runtime-saveable-android:1.8.3) with ExtractAarTransform
+Transforming lifecycle-viewmodel-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel:2.8.7) with ExtractAarTransform
+Transforming runtime-saveable-release.aar (androidx.compose.runtime:runtime-saveable-android:1.8.3) with AarTransform
+Transforming lifecycle-livedata-2.8.7.aar (androidx.lifecycle:lifecycle-livedata:2.8.7) with ExtractAarTransform
+Transforming runtime-release.aar (androidx.compose.runtime:runtime-android:1.8.3) with JetifyTransform
+Transforming lifecycle-viewmodel-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel:2.8.7) with AarTransform
+Transforming runtime-release.aar (androidx.compose.runtime:runtime-android:1.8.3) with ExtractAarTransform
+Transforming lifecycle-livedata-2.8.7.aar (androidx.lifecycle:lifecycle-livedata:2.8.7) with AarTransform
+Transforming runtime-release.aar (androidx.compose.runtime:runtime-android:1.8.3) with AarTransform
+Transforming annotation-experimental-1.4.1.aar (androidx.annotation:annotation-experimental:1.4.1) with JetifyTransform
+Transforming annotation-experimental-1.4.1.aar (androidx.annotation:annotation-experimental:1.4.1) with ExtractAarTransform
+Transforming annotation-experimental-1.4.1.aar (androidx.annotation:annotation-experimental:1.4.1) with AarTransform
+Transforming core-viewtree-1.0.0.aar (androidx.core:core-viewtree:1.0.0) with JetifyTransform
+Transforming core-viewtree-1.0.0.aar (androidx.core:core-viewtree:1.0.0) with ExtractAarTransform
+Transforming core-viewtree-1.0.0.aar (androidx.core:core-viewtree:1.0.0) with AarTransform
+Transforming profileinstaller-1.4.1.aar (androidx.profileinstaller:profileinstaller:1.4.1) with JetifyTransform
+Transforming versionedparcelable-1.1.1.aar (androidx.versionedparcelable:versionedparcelable:1.1.1) with JetifyTransform
+Transforming versionedparcelable-1.1.1.aar (androidx.versionedparcelable:versionedparcelable:1.1.1) with ExtractAarTransform
+Transforming versionedparcelable-1.1.1.aar (androidx.versionedparcelable:versionedparcelable:1.1.1) with AarTransform
+Transforming profileinstaller-1.4.1.aar (androidx.profileinstaller:profileinstaller:1.4.1) with ExtractAarTransform
+Transforming core-runtime-2.2.0.aar (androidx.arch.core:core-runtime:2.2.0) with JetifyTransform
+Transforming startup-runtime-1.1.1.aar (androidx.startup:startup-runtime:1.1.1) with JetifyTransform
+Transforming tracing-1.2.0.aar (androidx.tracing:tracing:1.2.0) with JetifyTransform
+Transforming startup-runtime-1.1.1.aar (androidx.startup:startup-runtime:1.1.1) with ExtractAarTransform
+Transforming tracing-1.2.0.aar (androidx.tracing:tracing:1.2.0) with ExtractAarTransform
+Transforming startup-runtime-1.1.1.aar (androidx.startup:startup-runtime:1.1.1) with AarTransform
+Transforming core-runtime-2.2.0.aar (androidx.arch.core:core-runtime:2.2.0) with ExtractAarTransform
+Transforming profileinstaller-1.4.1.aar (androidx.profileinstaller:profileinstaller:1.4.1) with AarTransform
+Transforming tracing-ktx-1.2.0.aar (androidx.tracing:tracing-ktx:1.2.0) with JetifyTransform
+Transforming core-runtime-2.2.0.aar (androidx.arch.core:core-runtime:2.2.0) with AarTransform
+Transforming tracing-1.2.0.aar (androidx.tracing:tracing:1.2.0) with AarTransform
+Transforming tracing-ktx-1.2.0.aar (androidx.tracing:tracing-ktx:1.2.0) with ExtractAarTransform
+Transforming tracing-ktx-1.2.0.aar (androidx.tracing:tracing-ktx:1.2.0) with AarTransform
+Transforming exifinterface-1.4.1.aar (androidx.exifinterface:exifinterface:1.4.1) with JetifyTransform
+Transforming exifinterface-1.4.1.aar (androidx.exifinterface:exifinterface:1.4.1) with ExtractAarTransform
+Transforming exifinterface-1.4.1.aar (androidx.exifinterface:exifinterface:1.4.1) with AarTransform
+Transforming interpolator-1.0.0.aar (androidx.interpolator:interpolator:1.0.0) with JetifyTransform
+Transforming interpolator-1.0.0.aar (androidx.interpolator:interpolator:1.0.0) with JetifyTransform
+Transforming cursoradapter-1.0.0.aar (androidx.cursoradapter:cursoradapter:1.0.0) with JetifyTransform
+Transforming interpolator-1.0.0.aar (androidx.interpolator:interpolator:1.0.0) with ExtractAarTransform
+Transforming interpolator-1.0.0.aar (androidx.interpolator:interpolator:1.0.0) with ExtractAarTransform
+Transforming interpolator-1.0.0.aar (androidx.interpolator:interpolator:1.0.0) with AarTransform
+Transforming interpolator-1.0.0.aar (androidx.interpolator:interpolator:1.0.0) with AarTransform
+Transforming cursoradapter-1.0.0.aar (androidx.cursoradapter:cursoradapter:1.0.0) with ExtractAarTransform
+Transforming cursoradapter-1.0.0.aar (androidx.cursoradapter:cursoradapter:1.0.0) with AarTransform
+Caching disabled for task ':library:mapReleaseSourceSetPaths' because:
+  Caching has been disabled for the task
+Skipping task ':library:mapReleaseSourceSetPaths' as it is up-to-date.
+
+> Task :library:compileDebugKotlinAndroid FAILED
+Transforming core-common-2.2.0.jar (androidx.arch.core:core-common:2.2.0) with JetifyTransform
+Transforming core-common-2.2.0.jar (androidx.arch.core:core-common:2.2.0) with IdentityTransform
+Transforming activity-1.10.1.aar (androidx.activity:activity:1.10.1) with JetifyTransform
+Transforming camera-video-1.4.2.aar (androidx.camera:camera-video:1.4.2) with JetifyTransform
+Transforming kotlin-stdlib-2.1.21.jar (org.jetbrains.kotlin:kotlin-stdlib:2.1.21) with JetifyTransform
+Transforming activity-1.10.1.aar (androidx.activity:activity:1.10.1) with AarToClassTransform
+Transforming camera-video-1.4.2.aar (androidx.camera:camera-video:1.4.2) with AarToClassTransform
+Transforming camera-core-1.4.2.aar (androidx.camera:camera-core:1.4.2) with JetifyTransform
+Transforming camera-view-1.4.2.aar (androidx.camera:camera-view:1.4.2) with JetifyTransform
+Transforming camera-core-1.4.2.aar (androidx.camera:camera-core:1.4.2) with AarToClassTransform
+Transforming activity-ktx-1.10.1.aar (androidx.activity:activity-ktx:1.10.1) with JetifyTransform
+Transforming camera-camera2-1.4.2.aar (androidx.camera:camera-camera2:1.4.2) with JetifyTransform
+Transforming activity-ktx-1.10.1.aar (androidx.activity:activity-ktx:1.10.1) with AarToClassTransform
+Transforming camera-camera2-1.4.2.aar (androidx.camera:camera-camera2:1.4.2) with AarToClassTransform
+Transforming kotlin-stdlib-2.1.21.jar (org.jetbrains.kotlin:kotlin-stdlib:2.1.21) with IdentityTransform
+Transforming coil-compose-core-release.aar (io.coil-kt.coil3:coil-compose-core-android:3.2.0) with JetifyTransform
+Transforming coil-compose-release.aar (io.coil-kt.coil3:coil-compose-android:3.2.0) with JetifyTransform
+Transforming coil-compose-core-release.aar (io.coil-kt.coil3:coil-compose-core-android:3.2.0) with AarToClassTransform
+Transforming activity-compose-1.10.1.aar (androidx.activity:activity-compose:1.10.1) with JetifyTransform
+Transforming core-3.5.3.jar (com.google.zxing:core:3.5.3) with JetifyTransform
+Transforming camera-view-1.4.2.aar (androidx.camera:camera-view:1.4.2) with AarToClassTransform
+Transforming accompanist-permissions-0.37.3.aar (com.google.accompanist:accompanist-permissions:0.37.3) with JetifyTransform
+Transforming core-3.5.3.jar (com.google.zxing:core:3.5.3) with IdentityTransform
+Transforming accompanist-permissions-0.37.3.aar (com.google.accompanist:accompanist-permissions:0.37.3) with AarToClassTransform
+Transforming material-icons-extended-release.aar (androidx.compose.material:material-icons-extended-android:1.5.4) with JetifyTransform
+Transforming activity-compose-1.10.1.aar (androidx.activity:activity-compose:1.10.1) with AarToClassTransform
+Transforming material-ripple-release.aar (androidx.compose.material:material-ripple-android:1.8.2) with JetifyTransform
+Transforming material-icons-core-release.aar (androidx.compose.material:material-icons-core-android:1.5.4) with JetifyTransform
+Transforming coil-compose-release.aar (io.coil-kt.coil3:coil-compose-android:3.2.0) with AarToClassTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with JetifyTransform
+Transforming core-ktx-1.15.0.aar (androidx.core:core-ktx:1.15.0) with JetifyTransform
+Transforming core-1.15.0.aar (androidx.core:core:1.15.0) with AarToClassTransform
+Transforming animation-core-release.aar (androidx.compose.animation:animation-core-android:1.8.2) with JetifyTransform
+Transforming animation-release.aar (androidx.compose.animation:animation-android:1.8.2) with JetifyTransform
+Transforming material-icons-core-release.aar (androidx.compose.material:material-icons-core-android:1.5.4) with AarToClassTransform
+Transforming foundation-release.aar (androidx.compose.foundation:foundation-android:1.8.2) with JetifyTransform
+Transforming material-ripple-release.aar (androidx.compose.material:material-ripple-android:1.8.2) with AarToClassTransform
+Transforming material-icons-extended-release.aar (androidx.compose.material:material-icons-extended-android:1.5.4) with AarToClassTransform
+Transforming foundation-layout-release.aar (androidx.compose.foundation:foundation-layout-android:1.8.2) with JetifyTransform
+Transforming material-release.aar (androidx.compose.material:material-android:1.8.2) with JetifyTransform
+Transforming ui-text-release.aar (androidx.compose.ui:ui-text-android:1.8.3) with JetifyTransform
+Transforming ui-unit-release.aar (androidx.compose.ui:ui-unit-android:1.8.3) with JetifyTransform
+Transforming foundation-release.aar (androidx.compose.foundation:foundation-android:1.8.2) with AarToClassTransform
+Transforming ui-util-release.aar (androidx.compose.ui:ui-util-android:1.8.3) with JetifyTransform
+Transforming animation-release.aar (androidx.compose.animation:animation-android:1.8.2) with AarToClassTransform
+Transforming animation-core-release.aar (androidx.compose.animation:animation-core-android:1.8.2) with AarToClassTransform
+Transforming core-ktx-1.15.0.aar (androidx.core:core-ktx:1.15.0) with AarToClassTransform
+Transforming ui-geometry-release.aar (androidx.compose.ui:ui-geometry-android:1.8.3) with JetifyTransform
+Transforming ui-util-release.aar (androidx.compose.ui:ui-util-android:1.8.3) with AarToClassTransform
+Transforming ui-graphics-release.aar (androidx.compose.ui:ui-graphics-android:1.8.3) with JetifyTransform
+Transforming ui-unit-release.aar (androidx.compose.ui:ui-unit-android:1.8.3) with AarToClassTransform
+Transforming ui-text-release.aar (androidx.compose.ui:ui-text-android:1.8.3) with AarToClassTransform
+Transforming material-release.aar (androidx.compose.material:material-android:1.8.2) with AarToClassTransform
+Transforming foundation-layout-release.aar (androidx.compose.foundation:foundation-layout-android:1.8.2) with AarToClassTransform
+Transforming coil-release.aar (io.coil-kt.coil3:coil-android:3.2.0) with JetifyTransform
+Transforming lifecycle-runtime-compose-release.aar (androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7) with JetifyTransform
+Transforming ui-graphics-release.aar (androidx.compose.ui:ui-graphics-android:1.8.3) with AarToClassTransform
+Transforming ui-release.aar (androidx.compose.ui:ui-android:1.8.3) with JetifyTransform
+Transforming ui-geometry-release.aar (androidx.compose.ui:ui-geometry-android:1.8.3) with AarToClassTransform
+Transforming ui-tooling-preview-release.aar (androidx.compose.ui:ui-tooling-preview-android:1.8.3) with JetifyTransform
+Transforming ui-release.aar (androidx.compose.ui:ui-android:1.8.3) with AarToClassTransform
+Transforming lifecycle-viewmodel-savedstate-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7) with JetifyTransform
+Transforming lifecycle-runtime-ktx-release.aar (androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7) with JetifyTransform
+Transforming lifecycle-runtime-compose-release.aar (androidx.lifecycle:lifecycle-runtime-compose-android:2.8.7) with AarToClassTransform
+Transforming coil-release.aar (io.coil-kt.coil3:coil-android:3.2.0) with AarToClassTransform
+Transforming lifecycle-livedata-core-2.8.7.aar (androidx.lifecycle:lifecycle-livedata-core:2.8.7) with JetifyTransform
+Transforming lifecycle-runtime-release.aar (androidx.lifecycle:lifecycle-runtime-android:2.8.7) with JetifyTransform
+Transforming coil-core-release.aar (io.coil-kt.coil3:coil-core-android:3.2.0) with JetifyTransform
+Transforming coil-core-release.aar (io.coil-kt.coil3:coil-core-android:3.2.0) with AarToClassTransform
+Transforming lifecycle-runtime-release.aar (androidx.lifecycle:lifecycle-runtime-android:2.8.7) with AarToClassTransform
+Transforming lifecycle-viewmodel-ktx-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7) with JetifyTransform
+Transforming lifecycle-viewmodel-release.aar (androidx.lifecycle:lifecycle-viewmodel-android:2.8.7) with JetifyTransform
+Transforming lifecycle-livedata-core-2.8.7.aar (androidx.lifecycle:lifecycle-livedata-core:2.8.7) with AarToClassTransform
+Transforming lifecycle-viewmodel-release.aar (androidx.lifecycle:lifecycle-viewmodel-android:2.8.7) with AarToClassTransform
+Transforming lifecycle-runtime-ktx-release.aar (androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.7) with AarToClassTransform
+Transforming runtime-saveable-release.aar (androidx.compose.runtime:runtime-saveable-android:1.8.3) with JetifyTransform
+Transforming runtime-release.aar (androidx.compose.runtime:runtime-android:1.8.3) with JetifyTransform
+Transforming runtime-saveable-release.aar (androidx.compose.runtime:runtime-saveable-android:1.8.3) with AarToClassTransform
+Transforming lifecycle-viewmodel-savedstate-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7) with AarToClassTransform
+Transforming lifecycle-livedata-core-ktx-2.8.7.aar (androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7) with JetifyTransform
+Transforming lifecycle-common-jvm-2.8.7.jar (androidx.lifecycle:lifecycle-common-jvm:2.8.7) with JetifyTransform
+Transforming kotlinx-coroutines-android-1.10.2.jar (org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2) with JetifyTransform
+Transforming annotation-experimental-1.4.1.aar (androidx.annotation:annotation-experimental:1.4.1) with JetifyTransform
+Transforming ui-tooling-preview-release.aar (androidx.compose.ui:ui-tooling-preview-android:1.8.3) with AarToClassTransform
+Transforming annotation-experimental-1.4.1.aar (androidx.annotation:annotation-experimental:1.4.1) with AarToClassTransform
+Transforming kotlinx-coroutines-android-1.10.2.jar (org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2) with IdentityTransform
+Transforming lifecycle-common-jvm-2.8.7.jar (androidx.lifecycle:lifecycle-common-jvm:2.8.7) with IdentityTransform
+Transforming lifecycle-livedata-core-ktx-2.8.7.aar (androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7) with AarToClassTransform
+Transforming kotlinx-coroutines-core-jvm-1.10.2.jar (org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2) with JetifyTransform
+Transforming runtime-release.aar (androidx.compose.runtime:runtime-android:1.8.3) with AarToClassTransform
+Transforming lifecycle-livedata-2.8.7.aar (androidx.lifecycle:lifecycle-livedata:2.8.7) with JetifyTransform
+Transforming annotation-jvm-1.9.1.jar (androidx.annotation:annotation-jvm:1.9.1) with JetifyTransform
+Transforming lifecycle-viewmodel-ktx-2.8.7.aar (androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7) with AarToClassTransform
+Transforming lifecycle-livedata-2.8.7.aar (androidx.lifecycle:lifecycle-livedata:2.8.7) with AarToClassTransform
+Transforming annotation-jvm-1.9.1.jar (androidx.annotation:annotation-jvm:1.9.1) with IdentityTransform
+Transforming collection-jvm-1.5.0.jar (androidx.collection:collection-jvm:1.5.0) with JetifyTransform
+Transforming core-runtime-2.2.0.aar (androidx.arch.core:core-runtime:2.2.0) with JetifyTransform
+Transforming collection-jvm-1.5.0.jar (androidx.collection:collection-jvm:1.5.0) with IdentityTransform
+Transforming core-runtime-2.2.0.aar (androidx.arch.core:core-runtime:2.2.0) with AarToClassTransform
+Transforming savedstate-ktx-1.2.1.aar (androidx.savedstate:savedstate-ktx:1.2.1) with JetifyTransform
+Transforming kotlinx-coroutines-core-jvm-1.10.2.jar (org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2) with IdentityTransform
+Transforming versionedparcelable-1.1.1.aar (androidx.versionedparcelable:versionedparcelable:1.1.1) with JetifyTransform
+Transforming savedstate-1.2.1.aar (androidx.savedstate:savedstate:1.2.1) with JetifyTransform
+Transforming versionedparcelable-1.1.1.aar (androidx.versionedparcelable:versionedparcelable:1.1.1) with AarToClassTransform
+Transforming jspecify-1.0.0.jar (org.jspecify:jspecify:1.0.0) with JetifyTransform
+Transforming savedstate-ktx-1.2.1.aar (androidx.savedstate:savedstate-ktx:1.2.1) with AarToClassTransform
+Transforming listenablefuture-1.0.jar (com.google.guava:listenablefuture:1.0) with JetifyTransform
+Transforming annotations-23.0.0.jar (org.jetbrains:annotations:23.0.0) with JetifyTransform
+Transforming okio-jvm-3.11.0.jar (com.squareup.okio:okio-jvm:3.11.0) with JetifyTransform
+Transforming core-viewtree-1.0.0.aar (androidx.core:core-viewtree:1.0.0) with JetifyTransform
+Transforming okio-jvm-3.11.0.jar (com.squareup.okio:okio-jvm:3.11.0) with IdentityTransform
+Transforming annotations-23.0.0.jar (org.jetbrains:annotations:23.0.0) with IdentityTransform
+Transforming listenablefuture-1.0.jar (com.google.guava:listenablefuture:1.0) with IdentityTransform
+Transforming jspecify-1.0.0.jar (org.jspecify:jspecify:1.0.0) with IdentityTransform
+Transforming camera-lifecycle-1.4.2.aar (androidx.camera:camera-lifecycle:1.4.2) with JetifyTransform
+Transforming savedstate-1.2.1.aar (androidx.savedstate:savedstate:1.2.1) with AarToClassTransform
+Transforming camera-lifecycle-1.4.2.aar (androidx.camera:camera-lifecycle:1.4.2) with AarToClassTransform
+Transforming core-viewtree-1.0.0.aar (androidx.core:core-viewtree:1.0.0) with AarToClassTransform
+Transforming android.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming core-lambda-stubs.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming R.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-activity-1.10.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-activity-ktx-1.10.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-activity-compose-1.10.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-camera-video-1.4.2-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-camera-view-1.4.2-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-camera-lifecycle-1.4.2-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-camera-camera2-1.4.2-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-camera-core-1.4.2-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-accompanist-permissions-0.37.3-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-core-3.5.3.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-coil-compose-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-coil-compose-core-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-core-ktx-1.15.0-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming core-1.15.0-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-material-icons-core-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-material-icons-extended-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-material-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-foundation-layout-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-material-ripple-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-foundation-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-animation-core-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-animation-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-util-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-unit-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-text-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-graphics-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-geometry-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-tooling-preview-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-runtime-compose-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-coil-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-coil-core-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-runtime-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-runtime-ktx-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-viewmodel-savedstate-2.8.7-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-common-jvm-2.8.7.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-livedata-core-ktx-2.8.7-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming lifecycle-livedata-core-2.8.7-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-viewmodel-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-viewmodel-ktx-2.8.7-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming lifecycle-livedata-2.8.7-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-runtime-saveable-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-runtime-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-kotlinx-coroutines-core-jvm-1.10.2.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-kotlinx-coroutines-android-1.10.2.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-annotation-experimental-1.4.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-savedstate-1.2.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-savedstate-ktx-1.2.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming versionedparcelable-1.1.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming core-runtime-2.2.0-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming core-common-2.2.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-collection-jvm-1.5.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-annotation-jvm-1.9.1.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-core-viewtree-1.0.0-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-okio-jvm-3.11.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-kotlin-stdlib-2.1.21.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-annotations-23.0.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-listenablefuture-1.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-jspecify-1.0.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Build cache key for task ':library:compileDebugKotlinAndroid' is c30eb55ee2e9f2ab90b3f750cf75b1bf
+Task ':library:compileDebugKotlinAndroid' is not up-to-date because:
+  Task has failed previously.
+The input changes require a full rebuild for incremental task ':library:compileDebugKotlinAndroid'.
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidDebug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidDebug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidDebug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidDebug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidDebug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidDebug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+Kotlin source files: /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraCapturePreview.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/Strings.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/RequestCameraPermission.android.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/ImageConfirmationViewWithCustomButtons.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraController.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraCaptureStateHolder.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/FileManager.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/ImagePickerConfirmationView.android.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraCaptureView.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CapturePhotoPreference.android.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/ImageProcessor.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/ImagePickerLauncher.android.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraXManager.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/playShutterSound.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/GalleryPickerLauncher.android.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/openAppSettings.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/ImagePickerLauncher.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/ImagePickerConfirmationView.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/Strings.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/RequestCameraPermission.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/CapturePhotoPreference.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/Constant.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/CustomPermissionDialog.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/GalleryPickerLauncher.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/PermissionConfig.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/CameraPhotoHandler.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/PhotoCaptureException.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/Logger.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/GalleryPhotoHandler.kt
+Java source files: 
+Script source files: 
+Script file extensions: 
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidDebug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/debug/java', not found
+[KOTLIN] Kotlin compilation 'jdkHome' argument: /Volumes/MacBook_Externo/MacBook_Externo/Library/Java/JavaVirtualMachines/ms-17.0.15/Contents/Home
+Finished executing kotlin compiler using DAEMON strategy
+
+> Task :library:compileReleaseKotlinAndroid FAILED
+Transforming android.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming core-lambda-stubs.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming R.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-activity-1.10.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-activity-ktx-1.10.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-activity-compose-1.10.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-camera-video-1.4.2-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-camera-view-1.4.2-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-camera-lifecycle-1.4.2-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-camera-camera2-1.4.2-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-camera-core-1.4.2-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-accompanist-permissions-0.37.3-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-core-3.5.3.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-coil-compose-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-coil-compose-core-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-core-ktx-1.15.0-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming core-1.15.0-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-material-icons-core-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-material-icons-extended-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-material-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-foundation-layout-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-material-ripple-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-foundation-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-animation-core-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-animation-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-util-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-unit-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-text-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-graphics-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-geometry-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-tooling-preview-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-ui-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-runtime-compose-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-coil-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-coil-core-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-runtime-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-runtime-ktx-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-viewmodel-savedstate-2.8.7-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-common-jvm-2.8.7.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-livedata-core-ktx-2.8.7-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming lifecycle-livedata-core-2.8.7-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-viewmodel-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-lifecycle-viewmodel-ktx-2.8.7-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming lifecycle-livedata-2.8.7-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-runtime-saveable-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-runtime-release-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-kotlinx-coroutines-core-jvm-1.10.2.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-kotlinx-coroutines-android-1.10.2.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-annotation-experimental-1.4.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-savedstate-1.2.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-savedstate-ktx-1.2.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming versionedparcelable-1.1.1-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming core-runtime-2.2.0-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming core-common-2.2.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-collection-jvm-1.5.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-annotation-jvm-1.9.1.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-core-viewtree-1.0.0-api.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-okio-jvm-3.11.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-kotlin-stdlib-2.1.21.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-annotations-23.0.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-listenablefuture-1.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Transforming jetified-jspecify-1.0.0.jar with BuildToolsApiClasspathEntrySnapshotTransform
+Build cache key for task ':library:compileReleaseKotlinAndroid' is b84607fdc958fa1a2931d6aab6db0394
+Task ':library:compileReleaseKotlinAndroid' is not up-to-date because:
+  Task has failed previously.
+The input changes require a full rebuild for incremental task ':library:compileReleaseKotlinAndroid'.
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidRelease/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidRelease/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidRelease/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidRelease/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidRelease/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidRelease/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+Kotlin source files: /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraCapturePreview.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/Strings.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/RequestCameraPermission.android.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/ImageConfirmationViewWithCustomButtons.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraController.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraCaptureStateHolder.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/FileManager.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/ImagePickerConfirmationView.android.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraCaptureView.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CapturePhotoPreference.android.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/ImageProcessor.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/ImagePickerLauncher.android.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraXManager.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/playShutterSound.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/GalleryPickerLauncher.android.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/openAppSettings.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/ImagePickerLauncher.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/ImagePickerConfirmationView.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/Strings.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/RequestCameraPermission.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/CapturePhotoPreference.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/Constant.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/CustomPermissionDialog.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/GalleryPickerLauncher.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/PermissionConfig.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/CameraPhotoHandler.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/PhotoCaptureException.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/Logger.kt, /Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/GalleryPhotoHandler.kt
+Java source files: 
+Script source files: 
+Script file extensions: 
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/androidRelease/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/kotlin', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/main/java', not found
+file or directory '/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP/library/src/release/java', not found
+[KOTLIN] Kotlin compilation 'jdkHome' argument: /Volumes/MacBook_Externo/MacBook_Externo/Library/Java/JavaVirtualMachines/ms-17.0.15/Contents/Home
+Finished executing kotlin compiler using DAEMON strategy
+Build f01b97bc-eab6-4700-8fa4-e0c5a4c31976 is closed
+35 actionable tasks: 3 executed, 32 up-to-date
+Watched directory hierarchies: [/Volumes/MacBook_Externo/MacBook_Externo/Downloads/imagepickerproject/ImagePickerKMP]
