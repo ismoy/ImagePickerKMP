@@ -286,6 +286,67 @@ fun MultipleGallerySelectionExample() {
 }
 ```
 
+### Selección Múltiple Limitada
+
+```kotlin
+@Composable
+fun LimitedGallerySelectionExample() {
+    var showGallery by remember { mutableStateOf(false) }
+
+    if (showGallery) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result -> showGallery = false },
+                onPhotosSelected = { results -> showGallery = false },
+                onError = { exception -> showGallery = false },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    galleryConfig = GalleryConfig(
+                        allowMultiple = true,
+                        mimeTypes = listOf("image/jpeg", "image/png"),
+                        selectionLimit = 10 // Permitir hasta 10 imágenes
+                    )
+                )
+            )
+        )
+    }
+
+    Button(onClick = { showGallery = true }) {
+        Text("Seleccionar hasta 10 imágenes")
+    }
+}
+```
+
+### Selección de Galería de Alto Rendimiento
+
+```kotlin
+@Composable
+fun HighPerformanceGalleryExample() {
+    var showGallery by remember { mutableStateOf(false) }
+
+    if (showGallery) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result -> showGallery = false },
+                onPhotosSelected = { results -> showGallery = false },
+                onError = { exception -> showGallery = false },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    galleryConfig = GalleryConfig(
+                        allowMultiple = true,
+                        selectionLimit = 5 // Límite conservador para mejor rendimiento
+                    )
+                )
+            )
+        )
+    }
+
+    Button(onClick = { showGallery = true }) {
+        Text("Seleccionar hasta 5 imágenes (Optimizado)")
+    }
+}
+```
+
 - En **Android**, el usuario verá el selector de galería del sistema y los permisos se solicitan automáticamente si es necesario.
 - En **iOS**, se usa el selector nativo de galería. En iOS 14+ se soporta selección múltiple. El sistema gestiona permisos y acceso limitado de forma nativa.
 - El callback `onPhotosSelected` siempre recibe una lista, incluso para selección simple.
@@ -466,7 +527,7 @@ fun CustomErrorMessagesExample() {
 ```kotlin
 // build.gradle.kts (nivel de app)
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
     implementation("androidx.compose.ui:ui:1.4.0")
     implementation("androidx.compose.material:material:1.4.0")
     implementation("androidx.activity:activity-compose:1.7.0")
@@ -938,7 +999,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+                implementation("io.github.ismoy:imagepickerkmp:1.0.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
                 implementation("org.jetbrains.compose.runtime:runtime:1.4.0")
             }
