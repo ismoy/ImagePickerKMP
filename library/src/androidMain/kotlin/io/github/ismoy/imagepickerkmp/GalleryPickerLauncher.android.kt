@@ -16,14 +16,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@Suppress("ReturnCount")
+@Suppress("ReturnCount","LongParameterList")
 @Composable
 actual fun GalleryPickerLauncher(
     context: Any?,
     onPhotosSelected: (List<PhotoResult>) -> Unit,
     onError: (Exception) -> Unit,
     allowMultiple: Boolean,
-    mimeTypes: List<String>
+    mimeTypes: List<String>,
+    selectionLimit: Long
 ) {
     if (context !is ComponentActivity) {
         onError(Exception(getStringResource(StringResource.INVALID_CONTEXT_ERROR)))

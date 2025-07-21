@@ -36,6 +36,7 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Selección múltiple de imágenes en iOS: Implementada usando `PHPickerViewController` (iOS 14+), reemplazando el picker antiguo de una sola imagen.
 - Nuevos tests instrumentados y unitarios: Se añadieron y reactivaron pruebas para cubrir los nuevos flujos de permisos y selección múltiple.
 - Mejoras de localización: Nuevos textos y traducciones para los diálogos de permisos de galería.
+- **Límite de selección configurable para el picker de galería**: Se añadió el parámetro `selectionLimit` a `GalleryConfig` para controlar el número máximo de imágenes que se pueden seleccionar en el picker de galería. El límite se aplica en tiempo de compilación con un valor máximo de 30 imágenes para prevenir problemas de rendimiento y crashes al seleccionar demasiadas imágenes en iOS.
 
 ### Cambiado
 - Mejorado el flujo de manejo de permisos
@@ -45,6 +46,7 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Procesamiento de imágenes mejorado con corrección automática de orientación para fotos de cámara frontal
 - Flujo de permisos en iOS: Ahora el permiso de galería se solicita directamente desde el sistema, sin diálogos previos personalizados, siguiendo el comportamiento nativo.
 - Refactor de lógica de permisos: El manejo de permisos de galería y cámara ahora es más consistente y multiplataforma.
+- **Límite de selección de galería**: Cambiado de selección ilimitada (0) a límite configurable con máximo de 30 imágenes para prevenir problemas de rendimiento y crashes en iOS al seleccionar demasiadas imágenes.
 
 ### Arreglado
 - Flujo de denegación de permisos en iOS
@@ -56,6 +58,7 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Errores de texto en diálogos: El diálogo de galería ya no muestra textos de cámara.
 - Bugs de selección múltiple: Corregidos errores de rendimiento y crashes al seleccionar muchas imágenes en iOS.
 - Errores de threading y casting: Solucionados problemas de concurrencia y conversiones de tipos en la selección de imágenes.
+- **Problemas de rendimiento en galería de iOS**: Corregidos crashes y degradación de rendimiento al seleccionar más de 30 imágenes implementando un límite de selección configurable con validación en tiempo de compilación.
 
 ### Documentación
 
@@ -64,8 +67,9 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Se garantizó que toda la documentación, tanto en inglés como en español, esté completamente sincronizada y sea precisa.
 - Todos los ejemplos y guías actualizados para reflejar el nuevo manejo automático de permisos y la selección múltiple en iOS.
 - Notas añadidas sobre diferencias de plataforma en el comportamiento de permisos y selección (Android vs iOS).
+- **Documentación actualizada**: Se añadieron ejemplos y documentación para el nuevo parámetro `selectionLimit` en `GalleryConfig`, incluyendo casos de uso para límites de selección y optimización de rendimiento.
 
-## [1.0.0] - 2024-01-15
+## [1.0.1] - 2024-01-15
 
 ### Añadido
 - Lanzamiento inicial de ImagePickerKMP
@@ -130,7 +134,7 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Historial de Versiones
 
-### Versión 1.0.0 (Estable Actual)
+### Versión 1.0.1 (Estable Actual)
 - **Fecha de Lanzamiento**: 15 de Enero, 2024
 - **Estado**: Estable
 - **Características Clave**:
@@ -167,7 +171,7 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Guía de Migración
 
-### De 0.9.0 a 1.0.0
+### De 0.9.0 a 1.0.1
 
 #### Cambios Rompedores
 - API de manejo de permisos actualizada
@@ -181,7 +185,7 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
    implementation("io.github.ismoy:imagepickerkmp:0.9.0")
    
    // Nuevo
-   implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+   implementation("io.github.ismoy:imagepickerkmp:1.0.1")
    ```
 
 2. **Actualizar Manejo de Permisos**
@@ -265,14 +269,14 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 | Versión | Android API | Versión iOS | Versión Kotlin | Versión Compose |
 |---------|-------------|-------------|----------------|-----------------|
-| 1.0.0   | 21+         | 12.0+       | 1.8+           | 1.4+            |
+| 1.0.1   | 21+         | 12.0+       | 1.8+           | 1.4+            |
 | 0.9.0   | 21+         | 12.0+       | 1.8+           | 1.4+            |
 | 0.8.0   | 21+         | N/A         | 1.8+           | 1.4+            |
 | 0.7.0   | 21+         | N/A         | 1.8+           | 1.4+            |
 
 ## Problemas Conocidos
 
-### Versión 1.0.0
+### Versión 1.0.1
 - **Problema**: Uso de memoria alto con fotos grandes
   - **Estado**: Arreglado en la próxima versión
   - **Solución temporal**: Usar compresión de imagen
@@ -283,7 +287,7 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Versión 0.9.0
 - **Problema**: Inicialización de cámara lenta en algunos dispositivos
-  - **Estado**: Arreglado en 1.0.0
+  - **Estado**: Arreglado en 1.0.1
   - **Solución temporal**: Usar preferencia de captura FAST
 
 ### Versión 0.8.0

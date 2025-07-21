@@ -386,7 +386,7 @@ What actually happened
 
 ## Environment
 - Platform: Android/iOS
-- Version: 1.0.0
+- Version: 1.0.1
 - Device: Pixel 6 / iPhone 13
 - OS Version: Android 12 / iOS 15
 

@@ -1,6 +1,7 @@
 package io.github.ismoy.imagepickerkmp
 
 import io.github.ismoy.imagepickerkmp.GalleryPhotoHandler.PhotoResult
+import io.github.ismoy.imagepickerkmp.ImagePickerUiConstants.SELECTION_LIMIT
 import platform.PhotosUI.PHPickerConfiguration
 import platform.PhotosUI.PHPickerFilter
 import platform.PhotosUI.PHPickerViewController
@@ -17,10 +18,12 @@ object PHPickerPresenter {
     fun presentGallery(
         viewController: UIViewController,
         onPhotoSelected: (PhotoResult) -> Unit,
-        onError: (Exception) -> Unit
+        onError: (Exception) -> Unit,
+        selectionLimit: Long
     ) {
+        require(selectionLimit <= SELECTION_LIMIT) {"Selection limit cannot exceed $SELECTION_LIMIT"}
         try {
-            val pickerViewController = createPHPickerController(onPhotoSelected, onError)
+            val pickerViewController = createPHPickerController(onPhotoSelected, onError, selectionLimit)
             viewController.presentViewController(pickerViewController,
                 animated = true, completion = null)
         } catch (e: Exception) {
@@ -30,10 +33,11 @@ object PHPickerPresenter {
 
     private fun createPHPickerController(
         onPhotoSelected: (PhotoResult) -> Unit,
-        onError: (Exception) -> Unit
+        onError: (Exception) -> Unit,
+        selectionLimit: Long
     ): PHPickerViewController {
         val configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 0
+        configuration.selectionLimit = selectionLimit
         configuration.filter = PHPickerFilter.imagesFilter
 
         val cleanup = { pickerDelegate = null }
