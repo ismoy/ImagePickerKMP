@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-image selection on iOS: Implemented using `PHPickerViewController` (iOS 14+), replacing the old single-image picker.
 - New instrumented and unit tests: Added and re-enabled tests to cover new permission flows and multi-image selection.
 - Improved localization: New strings and translations for gallery permission dialogs.
+- **Configurable selection limit for gallery picker**: Added `selectionLimit` parameter to `GalleryConfig` to control the maximum number of images that can be selected in the gallery picker. The limit is enforced at compile time with a maximum value of 30 images to prevent performance issues and crashes when selecting too many images on iOS.
 
 ### Changed
 - Improved permission handling flow
@@ -43,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced image processing with automatic orientation correction for front camera photos
 - iOS gallery permission flow: Now requests permission directly via the system dialog, with no pre-permission custom dialog, matching native iOS behavior.
 - Refactored permission logic: Gallery and camera permission handling is now more consistent and cross-platform.
+- **Gallery selection limit**: Changed from unlimited selection (0) to configurable limit with maximum of 30 images to prevent performance issues and crashes on iOS when selecting too many images.
 
 ### Fixed
 - iOS permission denial flow
@@ -54,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dialog text errors: Gallery permission dialog no longer shows camera texts.
 - Multi-image selection bugs: Fixed performance issues and crashes when selecting many images on iOS.
 - Threading and casting errors: Resolved concurrency and type conversion issues in image selection.
+- **iOS gallery performance issues**: Fixed crashes and performance degradation when selecting more than 30 images by implementing a configurable selection limit with compile-time validation.
 
 ### Documentation
 
@@ -63,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All examples and guides updated to reflect new automatic permission handling and multi-image selection on iOS.
 - Added notes on platform differences for permission and selection behavior (Android vs iOS).
 
-## [1.0.0] - 2025-01-15
+## [1.0.1] - 2025-01-15
 
 ### Added
 - **First Official Release** of ImagePickerKMP
@@ -140,7 +143,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
-### Version 1.0.0 (Current Stable)
+### Version 1.0.1 (Current Stable)
 - **Release Date**: January 15, 2024
 - **Status**: Stable
 - **Key Features**:
@@ -177,7 +180,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Migration Guide
 
-### From 0.9.0 to 1.0.0
+### From 0.9.0 to 1.0.1
 
 #### Breaking Changes
 - Updated permission handling API
@@ -191,7 +194,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    implementation("io.github.ismoy:imagepickerkmp:0.9.0")
    
    // New
-   implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+   implementation("io.github.ismoy:imagepickerkmp:1.0.1")
    ```
 
 2. **Update Permission Handling**
@@ -275,14 +278,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Android API | iOS Version | Kotlin Version | Compose Version |
 |---------|-------------|-------------|----------------|-----------------|
-| 1.0.0   | 21+         | 12.0+       | 1.8+           | 1.4+            |
+| 1.0.1   | 21+         | 12.0+       | 1.8+           | 1.4+            |
 | 0.9.0   | 21+         | 12.0+       | 1.8+           | 1.4+            |
 | 0.8.0   | 21+         | N/A         | 1.8+           | 1.4+            |
 | 0.7.0   | 21+         | N/A         | 1.8+           | 1.4+            |
 
 ## Known Issues
 
-### Version 1.0.0
+### Version 1.0.1
 - **Issue**: Memory usage high with large photos
   - **Status**: Fixed in next release
   - **Workaround**: Use image compression
@@ -293,7 +296,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Version 0.9.0
 - **Issue**: Camera initialization slow on some devices
-  - **Status**: Fixed in 1.0.0
+  - **Status**: Fixed in 1.0.1
   - **Workaround**: Use FAST capture preference
 
 ### Version 0.8.0

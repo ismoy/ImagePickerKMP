@@ -57,7 +57,7 @@ Agrega la dependencia en tu `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
 }
 ```
 

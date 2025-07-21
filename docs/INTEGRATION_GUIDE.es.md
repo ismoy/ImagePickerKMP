@@ -35,7 +35,7 @@ En tu `build.gradle.kts` (nivel app):
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
 }
 ```
 
@@ -317,7 +317,7 @@ Para apps de Android usando Jetpack Compose:
 ```kotlin
 // build.gradle.kts (nivel de app)
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
     implementation("androidx.compose.ui:ui:1.4.0")
     implementation("androidx.compose.material:material:1.4.0")
 }
@@ -479,7 +479,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+                implementation("io.github.ismoy:imagepickerkmp:1.0.1")
             }
         }
     }

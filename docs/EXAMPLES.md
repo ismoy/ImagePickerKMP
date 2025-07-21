@@ -274,6 +274,67 @@ fun MultipleGallerySelectionExample() {
 }
 ```
 
+### Limited Multiple Image Selection
+
+```kotlin
+@Composable
+fun LimitedGallerySelectionExample() {
+    var showGallery by remember { mutableStateOf(false) }
+
+    if (showGallery) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result -> showGallery = false },
+                onPhotosSelected = { results -> showGallery = false },
+                onError = { exception -> showGallery = false },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    galleryConfig = GalleryConfig(
+                        allowMultiple = true,
+                        mimeTypes = listOf("image/jpeg", "image/png"),
+                        selectionLimit = 10 // Allow up to 10 images
+                    )
+                )
+            )
+        )
+    }
+
+    Button(onClick = { showGallery = true }) {
+        Text("Select Up to 10 Images")
+    }
+}
+```
+
+### High-Performance Gallery Selection
+
+```kotlin
+@Composable
+fun HighPerformanceGalleryExample() {
+    var showGallery by remember { mutableStateOf(false) }
+
+    if (showGallery) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result -> showGallery = false },
+                onPhotosSelected = { results -> showGallery = false },
+                onError = { exception -> showGallery = false },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    galleryConfig = GalleryConfig(
+                        allowMultiple = true,
+                        selectionLimit = 5 // Conservative limit for better performance
+                    )
+                )
+            )
+        )
+    }
+
+    Button(onClick = { showGallery = true }) {
+        Text("Select Up to 5 Images (Optimized)")
+    }
+}
+```
+
 - On **Android**, the user will see the system gallery picker, and permissions are requested automatically if needed.
 - On **iOS**, the native gallery picker is used. On iOS 14+, multiple selection is supported. The system handles permissions and limited access natively.
 - The callback `onPhotosSelected` always receives a list, even for single selection.
@@ -454,7 +515,7 @@ fun CustomErrorMessagesExample() {
 ```kotlin
 // build.gradle.kts (app level)
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
     implementation("androidx.compose.ui:ui:1.4.0")
     implementation("androidx.compose.material:material:1.4.0")
     implementation("androidx.activity:activity-compose:1.7.0")
@@ -926,7 +987,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("io.github.ismoy:imagepickerkmp:1.0.0")
+                implementation("io.github.ismoy:imagepickerkmp:1.0.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
                 implementation("org.jetbrains.compose.runtime:runtime:1.4.0")
             }
