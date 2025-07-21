@@ -394,7 +394,7 @@ Lo que realmente pasó
 
 ## Entorno
 - Plataforma: Android/iOS
-- Versión: 1.0.0
+- Versión: 1.0.1
 - Dispositivo: Pixel 6 / iPhone 13
 - Versión OS: Android 12 / iOS 15
 

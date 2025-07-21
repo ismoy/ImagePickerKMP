@@ -1,8 +1,10 @@
 name: Main Branch Deployment
 
 on:
-  push:
-    branches: [ main ]
+  # push:
+  #   branches: [ main ]
+  # Solo ejecución manual si se requiere
+  workflow_dispatch:
 
 jobs:
   deploy:

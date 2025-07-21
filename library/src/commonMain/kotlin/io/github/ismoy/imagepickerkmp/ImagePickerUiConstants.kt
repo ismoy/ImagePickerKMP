@@ -43,4 +43,5 @@ object ImagePickerUiConstants {
     const val ORIENTATION_FLIP_VERTICAL_Y = -1f
     const val SYSTEM_VERSION_10 = 10.0
     const val DELAY_TO_TAKE_PHOTO = 60L
+    const val SELECTION_LIMIT = 30L
 }

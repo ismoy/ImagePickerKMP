@@ -1116,4 +1116,51 @@ fun MyGalleryPicker() {
         Text("Pick from Gallery")
     }
 }
-``` 
+```
+
+### GalleryConfig
+
+Configuration class for gallery picker settings.
+
+```kotlin
+data class GalleryConfig(
+    val allowMultiple: Boolean = false,
+    val mimeTypes: List<String> = listOf("image/*"),
+    val selectionLimit: Int = 30
+)
+```
+
+#### Properties
+
+- `allowMultiple: Boolean` - Allow multiple image selection (default: false)
+- `mimeTypes: List<String>` - List of MIME types to filter selectable files (default: all images)
+- `selectionLimit: Int` - Maximum number of images that can be selected (default: 30, maximum: 30)
+
+#### Example
+
+```kotlin
+@Composable
+fun CustomGalleryPicker() {
+    ImagePickerLauncher(
+        context = LocalContext.current,
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result -> /* handle single photo */ },
+            onPhotosSelected = { results -> /* handle multiple photos */ },
+            onError = { exception -> /* handle error */ },
+            cameraCaptureConfig = CameraCaptureConfig(
+                galleryConfig = GalleryConfig(
+                    allowMultiple = true,
+                    mimeTypes = listOf("image/jpeg", "image/png"),
+                    selectionLimit = 10 // Allow up to 10 images
+                )
+            )
+        )
+    )
+}
+```
+
+#### Important Notes
+
+- **Selection Limit**: The maximum value for `selectionLimit` is 30. Values greater than 30 will cause a compile-time error to prevent performance issues and crashes on iOS when selecting too many images.
+- **Platform Behavior**: On iOS, the selection limit is enforced by the system picker. On Android, the limit is enforced by the library.
+- **Performance**: Limiting the selection helps prevent memory issues and improves performance, especially on devices with limited resources. 

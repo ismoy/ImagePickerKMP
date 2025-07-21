@@ -44,7 +44,8 @@ data class PermissionAndConfirmationConfig(
  */
 data class GalleryConfig(
     val allowMultiple: Boolean = false,
-    val mimeTypes: List<String> = listOf("image/*")
+    val mimeTypes: List<String> = listOf("image/*"),
+    val selectionLimit: Int = 30
 )
 
 @Suppress("EndOfSentenceFormat")
