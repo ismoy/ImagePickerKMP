@@ -30,11 +30,28 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
+      - name: Setup GPG
+        run: |
+          echo "${{ secrets.SIGNING_SECRET_KEY_RING_FILE }}" | base64 -d > secring.gpg
+          echo "signing.keyId=${{ secrets.SIGNING_KEY_ID }}" >> gradle.properties
+          echo "signing.password=${{ secrets.SIGNING_PASSWORD }}" >> gradle.properties
+          echo "signing.secretKeyRingFile=secring.gpg" >> gradle.properties
+
+      - name: Setup Maven Central credentials
+        run: |
+          echo "mavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USERNAME }}" >> gradle.properties
+          echo "mavenCentralPassword=${{ secrets.MAVEN_CENTRAL_PASSWORD }}" >> gradle.properties
+
       - name: Build and test
         run: ./gradlew build test --no-daemon
 
       - name: Generate coverage report
         run: ./gradlew jacocoTestReport --no-daemon
+
+      - name: Publish to Maven Central
+        run: ./gradlew publishToMavenCentral --no-daemon
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -59,6 +76,8 @@ jobs:
             **Commit:** ${{ github.sha }}
             **Author:** ${{ github.actor }}
             
+            📦 **Published to Maven Central**
+            
             🔗 **View Release:** ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.ref_name }}
 
       - name: Notify Discord on Release Failure
@@ -75,3 +94,4 @@ jobs:
             **Commit:** ${{ github.sha }}
             **Author:** ${{ github.actor }}
             
+            🔗 **View Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} 
