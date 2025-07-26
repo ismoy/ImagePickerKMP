@@ -1,4 +1,3 @@
-import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -6,7 +5,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeCompiler)
-    id("com.vanniktech.maven.publish") version "0.30.0"
+    id("com.vanniktech.maven.publish") version "0.33.0"
     id("maven-publish")
     id("jacoco")
     id("io.gitlab.arturbosch.detekt")
@@ -257,6 +256,8 @@ mavenPublishing{
         }
         scm {
             url.set("https://github.com/ismoy/ImagePickerKMP")
+            connection.set("scm:git:git://github.com/ismoy/ImagePickerKMP.git")
+            developerConnection.set("scm:git:git://github.com/ismoy/ImagePickerKMP.git")
         }
     }
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
