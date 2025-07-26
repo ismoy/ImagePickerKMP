@@ -12,6 +12,7 @@ xcuserdata
 #So we don't accidentally commit our private keys
 *.gpg
 gradle.properties
+gradle.local.properties
 build/
 
 library/build/
