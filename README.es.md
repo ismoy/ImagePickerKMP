@@ -9,13 +9,11 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/ismoy/ImagePickerKMP)](https://github.com/ismoy/ImagePickerKMP/commits/main)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ismoy/ImagePickerKMP/pulls)
 [![Discord](https://img.shields.io/discord/1393705692484993114.svg?label=Discord&logo=discord&color=7289da)](https://discord.gg/EjSQTeyh)
-[![official project](http://jb.gg/badges/official.svg)](https://github.com/JetBrains#jetbrains-on-github)
 ![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-green)
 ![Android](https://img.shields.io/badge/Platform-Android-green)
 ![iOS](https://img.shields.io/badge/Platform-iOS-blue)
 ![Coverage Status](https://img.shields.io/codecov/c/github/ismoy/ImagePickerKMP)
 [![Detekt](https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main)](https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml)
-[![Detekt Issues](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/ismoy/c18082f28a33af515885ed319e2fec4c/raw/detekt-issues.json&label=Detekt%20Issues)](https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml)
 
 ## 🎥 Demo
 

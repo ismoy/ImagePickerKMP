@@ -152,7 +152,7 @@ jobs:
         with:
           name: coverage-report
           path: library/build/reports/jacoco/jacocoTestReport/
-          retention-days: 7
+          retention-days: 30
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5

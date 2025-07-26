@@ -1,3 +1,4 @@
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -239,6 +240,7 @@ mavenPublishing{
                     "customizable UI components, automatic permission handling, and a unified API. " +
                     "Add high-quality camera and gallery features to your KMP app with minimal effort."
         )
+        inceptionYear.set("2025")
         url.set("https://github.com/ismoy/ImagePickerKMP")
         licenses {
             license {
@@ -259,6 +261,7 @@ mavenPublishing{
             developerConnection.set("scm:git:git://github.com/ismoy/ImagePickerKMP.git")
         }
     }
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
 }
 afterEvaluate {
     publishing {

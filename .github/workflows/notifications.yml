@@ -19,11 +19,16 @@ jobs:
         with:
           name: coverage-report
           path: ./coverage
+        continue-on-error: true
 
       - name: Parse coverage data
         id: coverage
         run: |
+          echo "=== Checking for coverage artifacts ==="
+          ls -la ./coverage/ || echo "No coverage directory found"
+          
           if [ -f "./coverage/jacocoTestReport.xml" ]; then
+            echo "✅ Coverage artifact found"
             # Extract line coverage percentage
             LINE_COVERAGE=$(grep -o 'LINE="[^"]*"' ./coverage/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*')
             BRANCH_COVERAGE=$(grep -o 'BRANCH="[^"]*"' ./coverage/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*')
@@ -31,10 +36,13 @@ jobs:
             echo "line_coverage=$LINE_COVERAGE" >> $GITHUB_OUTPUT
             echo "branch_coverage=$BRANCH_COVERAGE" >> $GITHUB_OUTPUT
             echo "has_coverage=true" >> $GITHUB_OUTPUT
+            echo "Coverage data extracted successfully"
           else
+            echo "❌ Coverage artifact not found or not available"
             echo "line_coverage=0" >> $GITHUB_OUTPUT
             echo "branch_coverage=0" >> $GITHUB_OUTPUT
             echo "has_coverage=false" >> $GITHUB_OUTPUT
+            echo "Coverage data not available"
           fi
 
       - name: Notify Discord with detailed info
