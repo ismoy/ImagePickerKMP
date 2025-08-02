@@ -241,15 +241,20 @@ The main composable function for launching the image picker.
 ```kotlin
 @Composable
 fun ImagePickerLauncher(
-    context: Any?,
     config: ImagePickerConfig
 )
 ```
 
 #### Parameters
 
-- `context: Any?` - Context for Android, null for iOS
 - `config: ImagePickerConfig` - Configuration for the image picker
+
+#### ImagePickerConfig Parameters
+
+- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback when a photo is captured
+- `onPhotosSelected: ((List<GalleryPhotoHandler.PhotoResult>) -> Unit)?` - Callback for gallery photo selection
+- `onError: (Exception) -> Unit` - Callback for error handling
+- `onDismiss: () -> Unit` - Callback when the picker is dismissed without selection (default: empty lambda)
 
 #### Example
 
@@ -259,10 +264,10 @@ fun CustomImagePicker() {
     var showPicker by remember { mutableStateOf(false) }
     if (showPicker) {
         ImagePickerLauncher(
-            context = LocalContext.current,
             config = ImagePickerConfig(
                 onPhotoCaptured = { result -> showPicker = false },
                 onError = { exception -> showPicker = false },
+                onDismiss = { showPicker = false }, // Handle dismissal
                 cameraCaptureConfig = CameraCaptureConfig(
                     preference = CapturePhotoPreference.HIGH_QUALITY,
                     permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
@@ -1080,23 +1085,25 @@ A composable for launching the system gallery picker to select one or more image
 ```kotlin
 @Composable
 fun GalleryPickerLauncher(
-    context: Any?, // Android only; ignored on iOS
     onPhotosSelected: (List<PhotoResult>) -> Unit,
     onError: (Exception) -> Unit,
+    onDismiss: () -> Unit = {},
     allowMultiple: Boolean = false,
-    mimeTypes: List<String> = listOf("image/*")
+    mimeTypes: List<String> = listOf("image/*"),
+    selectionLimit: Long = SELECTION_LIMIT
 )
 ```
 
 #### Parameters
-- `context: Any?` – Android context (ignored on iOS)
 - `onPhotosSelected: (List<PhotoResult>) -> Unit` – Callback with the selected images (always a list, even for single selection)
 - `onError: (Exception) -> Unit` – Callback for error handling
+- `onDismiss: () -> Unit` – Callback triggered when the picker is dismissed without selection (default: empty lambda)
 - `allowMultiple: Boolean` – Allow multiple image selection (default: false)
 - `mimeTypes: List<String>` – Optional list of MIME types to filter selectable files (default: all images)
+- `selectionLimit: Long` – Maximum number of images that can be selected (default: SELECTION_LIMIT)
 
 #### Platform Behavior
-- **Android:** Uses the system gallery picker. Permissions are requested automatically if needed.
+- **Android:** Uses the system gallery picker. No permissions are required as the system handles access automatically.
 - **iOS:** Uses the native gallery picker. On iOS 14+, multiple selection is supported. The system handles permissions and limited access natively.
 
 #### Example
@@ -1106,9 +1113,9 @@ fun MyGalleryPicker() {
     var showGallery by remember { mutableStateOf(false) }
     if (showGallery) {
         GalleryPickerLauncher(
-            context = LocalContext.current, // Android only
             onPhotosSelected = { results -> showGallery = false },
             onError = { showGallery = false },
+            onDismiss = { showGallery = false }, // Handle dismissal
             allowMultiple = true
         )
     }

@@ -17,10 +17,11 @@ object CameraPresenter {
     fun presentCamera(
         viewController: UIViewController,
         onPhotoCaptured: (PhotoResult) -> Unit,
-        onError: (Exception) -> Unit
+        onError: (Exception) -> Unit,
+        onDismiss: () -> Unit
     ) {
         try {
-            val imagePickerController = createImagePickerController(onPhotoCaptured, onError)
+            val imagePickerController = createImagePickerController(onPhotoCaptured, onError, onDismiss)
             viewController.presentViewController(imagePickerController, animated = true, completion = null)
         } catch (e: Exception) {
             onError(PhotoCaptureException("Failed to present camera: ${e.message}"))
@@ -29,7 +30,8 @@ object CameraPresenter {
 
     private fun createImagePickerController(
         onPhotoCaptured: (PhotoResult) -> Unit,
-        onError: (Exception) -> Unit
+        onError: (Exception) -> Unit,
+        onDismiss: () -> Unit
     ): UIImagePickerController {
         return UIImagePickerController().apply {
             sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
@@ -44,7 +46,11 @@ object CameraPresenter {
                 onError(error)
                 cleanup()
             }
-            cameraDelegate = CameraDelegate(wrappedOnPhotoCaptured, wrappedOnError)
+            val wrappedOnDismiss: () -> Unit = {
+                onDismiss()
+                cleanup()
+            }
+            cameraDelegate = CameraDelegate(wrappedOnPhotoCaptured, wrappedOnError, wrappedOnDismiss)
             delegate = cameraDelegate
         }
     }

@@ -11,17 +11,15 @@ import platform.UIKit.UIAlertAction
 import platform.UIKit.UIAlertController
 import platform.UIKit.UIAlertControllerStyleActionSheet
 
-@Suppress("FunctionNaming")
+@Suppress("FunctionNaming","TrailingWhitespace")
 @Composable
 actual fun ImagePickerLauncher(
-    context: Any?,
     config: ImagePickerConfig
 ) {
     var showDialog by remember { mutableStateOf(true) }
     var askCameraPermission by remember { mutableStateOf(false) }
     var launchCamera by remember { mutableStateOf(false) }
     var launchGallery by remember { mutableStateOf(false) }
-
     handleImagePickerState(
         showDialog = showDialog,
         askCameraPermission = askCameraPermission,
@@ -29,13 +27,21 @@ actual fun ImagePickerLauncher(
         launchGallery = launchGallery,
         config = config,
         onDismissDialog = { showDialog = false },
+        onCancelDialog = {
+
+            showDialog = false
+            config.onDismiss()
+        },
         onRequestCameraPermission = { askCameraPermission = true },
         onRequestGallery = { launchGallery = true },
         onCameraPermissionGranted = {
             askCameraPermission = false
             launchCamera = true
         },
-        onCameraPermissionDenied = { askCameraPermission = false },
+        onCameraPermissionDenied = {
+            askCameraPermission = false
+            config.onDismiss()
+        },
         onCameraFinished = { launchCamera = false },
         onGalleryFinished = { launchGallery = false }
     )
@@ -49,6 +55,7 @@ private fun handleImagePickerState(
     launchGallery: Boolean,
     config: ImagePickerConfig,
     onDismissDialog: () -> Unit,
+    onCancelDialog: () -> Unit,
     onRequestCameraPermission: () -> Unit,
     onRequestGallery: () -> Unit,
     onCameraPermissionGranted: () -> Unit,
@@ -66,7 +73,7 @@ private fun handleImagePickerState(
                 onDismissDialog()
                 onRequestGallery()
             },
-            onCancel = onDismissDialog
+            onCancel = onCancelDialog
         )
     }
 
@@ -81,6 +88,7 @@ private fun handleImagePickerState(
         launchCameraInternal(
             onPhotoCaptured = config.onPhotoCaptured,
             onError = config.onError,
+            onDismiss = config.onDismiss,
             onFinish = onCameraFinished
         )
     }
@@ -98,6 +106,7 @@ private fun handleImagePickerState(
                 )
             },
             onError = config.onError,
+            onDismiss = config.onDismiss,
             onFinish = onGalleryFinished
         )
     }
@@ -159,6 +168,7 @@ private fun handleCameraPermission(
 private fun launchCameraInternal(
     onPhotoCaptured: (CameraPhotoHandler.PhotoResult) -> Unit,
     onError: (Exception) -> Unit,
+    onDismiss: () -> Unit,
     onFinish: () -> Unit
 ) {
     LaunchedEffect(Unit) {
@@ -170,6 +180,10 @@ private fun launchCameraInternal(
             onError = {
                 onError(it)
                 onFinish()
+            },
+            onDismiss = {
+                onDismiss()
+                onFinish()
             }
         )
     }
@@ -179,6 +193,7 @@ private fun launchCameraInternal(
 private fun launchGalleryInternal(
     onPhotoSelected: (GalleryPhotoHandler.PhotoResult) -> Unit,
     onError: (Exception) -> Unit,
+    onDismiss: () -> Unit,
     onFinish: () -> Unit
 ) {
     LaunchedEffect(Unit) {
@@ -190,7 +205,8 @@ private fun launchGalleryInternal(
             onError = {
                 onError(it)
                 onFinish()
-            }
+            },
+            onDismiss = onDismiss
         )
     }
 }

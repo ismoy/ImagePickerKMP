@@ -16,10 +16,11 @@ object GalleryPresenter {
     fun presentGallery(
         viewController: UIViewController,
         onPhotoSelected: (PhotoResult) -> Unit,
-        onError: (Exception) -> Unit
+        onError: (Exception) -> Unit,
+        onDismiss: () -> Unit
     ) {
         try {
-            val imagePickerController = createImagePickerController(onPhotoSelected, onError)
+            val imagePickerController = createImagePickerController(onPhotoSelected, onError, onDismiss)
             viewController.presentViewController(imagePickerController, animated = true, completion = null)
         } catch (e: Exception) {
             onError(Exception("Failed to present gallery: ${e.message}"))
@@ -28,7 +29,8 @@ object GalleryPresenter {
 
     private fun createImagePickerController(
         onPhotoSelected: (PhotoResult) -> Unit,
-        onError: (Exception) -> Unit
+        onError: (Exception) -> Unit,
+        onDismiss: () -> Unit
     ): UIImagePickerController {
         return UIImagePickerController().apply {
             sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypePhotoLibrary
@@ -43,7 +45,11 @@ object GalleryPresenter {
                 onError(error)
                 cleanup()
             }
-            galleryDelegate = GalleryDelegate(wrappedOnPhotoSelected, wrappedOnError)
+            val wrappedOnDismiss: () -> Unit = {
+                onDismiss()
+                cleanup()
+            }
+            galleryDelegate = GalleryDelegate(wrappedOnPhotoSelected, wrappedOnError, wrappedOnDismiss)
             delegate = galleryDelegate
         }
     }

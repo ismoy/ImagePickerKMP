@@ -11,85 +11,77 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.GalleryPhotoHandler.PhotoResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private data class GalleryPickerConfig(
+    val context: ComponentActivity,
+    val onPhotosSelected: (List<PhotoResult>) -> Unit,
+    val onError: (Exception) -> Unit,
+    val onDismiss: () -> Unit,
+    val allowMultiple: Boolean,
+    val mimeTypes: List<String>
+)
+
 @Suppress("ReturnCount","LongParameterList")
 @Composable
 actual fun GalleryPickerLauncher(
-    context: Any?,
     onPhotosSelected: (List<PhotoResult>) -> Unit,
     onError: (Exception) -> Unit,
+    onDismiss: () -> Unit,
     allowMultiple: Boolean,
     mimeTypes: List<String>,
     selectionLimit: Long
 ) {
+    val context = LocalContext.current
     if (context !is ComponentActivity) {
         onError(Exception(getStringResource(StringResource.INVALID_CONTEXT_ERROR)))
         return
     }
 
-    var hasPermission by remember { mutableStateOf(false) }
-    var permissionChecked by remember { mutableStateOf(false) }
-
-    if (!permissionChecked) {
-        RequestGalleryPermission(
-            onGranted = {
-                hasPermission = true
-                permissionChecked = true
-            },
-            onLimited = {
-                hasPermission = true
-                permissionChecked = true
-            },
-            onDenied = {
-                hasPermission = false
-                permissionChecked = true
-            },
-            customDeniedDialog = null,
-            dialogConfig = defaultGalleryPermissionDialogConfig()
-        )
-        return
-    }
-
-    if (hasPermission) {
-        GalleryPickerLauncherContent(
-            context = context,
-            onPhotosSelected = onPhotosSelected,
-            onError = onError,
-            allowMultiple = allowMultiple,
-            mimeTypes = mimeTypes
-        )
-    }
+    val config = GalleryPickerConfig(
+        context = context,
+        onPhotosSelected = onPhotosSelected,
+        onError = onError,
+        onDismiss = onDismiss,
+        allowMultiple = allowMultiple,
+        mimeTypes = mimeTypes
+    )
+    GalleryPickerLauncherContent(config)
 }
 
 @Composable
-private fun GalleryPickerLauncherContent(
-    context: ComponentActivity,
-    onPhotosSelected: (List<PhotoResult>) -> Unit,
-    onError: (Exception) -> Unit,
-    allowMultiple: Boolean,
-    mimeTypes: List<String>
-) {
+private fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
     var shouldLaunch by remember { mutableStateOf(false) }
 
-    val singlePickerLauncher = rememberSinglePickerLauncher(context, onPhotosSelected, onError)
-    val multiplePickerLauncher = rememberMultiplePickerLauncher(context, onPhotosSelected, onError)
+    val singlePickerLauncher = rememberSinglePickerLauncher(
+        config.context,
+        config.onPhotosSelected,
+        config.onError,
+        config.onDismiss
+    )
+    val multiplePickerLauncher = rememberMultiplePickerLauncher(
+        config.context,
+        config.onPhotosSelected,
+        config.onError,
+        config.onDismiss
+    )
 
     LaunchedEffect(shouldLaunch) {
         if (shouldLaunch) {
             try {
-                val mimeType = mimeTypes.firstOrNull() ?: "image/*"
-                if (allowMultiple) {
+                val mimeType = config.mimeTypes.firstOrNull() ?: "image/*"
+                if (config.allowMultiple) {
                     multiplePickerLauncher.launch(mimeType)
                 } else {
                     singlePickerLauncher.launch(mimeType)
                 }
                 shouldLaunch = false
             } catch (e: Exception) {
-                onError(e)
+                config.onError(e)
             }
         }
     }
@@ -103,7 +95,8 @@ private fun GalleryPickerLauncherContent(
 private fun rememberSinglePickerLauncher(
     context: Context,
     onPhotosSelected: (List<PhotoResult>) -> Unit,
-    onError: (Exception) -> Unit
+    onError: (Exception) -> Unit,
+    onDismiss: () -> Unit
 ) = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.GetContent()
 ) { uri: Uri? ->
@@ -117,6 +110,9 @@ private fun rememberSinglePickerLauncher(
         } catch (e: Exception) {
             onError(e)
         }
+    } else {
+        // User cancelled the picker
+        onDismiss()
     }
 }
 
@@ -124,7 +120,8 @@ private fun rememberSinglePickerLauncher(
 private fun rememberMultiplePickerLauncher(
     context: Context,
     onPhotosSelected: (List<PhotoResult>) -> Unit,
-    onError: (Exception) -> Unit
+    onError: (Exception) -> Unit,
+    onDismiss: () -> Unit
 ) = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.GetMultipleContents()
 ) { uris: List<Uri> ->
@@ -149,6 +146,9 @@ private fun rememberMultiplePickerLauncher(
         } catch (e: Exception) {
             onError(e)
         }
+    } else {
+        // User cancelled the picker
+        onDismiss()
     }
 }
 

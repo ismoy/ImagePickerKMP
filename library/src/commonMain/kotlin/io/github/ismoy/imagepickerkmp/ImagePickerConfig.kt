@@ -68,6 +68,7 @@ data class ImagePickerConfig(
     val onPhotoCaptured: (CameraPhotoHandler.PhotoResult) -> Unit,
     val onPhotosSelected: ((List<GalleryPhotoHandler.PhotoResult>) -> Unit)? = null,
     val onError: (Exception) -> Unit,
+    val onDismiss: () -> Unit = {},
 
     // Default values in English
     val dialogTitle: String = "Select option",

@@ -6,6 +6,5 @@ import androidx.compose.runtime.Composable
 @Suppress("FunctionNaming")
 @Composable
 expect fun ImagePickerLauncher(
-    context: Any?,
     config: ImagePickerConfig
 )

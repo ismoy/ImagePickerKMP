@@ -66,21 +66,23 @@ fun MyImagePicker() {
 
     if (showImagePicker) {
         ImagePickerLauncher(
-            context = LocalContext.current,
             config = ImagePickerConfig(
                 onPhotoCaptured = { result ->
                     // Handle captured photo
                     capturedImage = result
                     showImagePicker = false
                 },
-                onError = { exception ->
-                    // Handle errors
+                onError = { exception -> 
+                    println("Error: ${exception.message}")
                     showImagePicker = false
+                },
+                onDismiss = { 
+                    println("User cancelled or dismissed the picker")
+                    showImagePicker = false // Reset state when user doesn't select anything
                 }
             )
         )
     }
-
     Button(onClick = { showImagePicker = true }) {
         Text("Take Photo")
     }
@@ -100,7 +102,6 @@ fun AdvancedImagePicker() {
 
     if (showPicker) {
         ImagePickerLauncher(
-            context = LocalContext.current,
             config = ImagePickerConfig(
                 onPhotoCaptured = { result ->
                     capturedImage = result
@@ -110,6 +111,10 @@ fun AdvancedImagePicker() {
                 onError = { exception ->
                     showPicker = false
                     // Custom error handling here
+                },
+                onDismiss = { 
+                    println("User cancelled or dismissed the picker")
+                    showPicker = false // Reset state when user doesn't select anything
                 },
                 cameraCaptureConfig = CameraCaptureConfig(
                     permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
@@ -181,31 +186,34 @@ private fun uploadImage(photoResult: PhotoResult) {
 
 You can also allow users to pick images directly from the gallery:
 
-> **Note:** You do not need to request gallery permissions manually. The library automatically handles permission requests and user flows for both Android and iOS, providing a native experience on each platform.
+> **Note:** You don't need to request gallery permissions manually. On Android, the system handles access automatically. On iOS, the library automatically handles permission requests and user flows, providing a native experience on each platform.
 
 ```kotlin
 @Composable
 fun MyGalleryPicker() {
-    var showGalleryPicker by remember { mutableStateOf(false) }
+    var showGallery by remember { mutableStateOf(false) }
     var selectedImages by remember { mutableStateOf<List<PhotoResult>>(emptyList()) }
 
-    if (showGalleryPicker) {
+    if (showGallery) {
         GalleryPickerLauncher(
-            context = LocalContext.current, // Android only; ignored on iOS
             onPhotosSelected = { results ->
                 selectedImages = results
-                showGalleryPicker = false
+                showGallery = false
             },
             onError = { exception ->
                 // Handle errors
-                showGalleryPicker = false
+                showGallery = false
+            },
+            onDismiss = { 
+                println("User cancelled gallery selection")
+                showGallery = false // Reset state when user doesn't select anything
             },
             allowMultiple = true // or false for single selection
             // mimeTypes = listOf("image/jpeg", "image/png") // Optional: filter by type
         )
     }
 
-    Button(onClick = { showGalleryPicker = true }) {
+    Button(onClick = { showGallery = true }) {
         Text("Pick from Gallery")
     }
 }
@@ -217,7 +225,58 @@ fun MyGalleryPicker() {
 - You can use `allowMultiple` to enable or disable multi-image selection.
 - The `mimeTypes` parameter is optional and lets you filter selectable file types.
 
+## GalleryPickerLauncher Dismiss Fix
+
+The `GalleryPickerLauncher` now includes an `onDismiss` callback to handle cases where users dismiss the picker without selecting any images. This resolves the issue where the picker couldn't be reopened after being dismissed.
+
+### Before (Problematic)
+```kotlin
+@Composable
+fun MyGalleryPicker() {
+    var showGallery by remember { mutableStateOf(false) }
+    if (showGallery) {
+        GalleryPickerLauncher(
+            context = LocalContext.current,
+            onPhotosSelected = { results -> showGallery = false },
+            onError = { showGallery = false }
+            // Missing onDismiss - picker couldn't be reopened after dismissal
+        )
+    }
+    Button(onClick = { showGallery = true }) {
+        Text("Pick from Gallery")
+    }
+}
+```
+
+### After (Fixed)
+```kotlin
+@Composable
+fun MyGalleryPicker() {
+    var showGallery by remember { mutableStateOf(false) }
+    if (showGallery) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { results -> showGallery = false },
+            onError = { showGallery = false },
+            onDismiss = { showGallery = false }, // Handle dismissal
+            allowMultiple = true
+        )
+    }
+    Button(onClick = { showGallery = true }) {
+        Text("Pick from Gallery")
+    }
+}
+```
+
+The `onDismiss` callback is triggered when:
+- User cancels the selection dialog (Android)
+- User taps "Cancel" (iOS)
+- User cancels camera permission request (iOS)
+- User cancels the camera interface (taps "Cancel" or "X") (iOS)
+
 ## Platform Support
+
+- **Android:** The library automatically manages the context using `LocalContext.current`. No need to pass context manually.
+- **iOS:** Context is not required as the library uses native iOS APIs.
 
 | Platform                | Minimum Version | Status |
 |-------------------------|----------------|--------|

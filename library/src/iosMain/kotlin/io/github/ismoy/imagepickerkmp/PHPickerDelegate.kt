@@ -16,7 +16,8 @@ import platform.darwin.dispatch_get_main_queue
  */
 class PHPickerDelegate(
     private val onPhotoSelected: (PhotoResult) -> Unit,
-    private val onError: (Exception) -> Unit
+    private val onError: (Exception) -> Unit,
+    private val onDismiss: () -> Unit
 ) : NSObject(), PHPickerViewControllerDelegateProtocol {
 
     override fun picker(
@@ -24,6 +25,7 @@ class PHPickerDelegate(
         didFinishPicking: List<*>
     ) {
         if (didFinishPicking.isEmpty()) {
+            onDismiss()
             dismissPicker(picker)
             return
         }
