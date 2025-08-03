@@ -66,7 +66,6 @@ fun CameraCapturePreview(
 
     if (openGallery) {
         GalleryPickerLauncher(
-            context = context,
             onPhotosSelected = { results ->
                 openGallery = false
                 val result = results.firstOrNull()

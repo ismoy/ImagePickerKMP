@@ -25,19 +25,22 @@ fun SimplePhotoCapture() {
 
     if (showImagePicker) {
         ImagePickerLauncher(
-            context = LocalContext.current,
             config = ImagePickerConfig(
                 onPhotoCaptured = { result ->
                     capturedImage = result
                     showImagePicker = false
                 },
-                onError = { exception ->
+                onError = { exception -> 
+                    println("Error: ${exception.message}")
                     showImagePicker = false
+                },
+                onDismiss = { 
+                    println("User cancelled or dismissed the picker")
+                    showImagePicker = false // Reset state when user doesn't select anything
                 }
             )
         )
     }
-
     Button(onClick = { showImagePicker = true }) {
         Text("Take Photo")
     }
@@ -57,6 +60,10 @@ fun CustomConfirmationExample() {
             config = ImagePickerConfig(
                 onPhotoCaptured = { result -> showPicker = false },
                 onError = { showPicker = false },
+                onDismiss = { 
+                    println("User cancelled or dismissed the picker")
+                    showPicker = false 
+                },
                 cameraCaptureConfig = CameraCaptureConfig(
                     permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
                         customConfirmationView = { result, onConfirm, onRetry ->
@@ -115,6 +122,10 @@ fun CustomCallbacksExample() {
         config = ImagePickerConfig(
             onPhotoCaptured = { result -> /* ... */ },
             onError = { exception -> /* ... */ },
+            onDismiss = { 
+                    println("User cancelled or dismissed the picker")
+                    showImagePicker = false // Reset state when user doesn't select anything
+                },
             onCameraReady = {
                 println("Camera is ready!")
             },

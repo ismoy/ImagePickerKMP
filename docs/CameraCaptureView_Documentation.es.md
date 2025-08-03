@@ -116,10 +116,10 @@ El `CameraCaptureView` maneja tres estados principales:
 - Soporta selección múltiple de fotos
 - Se integra con la galería del sistema
 
-> **Nota:** No necesitas solicitar permisos de galería manualmente. La librería gestiona automáticamente la solicitud de permisos y el flujo de usuario tanto en Android como en iOS, proporcionando una experiencia nativa en cada plataforma.
+> **Nota:** En Android no se requieren permisos de galería ya que el sistema maneja el acceso automáticamente. En iOS, el sistema gestiona permisos y acceso limitado de forma nativa.
 
 **Detalles por plataforma:**
-- En **Android**, se usa el selector de galería del sistema y los permisos se solicitan automáticamente si es necesario.
+- En **Android**, se usa el selector de galería del sistema y no se requieren permisos ya que el sistema maneja el acceso automáticamente.
 - En **iOS**, se usa el selector nativo de galería. En iOS 14+ se soporta selección múltiple. El sistema gestiona permisos y acceso limitado de forma nativa.
 - El callback `onPhotosSelected` siempre recibe una lista, incluso para selección simple.
 - Usa `allowMultiple` para habilitar o deshabilitar la selección múltiple de imágenes.
@@ -135,6 +135,7 @@ fun MiSelectorGaleria() {
             context = LocalContext.current, // Solo Android
             onPhotosSelected = { resultados -> mostrarGaleria = false },
             onError = { mostrarGaleria = false },
+            onDismiss = { mostrarGaleria = false }, // Manejar cierre
             allowMultiple = true
         )
     }

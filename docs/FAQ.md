@@ -134,15 +134,20 @@ fun MyImagePicker() {
     
     if (showImagePicker) {
         ImagePickerLauncher(
-            context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-                showImagePicker = false
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-                showImagePicker = false
-            }
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result -> 
+                    println("Photo captured: ${result.uri}")
+                    showImagePicker = false
+                },
+                onError = { exception -> 
+                    println("Error: ${exception.message}")
+                    showImagePicker = false
+                },
+                onDismiss = { 
+                    println("User cancelled or dismissed the picker")
+                    showImagePicker = false // Reset state when user doesn't select anything
+                }
+            )
         )
     }
     
@@ -222,6 +227,75 @@ fun HighQualityImagePicker() {
     )
 }
 ```
+
+## How do I handle user cancellation?
+
+The library provides an `onDismiss` callback that is triggered when the user cancels or dismisses the picker without selecting anything. This is essential for resetting your UI state.
+
+### ImagePickerLauncher Example
+
+```kotlin
+@Composable
+fun MyImagePicker() {
+    var showImagePicker by remember { mutableStateOf(false) }
+    if (showImagePicker) {
+        ImagePickerLauncher(
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result -> 
+                    println("Photo captured: ${result.uri}")
+                    showImagePicker = false
+                },
+                onError = { exception -> 
+                    println("Error: ${exception.message}")
+                    showImagePicker = false
+                },
+                onDismiss = { 
+                    println("User cancelled or dismissed the picker")
+                    showImagePicker = false // Reset state when user doesn't select anything
+                }
+            )
+        )
+    }
+    Button(onClick = { showImagePicker = true }) {
+        Text("Take Photo")
+    }
+}
+```
+
+### GalleryPickerLauncher Example
+
+```kotlin
+@Composable
+fun MyGalleryPicker() {
+    var showGallery by remember { mutableStateOf(false) }
+    if (showGallery) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { results -> 
+                println("Selected ${results.size} images")
+                showGallery = false
+            },
+            onError = { exception -> 
+                println("Error: ${exception.message}")
+                showGallery = false
+            },
+            onDismiss = { 
+                println("User cancelled gallery selection")
+                showGallery = false // Reset state when user doesn't select anything
+            },
+            allowMultiple = true
+        )
+    }
+    Button(onClick = { showGallery = true }) {
+        Text("Pick from Gallery")
+    }
+}
+```
+
+**When `onDismiss` is triggered:**
+- **Android:** User cancels the selection dialog or camera interface
+- **iOS:** User taps "Cancel" in the dialog or camera interface
+- **iOS:** User cancels camera permission request
+- **iOS:** User cancels the camera interface (taps "Cancel" or "X")
 
 ## Platform-Specific
 

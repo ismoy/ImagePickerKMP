@@ -48,176 +48,158 @@ Este documento también está disponible en español: [README.es.md](README.es.m
 
 ### Installation
 
-Add the dependency to your `build.gradle.kts`:
+## Using ImagePickerKMP in Kotlin Multiplatform / Compose Multiplatform
+
+### Step 1: Add the dependency
+In your `commonMain` `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.2")//lastversion
 }
 ```
-
-### Basic Usage
-
-```kotlin
-@Composable
-fun MyImagePicker() {
-    var showImagePicker by remember { mutableStateOf(false) }
-    var capturedImage by remember { mutableStateOf<PhotoResult?>(null) }
-
-    if (showImagePicker) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    // Handle captured photo
-                    capturedImage = result
-                    showImagePicker = false
-                },
-                onError = { exception ->
-                    // Handle errors
-                    showImagePicker = false
-                }
-            )
-        )
-    }
-
-    Button(onClick = { showImagePicker = true }) {
-        Text("Take Photo")
-    }
-}
+### Don’t forget to configure iOS-specific permissions in your Info.plist file:
 ```
-
-### 💡 Real-World Use Case
-
-Here's a practical example showing camera capture with preview and upload:
-
-```kotlin
-@Composable
-fun AdvancedImagePicker() {
-    var showPicker by remember { mutableStateOf(false) }
-    var capturedImage by remember { mutableStateOf<PhotoResult?>(null) }
-    var isUploading by remember { mutableStateOf(false) }
-
-    if (showPicker) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    capturedImage = result
-                    showPicker = false
-                    uploadImage(result)
-                },
-                onError = { exception ->
-                    showPicker = false
-                    // Custom error handling here
-                },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                        customConfirmationView = { result, onConfirm, onRetry ->
-                            ImageConfirmationViewWithCustomButtons(
-                                result = result,
-                                onConfirm = onConfirm,
-                                onRetry = onRetry,
-                                questionText = "Use this photo?",
-                                retryText = "Retake",
-                                acceptText = "Use Photo"
-                            )
-                        }
-                    )
-                )
-            )
-        )
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Display captured image
-        capturedImage?.let { photo ->
-            AsyncImage(
-                model = photo.uri,
-                contentDescription = "Captured photo",
-                modifier = Modifier
-                    .size(200.dp)
-                    .clip(RoundedCornerShape(8.dp))
-            )
-
-            if (isUploading) {
-                CircularProgressIndicator()
-                Text("Uploading...")
-            }
-        }
-
-        Button(
-            onClick = { showPicker = true },
-            enabled = !isUploading
-        ) {
-            Icon(Icons.Default.Camera, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text("Take Photo")
-        }
-    }
-}
-
-private fun uploadImage(photoResult: PhotoResult) {
-    // Example upload implementation
-    lifecycleScope.launch(Dispatchers.IO) {
-        try {
-            // Upload logic here
-            withContext(Dispatchers.Main) {
-                // Show success message
-            }
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                // Show error message
-            }
-        }
-    }
-}
+<key>NSCameraUsageDescription</key>
+<string>We need access to the camera to capture a photo.</string>
 ```
-
-### Gallery Picker Usage
-
-You can also allow users to pick images directly from the gallery:
-
-> **Note:** You do not need to request gallery permissions manually. The library automatically handles permission requests and user flows for both Android and iOS, providing a native experience on each platform.
-
+### Step 2: Launch the Camera
 ```kotlin
-@Composable
-fun MyGalleryPicker() {
-    var showGalleryPicker by remember { mutableStateOf(false) }
-    var selectedImages by remember { mutableStateOf<List<PhotoResult>>(emptyList()) }
-
-    if (showGalleryPicker) {
-        GalleryPickerLauncher(
-            context = LocalContext.current, // Android only; ignored on iOS
-            onPhotosSelected = { results ->
-                selectedImages = results
-                showGalleryPicker = false
+ var showCamera by remember { mutableStateOf(false) }
+ var capturedPhoto by remember { mutableStateOf<CameraPhotoHandler.PhotoResult?>(null) }
+```
+```kotlin
+if (showCamera) {
+    ImagePickerLauncher(
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                capturedPhoto = result
+                showCamera = false
             },
-            onError = { exception ->
-                // Handle errors
-                showGalleryPicker = false
+            onError = {
+                showCamera = false
             },
-            allowMultiple = true // or false for single selection
-            // mimeTypes = listOf("image/jpeg", "image/png") // Optional: filter by type
+            onDismiss = { 
+                showImagePicker = false // Reset state when user doesn't select anything
+            }
         )
-    }
+    )
+}
+```
+### Step 3: Pick from the Gallery
+```kotlin
+var showGallery by remember { mutableStateOf(false) }
+var selectedImages by remember { mutableStateOf<List<GalleryPhotoHandler.PhotoResult>>(emptyList()) }
+```
+```kotlin
+if (showGallery) {
+    GalleryPickerLauncher(
+        onPhotosSelected = { photos ->
+            selectedImages = photos
+            showGallery = false
+        },
+        onError = { error ->
+            showGallery = false
+        },
+        onDismiss = { 
+            println("User cancelled or dismissed the picker")
+            showGallery = false // Reset state when user doesn't select anything
+        }
+        allowMultiple = true, // False for single selection
+        mimeTypes = listOf("image/jpeg", "image/png") // Optional: filter by type
+    )
+}
 
-    Button(onClick = { showGalleryPicker = true }) {
-        Text("Pick from Gallery")
-    }
+Button(onClick = { showGallery = true }) {
+    Text("Choose from Gallery")
+}
+```
+For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for KMP.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md#kotlin-multiplatform--compose-multiplatform)
+
+### Using ImagePickerKMP in Android Native (Jetpack Compose)
+Even if you’re not using KMP, you can use ImagePickerKMP in pure Android projects with Jetpack Compose.
+
+### Step 1: Add the dependency
+```kotlin
+implementation("io.github.ismoy:imagepickerkmp:1.0.2")
+```
+### Step 2: Camera Launcher Example
+```kotlin
+var showCamera by remember { mutableStateOf(false) }
+var capturedPhoto by remember { mutableStateOf<CameraPhotoHandler.PhotoResult?>(null) }
+```
+```kotlin
+if (showCamera) {
+    ImagePickerLauncher(
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                capturedPhoto = result
+                showCamera = false
+            },
+            onError = {
+                showCamera = false
+            },
+           onDismiss = {
+            showCamera = false
+           }
+        )
+    )
+}
+
+Button(onClick = { showCamera = true }) {
+    Text("Take Photo")
 }
 ```
 
-- On **Android**, the user will see the system gallery picker, and permissions are requested automatically if needed.
+### Step 3: Gallery Picker Example
+```kotlin
+var showGallery by remember { mutableStateOf(false) }
+var selectedImages by remember { mutableStateOf<List<GalleryPhotoHandler.PhotoResult>>(emptyList()) }
+```
+```kotlin
+if (showGallery) {
+    GalleryPickerLauncher(
+        onPhotosSelected = { photos ->
+            selectedImages = photos
+            showGallery = false
+        },
+        onError = { error ->
+            showGallery = false
+        },
+        onDismiss = {
+            showCamera = false
+           },
+        allowMultiple = true, // False for single selection
+        mimeTypes = listOf("image/jpeg", "image/png") // Optional: filter by type
+    )
+}
+
+Button(onClick = { showGallery = true }) {
+    Text("Choose from Gallery")
+}
+```
+See the [Android Native integration guide](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md#android-native-jetpack-compose) for more usage details.
+
+- On **Android**, the user will see the system gallery picker.
 - On **iOS**, the native gallery picker is used. On iOS 14+, multiple selection is supported. The system handles permissions and limited access natively.
 - The callback `onPhotosSelected` always receives a list, even for single selection.
 - You can use `allowMultiple` to enable or disable multi-image selection.
 - The `mimeTypes` parameter is optional and lets you filter selectable file types.
 
+## GalleryPickerLauncher Dismiss Fix
+
+The `GalleryPickerLauncher` now includes an `onDismiss` callback to handle cases where users dismiss the picker without selecting any images. This resolves the issue where the picker couldn't be reopened after being dismissed.
+
+The `onDismiss` callback is triggered when:
+- User cancels the selection dialog (Android)
+- User taps "Cancel" (iOS)
+- User cancels camera permission request (iOS)
+- User cancels the camera interface (taps "Cancel" or "X") (iOS)
+
 ## Platform Support
+
+- **Android:** The library automatically manages the context using `LocalContext.current`. No need to pass context manually.
+- **iOS:** Context is not required as the library uses native iOS APIs.
 
 | Platform                | Minimum Version | Status |
 |-------------------------|----------------|--------|

@@ -19,11 +19,12 @@ object PHPickerPresenter {
         viewController: UIViewController,
         onPhotoSelected: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
+        onDismiss: () -> Unit,
         selectionLimit: Long
     ) {
         require(selectionLimit <= SELECTION_LIMIT) {"Selection limit cannot exceed $SELECTION_LIMIT"}
         try {
-            val pickerViewController = createPHPickerController(onPhotoSelected, onError, selectionLimit)
+            val pickerViewController = createPHPickerController(onPhotoSelected, onError, onDismiss, selectionLimit)
             viewController.presentViewController(pickerViewController,
                 animated = true, completion = null)
         } catch (e: Exception) {
@@ -34,6 +35,7 @@ object PHPickerPresenter {
     private fun createPHPickerController(
         onPhotoSelected: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
+        onDismiss: () -> Unit,
         selectionLimit: Long
     ): PHPickerViewController {
         val configuration = PHPickerConfiguration()
@@ -49,7 +51,11 @@ object PHPickerPresenter {
             onError(error)
             cleanup()
         }
-        pickerDelegate = PHPickerDelegate(wrappedOnPhotoSelected, wrappedOnError)
+        val wrappedOnDismiss: () -> Unit = {
+            onDismiss()
+            cleanup()
+        }
+        pickerDelegate = PHPickerDelegate(wrappedOnPhotoSelected, wrappedOnError, wrappedOnDismiss)
         return PHPickerViewController(configuration).apply {
             delegate = pickerDelegate
         }

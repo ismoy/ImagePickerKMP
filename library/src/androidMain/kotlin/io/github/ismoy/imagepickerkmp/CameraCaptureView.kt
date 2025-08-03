@@ -14,13 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.CameraPhotoHandler.PhotoResult
 
-@Suppress("LongMethod")
+@Suppress("LongMethod","LongParameterList")
 @Composable
 fun CameraCaptureView(
     activity: ComponentActivity,
     onPhotoResult: (PhotoResult) -> Unit,
     onPhotosSelected: ((List<GalleryPhotoHandler.PhotoResult>) -> Unit)? = null,
     onError: (Exception) -> Unit,
+    onDismiss: () -> Unit = {},
     cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(preference = CapturePhotoPreference.QUALITY)
 ) {
     val context = LocalContext.current
@@ -45,9 +46,9 @@ fun CameraCaptureView(
         when {
             cameraCaptureConfig.galleryConfig.allowMultiple && onPhotosSelected != null -> {
                 GalleryPickerLauncher(
-                    context = activity,
                     onPhotosSelected = { results -> onPhotosSelected(results) },
                     onError = onError,
+                    onDismiss = onDismiss,
                     allowMultiple = true,
                     mimeTypes = cameraCaptureConfig.galleryConfig.mimeTypes
                 )

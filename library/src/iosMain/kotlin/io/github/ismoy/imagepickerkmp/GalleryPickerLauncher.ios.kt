@@ -7,9 +7,9 @@ import io.github.ismoy.imagepickerkmp.GalleryPhotoHandler.PhotoResult
 @Suppress("LongParameterList")
 @Composable
 actual fun GalleryPickerLauncher(
-    context: Any?,
     onPhotosSelected: (List<PhotoResult>) -> Unit,
     onError: (Exception) -> Unit,
+    onDismiss: () -> Unit,
     allowMultiple: Boolean,
     mimeTypes: List<String>,
     selectionLimit: Long
@@ -23,6 +23,7 @@ actual fun GalleryPickerLauncher(
                     onPhotosSelected(selectedImages.toList())
                 },
                 onError = onError,
+                onDismiss = onDismiss,
                 allowMultiple = true,
                 selectionLimit = selectionLimit
             )
@@ -30,6 +31,7 @@ actual fun GalleryPickerLauncher(
             GalleryPickerOrchestrator.launchGallery(
                 onPhotoSelected = { result -> onPhotosSelected(listOf(result)) },
                 onError = onError,
+                onDismiss = onDismiss,
                 allowMultiple = false,
                 selectionLimit = 1
             )

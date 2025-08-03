@@ -18,7 +18,8 @@ class GalleryPickerLauncherTest {
         )
         val launcher = FakeGalleryPickerLauncher(
             onPhotosSelected = { results -> selected.add(results) },
-            onError = { }
+            onError = { },
+            onDismiss = { }
         )
         launcher.simulateSelection(listOf(fakeResult))
         assertEquals(1, selected.size)
@@ -30,11 +31,24 @@ class GalleryPickerLauncherTest {
         var error: Exception? = null
         val launcher = FakeGalleryPickerLauncher(
             onPhotosSelected = { },
-            onError = { e -> error = e }
+            onError = { e -> error = e },
+            onDismiss = { }
         )
         launcher.simulateError(Exception("Gallery error"))
         assertNotNull(error)
         assertEquals("Gallery error", error?.message)
+    }
+
+    @Test
+    fun testOnDismissIsCalledOnDismiss() {
+        var dismissed = false
+        val launcher = FakeGalleryPickerLauncher(
+            onPhotosSelected = { },
+            onError = { },
+            onDismiss = { dismissed = true }
+        )
+        launcher.simulateDismiss()
+        assertTrue(dismissed)
     }
 
     @Test
@@ -46,7 +60,8 @@ class GalleryPickerLauncherTest {
         )
         val launcher = FakeGalleryPickerLauncher(
             onPhotosSelected = { selected.add(it) },
-            onError = { }
+            onError = { },
+            onDismiss = { }
         )
         launcher.simulateSelection(results)
         assertEquals(1, selected.size)
@@ -60,7 +75,8 @@ class GalleryPickerLauncherTest {
         val selected = mutableListOf<List<GalleryPhotoHandler.PhotoResult>>()
         val launcher = FakeGalleryPickerLauncher(
             onPhotosSelected = { selected.add(it) },
-            onError = { }
+            onError = { },
+            onDismiss = { }
         )
         launcher.simulateSelection(emptyList())
         assertEquals(1, selected.size)
@@ -72,7 +88,8 @@ class GalleryPickerLauncherTest {
         var error: Exception? = null
         val launcher = FakeGalleryPickerLauncher(
             onPhotosSelected = { },
-            onError = { e -> error = e }
+            onError = { e -> error = e },
+            onDismiss = { }
         )
         launcher.simulateError(PermissionDeniedException("Permission denied"))
         assertNotNull(error)
@@ -89,7 +106,8 @@ class GalleryPickerLauncherTest {
         )
         val launcher = FakeGalleryPickerLauncher(
             onPhotosSelected = { selected.add(it.filter { r -> r.fileName?.endsWith(".png") == true }) },
-            onError = { }
+            onError = { },
+            onDismiss = { }
         )
         launcher.simulateSelection(results)
         assertEquals(1, selected.size)
@@ -102,7 +120,8 @@ class GalleryPickerLauncherTest {
         var error: Exception? = null
         val launcher = FakeGalleryPickerLauncher(
             onPhotosSelected = { },
-            onError = { e -> error = e }
+            onError = { e -> error = e },
+            onDismiss = { }
         )
         launcher.simulateError(RuntimeException("Unexpected error"))
         assertNotNull(error)
@@ -113,13 +132,17 @@ class GalleryPickerLauncherTest {
 
 class FakeGalleryPickerLauncher(
     val onPhotosSelected: (List<GalleryPhotoHandler.PhotoResult>) -> Unit,
-    val onError: (Exception) -> Unit
+    val onError: (Exception) -> Unit,
+    val onDismiss: () -> Unit
 ) {
     fun simulateSelection(results: List<GalleryPhotoHandler.PhotoResult>) {
         onPhotosSelected(results)
     }
     fun simulateError(e: Exception) {
         onError(e)
+    }
+    fun simulateDismiss() {
+        onDismiss()
     }
 }
 

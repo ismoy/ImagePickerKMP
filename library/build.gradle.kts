@@ -214,7 +214,6 @@ android {
     }
 }
 
-// --- Load gradle.local.properties if exists (for local sensitive data) ---
 val localPropertiesFile = rootProject.file("gradle.local.properties")
 if (localPropertiesFile.exists()) {
     println("Loading gradle.local.properties")
@@ -230,7 +229,7 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.1"
+        version = "1.0.2"
     )
     pom {
         name.set("ImagePickerKMP")
@@ -261,7 +260,7 @@ mavenPublishing{
             developerConnection.set("scm:git:git://github.com/ismoy/ImagePickerKMP.git")
         }
     }
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    //publishToMavenCentral()
 }
 afterEvaluate {
     publishing {

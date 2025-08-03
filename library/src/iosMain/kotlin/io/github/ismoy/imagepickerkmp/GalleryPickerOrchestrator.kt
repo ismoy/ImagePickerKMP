@@ -12,6 +12,7 @@ object GalleryPickerOrchestrator {
     fun launchGallery(
         onPhotoSelected: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
+        onDismiss: () -> Unit,
         allowMultiple: Boolean = false,
         selectionLimit: Long = SELECTION_LIMIT
     ) {
@@ -22,9 +23,15 @@ object GalleryPickerOrchestrator {
                 return
             }
             if (allowMultiple) {
-                PHPickerPresenter.presentGallery(rootViewController, onPhotoSelected, onError, selectionLimit)
+                PHPickerPresenter.presentGallery(
+                    rootViewController,
+                    onPhotoSelected,
+                    onError,
+                    onDismiss,
+                    selectionLimit
+                )
             } else {
-                GalleryPresenter.presentGallery(rootViewController, onPhotoSelected, onError)
+                GalleryPresenter.presentGallery(rootViewController, onPhotoSelected, onError, onDismiss)
             }
         } catch (e: Exception) {
             onError(Exception("Failed to launch gallery: ${e.message}"))

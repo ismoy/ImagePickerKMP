@@ -21,70 +21,63 @@ Este documento proporciona ejemplos completos para usar ImagePickerKMP en varios
 - [Manejo de Errores](#manejo-de-errores)
 - [Ejemplos Específicos de Plataforma](#ejemplos-específicos-de-plataforma)
 
-## Uso Básico
+## Ejemplos Básicos
 
-### Captura de Foto Simple
+### Selector de Imagen Simple
 
 ```kotlin
 @Composable
-fun SimplePhotoCapture() {
-    var showImagePicker by remember { mutableStateOf(false) }
-    var capturedImage by remember { mutableStateOf<PhotoResult?>(null) }
-
-    if (showImagePicker) {
+fun SelectorImagenSimple() {
+    var mostrarSelector by remember { mutableStateOf(false) }
+    if (mostrarSelector) {
         ImagePickerLauncher(
-            context = LocalContext.current,
             config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    capturedImage = result
-                    showImagePicker = false
+                onPhotoCaptured = { resultado -> 
+                    println("Foto capturada: ${resultado.uri}")
+                    mostrarSelector = false
                 },
-                onError = { exception ->
-                    showImagePicker = false
+                onError = { excepcion -> 
+                    println("Error: ${excepcion.message}")
+                    mostrarSelector = false
+                },
+                onDismiss = { 
+                    println("Usuario canceló o cerró el selector")
+                    mostrarSelector = false // Resetear estado cuando el usuario no selecciona nada
                 }
             )
         )
     }
-
-    Button(onClick = { showImagePicker = true }) {
-        Text("Take Photo")
+    Button(onClick = { mostrarSelector = true }) {
+        Text("Tomar Foto")
     }
 }
 ```
 
-### Vista de Confirmación Personalizada
+### Selector de Galería
 
 ```kotlin
 @Composable
-fun CustomConfirmationExample() {
-    var showPicker by remember { mutableStateOf(false) }
-
-    if (showPicker) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result -> showPicker = false },
-                onError = { showPicker = false },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                        customConfirmationView = { result, onConfirm, onRetry ->
-                            ImageConfirmationViewWithCustomButtons(
-                                result = result,
-                                onConfirm = onConfirm,
-                                onRetry = onRetry,
-                                questionText = "¿Te gusta esta foto?",
-                                retryText = "Otra vez",
-                                acceptText = "Perfecto"
-                            )
-                        }
-                    )
-                )
-            )
+fun SelectorGaleria() {
+    var mostrarGaleria by remember { mutableStateOf(false) }
+    if (mostrarGaleria) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { resultados -> 
+                println("Seleccionadas ${resultados.size} imágenes")
+                mostrarGaleria = false
+            },
+            onError = { excepcion -> 
+                println("Error: ${excepcion.message}")
+                mostrarGaleria = false
+            },
+            onDismiss = { 
+                println("Usuario canceló la selección de galería")
+                mostrarGaleria = false // Resetear estado cuando el usuario no selecciona nada
+            },
+            allowMultiple = true
         )
     }
-
-    Button(onClick = { showPicker = true }) {
-        Text("Take Photo")
+    Button(onClick = { mostrarGaleria = true }) {
+        Text("Seleccionar de la Galería")
     }
 }
 ```

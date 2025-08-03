@@ -90,81 +90,63 @@ target 'YourApp' do
 end
 ```
 
-## Basic Integration
+## Basic Usage
 
-### Simple Implementation
+### ImagePickerLauncher
 
 ```kotlin
 @Composable
-fun SimpleImagePicker() {
-    var showPicker by remember { mutableStateOf(false) }
-    
-    if (showPicker) {
+fun MyImagePicker() {
+    var showImagePicker by remember { mutableStateOf(false) }
+    if (showImagePicker) {
         ImagePickerLauncher(
-            context = LocalContext.current,
             config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    // Handle successful photo capture
+                onPhotoCaptured = { result -> 
                     println("Photo captured: ${result.uri}")
-                    showPicker = false
+                    showImagePicker = false
                 },
-                onError = { exception ->
-                    // Handle errors
+                onError = { exception -> 
                     println("Error: ${exception.message}")
-                    showPicker = false
+                    showImagePicker = false
+                },
+                onDismiss = { 
+                    println("User cancelled or dismissed the picker")
+                    showImagePicker = false // Reset state when user doesn't select anything
                 }
             )
         )
     }
-    
-    Button(onClick = { showPicker = true }) {
+    Button(onClick = { showImagePicker = true }) {
         Text("Take Photo")
     }
 }
 ```
 
-### With Custom Configuration
+### GalleryPickerLauncher
 
 ```kotlin
 @Composable
-fun CustomImagePicker() {
-    var showPicker by remember { mutableStateOf(false) }
-    
-    if (showPicker) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    // Handle photo capture
-                    showPicker = false
-                },
-                onError = { exception ->
-                    // Handle errors
-                    showPicker = false
-                },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    preference = CapturePhotoPreference.HIGH_QUALITY,
-                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                        customPermissionHandler = { config ->
-                            // Custom permission handling
-                            println("Custom permission config: ${config.titleDialogConfig}")
-                        },
-                        customConfirmationView = { result, onConfirm, onRetry ->
-                            // Custom confirmation view
-                            CustomConfirmationDialog(
-                                result = result,
-                                onConfirm = onConfirm,
-                                onRetry = onRetry
-                            )
-                        }
-                    )
-                )
-            )
+fun MyGalleryPicker() {
+    var showGallery by remember { mutableStateOf(false) }
+    if (showGallery) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { results -> 
+                println("Selected ${results.size} images")
+                showGallery = false
+            },
+            onError = { exception -> 
+                println("Error: ${exception.message}")
+                showGallery = false
+            },
+            onDismiss = { 
+                println("User cancelled gallery selection")
+                showGallery = false // Reset state when user doesn't select anything
+            },
+            allowMultiple = true
         )
     }
-    
-    Button(onClick = { showPicker = true }) {
-        Text("Take High Quality Photo")
+    Button(onClick = { showGallery = true }) {
+        Text("Pick from Gallery")
     }
 }
 ```

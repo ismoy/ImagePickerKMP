@@ -19,7 +19,7 @@ style:
     active: true
     maxLineLength: 120
   TrailingWhitespace:
-    active: true
+    active: false
   UnusedImports:
     active: true
   ExpressionBodySyntax:

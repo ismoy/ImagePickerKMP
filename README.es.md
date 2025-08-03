@@ -184,7 +184,7 @@ private fun subirImagen(photoResult: PhotoResult) {
 
 También puedes permitir que los usuarios seleccionen imágenes directamente desde la galería:
 
-> **Nota:** No necesitas solicitar permisos de galería manualmente. La librería gestiona automáticamente la solicitud de permisos y el flujo de usuario tanto en Android como en iOS, proporcionando una experiencia nativa en cada plataforma.
+> **Nota:** No necesitas solicitar permisos de galería manualmente. En Android, el sistema maneja el acceso automáticamente. En iOS, la librería gestiona automáticamente la solicitud de permisos y el flujo de usuario, proporcionando una experiencia nativa en cada plataforma.
 
 ```kotlin
 @Composable
@@ -194,14 +194,17 @@ fun MiSelectorGaleria() {
 
     if (mostrarGaleria) {
         GalleryPickerLauncher(
-            context = LocalContext.current, // Solo Android; ignorado en iOS
             onPhotosSelected = { resultados ->
                 imagenesSeleccionadas = resultados
                 mostrarGaleria = false
             },
-            onError = { exception ->
+            onError = { excepcion ->
                 // Manejar errores
                 mostrarGaleria = false
+            },
+            onDismiss = { 
+                println("Usuario canceló la selección de galería")
+                mostrarGaleria = false // Resetear estado cuando el usuario no selecciona nada
             },
             allowMultiple = true // o false para selección simple
             // mimeTypes = listOf("image/jpeg", "image/png") // Opcional: filtrar por tipo
@@ -220,8 +223,126 @@ fun MiSelectorGaleria() {
 - Puedes usar `allowMultiple` para habilitar o deshabilitar la selección múltiple de imágenes.
 - El parámetro `mimeTypes` es opcional y permite filtrar los tipos de archivos seleccionables.
 
+## Corrección de Cierre de GalleryPickerLauncher
+
+El `GalleryPickerLauncher` ahora incluye un callback `onDismiss` para manejar los casos donde los usuarios cierran el selector sin seleccionar ninguna imagen. Esto resuelve el problema donde el selector no se podía volver a abrir después de ser cerrado.
+
+### Antes (Problemático)
+```kotlin
+@Composable
+fun MiSelectorGaleria() {
+    var mostrarGaleria by remember { mutableStateOf(false) }
+    if (mostrarGaleria) {
+        GalleryPickerLauncher(
+            context = LocalContext.current,
+            onPhotosSelected = { resultados -> mostrarGaleria = false },
+            onError = { mostrarGaleria = false }
+            // Falta onDismiss - el selector no se podía volver a abrir después del cierre
+        )
+    }
+    Button(onClick = { mostrarGaleria = true }) {
+        Text("Seleccionar de la galería")
+    }
+}
+```
+
+### Después (Corregido)
+```kotlin
+@Composable
+fun MiSelectorGaleria() {
+    var mostrarGaleria by remember { mutableStateOf(false) }
+    if (mostrarGaleria) {
+        GalleryPickerLauncher(
+            context = LocalContext.current,
+            onPhotosSelected = { resultados -> mostrarGaleria = false },
+            onError = { mostrarGaleria = false },
+            onDismiss = { mostrarGaleria = false } // ← MANEJA EL CIERRE
+        )
+    }
+    Button(onClick = { mostrarGaleria = true }) {
+        Text("Seleccionar de la galería")
+    }
+}
+```
+
+El callback `onDismiss` se activa cuando:
+- **Android:** Usuario desliza hacia abajo para cerrar el selector
+- **iOS:** Usuario toca "Cancelar"
+- **iOS:** Usuario no selecciona imágenes y cierra
+
+## Corrección de Cierre de ImagePickerLauncher
+
+El `ImagePickerLauncher` ahora incluye un callback `onDismiss` para manejar los casos donde los usuarios cierran el selector sin seleccionar nada. Esto resuelve el problema donde el selector no se podía volver a abrir después de ser cerrado.
+
+### Antes (Problemático)
+```kotlin
+@Composable
+fun MiSelectorImagen() {
+    var mostrarSelector by remember { mutableStateOf(false) }
+    if (mostrarSelector) {
+        ImagePickerLauncher(
+            context = LocalContext.current,
+            config = ImagePickerConfig(
+                onPhotoCaptured = { resultado -> 
+                    println("Foto capturada: ${resultado.uri}")
+                    mostrarSelector = false
+                },
+                onError = { excepcion -> 
+                    println("Error: ${excepcion.message}")
+                    mostrarSelector = false
+                },
+                onDismiss = { 
+                    println("Usuario canceló o cerró el selector")
+                    mostrarSelector = false // Resetear estado cuando el usuario no selecciona nada
+                }
+            )
+        )
+    }
+    Button(onClick = { mostrarSelector = true }) {
+        Text("Tomar Foto")
+    }
+}
+```
+
+### Después (Corregido)
+```kotlin
+@Composable
+fun MiSelectorImagen() {
+    var mostrarSelector by remember { mutableStateOf(false) }
+    if (mostrarSelector) {
+        ImagePickerLauncher(
+            config = ImagePickerConfig(
+                onPhotoCaptured = { resultado -> 
+                    println("Foto capturada: ${resultado.uri}")
+                    mostrarSelector = false
+                },
+                onError = { excepcion -> 
+                    println("Error: ${excepcion.message}")
+                    mostrarSelector = false
+                },
+                onDismiss = { 
+                    println("Usuario canceló o cerró el selector")
+                    mostrarSelector = false // Resetear estado cuando el usuario no selecciona nada
+                }
+            )
+        )
+    }
+    Button(onClick = { mostrarSelector = true }) {
+        Text("Tomar Foto")
+    }
+}
+```
+
+El callback `onDismiss` se activa cuando:
+- **Android:** Usuario cancela el diálogo de selección
+- **iOS:** Usuario toca "Cancelar" en el diálogo
+- **iOS:** Usuario cancela la solicitud de permisos de cámara
+- **iOS:** Usuario cancela la interfaz de cámara (toca "Cancel" o "X")
+
 ## Compatibilidad de plataformas
 
+- **Android:** La librería gestiona automáticamente el contexto usando `LocalContext.current`. No es necesario pasar el contexto manualmente.
+- **iOS:** No se requiere contexto ya que la librería usa APIs nativas de iOS.
 
 | Platform                | Minimum Version | Status |
 |-------------------------|----------------|--------|

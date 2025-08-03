@@ -225,6 +225,75 @@ fun HighQualityImagePicker() {
 }
 ```
 
+## ¿Cómo manejo la cancelación del usuario?
+
+La librería proporciona un callback `onDismiss` que se activa cuando el usuario cancela o cierra el selector sin seleccionar nada. Esto es esencial para resetear el estado de tu UI.
+
+### Ejemplo con ImagePickerLauncher
+
+```kotlin
+@Composable
+fun MiSelectorImagen() {
+    var mostrarSelector by remember { mutableStateOf(false) }
+    if (mostrarSelector) {
+        ImagePickerLauncher(
+            config = ImagePickerConfig(
+                onPhotoCaptured = { resultado -> 
+                    println("Foto capturada: ${resultado.uri}")
+                    mostrarSelector = false
+                },
+                onError = { excepcion -> 
+                    println("Error: ${excepcion.message}")
+                    mostrarSelector = false
+                },
+                onDismiss = { 
+                    println("Usuario canceló o cerró el selector")
+                    mostrarSelector = false // Resetear estado cuando el usuario no selecciona nada
+                }
+            )
+        )
+    }
+    Button(onClick = { mostrarSelector = true }) {
+        Text("Tomar Foto")
+    }
+}
+```
+
+### Ejemplo con GalleryPickerLauncher
+
+```kotlin
+@Composable
+fun MiSelectorGaleria() {
+    var mostrarGaleria by remember { mutableStateOf(false) }
+    if (mostrarGaleria) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { resultados -> 
+                println("Seleccionadas ${resultados.size} imágenes")
+                mostrarGaleria = false
+            },
+            onError = { excepcion -> 
+                println("Error: ${excepcion.message}")
+                mostrarGaleria = false
+            },
+            onDismiss = { 
+                println("Usuario canceló la selección de galería")
+                mostrarGaleria = false // Resetear estado cuando el usuario no selecciona nada
+            },
+            allowMultiple = true
+        )
+    }
+    Button(onClick = { mostrarGaleria = true }) {
+        Text("Seleccionar de la Galería")
+    }
+}
+```
+
+**Cuándo se activa `onDismiss`:**
+- **Android:** Usuario cancela el diálogo de selección o la interfaz de cámara
+- **iOS:** Usuario toca "Cancelar" en el diálogo o la interfaz de cámara
+- **iOS:** Usuario cancela la solicitud de permisos de cámara
+- **iOS:** Usuario cancela la interfaz de cámara (toca "Cancel" o "X")
+
 ## Específico de Plataforma
 
 ### ¿Hay diferencias entre Android y iOS?

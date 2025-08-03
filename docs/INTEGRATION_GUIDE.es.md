@@ -610,3 +610,64 @@ fun IOSApp() {
 ```
 
 Este enfoque proporciona una sola UI que funciona en ambas plataformas con el mismo código base.
+
+## Uso Básico
+
+### ImagePickerLauncher
+
+```kotlin
+@Composable
+fun MiSelectorImagen() {
+    var mostrarSelector by remember { mutableStateOf(false) }
+    if (mostrarSelector) {
+        ImagePickerLauncher(
+            config = ImagePickerConfig(
+                onPhotoCaptured = { resultado -> 
+                    println("Foto capturada: ${resultado.uri}")
+                    mostrarSelector = false
+                },
+                onError = { excepcion -> 
+                    println("Error: ${excepcion.message}")
+                    mostrarSelector = false
+                },
+                onDismiss = { 
+                    println("Usuario canceló o cerró el selector")
+                    mostrarSelector = false // Resetear estado cuando el usuario no selecciona nada
+                }
+            )
+        )
+    }
+    Button(onClick = { mostrarSelector = true }) {
+        Text("Tomar Foto")
+    }
+}
+```
+
+### GalleryPickerLauncher
+
+```kotlin
+@Composable
+fun MiSelectorGaleria() {
+    var mostrarGaleria by remember { mutableStateOf(false) }
+    if (mostrarGaleria) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { resultados -> 
+                println("Seleccionadas ${resultados.size} imágenes")
+                mostrarGaleria = false
+            },
+            onError = { excepcion -> 
+                println("Error: ${excepcion.message}")
+                mostrarGaleria = false
+            },
+            onDismiss = { 
+                println("Usuario canceló la selección de galería")
+                mostrarGaleria = false // Resetear estado cuando el usuario no selecciona nada
+            },
+            allowMultiple = true
+        )
+    }
+    Button(onClick = { mostrarGaleria = true }) {
+        Text("Seleccionar de la Galería")
+    }
+}
+```

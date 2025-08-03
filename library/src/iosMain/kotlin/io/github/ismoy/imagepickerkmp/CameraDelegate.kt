@@ -15,7 +15,8 @@ import platform.darwin.NSObject
  */
 class CameraDelegate(
     private val onPhotoCaptured: (PhotoResult) -> Unit,
-    private val onError: (Exception) -> Unit
+    private val onError: (Exception) -> Unit,
+    private val onDismiss: () -> Unit
 ) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
 
     override fun imagePickerController(
@@ -32,6 +33,7 @@ class CameraDelegate(
     }
 
     override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        onDismiss()
         dismissPicker(picker)
     }
 
