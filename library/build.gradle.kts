@@ -1,6 +1,6 @@
 import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -217,11 +217,13 @@ android {
 val localPropertiesFile = rootProject.file("gradle.local.properties")
 if (localPropertiesFile.exists()) {
     println("Loading gradle.local.properties")
-    localPropertiesFile.forEachLine { line ->
-        if (line.isNotBlank() && !line.trim().startsWith("#")) {
-            val (key, value) = line.split("=", limit = 2)
-            project.extra.set(key.trim(), value.trim())
-        }
+    val localProperties = Properties()
+    localProperties.load(localPropertiesFile.inputStream())
+    localProperties.forEach { key: Any, value: Any ->
+        val keyStr = key.toString()
+        val valueStr = value.toString()
+        project.extra.set(keyStr, valueStr)
+        System.setProperty(keyStr, valueStr)
     }
 }
 
@@ -260,7 +262,8 @@ mavenPublishing{
             developerConnection.set("scm:git:git://github.com/ismoy/ImagePickerKMP.git")
         }
     }
-    //publishToMavenCentral()
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
+    signAllPublications()
 }
 afterEvaluate {
     publishing {
