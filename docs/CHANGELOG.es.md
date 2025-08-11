@@ -185,7 +185,7 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
    implementation("io.github.ismoy:imagepickerkmp:0.9.0")
    
    // Nuevo
-   implementation("io.github.ismoy:imagepickerkmp:1.0.1")
+   implementation("io.github.ismoy:imagepickerkmp:1.0.2")
    ```
 
 2. **Actualizar Manejo de Permisos**
@@ -379,4 +379,4 @@ Para solicitudes de características, por favor:
 
 ---
 
-**Nota**: Este changelog es mantenido por el equipo de ImagePickerKMP. Para preguntas o sugerencias, por favor contáctanos. 
+**Nota**: Este changelog es mantenido por el equipo de ImagePickerKMP. Para preguntas o sugerencias, por favor contáctanos.

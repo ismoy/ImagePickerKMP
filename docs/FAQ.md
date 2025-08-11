@@ -1,3 +1,5 @@
+This document is also available in Spanish: [FAQ.es.md](FAQ.es.md)
+
 # Frequently Asked Questions (FAQ)
 
 Common questions and answers about ImagePickerKMP.
@@ -74,7 +76,7 @@ Add the dependency to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.2")
 }
 ```
 
@@ -687,4 +689,4 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines.
 
 ---
 
-**Still have questions?** Feel free to ask in our [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions) or contact us directly. 
+**Still have questions?** Feel free to ask in our [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions) or contact us directly.

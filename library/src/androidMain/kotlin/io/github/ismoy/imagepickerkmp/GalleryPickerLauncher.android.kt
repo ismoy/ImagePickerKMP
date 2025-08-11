@@ -23,7 +23,8 @@ private data class GalleryPickerConfig(
     val onError: (Exception) -> Unit,
     val onDismiss: () -> Unit,
     val allowMultiple: Boolean,
-    val mimeTypes: List<String>
+    val mimeTypes: List<String>,
+    val cameraCaptureConfig: CameraCaptureConfig?
 )
 
 @Suppress("ReturnCount","LongParameterList")
@@ -34,7 +35,8 @@ actual fun GalleryPickerLauncher(
     onDismiss: () -> Unit,
     allowMultiple: Boolean,
     mimeTypes: List<String>,
-    selectionLimit: Long
+    selectionLimit: Long,
+    cameraCaptureConfig: CameraCaptureConfig?
 ) {
     val context = LocalContext.current
     if (context !is ComponentActivity) {
@@ -48,7 +50,8 @@ actual fun GalleryPickerLauncher(
         onError = onError,
         onDismiss = onDismiss,
         allowMultiple = allowMultiple,
-        mimeTypes = mimeTypes
+        mimeTypes = mimeTypes,
+        cameraCaptureConfig = cameraCaptureConfig
     )
     GalleryPickerLauncherContent(config)
 }
@@ -56,10 +59,17 @@ actual fun GalleryPickerLauncher(
 @Composable
 private fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
     var shouldLaunch by remember { mutableStateOf(false) }
+    var selectedPhotoForConfirmation by remember { mutableStateOf<PhotoResult?>(null) }
 
     val singlePickerLauncher = rememberSinglePickerLauncher(
         config.context,
-        config.onPhotosSelected,
+        { photoResult ->
+            if (config.cameraCaptureConfig?.permissionAndConfirmationConfig?.customConfirmationView != null) {
+                selectedPhotoForConfirmation = photoResult
+            } else {
+                config.onPhotosSelected(listOf(photoResult))
+            }
+        },
         config.onError,
         config.onDismiss
     )
@@ -89,12 +99,40 @@ private fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
     LaunchedEffect(Unit) {
         shouldLaunch = true
     }
+
+    // Show custom confirmation view if photo is selected and customConfirmationView is provided
+    selectedPhotoForConfirmation?.let { photoResult ->
+        config.cameraCaptureConfig?.permissionAndConfirmationConfig?.customConfirmationView?.invoke(
+            // Convert GalleryPhotoHandler.PhotoResult to CameraPhotoHandler.PhotoResult
+            CameraPhotoHandler.PhotoResult(
+                uri = photoResult.uri,
+                width = photoResult.width,
+                height = photoResult.height
+            ),
+            { confirmedResult ->
+                // Convert back to GalleryPhotoHandler.PhotoResult
+                val galleryResult = GalleryPhotoHandler.PhotoResult(
+                    uri = confirmedResult.uri,
+                    width = confirmedResult.width,
+                    height = confirmedResult.height,
+                    fileName = photoResult.fileName,
+                    fileSize = photoResult.fileSize
+                )
+                config.onPhotosSelected(listOf(galleryResult))
+                selectedPhotoForConfirmation = null
+            },
+            {
+                selectedPhotoForConfirmation = null
+                shouldLaunch = true
+            }
+        )
+    }
 }
 
 @Composable
 private fun rememberSinglePickerLauncher(
     context: Context,
-    onPhotosSelected: (List<PhotoResult>) -> Unit,
+    onPhotoSelected: (PhotoResult) -> Unit,
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit
 ) = rememberLauncherForActivityResult(
@@ -103,9 +141,7 @@ private fun rememberSinglePickerLauncher(
     if (uri != null) {
         try {
             kotlinx.coroutines.CoroutineScope(Dispatchers.Main).launch {
-                processSelectedImage(context, uri, {
-                    onPhotosSelected(listOf(it))
-                }, onError)
+                processSelectedImage(context, uri, onPhotoSelected, onError)
             }
         } catch (e: Exception) {
             onError(e)

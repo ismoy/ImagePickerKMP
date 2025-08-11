@@ -1,3 +1,5 @@
+This document is also available in Spanish: [INTEGRATION_GUIDE.es.md](INTEGRATION_GUIDE.es.md)
+
 # Integration Guide
 
 This guide will help you integrate ImagePickerKMP into your Kotlin Multiplatform project for both Android and iOS platforms.
@@ -33,7 +35,7 @@ In your `build.gradle.kts` (app level):
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.2")
 }
 ```
 
@@ -90,66 +92,639 @@ target 'YourApp' do
 end
 ```
 
-## Basic Usage
+## Basic Integration
 
-### ImagePickerLauncher
+### Simple Implementation
 
 ```kotlin
 @Composable
-fun MyImagePicker() {
-    var showImagePicker by remember { mutableStateOf(false) }
-    if (showImagePicker) {
-        ImagePickerLauncher(
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result -> 
-                    println("Photo captured: ${result.uri}")
-                    showImagePicker = false
-                },
-                onError = { exception -> 
-                    println("Error: ${exception.message}")
-                    showImagePicker = false
-                },
-                onDismiss = { 
-                    println("User cancelled or dismissed the picker")
-                    showImagePicker = false // Reset state when user doesn't select anything
-                }
-            )
+fun SimpleImagePicker() {
+    var showPicker by remember { mutableStateOf(false) }
+    
+    if (showPicker) {
+      ImagePickerLauncher(
+        config = ImagePickerConfig(
+          onPhotoCaptured = { result ->
+            cameraPhoto = result
+            showPicker = false
+            isPickerSheetVisible = false
+          },
+          onError = {
+            showCameraPicker = false
+            isPickerSheetVisible = false
+          },
+          onDismiss = {
+            showCameraPicker = false
+            isPickerSheetVisible = false
+          }
         )
+      )
     }
-    Button(onClick = { showImagePicker = true }) {
+    
+    Button(onClick = { showPicker = true }) {
         Text("Take Photo")
     }
 }
 ```
 
-### GalleryPickerLauncher
+### With Custom Configuration
 
 ```kotlin
 @Composable
-fun MyGalleryPicker() {
-    var showGallery by remember { mutableStateOf(false) }
-    if (showGallery) {
-        GalleryPickerLauncher(
-            onPhotosSelected = { results -> 
-                println("Selected ${results.size} images")
-                showGallery = false
-            },
-            onError = { exception -> 
-                println("Error: ${exception.message}")
-                showGallery = false
-            },
-            onDismiss = { 
-                println("User cancelled gallery selection")
-                showGallery = false // Reset state when user doesn't select anything
-            },
-            allowMultiple = true
+fun CustomImagePicker() {
+    var showPicker by remember { mutableStateOf(false) }
+    
+    if (showPicker) {
+      ImagePickerLauncher(
+        config = ImagePickerConfig(
+          onPhotoCaptured = { result ->
+            cameraPhoto = result
+            showPicker = false
+            isPickerSheetVisible = false
+          },
+          onError = {
+            showPicker = false
+            isPickerSheetVisible = false
+          },
+          onDismiss = {
+            showPicker = false
+            isPickerSheetVisible = false
+          },
+          customPickerDialog = { onTakePhoto, onSelectFromGallery, onCancel ->
+            isPickerSheetVisible = true
+            MyCustomBottomSheet(
+              onTakePhoto = onTakePhoto,
+              onSelectFromGallery = onSelectFromGallery,
+              onDismiss = {
+                isPickerSheetVisible = false
+                onCancel()
+                showCameraPicker = false
+              }
+            )
+          },
+          cameraCaptureConfig = CameraCaptureConfig(
+            permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+              customConfirmationView = { photoResult, onConfirm, onRetry ->
+                YourCustomConfirmationView(
+                  result = photoResult,
+                  onConfirm = onConfirm,
+                  onRetry = onRetry
+                )
+              }
+            )
+          )
         )
+      )
     }
-    Button(onClick = { showGallery = true }) {
-        Text("Pick from Gallery")
+    
+    Button(onClick = { showPicker = true }) {
+        Text("Take High Quality Photo")
     }
 }
 ```
+
+## Advanced Configuration
+
+### Custom Permission Dialogs
+
+```kotlin
+var showCameraPicker by remember { mutableStateOf(false) }
+var isPickerSheetVisible by remember { mutableStateOf(false) }
+var cameraPhoto by remember { mutableStateOf<CameraPhotoHandler.PhotoResult?>(null) }
+
+if(showCameraPicker){
+  ImagePickerLauncher(
+    config = ImagePickerConfig(
+      onPhotoCaptured = { result ->
+        cameraPhoto = result
+        showCameraPicker = false
+        isPickerSheetVisible = false
+      },
+      onError = {
+        showCameraPicker = false
+        isPickerSheetVisible = false
+      },
+      onDismiss = {
+        showCameraPicker = false
+        isPickerSheetVisible = false
+      },
+      customPickerDialog = { onTakePhoto, onSelectFromGallery, onCancel ->
+        isPickerSheetVisible = true
+        MyCustomBottomSheet(
+          onTakePhoto = onTakePhoto,
+          onSelectFromGallery = onSelectFromGallery,
+          onDismiss = {
+            isPickerSheetVisible = false
+            onCancel()
+            showCameraPicker = false
+          }
+        )
+      },
+      cameraCaptureConfig = CameraCaptureConfig(
+        permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+          customConfirmationView = { photoResult, onConfirm, onRetry ->
+            YourCustomConfirmationView(
+              result = photoResult,
+              onConfirm = onConfirm,
+              onRetry = onRetry
+            )
+          }
+        )
+      )
+    )
+  )
+}
+// The views
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun MyCustomBottomSheet(
+  onTakePhoto: () -> Unit,
+  onSelectFromGallery: () -> Unit,
+  onDismiss: () -> Unit
+) {
+  val bottomSheetState = rememberModalBottomSheetState(
+    initialValue = ModalBottomSheetValue.Expanded,
+    skipHalfExpanded = true
+  )
+  val coroutineScope = rememberCoroutineScope()
+
+  LaunchedEffect(bottomSheetState.currentValue) {
+    if (bottomSheetState.currentValue == ModalBottomSheetValue.Hidden) {
+      onDismiss()
+    }
+  }
+
+  ModalBottomSheetLayout(
+    sheetState = bottomSheetState,
+    sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+    sheetElevation = 16.dp,
+    sheetBackgroundColor = MaterialTheme.colors.surface,
+    scrimColor = Color.Black.copy(alpha = 0.35f),
+    sheetContent = {
+      Column(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(top = 12.dp, start = 20.dp, end = 20.dp, bottom = 28.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+      ) {
+        Box(
+          modifier = Modifier
+            .width(44.dp)
+            .height(5.dp)
+            .padding(bottom = 20.dp)
+            .align(Alignment.CenterHorizontally)
+            .then(
+              Modifier
+                .padding(top = 2.dp)
+            )
+        ) {
+          Box(
+            modifier = Modifier
+              .fillMaxWidth()
+              .height(5.dp)
+              .align(Alignment.Center)
+              .padding(horizontal = 12.dp)
+              .background(
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.18f),
+                shape = RoundedCornerShape(50)
+              )
+          )
+        }
+
+        Text(
+          text = "Select image source",
+          fontSize = 18.sp,
+          fontWeight = FontWeight.SemiBold,
+          color = MaterialTheme.colors.onSurface.copy(alpha = 0.87f),
+          modifier = Modifier.padding(bottom = 4.dp)
+        )
+        Text(
+          text = "Choose an option to continue",
+          fontSize = 13.sp,
+          color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+          modifier = Modifier.padding(bottom = 20.dp)
+        )
+
+        SheetAction(
+          emoji = "📷",
+          title = "Take a photo",
+          subtitle = "Open the camera",
+          tint = MaterialTheme.colors.primary,
+          onClick = {
+            coroutineScope.launch {
+              bottomSheetState.hide()
+              onTakePhoto()
+            }
+          }
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        SheetAction(
+          emoji = "🖼️",
+          title = "Select from gallery",
+          subtitle = "Explore images from your device",
+          tint = MaterialTheme.colors.primary,
+          onClick = {
+            coroutineScope.launch {
+              bottomSheetState.hide()
+              onSelectFromGallery()
+            }
+          }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextButton(
+          onClick = {
+            coroutineScope.launch {
+              bottomSheetState.hide()
+              onDismiss()
+            }
+          },
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+        ) {
+          Text(
+            text = "Cancel",
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+            fontSize = 15.sp
+          )
+        }
+      }
+    },
+    modifier = Modifier.fillMaxSize()
+  ) {
+    Box(modifier = Modifier.fillMaxSize())
+  }
+}
+
+@Composable
+private fun SheetAction(
+  emoji: String,
+  title: String,
+  subtitle: String?,
+  tint: Color,
+  onClick: () -> Unit
+) {
+  val shape = RoundedCornerShape(14.dp)
+  androidx.compose.material.Surface(
+    shape = shape,
+    color = MaterialTheme.colors.onSurface.copy(alpha = 0.04f),
+    contentColor = MaterialTheme.colors.onSurface,
+    elevation = 0.dp,
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(64.dp)
+      .clip(shape)
+      .padding(0.dp)
+  ) {
+    Row(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp)
+        .clickable { onClick() },
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.Start
+    ) {
+      Box(
+        modifier = Modifier
+          .width(40.dp)
+          .height(40.dp)
+          .clip(RoundedCornerShape(10.dp))
+          .background(tint.copy(alpha = 0.12f)),
+        contentAlignment = Alignment.Center
+      ) {
+        Text(text = emoji, fontSize = 20.sp)
+      }
+      Spacer(modifier = Modifier.width(12.dp))
+      Column(modifier = Modifier.weight(1f)) {
+        Text(
+          text = title,
+          fontSize = 16.sp,
+          fontWeight = FontWeight.Medium,
+          color = MaterialTheme.colors.onSurface
+        )
+        if (subtitle != null) {
+          Text(
+            text = subtitle,
+            fontSize = 13.sp,
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+          )
+        }
+      }
+    }
+  }
+}
+
+@Composable
+fun YourCustomConfirmationView(
+  result: CameraPhotoHandler.PhotoResult,
+  onConfirm: (CameraPhotoHandler.PhotoResult) -> Unit,
+  onRetry: () -> Unit
+) {
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(16.dp),
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    Text(
+      text = "Review photo",
+      fontSize = 18.sp,
+      fontWeight = FontWeight.SemiBold,
+      color = MaterialTheme.colors.onSurface.copy(alpha = 0.9f),
+      modifier = Modifier.padding(bottom = 12.dp)
+    )
+
+    Card(
+      shape = RoundedCornerShape(20.dp),
+      elevation = 10.dp,
+      modifier = Modifier
+        .fillMaxWidth()
+        .weight(1f)
+    ) {
+      AsyncImage(
+        model = result.uri,
+        contentDescription = "Captured photo preview",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+      )
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+      OutlinedButton(
+        onClick = { onRetry() },
+        modifier = Modifier
+          .weight(1f)
+          .height(52.dp)
+      ) {
+        Text(text = "Retry")
+      }
+
+      Button(
+        onClick = { onConfirm(result) },
+        modifier = Modifier
+          .weight(1f)
+          .height(52.dp),
+        shape = RoundedCornerShape(12.dp)
+      ) {
+        Text(text = "Confirm", color = Color.White)
+      }
+    }
+  }
+}
+```
+## Platform-Specific Configuration
+
+### Android
+
+```kotlin
+// Android-specific configuration
+@Composable
+fun AndroidImagePicker() {
+    ImagePickerLauncher(
+        onPhotoCaptured = { result ->
+            // Android-specific handling
+        },
+        onError = { exception ->
+            // Android-specific error handling
+        },
+        onDismiss = {
+            // Android-specific cancellation handling
+        }
+    )
+}
+```
+
+### iOS
+
+```kotlin
+// iOS-specific configuration
+@Composable
+fun IOSImagePicker() {
+    ImagePickerLauncher(
+        onPhotoCaptured = { result ->
+            // iOS-specific handling
+        },
+        onError = { exception ->
+            // iOS-specific error handling
+        },
+        onDismiss = {
+            // iOS-specific cancellation handling
+        }
+    )
+}
+```
+
+## Gallery Selection & iOS Dialog Customization
+
+### Multiplatform Gallery Support
+
+You can allow users to select images from the gallery on both Android and iOS. On Android, a gallery icon appears in the camera UI. On iOS, you can show a dialog to choose between camera and gallery.
+
+### iOS Dialog Text Customization
+
+You can customize the dialog texts (title, take photo, select from gallery, cancel) on iOS:
+
+```kotlin
+ImagePickerLauncher(
+    onPhotoCaptured = { result -> /* ... */ },
+    onError = { exception -> /* ... */ },
+    dialogTitle = "Choose action", // iOS only
+    takePhotoText = "Camera",      // iOS only
+    selectFromGalleryText = "Gallery", // iOS only
+    cancelText = "Cancel"         // iOS only
+)
+```
+
+- On Android, these parameters are ignored.
+- On iOS, if not provided, defaults are in English.
+
+## Gallery Confirmation View Customization
+
+### cameraCaptureConfig Support in GalleryPickerLauncher
+
+Now `GalleryPickerLauncher` supports the optional `cameraCaptureConfig` parameter, which allows you to use the same custom confirmation view as `ImagePickerLauncher`. This is especially useful when you want to maintain a consistent user experience between camera capture and gallery selection.
+
+### Basic Example with Custom Confirmation View
+
+```kotlin
+@Composable
+fun GalleryPickerWithCustomConfirmation() {
+    var showGalleryPicker by remember { mutableStateOf(false) }
+    
+    if (showGalleryPicker) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { results ->
+                // Handle selected images
+                showGalleryPicker = false
+            },
+            onError = { exception ->
+                // Handle errors
+                showGalleryPicker = false
+            },
+            onDismiss = {
+                // Handle cancellation
+                showGalleryPicker = false
+            },
+            allowMultiple = false,
+            mimeTypes = listOf("image/jpeg", "image/png"),
+            cameraCaptureConfig = CameraCaptureConfig(
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    customConfirmationView = { photoResult, onConfirm, onRetry ->
+                        YourCustomConfirmationView(
+                            result = photoResult,
+                            onConfirm = onConfirm,
+                            onRetry = onRetry
+                        )
+                    }
+                )
+            )
+        )
+    }
+    
+    Button(onClick = { showGalleryPicker = true }) {
+        Text("Select from Gallery")
+    }
+}
+```
+
+### Advanced Example with Complete Configuration
+
+```kotlin
+@Composable
+fun AdvancedGalleryPickerWithConfirmation() {
+    var showGalleryPicker by remember { mutableStateOf(false) }
+    var selectedImages by remember { mutableStateOf<List<GalleryPhotoHandler.PhotoResult>>(emptyList()) }
+    
+    if (showGalleryPicker) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { results ->
+                selectedImages = results
+                showGalleryPicker = false
+            },
+            onError = { exception ->
+                println("Error selecting image: ${exception.message}")
+                showGalleryPicker = false
+            },
+            onDismiss = {
+                showGalleryPicker = false
+            },
+            allowMultiple = true,
+            mimeTypes = listOf("image/jpeg", "image/png", "image/webp"),
+            selectionLimit = 5,
+            cameraCaptureConfig = CameraCaptureConfig(
+                preference = CapturePhotoPreference.QUALITY,
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    customConfirmationView = { photoResult, onConfirm, onRetry ->
+                        CustomGalleryConfirmationView(
+                            result = photoResult,
+                            onConfirm = { confirmedResult ->
+                                onConfirm(confirmedResult)
+                            },
+                            onRetry = {
+                                // In gallery, retry means select again
+                                onRetry()
+                            }
+                        )
+                    }
+                )
+            )
+        )
+    }
+    
+    Column {
+        Button(onClick = { showGalleryPicker = true }) {
+            Text("Select Multiple Images")
+        }
+        
+        if (selectedImages.isNotEmpty()) {
+            Text("Selected images: ${selectedImages.size}")
+            LazyRow {
+                items(selectedImages) { image ->
+                    AsyncImage(
+                        model = image.uri,
+                        contentDescription = "Selected image",
+                        modifier = Modifier.size(80.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CustomGalleryConfirmationView(
+    result: CameraPhotoHandler.PhotoResult,
+    onConfirm: (CameraPhotoHandler.PhotoResult) -> Unit,
+    onRetry: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Confirm selection",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            elevation = 8.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            AsyncImage(
+                model = result.uri,
+                contentDescription = "Selected image",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            OutlinedButton(
+                onClick = { onRetry() },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Select another")
+            }
+            
+            Button(
+                onClick = { onConfirm(result) },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Confirm")
+            }
+        }
+    }
+}
+```
+
+### Benefits of using cameraCaptureConfig in GalleryPickerLauncher
+
+- **UI Consistency**: Maintain the same confirmation experience between camera and gallery
+- **Code Reusability**: Use the same custom confirmation component
+- **Granular Control**: Fully customize the confirmation experience
+- **Flexibility**: Allows different confirmation flows based on your needs
 
 ## Platform-Specific Examples
 
@@ -160,7 +735,7 @@ For Android apps using Jetpack Compose:
 ```kotlin
 // build.gradle.kts (app level)
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.2")
     implementation("androidx.compose.ui:ui:1.4.0")
     implementation("androidx.compose.material:material:1.4.0")
 }
@@ -184,122 +759,59 @@ fun MyApp() {
 
 @Composable
 fun ImagePickerScreen() {
-    var showPicker by remember { mutableStateOf(false) }
-    
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Button(
-            onClick = { showPicker = true },
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text("Take Photo")
-        }
-        
-        if (showPicker) {
-            ImagePickerLauncher(
-                context = LocalContext.current,
-                onPhotoCaptured = { result ->
-                    // Handle photo capture
-                    println("Photo captured: ${result.uri}")
-                    showPicker = false
-                },
-                onError = { exception ->
-                    // Handle errors
-                    println("Error: ${exception.message}")
-                    showPicker = false
-                }
-            )
-        }
-    }
+    var showCameraPicker by remember { mutableStateOf(false) }
+
+  ImagePickerLauncher(
+    config = ImagePickerConfig(
+      onPhotoCaptured = { result ->
+        showCameraPicker = false
+      },
+      onError = {
+        showCameraPicker = false
+        isPickerSheetVisible = false
+      },
+      onDismiss = {
+        showCameraPicker = false
+      }
+    )
+  )
 }
 ```
-
-### iOS Native (Swift/SwiftUI)
-
-For iOS apps using SwiftUI:
-
-```swift
-// Podfile
-target 'YourApp' do
-  use_frameworks!
-  pod 'ImagePickerKMP', :path => '../path/to/your/library'
-end
-
-// ContentView.swift
-import SwiftUI
-import ImagePickerKMP
-
-struct ContentView: View {
-    @State private var showImagePicker = false
-    @State private var capturedImage: UIImage?
+## Selecting Images from Gallery
+```kotlin
+@Composable
+fun ImagePickerScreen() {
+    var showGalleryPicker by remember { mutableStateOf(false) }
     
-    var body: some View {
-        VStack {
-            if let image = capturedImage {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 200)
-            }
-            
-            Button("Take Photo") {
-                showImagePicker = true
-            }
-            .padding()
-        }
-        .sheet(isPresented: $showImagePicker) {
-            ImagePickerView(
-                onPhotoCaptured: { result in
-                    // Handle photo capture
-                    print("Photo captured: \(result.uri)")
-                    showImagePicker = false
-                },
-                onError: { error in
-                    // Handle errors
-                    print("Error: \(error.localizedDescription)")
-                    showImagePicker = false
+    GalleryPickerLauncher(
+        onPhotosSelected = { results ->
+            showGalleryPicker = false
+        },
+        onError = {
+            showGalleryPicker = false
+        },
+        onDismiss = {
+            showGalleryPicker = false
+        },
+        allowMultiple = false, // Change to true if you need to select multiple images
+        mimeTypes = mutableListOf("image/jpeg", "image/png"), // Optional: Filter by file types
+        cameraCaptureConfig = CameraCaptureConfig( // Optional: For custom confirmation view
+            permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                customConfirmationView = { photoResult, onConfirm, onRetry ->
+                    YourCustomConfirmationView(
+                        result = photoResult,
+                        onConfirm = onConfirm,
+                        onRetry = onRetry
+                    )
                 }
             )
-        }
-    }
-}
-
-// ImagePickerView.swift
-import SwiftUI
-import ImagePickerKMP
-
-struct ImagePickerView: UIViewControllerRepresentable {
-    let onPhotoCaptured: (PhotoResult) -> Void
-    let onError: (Error) -> Void
-    
-    func makeUIViewController(context: Context) -> UIViewController {
-        let controller = UIViewController()
-        
-        // Create ImagePickerKMP launcher
-        let imagePicker = ImagePickerLauncher(
-            context: nil, // iOS doesn't need context
-            onPhotoCaptured: onPhotoCaptured,
-            onError: onError
         )
-        
-        // Present the image picker
-        controller.present(imagePicker, animated: true)
-        
-        return controller
-    }
-    
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        // Update if needed
-    }
+    )
 }
 ```
-
 ### Kotlin Multiplatform / Compose Multiplatform
 
-For cross-platform apps using KMP/CMP with a single UI for both platforms:
+For multiplatform apps using KMP/CMP with a single UI for both platforms:
 
 #### 1. Add Dependencies
 
@@ -322,7 +834,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("io.github.ismoy:imagepickerkmp:1.0.1")
+                implementation("io.github.ismoy:imagepickerkmp:@lastVersion")
             }
         }
     }
@@ -347,507 +859,57 @@ kotlin {
 
 #### 3. Shared Implementation
 
-Create a shared composable in your `commonMain`:
-
+In your `commonMain/kotlin/YourPackage/App.kt`:
 ```kotlin
-// commonMain/kotlin/YourPackage/SharedImagePicker.kt
 @Composable
-fun SharedImagePicker(
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onError: (Exception) -> Unit
-) {
-    var showPicker by remember { mutableStateOf(false) }
+fun ImagePickerScreen() {
+var showCameraPicker by remember { mutableStateOf(false) }
+
+ImagePickerLauncher(
+config = ImagePickerConfig(
+onPhotoCaptured = { result ->
+showCameraPicker = false
+},
+onError = {
+showCameraPicker = false
+isPickerSheetVisible = false
+},
+onDismiss = {
+showCameraPicker = false
+}
+)
+)
+}
+```
+## Selecting Images from Gallery
+```kotlin
+@Composable
+fun ImagePickerScreen() {
+    var showGalleryPicker by remember { mutableStateOf(false) }
     
-    Column {
-        Button(onClick = { showPicker = true }) {
-            Text("Take Photo")
-        }
-        
-        if (showPicker) {
-            ImagePickerLauncher(
-                context = LocalContext.current,
-                config = ImagePickerConfig(
-                    onPhotoCaptured = { result ->
-                        onPhotoCaptured(result)
-                        showPicker = false
-                    },
-                    onError = { exception ->
-                        onError(exception)
-                        showPicker = false
-                    },
-                    cameraCaptureConfig = CameraCaptureConfig(
-                        preference = CapturePhotoPreference.HIGH_QUALITY,
-                        permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                            customPermissionHandler = { config ->
-                                // Custom permission handling
-                                println("Custom permission config: ${config.titleDialogConfig}")
-                            },
-                            customConfirmationView = { result, onConfirm, onRetry ->
-                                // Custom confirmation view
-                                CustomConfirmationDialog(
-                                    result = result,
-                                    onConfirm = onConfirm,
-                                    onRetry = onRetry
-                                )
-                            }
-                        )
+    GalleryPickerLauncher(
+        onPhotosSelected = { results ->
+            showGalleryPicker = false
+        },
+        onError = {
+            showGalleryPicker = false
+        },
+        onDismiss = {
+            showGalleryPicker = false
+        },
+        allowMultiple = false, // Change to true if you need to select multiple images
+        mimeTypes = mutableListOf("image/jpeg", "image/png"), // Optional: Filter by file types
+        cameraCaptureConfig = CameraCaptureConfig( // Optional: For custom confirmation view
+            permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                customConfirmationView = { photoResult, onConfirm, onRetry ->
+                    YourCustomConfirmationView(
+                        result = photoResult,
+                        onConfirm = onConfirm,
+                        onRetry = onRetry
                     )
-                )
-            )
-        }
-    }
-}
-```
-
-#### 4. Usage in Your App
-
-```kotlin
-// commonMain/kotlin/YourPackage/YourApp.kt
-@Composable
-fun YourApp() {
-    MaterialTheme {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text("Welcome to Your App")
-            
-            SharedImagePicker(
-                onPhotoCaptured = { result ->
-                    println("Photo captured: ${result.uri}")
-                    // Handle the captured photo
-                },
-                onError = { exception ->
-                    println("Error: ${exception.message}")
-                    // Handle errors
                 }
             )
-        }
-    }
-}
-```
-
-#### 5. Platform-Specific Entry Points
-
-**Android**: In your `androidMain/AndroidActivity.kt`:
-
-```kotlin
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            YourApp()
-        }
-    }
-}
-```
-
-**iOS**: In your `iosMain/IOSApp.kt`:
-
-```kotlin
-@Composable
-fun IOSApp() {
-    YourApp()
-}
-```
-
-This approach provides a single UI that works on both platforms with the same codebase.
-
-## Advanced Configuration
-
-### Custom Permission Dialogs
-
-```kotlin
-@Composable
-fun CustomPermissionDialog(
-    title: String,
-    description: String,
-    onConfirm: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = { },
-        title = { Text(title) },
-        text = { Text(description) },
-        confirmButton = {
-            Button(onClick = onConfirm) {
-                Text("Grant Permission")
-            }
-        }
-    )
-}
-
-// Usage
-ImagePickerLauncher(
-    context = LocalContext.current,
-    onPhotoCaptured = { /* ... */ },
-    onError = { /* ... */ },
-    customPermissionHandler = { config ->
-        // Show custom permission dialog
-        CustomPermissionDialog(
-            title = config.titleDialogConfig,
-            description = config.descriptionDialogConfig,
-            onConfirm = { /* Grant permission logic */ }
         )
-    }
-)
-```
-
-
-
-### Custom Photo Processing
-
-```kotlin
-@Composable
-fun ImagePickerWithProcessing() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Process the captured photo
-            lifecycleScope.launch {
-                val processedImage = processImage(result.uri)
-                // Use processed image
-            }
-        },
-        onError = { exception ->
-            // Handle processing errors
-        }
-    )
-}
-
-suspend fun processImage(uri: Uri): Bitmap {
-    return withContext(Dispatchers.IO) {
-        // Image processing logic
-        // Resize, compress, apply filters, etc.
-    }
-}
-```
-
-## Platform-Specific Configuration
-
-### Android Specific
-
-```kotlin
-// Android-specific configuration
-@Composable
-fun AndroidImagePicker() {
-    val context = LocalContext.current
-    
-    ImagePickerLauncher(
-        context = context,
-        onPhotoCaptured = { result ->
-            // Android-specific handling
-            if (context is ComponentActivity) {
-                // Use Android-specific APIs
-            }
-        },
-        onError = { exception ->
-            // Android-specific error handling
-        }
     )
 }
 ```
-
-### iOS Specific
-
-```kotlin
-// iOS-specific configuration
-@Composable
-fun IOSImagePicker() {
-    ImagePickerLauncher(
-        context = null, // iOS doesn't need context
-        onPhotoCaptured = { result ->
-            // iOS-specific handling
-        },
-        onError = { exception ->
-            // iOS-specific error handling
-        }
-    )
-}
-```
-
-## Gallery Selection & iOS Dialog Customization
-
-### Multiplatform Gallery Support
-
-You can allow users to select images from the gallery on both Android and iOS. On Android, a gallery icon appears in the camera UI. On iOS, you can present a dialog to choose between camera and gallery.
-
-### iOS Dialog Text Customization
-
-You can customize the dialog texts (title, take photo, select from gallery, cancel) on iOS:
-
-```kotlin
-ImagePickerLauncher(
-    context = ..., // platform context
-    onPhotoCaptured = { result -> /* ... */ },
-    onError = { exception -> /* ... */ },
-    dialogTitle = "Choose action", // iOS only
-    takePhotoText = "Camera",      // iOS only
-    selectFromGalleryText = "Gallery", // iOS only
-    cancelText = "Dismiss"         // iOS only
-)
-```
-
-- On Android, these parameters are ignored.
-- On iOS, if not provided, defaults are in English.
-
-## Troubleshooting
-
-### Common Issues
-
-#### 1. Permission Denied
-
-**Problem**: Camera permission is denied and not showing retry dialog.
-
-**Solution**: Ensure you're using the `RequestCameraPermission` component:
-
-```kotlin
-@Composable
-fun RequestCameraPermission(
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit
-) {
-    // Implementation handles platform differences
-}
-```
-
-#### 2. Camera Not Starting
-
-**Problem**: Camera doesn't start after permission is granted.
-
-**Solution**: Check your camera permissions and hardware:
-
-```kotlin
-// Check if camera is available
-val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-val cameraIds = cameraManager.cameraIdList
-if (cameraIds.isNotEmpty()) {
-    // Camera is available
-}
-```
-
-#### 3. iOS Build Errors
-
-**Problem**: iOS build fails with linking errors.
-
-**Solution**: Ensure proper framework configuration:
-
-```kotlin
-kotlin {
-    ios {
-        binaries {
-            framework {
-                baseName = "ImagePickerKMP"
-                isStatic = false
-            }
-        }
-    }
-}
-```
-
-#### 4. Memory Issues
-
-**Problem**: App crashes due to memory issues with large images.
-
-**Solution**: Implement image compression:
-
-```kotlin
-@Composable
-fun ImagePickerWithCompression() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Compress image before processing
-            val compressedImage = compressImage(result.uri)
-        }
-    )
-}
-```
-
-### Debug Tips
-
-1. **Enable Logging**:
-```kotlin
-// Add logging to track issues
-ImagePickerLauncher(
-    context = LocalContext.current,
-    onPhotoCaptured = { result ->
-        Log.d("ImagePicker", "Photo captured: ${result.uri}")
-    },
-    onError = { exception ->
-        Log.e("ImagePicker", "Error: ${exception.message}", exception)
-    }
-)
-```
-
-2. **Check Permissions**:
-```kotlin
-// Debug permission status
-fun checkCameraPermission(context: Context): Boolean {
-    return ContextCompat.checkSelfPermission(
-        context, 
-        Manifest.permission.CAMERA
-    ) == PackageManager.PERMISSION_GRANTED
-}
-```
-
-3. **Test on Different Devices**:
-- Test on physical devices, not just emulators
-- Test on different Android versions
-- Test on different iOS versions
-
-## Migration from Other Libraries
-
-### From CameraX
-
-```kotlin
-// Old CameraX implementation
-class CameraXImplementation {
-    fun startCamera() {
-        // CameraX code
-    }
-}
-
-// New ImagePickerKMP implementation
-@Composable
-fun ImagePickerKMPImplementation() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Handle photo capture
-        },
-        onError = { exception ->
-            // Handle errors
-        }
-    )
-}
-```
-
-### From UIImagePickerController (iOS)
-
-```swift
-// Old UIImagePickerController implementation
-let imagePicker = UIImagePickerController()
-imagePicker.sourceType = .camera
-present(imagePicker, animated: true)
-
-// New ImagePickerKMP implementation
-@Composable
-fun ImagePickerKMPImplementation() {
-    ImagePickerLauncher(
-        context = null,
-        onPhotoCaptured = { result ->
-            // Handle photo capture
-        },
-        onError = { exception ->
-            // Handle errors
-        }
-    )
-}
-```
-
-## Best Practices
-
-### 1. Error Handling
-
-```kotlin
-@Composable
-fun RobustImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            try {
-                // Process photo safely
-                processPhoto(result)
-            } catch (e: Exception) {
-                // Handle processing errors
-                showError("Failed to process photo: ${e.message}")
-            }
-        },
-        onError = { exception ->
-            when (exception) {
-                is CameraPermissionException -> {
-                    showPermissionError()
-                }
-                is PhotoCaptureException -> {
-                    showCaptureError()
-                }
-                else -> {
-                    showGenericError()
-                }
-            }
-        }
-    )
-}
-```
-
-### 2. Memory Management
-
-```kotlin
-@Composable
-fun MemoryEfficientImagePicker() {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Store URI instead of Bitmap to save memory
-            imageUri = result.uri
-        },
-        onError = { exception ->
-            // Handle errors
-        }
-    )
-    
-    // Load image only when needed
-    imageUri?.let { uri ->
-        AsyncImage(
-            model = uri,
-            contentDescription = "Captured photo"
-        )
-    }
-}
-```
-
-### 3. User Experience
-
-```kotlin
-@Composable
-fun UserFriendlyImagePicker() {
-    var isLoading by remember { mutableStateOf(false) }
-    
-    if (isLoading) {
-        CircularProgressIndicator()
-    } else {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                isLoading = true
-                // Process photo
-                processPhoto(result) {
-                    isLoading = false
-                }
-            },
-            onError = { exception ->
-                // Show user-friendly error message
-                showSnackbar("Unable to capture photo. Please try again.")
-            }
-        )
-    }
-}
-```
-
-## Support
-
-If you encounter issues during integration:
-
-1. **Check the documentation**: Review this guide and other documentation
-2. **Search issues**: Look for similar issues in the GitHub repository
-3. **Create an issue**: Provide detailed information about your problem
-4. **Community support**: Ask questions in the community forums
-
-For more details, see [Customization Guide](docs/CUSTOMIZATION_GUIDE.md).
-
-See [API Reference](docs/API_REFERENCE.md) for complete documentation.
-
-See [Examples](docs/EXAMPLES.md) for more use cases. 

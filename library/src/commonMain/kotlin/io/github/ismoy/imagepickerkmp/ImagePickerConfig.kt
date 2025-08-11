@@ -76,6 +76,15 @@ data class ImagePickerConfig(
     val selectFromGalleryText: String = "Select from gallery",
     val cancelText: String = "Cancel",
 
+    // Custom picker dialog for iOS - allows developers to use their own @Composable instead of native UIAlertController
+    val customPickerDialog: (
+        @Composable (
+            onTakePhoto: () -> Unit,
+            onSelectFromGallery: () -> Unit,
+            onCancel: () -> Unit
+        ) -> Unit
+    )? = null,
+
     val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig()
 )
 
