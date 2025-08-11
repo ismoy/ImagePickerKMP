@@ -1,3 +1,5 @@
+This document is also available in Spanish: [CUSTOMIZATION_GUIDE.es.md](CUSTOMIZATION_GUIDE.es.md)
+
 # Customization Guide
 
 This guide explains how to customize ImagePickerKMP to match your app's design and requirements.
@@ -880,9 +882,9 @@ For customization-related issues:
 4. **Accessibility**: Ensure customizations are accessible
 
 For more information, refer to:
-- [API Reference](docs/API_REFERENCE.md)
-- [Examples](docs/EXAMPLES.md)
-- [Integration Guide](docs/INTEGRATION_GUIDE.md)
+- [API Reference](API_REFERENCE.md)
+- [Examples](EXAMPLES.md)
+- [Integration Guide](INTEGRATION_GUIDE.md)
 
 ```kotlin
 @Composable
@@ -911,4 +913,4 @@ fun CustomImagePicker() {
     Button(onClick = { showPicker = true }) {
         Text("Take Photo")
     }
-} 
+}

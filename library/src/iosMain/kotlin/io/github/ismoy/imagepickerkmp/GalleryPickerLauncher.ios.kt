@@ -12,7 +12,8 @@ actual fun GalleryPickerLauncher(
     onDismiss: () -> Unit,
     allowMultiple: Boolean,
     mimeTypes: List<String>,
-    selectionLimit: Long
+    selectionLimit: Long,
+    cameraCaptureConfig: CameraCaptureConfig?
 ) {
     LaunchedEffect(Unit) {
         if (allowMultiple) {

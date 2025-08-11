@@ -64,17 +64,33 @@ private fun handleImagePickerState(
     onGalleryFinished: () -> Unit
 ) {
     if (showDialog) {
-        showImagePickerDialog(
-            onTakePhoto = {
-                onDismissDialog()
-                onRequestCameraPermission()
-            },
-            onSelectFromGallery = {
-                onDismissDialog()
-                onRequestGallery()
-            },
-            onCancel = onCancelDialog
-        )
+        // Use custom picker dialog if provided, otherwise use native UIAlertController
+        if (config.customPickerDialog != null) {
+            config.customPickerDialog.invoke(
+                {
+                    onDismissDialog()
+                    onRequestCameraPermission()
+                },
+                {
+                    onDismissDialog()
+                    onRequestGallery()
+                },
+                onCancelDialog
+            )
+        } else {
+            showImagePickerDialog(
+                config = config,
+                onTakePhoto = {
+                    onDismissDialog()
+                    onRequestCameraPermission()
+                },
+                onSelectFromGallery = {
+                    onDismissDialog()
+                    onRequestGallery()
+                },
+                onCancel = onCancelDialog
+            )
+        }
     }
 
     if (askCameraPermission) {
@@ -114,6 +130,7 @@ private fun handleImagePickerState(
 
 @Composable
 private fun showImagePickerDialog(
+    config: ImagePickerConfig,
     onTakePhoto: () -> Unit,
     onSelectFromGallery: () -> Unit,
     onCancel: () -> Unit
@@ -121,21 +138,21 @@ private fun showImagePickerDialog(
     LaunchedEffect(Unit) {
         val rootVC = ViewControllerProvider.getRootViewController() ?: return@LaunchedEffect
         val alert = UIAlertController.alertControllerWithTitle(
-            title = "Select option",
+            title = config.dialogTitle,
             message = null,
             preferredStyle = UIAlertControllerStyleActionSheet
         )
         alert.addAction(
-            UIAlertAction.actionWithTitle("Take photo", 0) { onTakePhoto() }
+            UIAlertAction.actionWithTitle(config.takePhotoText, 0) { onTakePhoto() }
         )
         alert.addAction(
-            UIAlertAction.actionWithTitle("Select from gallery", 0) { onSelectFromGallery() }
+            UIAlertAction.actionWithTitle(config.selectFromGalleryText, 0) { onSelectFromGallery() }
         )
         val spacerAction = UIAlertAction.actionWithTitle(" ", 0, null)
         spacerAction.setValue(false, forKey = "enabled")
         alert.addAction(spacerAction)
         alert.addAction(
-            UIAlertAction.actionWithTitle("Cancel", 1) { onCancel() }
+            UIAlertAction.actionWithTitle(config.cancelText, 1) { onCancel() }
         )
         rootVC.presentViewController(alert, animated = true, completion = null)
     }
