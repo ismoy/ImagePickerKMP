@@ -75,7 +75,7 @@
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.2")//lastversion
+    implementation("io.github.ismoy:imagepickerkmp:1.0.21")//lastversion
 }
 ```
 #### iOS Permissions Setup
@@ -183,7 +183,7 @@ For more customization (confirmation views, MIME filtering, etc.), [check out th
 
 #### Step 1: Add the dependency
 ```kotlin
-implementation("io.github.ismoy:imagepickerkmp:1.0.2")
+implementation("io.github.ismoy:imagepickerkmp:1.0.21")
 ```
 #### Step 2: Camera Launcher Example
 ```kotlin
