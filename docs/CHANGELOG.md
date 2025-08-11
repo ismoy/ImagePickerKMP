@@ -194,7 +194,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    implementation("io.github.ismoy:imagepickerkmp:0.9.0")
    
    // New
-   implementation("io.github.ismoy:imagepickerkmp:1.0.1")
+   implementation("io.github.ismoy:imagepickerkmp:1.0.2")
    ```
 
 2. **Update Permission Handling**
@@ -388,4 +388,4 @@ For feature requests, please:
 
 ---
 
-**Note**: This changelog is maintained by the ImagePickerKMP team. For questions or suggestions, please contact us. 
+**Note**: This changelog is maintained by the ImagePickerKMP team. For questions or suggestions, please contact us.

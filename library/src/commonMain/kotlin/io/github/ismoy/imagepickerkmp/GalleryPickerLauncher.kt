@@ -13,6 +13,7 @@ expect fun GalleryPickerLauncher(
     onDismiss: () -> Unit = {},
     allowMultiple: Boolean = false,
     mimeTypes: List<String> = listOf("image/*"),
-    selectionLimit: Long = SELECTION_LIMIT
+    selectionLimit: Long = SELECTION_LIMIT,
+    cameraCaptureConfig: CameraCaptureConfig? = null
 )
 

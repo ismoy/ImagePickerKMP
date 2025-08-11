@@ -1,4 +1,4 @@
-This document is also available in English: [EXAMPLES.md](docs/EXAMPLES.md)
+This document is also available in English: [EXAMPLES.md](EXAMPLES.md)
 
 # Ejemplos de uso - ImagePickerKMP
 
@@ -520,7 +520,7 @@ fun CustomErrorMessagesExample() {
 ```kotlin
 // build.gradle.kts (nivel de app)
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.2")
     implementation("androidx.compose.ui:ui:1.4.0")
     implementation("androidx.compose.material:material:1.4.0")
     implementation("androidx.activity:activity-compose:1.7.0")
@@ -992,7 +992,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("io.github.ismoy:imagepickerkmp:1.0.1")
+                implementation("io.github.ismoy:imagepickerkmp:1.0.2")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
                 implementation("org.jetbrains.compose.runtime:runtime:1.4.0")
             }
@@ -1206,7 +1206,7 @@ Este ejemplo muestra:
 - Separación limpia de responsabilidades
 - Flujo de desarrollo simplificado
 
-Para más información, consulta [Guía de Integración](docs/INTEGRATION_GUIDE.es.md) y [Referencia de API](docs/API_REFERENCE.es.md). 
+Para más información, consulta [Guía de Integración](INTEGRATION_GUIDE.es.md) y [Referencia de API](API_REFERENCE.es.md). 
 
 ```kotlin
 @Composable
@@ -1236,4 +1236,4 @@ fun CustomImagePicker() {
         Text("Tomar foto")
     }
 }
-``` 
+```

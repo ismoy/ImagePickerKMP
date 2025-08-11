@@ -1,4 +1,4 @@
-This document is also available in English: [FAQ.md](docs/FAQ.md)
+This document is also available in English: [FAQ.md](FAQ.md)
 
 # Preguntas Frecuentes (FAQ)
 
@@ -76,7 +76,7 @@ Agrega la dependencia en tu `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.1")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.2")
 }
 ```
 
@@ -650,8 +650,8 @@ Actualmente la corrección es automática y no se puede desactivar, ya que mejor
 ### ¿Dónde puedo obtener ayuda?
 
 - **Documentación**: [README.es.md](../README.es.md)
-- **Referencia de API**: [API_REFERENCE.es.md](docs/API_REFERENCE.es.md)
-- **Ejemplos**: [EXAMPLES.es.md](docs/EXAMPLES.es.md)
+- **Referencia de API**: [API_REFERENCE.es.md](API_REFERENCE.es.md)
+- **Ejemplos**: [EXAMPLES.es.md](EXAMPLES.es.md)
 - **GitHub Issues**: [GitHub Issues](https://github.com/ismoy/ImagePickerKMP/issues)
 - **Discusiones**: [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions)
 - **Email**: belizairesmoy72@gmail.com
@@ -678,8 +678,8 @@ Actualmente la corrección es automática y no se puede desactivar, ya que mejor
 4. **Añade tests**
 5. **Envía un pull request**
 
-Consulta [CONTRIBUTING.es.md](docs/CONTRIBUTING.es.md) para guías detalladas.
+Consulta [CONTRIBUTING.es.md](CONTRIBUTING.es.md) para guías detalladas.
 
 ---
 
-**¿Aún tienes preguntas?** No dudes en preguntar en nuestras [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions) o contáctanos directamente. 
+**¿Aún tienes preguntas?** No dudes en preguntar en nuestras [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions) o contáctanos directamente.
