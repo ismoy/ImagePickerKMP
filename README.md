@@ -75,7 +75,7 @@
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.2")//lastversion
+    implementation("io.github.ismoy:imagepickerkmp:1.0.21")//lastversion
 }
 ```
 #### iOS Permissions Setup
@@ -104,7 +104,7 @@ if (showCamera) {
             onDismiss = { 
                 showImagePicker = false // Reset state when user doesn't select anything
             },
-            // Custom dialog only IOS optional 
+            // Custom dialog only IOS optional delete it for use default UI
             customPickerDialog = { onTakePhoto, onSelectFromGallery, onCancel ->
                 MyCustomBottomSheet(
                     onTakePhoto = onTakePhoto,
@@ -116,7 +116,7 @@ if (showCamera) {
                     }
                 )
             },
-            // Only Android optional 
+            // Only Android optional delete it for use default UI
             cameraCaptureConfig = CameraCaptureConfig(
                 permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
                     customConfirmationView = { photoResult, onConfirm, onRetry ->
@@ -126,7 +126,7 @@ if (showCamera) {
                             onRetry = onRetry
                         )
                     },
-                    // Optional: custom permission handler
+                    // Optional: custom permission handler delete it for use default UI
                     customPermissionHandler = { config ->
                         // Handle permissions here
                     }
@@ -157,7 +157,7 @@ if (showGallery) {
         }
         allowMultiple = true, // False for single selection
         mimeTypes = listOf("image/jpeg", "image/png") ,// Optional: filter by type
-        // Only Android optional 
+        // Only Android optional delete it for use default UI
         cameraCaptureConfig = CameraCaptureConfig(
             permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
                 customConfirmationView = { photoResult, onConfirm, onRetry ->
@@ -183,7 +183,7 @@ For more customization (confirmation views, MIME filtering, etc.), [check out th
 
 #### Step 1: Add the dependency
 ```kotlin
-implementation("io.github.ismoy:imagepickerkmp:1.0.2")
+implementation("io.github.ismoy:imagepickerkmp:1.0.21")
 ```
 #### Step 2: Camera Launcher Example
 ```kotlin
@@ -204,7 +204,7 @@ if (showCamera) {
             onDismiss = {
                 showImagePicker = false // Reset state when user doesn't select anything
             },
-            // Custom dialog only IOS optional 
+            // Custom dialog only IOS optional delete it for use default UI
             customPickerDialog = { onTakePhoto, onSelectFromGallery, onCancel ->
                 MyCustomBottomSheet(
                     onTakePhoto = onTakePhoto,
@@ -216,7 +216,7 @@ if (showCamera) {
                     }
                 )
             },
-            // Only Android optional 
+            // Only Android optional delete it for use default UI
             cameraCaptureConfig = CameraCaptureConfig(
                 permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
                     customConfirmationView = { photoResult, onConfirm, onRetry ->
@@ -226,7 +226,7 @@ if (showCamera) {
                             onRetry = onRetry
                         )
                     },
-                    // Optional: custom permission handler
+                    // Optional: custom permission handler delete it for use default UI
                     customPermissionHandler = { config ->
                         // Handle permissions here
                     }
