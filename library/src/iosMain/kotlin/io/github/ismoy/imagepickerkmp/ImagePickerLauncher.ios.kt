@@ -148,9 +148,6 @@ private fun showImagePickerDialog(
         alert.addAction(
             UIAlertAction.actionWithTitle(config.selectFromGalleryText, 0) { onSelectFromGallery() }
         )
-        val spacerAction = UIAlertAction.actionWithTitle(" ", 0, null)
-        spacerAction.setValue(false, forKey = "enabled")
-        alert.addAction(spacerAction)
         alert.addAction(
             UIAlertAction.actionWithTitle(config.cancelText, 1) { onCancel() }
         )
