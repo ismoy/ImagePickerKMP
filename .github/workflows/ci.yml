@@ -155,10 +155,9 @@ jobs:
           retention-days: 30
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: ismoy/ImagePickerKMP
           file: ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
           flags: unittests
           name: codecov-umbrella
