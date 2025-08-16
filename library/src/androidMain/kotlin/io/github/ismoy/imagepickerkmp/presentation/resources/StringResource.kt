@@ -2,7 +2,7 @@ package io.github.ismoy.imagepickerkmp.presentation.resources
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import io.github.ismoy.R
+import io.github.ismoy.imagepickerkmp.R
 
 @Composable
 internal actual fun stringResource(id: StringResource): String {
