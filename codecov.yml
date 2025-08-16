@@ -9,10 +9,33 @@ coverage:
         target: 90%
         threshold: 1%
         base: auto
+        branches:
+          - develop
+          - main
     patch:
       default:
         target: 85%
         threshold: 5%
+        branches:
+          - develop
+          - main
+
+# Configure which branch to use for the badge
+codecov:
+  branch: develop
+  
+# Configure GitHub checks and annotations
+github_checks:
+  annotations: true
+
+# Force Codecov to process reports even with small changes  
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no
 
 ignore:
   - "**/*Test*"
@@ -39,6 +62,3 @@ comment:
   layout: "reach, diff, flags, files"
   behavior: default
   require_changes: false
-
-github_checks:
-  annotations: true
