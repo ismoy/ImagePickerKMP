@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp
 
+import io.github.ismoy.imagepickerkmp.data.camera.CameraController
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -9,7 +10,7 @@ class CameraControllerEnumTest {
     @Test
     fun testFlashModeEnumValues() {
         // When
-        val flashModes = CameraController.FlashMode.values()
+        val flashModes = CameraController.FlashMode.entries.toTypedArray()
         
         // Then
         assertEquals(3, flashModes.size)
@@ -21,7 +22,7 @@ class CameraControllerEnumTest {
     @Test
     fun testCameraTypeEnumValues() {
         // When
-        val cameraTypes = CameraController.CameraType.values()
+        val cameraTypes = CameraController.CameraType.entries.toTypedArray()
         
         // Then
         assertEquals(2, cameraTypes.size)

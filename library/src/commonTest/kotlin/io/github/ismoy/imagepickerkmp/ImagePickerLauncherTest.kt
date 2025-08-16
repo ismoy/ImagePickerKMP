@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp
 
+import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -7,8 +8,8 @@ import kotlin.test.assertNotNull
 class ImagePickerLauncherTest {
     @Test
     fun testOnPhotoCapturedIsCalled() {
-        val captured = mutableListOf<GalleryPhotoHandler.PhotoResult>()
-        val fakeResult = GalleryPhotoHandler.PhotoResult(
+        val captured = mutableListOf<GalleryPhotoResult>()
+        val fakeResult = GalleryPhotoResult(
             uri = "file:///tmp/photo2.jpg",
             width = 300,
             height = 400,
@@ -38,10 +39,10 @@ class ImagePickerLauncherTest {
 }
 
 class FakeImagePickerLauncher(
-    val onPhotoCaptured: (GalleryPhotoHandler.PhotoResult) -> Unit,
+    val onPhotoCaptured: (GalleryPhotoResult) -> Unit,
     val onError: (Exception) -> Unit
 ) {
-    fun simulateCapture(result: GalleryPhotoHandler.PhotoResult) {
+    fun simulateCapture(result: GalleryPhotoResult) {
         onPhotoCaptured(result)
     }
     fun simulateError(e: Exception) {

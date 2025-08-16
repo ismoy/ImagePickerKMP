@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp
 
+import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -8,7 +9,7 @@ import kotlin.test.assertNotNull
 class GalleryPhotoHandlerTest {
     @Test
     fun testPhotoResultProperties() {
-        val result = GalleryPhotoHandler.PhotoResult(
+        val result = GalleryPhotoResult(
             uri = "file:///tmp/gallery.jpg",
             width = 640,
             height = 480,
@@ -24,21 +25,21 @@ class GalleryPhotoHandlerTest {
 
     @Test
     fun testPhotoResultEquality() {
-        val result1 = GalleryPhotoHandler.PhotoResult(
+        val result1 = GalleryPhotoResult(
             uri = "file:///tmp/gallery.jpg",
             width = 640,
             height = 480,
             fileName = "gallery.jpg",
             fileSize = 98765L
         )
-        val result2 = GalleryPhotoHandler.PhotoResult(
+        val result2 = GalleryPhotoResult(
             uri = "file:///tmp/gallery.jpg",
             width = 640,
             height = 480,
             fileName = "gallery.jpg",
             fileSize = 98765L
         )
-        val result3 = GalleryPhotoHandler.PhotoResult(
+        val result3 = GalleryPhotoResult(
             uri = "file:///tmp/other.jpg",
             width = 320,
             height = 240,

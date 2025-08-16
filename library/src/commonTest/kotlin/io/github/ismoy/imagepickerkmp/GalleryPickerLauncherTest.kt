@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp
 
+import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -8,8 +9,8 @@ import kotlin.test.assertTrue
 class GalleryPickerLauncherTest {
     @Test
     fun testOnPhotosSelectedReceivesList() {
-        val selected = mutableListOf<List<GalleryPhotoHandler.PhotoResult>>()
-        val fakeResult = GalleryPhotoHandler.PhotoResult(
+        val selected = mutableListOf<List<GalleryPhotoResult>>()
+        val fakeResult = GalleryPhotoResult(
             uri = "file:///tmp/photo1.jpg",
             width = 100,
             height = 200,
@@ -53,10 +54,10 @@ class GalleryPickerLauncherTest {
 
     @Test
     fun testMultipleSelection() {
-        val selected = mutableListOf<List<GalleryPhotoHandler.PhotoResult>>()
+        val selected = mutableListOf<List<GalleryPhotoResult>>()
         val results = listOf(
-            GalleryPhotoHandler.PhotoResult("file:///tmp/1.jpg", 10, 10, "1.jpg", 1),
-            GalleryPhotoHandler.PhotoResult("file:///tmp/2.jpg", 20, 20, "2.jpg", 2)
+            GalleryPhotoResult("file:///tmp/1.jpg", 10, 10, "1.jpg", 1),
+            GalleryPhotoResult("file:///tmp/2.jpg", 20, 20, "2.jpg", 2)
         )
         val launcher = FakeGalleryPickerLauncher(
             onPhotosSelected = { selected.add(it) },
@@ -72,7 +73,7 @@ class GalleryPickerLauncherTest {
 
     @Test
     fun testEmptySelection() {
-        val selected = mutableListOf<List<GalleryPhotoHandler.PhotoResult>>()
+        val selected = mutableListOf<List<GalleryPhotoResult>>()
         val launcher = FakeGalleryPickerLauncher(
             onPhotosSelected = { selected.add(it) },
             onError = { },
@@ -98,11 +99,11 @@ class GalleryPickerLauncherTest {
 
     @Test
     fun testMimeTypeFilter() {
-        val selected = mutableListOf<List<GalleryPhotoHandler.PhotoResult>>()
+        val selected = mutableListOf<List<GalleryPhotoResult>>()
         val allowedMime = "image/png"
         val results = listOf(
-            GalleryPhotoHandler.PhotoResult("file:///tmp/1.png", 10, 10, "1.png", 1),
-            GalleryPhotoHandler.PhotoResult("file:///tmp/2.jpg", 20, 20, "2.jpg", 2)
+            GalleryPhotoResult("file:///tmp/1.png", 10, 10, "1.png", 1),
+            GalleryPhotoResult("file:///tmp/2.jpg", 20, 20, "2.jpg", 2)
         )
         val launcher = FakeGalleryPickerLauncher(
             onPhotosSelected = { selected.add(it.filter { r -> r.fileName?.endsWith(".png") == true }) },
@@ -131,11 +132,11 @@ class GalleryPickerLauncherTest {
 }
 
 class FakeGalleryPickerLauncher(
-    val onPhotosSelected: (List<GalleryPhotoHandler.PhotoResult>) -> Unit,
+    val onPhotosSelected: (List<GalleryPhotoResult>) -> Unit,
     val onError: (Exception) -> Unit,
     val onDismiss: () -> Unit
 ) {
-    fun simulateSelection(results: List<GalleryPhotoHandler.PhotoResult>) {
+    fun simulateSelection(results: List<GalleryPhotoResult>) {
         onPhotosSelected(results)
     }
     fun simulateError(e: Exception) {

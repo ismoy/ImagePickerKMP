@@ -2,28 +2,22 @@
   <a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>
   <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Code Coverage"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
-  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.9.0-blue.svg" alt="Kotlin"></a>
+  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.1.21-blue.svg" alt="Kotlin"></a>
 </p>
 
 <p align="center">
-  <a href="https://kotlinlang.org/docs/multiplatform.html"><img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-lightgrey.svg" alt="Platform"></a>
   <a href="https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp.svg?label=Maven%20Central" alt="Maven Central"></a>
   <a href="https://github.com/ismoy/ImagePickerKMP/releases"><img src="https://img.shields.io/github/v/release/ismoy/ImagePickerKMP?label=GitHub%20Release" alt="GitHub Release"></a>
   <a href="https://github.com/ismoy/ImagePickerKMP/stargazers"><img src="https://img.shields.io/github/stars/ismoy/ImagePickerKMP?style=social" alt="GitHub Repo stars"></a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/ismoy/ImagePickerKMP/commits/main"><img src="https://img.shields.io/github/last-commit/ismoy/ImagePickerKMP" alt="GitHub last commit"></a>
-  <a href="https://github.com/ismoy/ImagePickerKMP/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs Welcome"></a>
-  <a href="https://discord.gg/EjSQTeyh"><img src="https://img.shields.io/discord/1393705692484993114.svg?label=Discord&logo=discord&color=7289da" alt="Discord"></a>
+    <a href="https://github.com/ismoy/ImagePickerKMP/commits/main"><img src="https://img.shields.io/github/last-commit/ismoy/ImagePickerKMP" alt="GitHub last commit"></a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Compose%20Multiplatform-green" alt="Compose Multiplatform">
   <img src="https://img.shields.io/badge/Platform-Android-green" alt="Android">
   <img src="https://img.shields.io/badge/Platform-iOS-blue" alt="iOS">
-  <img src="https://img.shields.io/codecov/c/github/ismoy/ImagePickerKMP" alt="Coverage Status">
-  <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml"><img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a>
+  <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml">
+  <img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a>
 </p>
 
 ---
@@ -69,13 +63,12 @@
 ### Installation
 
 ### Using ImagePickerKMP in Kotlin Multiplatform / Compose Multiplatform
-
 #### Step 1: Add the dependency
 <p>In your <code>commonMain</code> <code>build.gradle.kts</code>:</p>
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.21")//lastversion
+    implementation("io.github.ismoy:imagepickerkmp:1.0.22")//lastversion
 }
 ```
 #### iOS Permissions Setup
@@ -85,10 +78,13 @@ dependencies {
 <key>NSCameraUsageDescription</key>
 <string>We need access to the camera to capture a photo.</string>
 ```
+<h1>Basic Use</h1>
+<p>With basic use, default designs will be used.</p>
+
 #### Step 2: Launch the Camera
 ```kotlin
  var showCamera by remember { mutableStateOf(false) }
- var capturedPhoto by remember { mutableStateOf<CameraPhotoHandler.PhotoResult?>(null) }
+var capturedPhoto by remember { mutableStateOf<CameraPhotoHandler.PhotoResult?>(null) }
 ```
 ```kotlin
 if (showCamera) {
@@ -101,37 +97,9 @@ if (showCamera) {
             onError = {
                 showCamera = false
             },
-            onDismiss = { 
+            onDismiss = {
                 showImagePicker = false // Reset state when user doesn't select anything
-            },
-            // Custom dialog only IOS optional delete it for use default UI
-            customPickerDialog = { onTakePhoto, onSelectFromGallery, onCancel ->
-                MyCustomBottomSheet(
-                    onTakePhoto = onTakePhoto,
-                    onSelectFromGallery = onSelectFromGallery,
-                    onDismiss = {
-                        isPickerSheetVisible = false
-                        onCancel()
-                        showCameraPicker = false
-                    }
-                )
-            },
-            // Only Android optional delete it for use default UI
-            cameraCaptureConfig = CameraCaptureConfig(
-                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                    customConfirmationView = { photoResult, onConfirm, onRetry ->
-                        YourCustomConfirmationView(
-                            result = photoResult,
-                            onConfirm = onConfirm,
-                            onRetry = onRetry
-                        )
-                    },
-                    // Optional: custom permission handler delete it for use default UI
-                    customPermissionHandler = { config ->
-                        // Handle permissions here
-                    }
-                )
-            )
+            }
         )
     )
 }
@@ -151,24 +119,12 @@ if (showGallery) {
         onError = { error ->
             showGallery = false
         },
-        onDismiss = { 
+        onDismiss = {
             println("User cancelled or dismissed the picker")
             showGallery = false // Reset state when user doesn't select anything
         }
-        allowMultiple = true, // False for single selection
+                allowMultiple = true, // False for single selection
         mimeTypes = listOf("image/jpeg", "image/png") ,// Optional: filter by type
-        // Only Android optional delete it for use default UI
-        cameraCaptureConfig = CameraCaptureConfig(
-            permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                customConfirmationView = { photoResult, onConfirm, onRetry ->
-                    YourCustomConfirmationView(
-                        result = photoResult,
-                        onConfirm = onConfirm,
-                        onRetry = onRetry
-                    )
-                }
-            )
-        )
     )
 }
 
@@ -176,14 +132,14 @@ Button(onClick = { showGallery = true }) {
     Text("Choose from Gallery")
 }
 ```
-For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for KMP.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md#kotlin-multiplatform--compose-multiplatform)
+### For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for KMP.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md)
 
 ### Using ImagePickerKMP in Android Native (Jetpack Compose)
 <p>Even if you're not using KMP, you can use ImagePickerKMP in pure Android projects with Jetpack Compose.</p>
 
 #### Step 1: Add the dependency
 ```kotlin
-implementation("io.github.ismoy:imagepickerkmp:1.0.21")
+implementation("io.github.ismoy:imagepickerkmp:1.0.22")
 ```
 #### Step 2: Camera Launcher Example
 ```kotlin
@@ -203,35 +159,7 @@ if (showCamera) {
             },
             onDismiss = {
                 showImagePicker = false // Reset state when user doesn't select anything
-            },
-            // Custom dialog only IOS optional delete it for use default UI
-            customPickerDialog = { onTakePhoto, onSelectFromGallery, onCancel ->
-                MyCustomBottomSheet(
-                    onTakePhoto = onTakePhoto,
-                    onSelectFromGallery = onSelectFromGallery,
-                    onDismiss = {
-                        isPickerSheetVisible = false
-                        onCancel()
-                        showCameraPicker = false
-                    }
-                )
-            },
-            // Only Android optional delete it for use default UI
-            cameraCaptureConfig = CameraCaptureConfig(
-                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                    customConfirmationView = { photoResult, onConfirm, onRetry ->
-                        YourCustomConfirmationView(
-                            result = photoResult,
-                            onConfirm = onConfirm,
-                            onRetry = onRetry
-                        )
-                    },
-                    // Optional: custom permission handler delete it for use default UI
-                    customPermissionHandler = { config ->
-                        // Handle permissions here
-                    }
-                )
-            )
+            }
         )
     )
 }
@@ -258,21 +186,9 @@ if (showGallery) {
         },
         onDismiss = {
             showCamera = false
-           },
+        },
         allowMultiple = true, // False for single selection
         mimeTypes = listOf("image/jpeg", "image/png"), // Optional: filter by type
-        // Only Android optional 
-        cameraCaptureConfig = CameraCaptureConfig(
-            permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                customConfirmationView = { photoResult, onConfirm, onRetry ->
-                    YourCustomConfirmationView(
-                        result = photoResult,
-                        onConfirm = onConfirm,
-                        onRetry = onRetry
-                    )
-                }
-            )
-        )
     )
 }
 
@@ -280,26 +196,9 @@ Button(onClick = { showGallery = true }) {
     Text("Choose from Gallery")
 }
 ```
-See the [Android Native integration guide](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md#android-native-jetpack-compose) for more usage details.
-
-- On **Android**, the user will see the system gallery picker.
-- On **iOS**, the native gallery picker is used. On iOS 14+, multiple selection is supported. The system handles permissions and limited access natively.
-- The callback `onPhotosSelected` always receives a list, even for single selection.
-- You can use `allowMultiple` to enable or disable multi-image selection.
-- The `mimeTypes` parameter is optional and lets you filter selectable file types.
-
-## GalleryPickerLauncher Dismiss Fix
-
-The `GalleryPickerLauncher` now includes an `onDismiss` callback to handle cases where users dismiss the picker without selecting any images. This resolves the issue where the picker couldn't be reopened after being dismissed.
-
-The `onDismiss` callback is triggered when:
-- User cancels the selection dialog (Android)
-- User taps "Cancel" (iOS)
-- User cancels camera permission request (iOS)
-- User cancels the camera interface (taps "Cancel" or "X") (iOS)
+### For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for Native.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md)
 
 ## Platform Support
-
 <p align="center">
   <strong>Cross-platform compatibility with intelligent context management</strong>
 </p>
@@ -319,17 +218,17 @@ The `onDismiss` callback is triggered when:
   <strong>The most comprehensive and developer-friendly image picker for Kotlin Multiplatform</strong>
 </p>
 
-### Comparison with Other Libraries
+<h1>ImagePickerKMP</h1>
 
-| Feature                        | ImagePickerKMP | Peekaboo        | KMPImagePicker   |
-|--------------------------------|----------------|-----------------|------------------|
-| **Compose Multiplatform Support** | ✅ Native      | ❌ Android only  | ⚠️ Limited       |
-| **UI Customization**           | ✅ Full control | ⚠️ Basic         | ⚠️ Basic         |
-| **Unified Permissions**        | ✅ Smart handling | ❌ Manual      | ⚠️ Platform-specific |
-| **Error Handling**             | ✅ Comprehensive | ⚠️ Basic        | ⚠️ Basic         |
-| **Camera Integration**         | ✅ Direct access | ✅ Direct access | ⚠️ Gallery only  |
-| **Gallery Support**            | ✅ Multi-select  | ✅ Multi-select  | ✅ Multi-select   |
-| **Cross-platform API**         | ✅ Single codebase | ❌ Platform-specific | ⚠️ Partial  |
+| Feature                        | ImagePickerKMP            
+|--------------------------------|----------------|
+| **Compose Multiplatform Support** | ✅ Native      
+| **UI Customization**           | ✅ Full control 
+| **Unified Permissions**        | ✅ Smart handling 
+| **Error Handling**             | ✅ Comprehensive 
+| **Camera Integration**         | ✅ Direct access 
+| **Gallery Support**            | ✅ Multi-select 
+| **Cross-platform API**         | ✅ Single codebase
 
 ### Key Advantages
 
@@ -350,20 +249,6 @@ The `onDismiss` callback is triggered when:
 - iOS 12.0+
 - Xcode 14+
 - Kotlin Multiplatform
-
-## Platform-Specific Integration
-
-### Android Native (Jetpack Compose)
-
-For detailed Android integration guide, see: [Android Integration Guide](docs/INTEGRATION_GUIDE.md#android-native-jetpack-compose)
-
-### iOS Native (Swift/SwiftUI)
-
-For detailed iOS integration guide, see: [iOS Integration Guide](docs/INTEGRATION_GUIDE.md#ios-native-swiftswiftui)
-
-### Kotlin Multiplatform/Compose Multiplatform
-
-For detailed KMP integration guide, see: [Kotlin Multiplatform Integration Guide](docs/INTEGRATION_GUIDE.md#kotlin-multiplatform--compose-multiplatform)
 
 ## Documentation
 
@@ -389,15 +274,6 @@ For detailed KMP integration guide, see: [Kotlin Multiplatform Integration Guide
 
 ---
 
-## License
-
-<p align="center">
-  This project is licensed under the <strong>MIT License</strong><br>
-  See the <a href="docs/LICENSE">LICENSE</a> file for details.
-</p>
-
----
-
 ## Support & Community
 
 <p align="center">
@@ -408,25 +284,10 @@ For detailed KMP integration guide, see: [Kotlin Multiplatform Integration Guide
   <a href="mailto:belizairesmoy72@gmail.com">📧 Email</a> • 
   <a href="https://github.com/ismoy/ImagePickerKMP/issues">🐛 Issues</a> • 
   <a href="https://github.com/ismoy/ImagePickerKMP/wiki">📖 Wiki</a> • 
-  <a href="https://discord.gg/EjSQTeyh">💬 Discord</a>
+  <a href="https://discord.com/channels/1393705692484993114/1393706133864190133">💬 Discord</a>
 </p>
-
-## Changelog
-
-<p align="center">
-  See <a href="docs/CHANGELOG.md">CHANGELOG.md</a> for a complete list of changes and updates.
-</p>
-
----
 
 <p align="center">
   <strong>Made with ❤️ for the Kotlin Multiplatform community</strong><br>
   <em>Star ⭐ this repo if it helped you!</em>
-</p>
-
-<p align="center">
-  <a href="https://github.com/ismoy/ImagePickerKMP/stargazers">⭐ Star on GitHub</a> • 
-  <a href="https://github.com/ismoy/ImagePickerKMP/fork">🍴 Fork</a> • 
-  <a href="https://github.com/ismoy/ImagePickerKMP/issues/new">🐛 Report Bug</a> • 
-  <a href="https://github.com/ismoy/ImagePickerKMP/issues/new">💡 Request Feature</a>
 </p>

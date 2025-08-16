@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.22] - 2024-12-XX
+
+### Added
+
+- **Custom Permission Dialog Composables**: New `customDeniedDialog` and `customSettingsDialog` parameters in `PermissionAndConfirmationConfig`
+  - `customDeniedDialog`: Custom composable for when permission is denied (allows retry)
+  - `customSettingsDialog`: Custom composable for when permission is permanently denied (opens settings)
+- **Complete UI Control**: Full customization of permission dialogs with your own composables
+- **Cross-platform Support**: Custom permission dialogs work on both Android and iOS
+- **Enhanced Developer Experience**: Easy-to-use API for permission dialog customization
+
+### Changed
+
+- Updated `PermissionAndConfirmationConfig` data class with new optional parameters
+- Enhanced permission handling flow to support custom composable dialogs
+- Improved documentation with comprehensive examples of custom permission dialogs
+
+### Fixed
+
+- Permission dialog flow now properly handles custom composables on both platforms
+
 ### Added
 
 - Custom permission dialogs
@@ -194,7 +215,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    implementation("io.github.ismoy:imagepickerkmp:0.9.0")
    
    // New
-   implementation("io.github.ismoy:imagepickerkmp:1.0.2")
+   implementation("io.github.ismoy:imagepickerkmp:1.0.22")
    ```
 
 2. **Update Permission Handling**

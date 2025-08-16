@@ -12,6 +12,7 @@ class CameraPhotoHandlerTest {
 }
 */
 
+import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -20,7 +21,7 @@ import kotlin.test.assertNotNull
 class CameraPhotoHandlerTest {
     @Test
     fun testPhotoResultProperties() {
-        val result = CameraPhotoHandler.PhotoResult(
+        val result = PhotoResult(
             uri = "file:///tmp/camera.jpg",
             width = 800,
             height = 600
@@ -32,17 +33,17 @@ class CameraPhotoHandlerTest {
 
     @Test
     fun testPhotoResultEquality() {
-        val result1 = CameraPhotoHandler.PhotoResult(
+        val result1 = PhotoResult(
             uri = "file:///tmp/camera.jpg",
             width = 800,
             height = 600
         )
-        val result2 = CameraPhotoHandler.PhotoResult(
+        val result2 = PhotoResult(
             uri = "file:///tmp/camera.jpg",
             width = 800,
             height = 600
         )
-        val result3 = CameraPhotoHandler.PhotoResult(
+        val result3 = PhotoResult(
             uri = "file:///tmp/other.jpg",
             width = 320,
             height = 240

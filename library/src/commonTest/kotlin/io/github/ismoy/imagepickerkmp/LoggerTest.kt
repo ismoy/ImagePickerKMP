@@ -1,5 +1,7 @@
 package io.github.ismoy.imagepickerkmp
 
+import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
+import io.github.ismoy.imagepickerkmp.domain.utils.ImagePickerLogger
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue

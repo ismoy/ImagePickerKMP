@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.github.ismoy.imagepickerkmp.presentation.ui.screens.CameraCaptureView
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

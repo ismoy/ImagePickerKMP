@@ -345,9 +345,18 @@ Configuración para permisos y confirmación.
 ```kotlin
 data class PermissionAndConfirmationConfig(
     val customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    val customConfirmationView: (@Composable (CameraPhotoHandler.PhotoResult, (CameraPhotoHandler.PhotoResult) -> Unit, () -> Unit) -> Unit)? = null
+    val customConfirmationView: (@Composable (CameraPhotoHandler.PhotoResult, (CameraPhotoHandler.PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
+    val customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))? = null,
+    val customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null
 )
 ```
+
+#### Parámetros
+
+- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejador personalizado de permisos para personalización basada en texto
+- `customConfirmationView: (@Composable (...) -> Unit)?` - Composable personalizado para confirmación de foto
+- `customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))?` - Diálogo composable personalizado cuando se deniega el permiso
+- `customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))?` - Diálogo composable personalizado para abrir configuración
 
 ### UiConfig
 

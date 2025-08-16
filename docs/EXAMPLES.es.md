@@ -229,6 +229,139 @@ fun TestPermissionFlow() {
 }
 ```
 
+### Diálogos de Permisos Composables Personalizados (Nuevo en v1.0.22)
+
+```kotlin
+@Composable
+fun CustomPermissionDialogsExample() {
+    var showPicker by remember { mutableStateOf(false) }
+
+    if (showPicker) {
+        ImagePickerLauncher(
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result -> showPicker = false },
+                onError = { showPicker = false },
+                onDismiss = { showPicker = false },
+                cameraCaptureConfig = CameraCaptureConfig(
+                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                        // Diálogo personalizado cuando se deniega el permiso
+                        customDeniedDialog = { onRetry ->
+                            CustomRetryDialog(
+                                title = "Permiso de Cámara Necesario",
+                                message = "Necesitamos acceso a la cámara para tomar fotos",
+                                onRetry = onRetry
+                            )
+                        },
+                        // Diálogo personalizado cuando el permiso es denegado permanentemente
+                        customSettingsDialog = { onOpenSettings ->
+                            CustomSettingsDialog(
+                                title = "Abrir Configuración",
+                                message = "Por favor habilita el permiso de cámara en Configuración",
+                                onOpenSettings = onOpenSettings
+                            )
+                        }
+                    )
+                )
+            )
+        )
+    }
+
+    Button(onClick = { showPicker = true }) {
+        Text("Tomar Foto con Diálogos de Permisos Personalizados")
+    }
+}
+
+@Composable
+fun CustomRetryDialog(
+    title: String,
+    message: String,
+    onRetry: () -> Unit
+) {
+    Dialog(onDismissRequest = { }) {
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "📸",
+                    fontSize = 48.sp,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Text(
+                    text = title,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                Text(
+                    text = message,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+                Button(
+                    onClick = onRetry,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Conceder Permiso")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CustomSettingsDialog(
+    title: String,
+    message: String,
+    onOpenSettings: () -> Unit
+) {
+    Dialog(onDismissRequest = { }) {
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "⚙️",
+                    fontSize = 48.sp,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Text(
+                    text = title,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                Text(
+                    text = message,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+                Button(
+                    onClick = onOpenSettings,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Abrir Configuración")
+                }
+            }
+        }
+    }
+}
+```
+
 ## Selección de Galería
 
 > **Nota:** No necesitas solicitar permisos de galería manualmente. La librería gestiona automáticamente la solicitud de permisos y el flujo de usuario tanto en Android como en iOS, proporcionando una experiencia nativa en cada plataforma.
@@ -520,7 +653,7 @@ fun CustomErrorMessagesExample() {
 ```kotlin
 // build.gradle.kts (nivel de app)
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.2")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.22")
     implementation("androidx.compose.ui:ui:1.4.0")
     implementation("androidx.compose.material:material:1.4.0")
     implementation("androidx.activity:activity-compose:1.7.0")
@@ -992,7 +1125,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("io.github.ismoy:imagepickerkmp:1.0.2")
+                implementation("io.github.ismoy:imagepickerkmp:1.0.22")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
                 implementation("org.jetbrains.compose.runtime:runtime:1.4.0")
             }
