@@ -159,7 +159,7 @@ naming:
     active: true
     enumEntryPattern: '[A-Z][_A-Z0-9]*'
   PackageNaming:
-    active: true
+    active: false
     packagePattern: '^[a-z]+(\.[a-z][a-z0-9]*)*$'
 
 coroutines:

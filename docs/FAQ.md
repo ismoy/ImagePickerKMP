@@ -76,7 +76,7 @@ Add the dependency to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.2")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.22")
 }
 ```
 

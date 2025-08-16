@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp
 
+import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

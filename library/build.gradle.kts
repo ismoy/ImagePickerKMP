@@ -10,6 +10,7 @@ plugins {
     id("maven-publish")
     id("jacoco")
     id("io.gitlab.arturbosch.detekt")
+    id("org.jetbrains.dokka") version "1.9.20"
 }
 
 jacoco {
@@ -60,14 +61,14 @@ tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
             limit {
                 counter = "LINE"
                 value = "COVEREDRATIO"
-                minimum = "0.04".toBigDecimal()
+                minimum = "0.80".toBigDecimal()
             }
         }
         rule {
             limit {
                 counter = "BRANCH"
                 value = "COVEREDRATIO"
-                minimum = "0.00".toBigDecimal()
+                minimum = "0.70".toBigDecimal()
             }
         }
     }
@@ -128,6 +129,8 @@ kotlin {
                 implementation(libs.compose.material)
                 implementation(libs.kotlinx.coroutines.core.v1102)
                 implementation("io.coil-kt.coil3:coil-compose:3.2.0")
+                implementation("io.insert-koin:koin-core:3.5.3")
+                implementation("io.insert-koin:koin-compose:1.1.2")
             }
         }
         val androidMain by getting {
@@ -143,6 +146,10 @@ kotlin {
                 implementation(libs.androidx.ui)
                 implementation(libs.androidx.ui.tooling.preview)
                 implementation("androidx.compose.material:material-icons-extended:1.5.4")
+                
+                // Koin for Android
+                implementation("io.insert-koin:koin-android:3.5.3")
+                implementation("io.insert-koin:koin-androidx-compose:3.5.3")
             }
         }
         val iosResourcesDir =
@@ -188,6 +195,9 @@ kotlin {
                 implementation("androidx.test:core:1.5.0")
                 implementation("androidx.test.ext:junit:1.1.5")
                 implementation("androidx.compose.material3:material3:1.2.0")
+                
+                // Kotlin test
+                implementation(kotlin("test"))
             }
         }
         val androidInstrumentedTest by getting {}
@@ -229,7 +239,7 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.21"
+        version = "1.0.22"
     )
     pom {
         name.set("ImagePickerKMP")
@@ -260,7 +270,14 @@ mavenPublishing{
             developerConnection.set("scm:git:git://github.com/ismoy/ImagePickerKMP.git")
         }
     }
-    //publishToMavenCentral()
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+    configure(
+        com.vanniktech.maven.publish.KotlinMultiplatform(
+            javadocJar = com.vanniktech.maven.publish.JavadocJar.Dokka("dokkaHtml"),
+            sourcesJar = true
+        )
+    )
 }
 afterEvaluate {
     publishing {

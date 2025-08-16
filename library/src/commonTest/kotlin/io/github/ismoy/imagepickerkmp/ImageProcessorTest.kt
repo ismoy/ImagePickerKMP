@@ -1,5 +1,7 @@
 package io.github.ismoy.imagepickerkmp
 
+import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
+import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -9,7 +11,7 @@ import kotlin.test.assertFailsWith
 class ImageProcessorTest {
     @Test
     fun testPhotoResultDataClass() {
-        val result = GalleryPhotoHandler.PhotoResult(
+        val result = GalleryPhotoResult(
             uri = "file:///tmp/test.jpg",
             width = 100,
             height = 200,
