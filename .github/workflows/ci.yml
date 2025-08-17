@@ -154,27 +154,15 @@ jobs:
           path: library/build/reports/jacoco/jacocoTestReport/
           retention-days: 30
 
-      - name: Debug coverage file before upload
-        run: |
-          echo "=== Verifying coverage file before Codecov upload ==="
-          ls -la ./library/build/reports/jacoco/jacocoTestReport/
-          echo "=== File size and first/last lines ==="
-          wc -l ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
-          head -3 ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
-          tail -3 ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
-
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          slug: ismoy/ImagePickerKMP
           file: ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
-          verbose: true
-          override_branch: develop
-          override_build: ${{ github.run_number }}
-          override_commit: ${{ github.sha }}
 
       - name: Comment PR with coverage summary
         if: github.event_name == 'pull_request'
