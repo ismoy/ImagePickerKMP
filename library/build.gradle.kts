@@ -267,13 +267,13 @@ kotlin {
                     exclude(group = "org.jetbrains.kotlin", module = "kotlin-test-junit5")
                 }
                 
-                implementation("org.jetbrains.kotlin:kotlin-test-junit:2.1.21")
+                implementation("org.jetbrains.kotlin:kotlin-test:2.1.21")
             }
         }
         val androidInstrumentedTest by getting {}
         val commonTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-junit:2.1.21")
+                implementation("org.jetbrains.kotlin:kotlin-test:2.1.21")
             }
         }
     }

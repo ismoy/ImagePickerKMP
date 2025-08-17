@@ -42,7 +42,7 @@ class ImageProcessor(
                     }
                 } else {
                     withContext(Dispatchers.Main) {
-                        ImageProcessingException("Failed to decode captured image.")
+                        onError(ImageProcessingException("Failed to decode captured image."))
                     }
                 }
             } catch (e: Exception) {
