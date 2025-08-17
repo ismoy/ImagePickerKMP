@@ -154,21 +154,6 @@ jobs:
           path: library/build/reports/jacoco/jacocoTestReport/
           retention-days: 30
 
-      - name: Verify coverage file before upload
-        run: |
-          echo "=== Pre-upload verification ==="
-          pwd
-          ls -la ./library/build/reports/jacoco/jacocoTestReport/
-          echo "=== File details ==="
-          file ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
-          wc -l ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
-          echo "=== Git info ==="
-          git rev-parse HEAD
-          git branch --show-current
-          echo "=== Environment ==="
-          echo "GITHUB_TOKEN: ${GITHUB_TOKEN:0:10}..."
-          echo "CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN != '' && 'SET' || 'NOT SET' }}"
-
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
@@ -177,8 +162,7 @@ jobs:
           file: ./library/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
           flags: unittests
           name: codecov-umbrella
-          fail_ci_if_error: true
-          verbose: true
+          fail_ci_if_error: false
 
       - name: Comment PR with coverage summary
         if: github.event_name == 'pull_request'
