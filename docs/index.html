@@ -168,13 +168,13 @@
 
   <body>
     <div
-      class="relative flex size-full min-h-screen flex-col bg-white dark:bg-gray-900 group/design-root overflow-x-hidden"
+      class="relative flex size-full min-h-screen flex-col bg-white dark:bg-gray-900 group/design-root overflow-x-hidden w-full"
       style="font-family: Inter, 'Noto Sans', sans-serif"
     >
       <header
-        class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f5] dark:border-b-gray-700 px-10 py-3 bg-white dark:bg-gray-900"
+        class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f5] dark:border-b-gray-700 px-4 md:px-10 py-3 bg-white dark:bg-gray-900"
       >
-        <div class="flex items-center gap-4 text-[#111418] dark:text-gray-200">
+        <div class="flex items-center gap-2 md:gap-4 text-[#111418] dark:text-gray-200">
           <div class="size-4">
             <svg
               viewBox="0 0 48 48"
@@ -193,14 +193,14 @@
             rel="noopener noreferrer"
           >
             <h2
-              class="text-[#111418] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] hover:text-[#0d80f2] dark:hover:text-blue-400 transition-colors cursor-pointer"
+              class="text-[#111418] dark:text-gray-200 text-sm md:text-lg font-bold leading-tight tracking-[-0.015em] hover:text-[#0d80f2] dark:hover:text-blue-400 transition-colors cursor-pointer"
             >
               ImagePickerKMP
             </h2>
           </a>
         </div>
-        <div class="flex flex-1 justify-end gap-8">
-          <div class="flex items-center gap-9">
+        <div class="flex flex-1 justify-end gap-2 md:gap-8">
+          <div class="hidden md:flex items-center gap-9">
             <a
               class="text-[#111418] dark:text-gray-200 text-sm font-medium leading-normal hover:text-[#0d80f2] dark:hover:text-blue-400 transition-colors"
               href="#examples"
@@ -212,7 +212,7 @@
               href="https://github.com/ismoy/ImagePickerKMP"
               target="_blank"
               rel="noopener noreferrer"
-              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#0d80f2] text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#0c6fd1] transition-colors"
+              class="flex w-auto md:min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 md:h-10 px-2 md:px-4 bg-[#0d80f2] text-white text-xs md:text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#0c6fd1] transition-colors"
             >
               <span class="truncate">Get started</span>
             </a>
@@ -244,25 +244,25 @@
         </div>
       </header>
 
-      <main class="flex-1 overflow-y-auto pt-[90px] pb-[160px]">
-        <div class="px-40 flex flex-1 justify-center py-5">
+      <main class="flex-1 overflow-y-auto overflow-x-hidden pt-[70px] pb-[140px] w-full">
+        <div class="px-4 sm:px-6 md:px-20 lg:px-40 flex flex-1 justify-center py-4">
           <div
-            class="layout-content-container flex flex-col max-w-[960px] flex-1"
+            class="layout-content-container flex flex-col w-full max-w-[960px] flex-1"
           >
-            <div class="@container">
-              <div class="@[480px]:p-4">
+            <div class="@container w-full">
+              <div class="p-2 md:p-4">
                 <div
-                  class="hero-section flex min-h-[480px] flex-col gap-6 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 @[480px]:gap-8 @[480px]:rounded-lg items-start justify-end px-4 pb-10 @[480px]:px-10 relative overflow-hidden border border-gray-200 dark:border-gray-600"
+                  class="hero-section flex min-h-[280px] sm:min-h-[320px] md:min-h-[380px] flex-col gap-4 md:gap-6 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-lg items-start justify-end px-4 md:px-10 py-6 md:pb-10 relative overflow-hidden border border-gray-200 dark:border-gray-600"
                 >
                   <div class="flex flex-col gap-2 text-left">
                     <h1
-                      class="text-gray-900 dark:text-gray-100 text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-5xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em]"
+                      class="text-gray-900 dark:text-gray-100 text-xl md:text-3xl lg:text-4xl font-black leading-tight tracking-[-0.015em]"
                     >
                       ImagePickerKMP: Best Cross‑Platform Image Picker & Camera
                       Capture Library
                     </h1>
                     <h2
-                      class="text-gray-700 dark:text-gray-300 text-sm font-normal leading-normal @[480px]:text-base @[480px]:font-normal @[480px]:leading-normal"
+                      class="text-gray-700 dark:text-gray-300 text-sm md:text-base font-normal leading-normal"
                     >
                       The ultimate ImagePickerKMP library for cross‑platform
                       image picker and camera capture on Android & iOS. Built
@@ -274,7 +274,7 @@
 
                     <div class="flex flex-wrap gap-3 mt-4 items-center">
                       <div
-                        class="flex items-center gap-2 bg-blue-100 rounded-lg px-3 py-1.5 border border-blue-200"
+                        class="flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg px-3 py-1.5 border border-blue-200 dark:border-blue-700"
                       >
                         <svg
                           width="18"
@@ -291,12 +291,12 @@
                             stroke-linejoin="round"
                           />
                         </svg>
-                        <span class="text-blue-700 text-xs font-medium"
+                        <span class="text-blue-700 dark:text-blue-300 text-xs font-medium"
                           >Kotlin Multiplatform</span
                         >
                       </div>
                       <div
-                        class="flex items-center gap-2 bg-purple-100 rounded-lg px-3 py-1.5 border border-purple-200"
+                        class="flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg px-3 py-1.5 border border-purple-200 dark:border-purple-700"
                       >
                         <svg
                           width="18"
@@ -332,12 +332,12 @@
                             stroke-width="2"
                           />
                         </svg>
-                        <span class="text-purple-700 text-xs font-medium"
+                        <span class="text-purple-700 dark:text-purple-300 text-xs font-medium"
                           >Compose Multiplatform</span
                         >
                       </div>
                       <div
-                        class="flex items-center gap-2 bg-orange-100 rounded-lg px-3 py-1.5 border border-orange-200"
+                        class="flex items-center gap-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg px-3 py-1.5 border border-orange-200 dark:border-orange-700"
                       >
                         <svg
                           width="18"
@@ -368,12 +368,12 @@
                             stroke-linejoin="round"
                           />
                         </svg>
-                        <span class="text-orange-700 text-xs font-medium"
+                        <span class="text-orange-700 dark:text-orange-300 text-xs font-medium"
                           >Kotlin</span
                         >
                       </div>
                       <div
-                        class="flex items-center gap-2 bg-green-100 rounded-lg px-3 py-1.5 border border-green-200"
+                        class="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 rounded-lg px-3 py-1.5 border border-green-200 dark:border-green-700"
                       >
                         <svg
                           width="18"
@@ -398,12 +398,12 @@
                             stroke-width="2"
                           />
                         </svg>
-                        <span class="text-green-700 text-xs font-medium"
+                        <span class="text-green-700 dark:text-green-300 text-xs font-medium"
                           >iOS</span
                         >
                       </div>
                       <div
-                        class="flex items-center gap-2 bg-emerald-100 rounded-lg px-3 py-1.5 border border-emerald-200"
+                        class="flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg px-3 py-1.5 border border-emerald-200 dark:border-emerald-700"
                       >
                         <svg
                           width="18"
@@ -429,7 +429,7 @@
                             stroke-width="2"
                           />
                         </svg>
-                        <span class="text-emerald-700 text-xs font-medium"
+                        <span class="text-emerald-700 dark:text-emerald-300 text-xs font-medium"
                           >Android</span
                         >
                       </div>
@@ -439,20 +439,20 @@
               </div>
             </div>
             <h2
-              class="text-[#111418] dark:text-gray-200 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5"
+              class="text-[#111418] dark:text-gray-200 text-lg sm:text-xl md:text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5"
             >
               Why Choose ImagePickerKMP for Cross-Platform Development
             </h2>
-            <div class="flex flex-col gap-10 px-4 py-10 @container">
+            <div class="flex flex-col gap-6 sm:gap-10 px-4 py-6 sm:py-10 @container w-full">
               <div class="flex flex-col gap-4">
                 <h1
-                  class="text-[#111418] dark:text-gray-200 tracking-light text-[32px] font-bold leading-tight @[480px]:text-4xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em] max-w-[720px]"
+                  class="text-[#111418] dark:text-gray-200 tracking-light text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight md:font-black md:tracking-[-0.033em] w-full"
                 >
                   Powerful Image Picker and Camera Features for Mobile
                   Development
                 </h1>
                 <p
-                  class="text-[#111418] dark:text-gray-300 text-base font-normal leading-normal max-w-[720px]"
+                  class="text-[#111418] dark:text-gray-300 text-base font-normal leading-normal w-full"
                 >
                   ImagePickerKMP provides seamless image picker, camera capture,
                   and photo selection functionality across Android and iOS
@@ -461,7 +461,7 @@
                 </p>
               </div>
               <div
-                class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-0"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-0"
               >
                 <div
                   class="flex flex-1 gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 flex-col"
@@ -578,7 +578,7 @@
             </div>
             <h2
               id="examples"
-              class="text-[#111418] dark:text-gray-200 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5"
+              class="text-[#111418] dark:text-gray-200 text-lg sm:text-xl md:text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5"
             >
               Code Examples
             </h2>
@@ -625,18 +625,18 @@
                 Multiplatform Architecture
               </h3>
 
-              <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
                 <div
-                  class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4"
+                  class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 sm:p-4"
                 >
                   <div class="flex items-center gap-2 mb-3">
                     <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <span class="text-sm font-medium text-blue-700"
-                      >commonMain</span
+                    <span class="text-sm font-medium text-blue-700 dark:text-blue-300"
+                    >commonMain</span
                     >
                   </div>
                   <pre
-                    class="text-xs text-gray-800 overflow-x-auto"
+                    class="text-xs sm:text-sm text-gray-800 dark:text-gray-200 overflow-x-auto"
                   ><code>@Composable
 expect fun ImagePickerLauncher(
     config: ImagePickerConfig
@@ -651,16 +651,16 @@ expect fun GalleryPickerLauncher(
                 </div>
 
                 <div
-                  class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4"
+                  class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 sm:p-4"
                 >
                   <div class="flex items-center gap-2 mb-3">
                     <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span class="text-sm font-medium text-green-700"
+                    <span class="text-sm font-medium text-green-700 dark:text-green-300"
                       >androidMain</span
                     >
                   </div>
                   <pre
-                    class="text-xs text-gray-800 overflow-x-auto"
+                    class="text-xs sm:text-sm text-gray-800 dark:text-gray-200 overflow-x-auto"
                   ><code>@Composable
 actual fun ImagePickerLauncher(
     config: ImagePickerConfig
@@ -675,16 +675,16 @@ actual fun ImagePickerLauncher(
                 </div>
 
                 <div
-                  class="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg p-4"
+                  class="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-3 sm:p-4"
                 >
                   <div class="flex items-center gap-2 mb-3">
                     <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
-                    <span class="text-sm font-medium text-purple-700"
+                    <span class="text-sm font-medium text-purple-700 dark:text-purple-300"
                       >iosMain</span
                     >
                   </div>
                   <pre
-                    class="text-xs text-gray-800 overflow-x-auto"
+                    class="text-xs sm:text-sm text-gray-800 dark:text-gray-200 overflow-x-auto"
                   ><code>@Composable
 actual fun ImagePickerLauncher(
     config: ImagePickerConfig
@@ -740,7 +740,7 @@ actual fun ImagePickerLauncher(
               </h3>
 
               <div
-                class="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-gray-800 dark:text-green-400 font-mono text-sm overflow-x-auto"
+                class="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 md:p-6 text-gray-800 dark:text-green-400 font-mono text-xs sm:text-sm overflow-x-auto"
               >
                 <pre><code><span class="text-purple-600 dark:text-purple-400">@Composable</span>
 <span class="text-blue-600 dark:text-blue-400">fun</span> <span class="text-orange-600 dark:text-yellow-300">MyImageScreen</span>() {
@@ -773,9 +773,9 @@ actual fun ImagePickerLauncher(
             </div>
 
             <div class="px-4 py-2">
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <div
-                  class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200"
+                  class="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
                 >
                   <div
                     class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center"
@@ -783,14 +783,14 @@ actual fun ImagePickerLauncher(
                     <span class="text-white text-sm font-bold">1</span>
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-blue-900">One API</p>
-                    <p class="text-xs text-blue-600">
+                    <p class="text-sm font-medium text-blue-900 dark:text-blue-300">One API</p>
+                    <p class="text-xs text-blue-600 dark:text-blue-400">
                       Write once, run everywhere
                     </p>
                   </div>
                 </div>
                 <div
-                  class="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200"
+                  class="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800"
                 >
                   <div
                     class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center"
@@ -798,16 +798,16 @@ actual fun ImagePickerLauncher(
                     <span class="text-white text-sm font-bold">2</span>
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-green-900">
+                    <p class="text-sm font-medium text-green-900 dark:text-green-300">
                       Native Performance
                     </p>
-                    <p class="text-xs text-green-600">
+                    <p class="text-xs text-green-600 dark:text-green-400">
                       Platform-specific implementations
                     </p>
                   </div>
                 </div>
                 <div
-                  class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200"
+                  class="flex items-center gap-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800"
                 >
                   <div
                     class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center"
@@ -815,10 +815,10 @@ actual fun ImagePickerLauncher(
                     <span class="text-white text-sm font-bold">3</span>
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-purple-900">
+                    <p class="text-sm font-medium text-purple-900 dark:text-purple-300">
                       Type Safety
                     </p>
-                    <p class="text-xs text-purple-600">
+                    <p class="text-xs text-purple-600 dark:text-purple-400">
                       Kotlin's compile-time guarantees
                     </p>
                   </div>
@@ -826,12 +826,12 @@ actual fun ImagePickerLauncher(
               </div>
             </div>
             <h2
-              class="text-[#111418] dark:text-gray-200 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5"
+              class="text-[#111418] dark:text-gray-200 text-base sm:text-lg md:text-xl lg:text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5 text-center sm:text-left"
             >
               Get Started with ImagePickerKMP - Free Open Source Library
             </h2>
             <p
-              class="text-[#111418] dark:text-gray-300 text-base font-normal leading-normal pb-3 pt-1 px-4"
+              class="text-[#111418] dark:text-gray-300 text-sm sm:text-base font-normal leading-normal pb-3 pt-1 px-4 text-center sm:text-left"
             >
               Ready to add powerful image picker, camera capture, and photo
               selection capabilities to your mobile app? Download ImagePickerKMP
@@ -843,7 +843,7 @@ actual fun ImagePickerLauncher(
                 href="https://github.com/ismoy/ImagePickerKMP"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-[#0d80f2] text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-[#0c6fd1] transition-colors"
+                class="flex w-auto sm:min-w-[160px] max-w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 sm:h-12 px-4 sm:px-5 bg-[#0d80f2] text-white text-sm sm:text-base font-bold leading-normal tracking-[0.015em] hover:bg-[#0c6fd1] transition-colors"
                 aria-label="Download ImagePickerKMP from GitHub - Best Cross-Platform Image Picker Library"
               >
                 <span class="truncate">Download ImagePickerKMP on GitHub</span>
@@ -854,16 +854,16 @@ actual fun ImagePickerLauncher(
               class="px-4 py-8 border-t border-gray-200 dark:border-gray-700 mt-8"
             >
               <h2
-                class="text-[#111418] dark:text-gray-200 text-xl font-bold mb-4"
+                class="text-[#111418] dark:text-gray-200 text-xl font-bold mb-6 text-center sm:text-left"
               >
                 Why ImagePickerKMP is the Best Cross-Platform Image Picker
                 Library for Mobile Developers
               </h2>
               <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm text-[#60758a] dark:text-gray-400"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 text-sm text-[#60758a] dark:text-gray-400"
               >
-                <div>
-                  <div class="flex items-center gap-3 mb-3">
+                <div class="flex flex-col gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 text-center sm:text-left">
+                  <div class="flex items-center justify-center sm:justify-start gap-3">
                     <div
                       class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center"
                     >
@@ -894,8 +894,8 @@ actual fun ImagePickerLauncher(
                     you're ready to go with full photo selection capabilities.
                   </p>
                 </div>
-                <div>
-                  <div class="flex items-center gap-3 mb-3">
+                <div class="flex flex-col gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 text-center sm:text-left">
+                  <div class="flex items-center justify-center sm:justify-start gap-3">
                     <div
                       class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center"
                     >
@@ -945,8 +945,8 @@ actual fun ImagePickerLauncher(
                     up to 70%.
                   </p>
                 </div>
-                <div>
-                  <div class="flex items-center gap-3 mb-3">
+                <div class="flex flex-col gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 text-center sm:text-left">
+                  <div class="flex items-center justify-center sm:justify-start gap-3">
                     <div
                       class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center"
                     >
@@ -982,8 +982,8 @@ actual fun ImagePickerLauncher(
                     and native camera integration.
                   </p>
                 </div>
-                <div>
-                  <div class="flex items-center gap-3 mb-3">
+                <div class="flex flex-col gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 text-center sm:text-left">
+                  <div class="flex items-center justify-center sm:justify-start gap-3">
                     <div
                       class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center"
                     >
@@ -1014,8 +1014,8 @@ actual fun ImagePickerLauncher(
                     with Compose Multiplatform integration.
                   </p>
                 </div>
-                <div>
-                  <div class="flex items-center gap-3 mb-3">
+                <div class="flex flex-col gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 text-center sm:text-left">
+                  <div class="flex items-center justify-center sm:justify-start gap-3">
                     <div
                       class="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center"
                     >
@@ -1060,8 +1060,8 @@ actual fun ImagePickerLauncher(
                     permission explanations without extra setup.
                   </p>
                 </div>
-                <div>
-                  <div class="flex items-center gap-3 mb-3">
+                <div class="flex flex-col gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 text-center sm:text-left">
+                  <div class="flex items-center justify-center sm:justify-start gap-3">
                     <div
                       class="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center"
                     >
@@ -1086,9 +1086,7 @@ actual fun ImagePickerLauncher(
                         />
                       </svg>
                     </div>
-                    <h3
-                      class="font-semibold text-[#111418] dark:text-gray-200 mb-2"
-                    >
+                    <h3 class="font-semibold text-[#111418] dark:text-gray-200">
                       Developer-First Experience
                     </h3>
                   </div>
@@ -1105,21 +1103,21 @@ actual fun ImagePickerLauncher(
                 class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600"
               >
                 <h3
-                  class="text-[#111418] dark:text-gray-200 text-lg font-semibold mb-4"
+                  class="text-[#111418] dark:text-gray-200 text-lg font-semibold mb-6 text-center sm:text-left"
                 >
                   Advanced ImagePickerKMP Features for Professional Development
                 </h3>
                 <div
-                  class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-[#60758a] dark:text-gray-400"
+                  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-4 text-xs text-[#60758a] dark:text-gray-400"
                 >
-                  <div class="space-y-2">
-                    <div class="flex items-center gap-2 mb-2">
+                  <div class="flex flex-col gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 w-full text-center sm:text-left">
+                    <div class="flex items-center justify-center sm:justify-start gap-2">
                       <div
-                        class="w-5 h-5 bg-gradient-to-br from-blue-500 to-blue-600 rounded flex items-center justify-center"
+                        class="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center"
                       >
                         <svg
-                          width="12"
-                          height="12"
+                          width="14"
+                          height="14"
                           viewBox="0 0 24 24"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -1138,25 +1136,25 @@ actual fun ImagePickerLauncher(
                           />
                         </svg>
                       </div>
-                      <p class="font-medium text-[#111418] dark:text-gray-200">
+                      <h4 class="font-semibold text-sm text-[#111418] dark:text-gray-200">
                         Camera Features
-                      </p>
+                      </h4>
                     </div>
-                    <ul class="space-y-1">
+                    <ul class="space-y-1.5 text-xs">
                       <li>• Native camera capture</li>
                       <li>• Front/back camera switch</li>
                       <li>• Flash control</li>
                       <li>• Image quality settings</li>
                     </ul>
                   </div>
-                  <div class="space-y-2">
-                    <div class="flex items-center gap-2 mb-2">
+                  <div class="flex flex-col gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 w-full text-center sm:text-left">
+                    <div class="flex items-center justify-center sm:justify-start gap-2">
                       <div
-                        class="w-5 h-5 bg-gradient-to-br from-green-500 to-green-600 rounded flex items-center justify-center"
+                        class="w-6 h-6 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center"
                       >
                         <svg
-                          width="12"
-                          height="12"
+                          width="14"
+                          height="14"
                           viewBox="0 0 24 24"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -1185,25 +1183,25 @@ actual fun ImagePickerLauncher(
                           />
                         </svg>
                       </div>
-                      <p class="font-medium text-[#111418] dark:text-gray-200">
+                      <h4 class="font-semibold text-sm text-[#111418] dark:text-gray-200">
                         Gallery Integration
-                      </p>
+                      </h4>
                     </div>
-                    <ul class="space-y-1">
+                    <ul class="space-y-1.5 text-xs">
                       <li>• Multiple photo selection</li>
                       <li>• Album browsing</li>
                       <li>• Image filtering</li>
                       <li>• Metadata preservation</li>
                     </ul>
                   </div>
-                  <div class="space-y-2">
-                    <div class="flex items-center gap-2 mb-2">
+                  <div class="flex flex-col gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 w-full text-center sm:text-left">
+                    <div class="flex items-center justify-center sm:justify-start gap-2">
                       <div
-                        class="w-5 h-5 bg-gradient-to-br from-purple-500 to-purple-600 rounded flex items-center justify-center"
+                        class="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center"
                       >
                         <svg
-                          width="12"
-                          height="12"
+                          width="14"
+                          height="14"
                           viewBox="0 0 24 24"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -1236,25 +1234,25 @@ actual fun ImagePickerLauncher(
                           />
                         </svg>
                       </div>
-                      <p class="font-medium text-[#111418] dark:text-gray-200">
+                      <h4 class="font-semibold text-sm text-[#111418] dark:text-gray-200">
                         Platform Support
-                      </p>
+                      </h4>
                     </div>
-                    <ul class="space-y-1">
+                    <ul class="space-y-1.5 text-xs">
                       <li>• Android 5.0+ (API 21+)</li>
                       <li>• iOS 12.0+</li>
                       <li>• Compose Multiplatform</li>
                       <li>• Kotlin/Native support</li>
                     </ul>
                   </div>
-                  <div class="space-y-2">
-                    <div class="flex items-center gap-2 mb-2">
+                  <div class="flex flex-col gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 w-full text-center sm:text-left">
+                    <div class="flex items-center justify-center sm:justify-start gap-2">
                       <div
-                        class="w-5 h-5 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded flex items-center justify-center"
+                        class="w-6 h-6 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center"
                       >
                         <svg
-                          width="12"
-                          height="12"
+                          width="14"
+                          height="14"
                           viewBox="0 0 24 24"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
@@ -1271,11 +1269,11 @@ actual fun ImagePickerLauncher(
                           />
                         </svg>
                       </div>
-                      <p class="font-medium text-[#111418] dark:text-gray-200">
+                      <h4 class="font-semibold text-sm text-[#111418] dark:text-gray-200">
                         Developer Tools
-                      </p>
+                      </h4>
                     </div>
-                    <ul class="space-y-1">
+                    <ul class="space-y-1.5 text-xs">
                       <li>• Type-safe APIs</li>
                       <li>• Coroutines support</li>
                       <li>• Error handling</li>
@@ -1293,12 +1291,12 @@ actual fun ImagePickerLauncher(
         class="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-solid border-t-[#f0f2f5] dark:border-t-gray-700"
       >
         <div class="flex justify-center">
-          <div class="flex max-w-[960px] flex-1 flex-col">
+          <div class="flex w-full max-w-[960px] flex-1 flex-col">
             <footer
               class="flex flex-col gap-4 px-5 py-6 text-center @container"
             >
               <div
-                class="flex flex-wrap items-center justify-center gap-6 @[480px]:flex-row @[480px]:justify-around"
+                class="flex flex-wrap items-center justify-center gap-4 sm:gap-6 sm:flex-row sm:justify-around"
               >
                 <a
                   class="text-[#60758a] dark:text-gray-400 text-base font-normal leading-normal min-w-40"
