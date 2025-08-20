@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+
+    <title>
+      ImagePickerKMP - Cross-Platform Image Picker & Camera Library for Kotlin
+      Multiplatform
+    </title>
+    <meta
+      name="title"
+      content="ImagePickerKMP - Cross-Platform Image Picker & Camera Library for Kotlin Multiplatform"
+    />
+    <meta
+      name="description"
+      content="ImagePickerKMP is the best cross-platform image picker and camera library for Kotlin Multiplatform. Support Android & iOS with unified API. Easy camera capture, gallery access, and photo selection."
+    />
+    <meta
+      name="keywords"
+      content="ImagePickerKMP, Image Picker, Camera Capture, Kotlin Multiplatform, Compose Multiplatform, Android Camera, iOS Camera, Photo Picker, Gallery Picker, Cross Platform Camera, KMP Library, Mobile Image Selection"
+    />
+    <meta name="author" content="Ismoy Belizaire" />
+
+    <link rel="canonical" href="https://github.com/ismoy/ImagePickerKMP" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://github.com/ismoy/ImagePickerKMP" />
+    <meta
+      property="og:title"
+      content="ImagePickerKMP - Cross-Platform Image Picker & Camera Library"
+    />
+    <meta
+      property="og:description"
+      content="The ultimate cross-platform image picker and camera library for Kotlin Multiplatform. Seamless Android & iOS integration with unified API."
+    />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/main/docs/og-image.png"
+    />
+    <meta property="og:site_name" content="ImagePickerKMP" />
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta
+      property="twitter:url"
+      content="https://github.com/ismoy/ImagePickerKMP"
+    />
+    <meta
+      property="twitter:title"
+      content="ImagePickerKMP - Cross-Platform Image Picker & Camera Library"
+    />
+    <meta
+      property="twitter:description"
+      content="The ultimate cross-platform image picker and camera library for Kotlin Multiplatform. Seamless Android & iOS integration with unified API."
+    />
+    <meta
+      property="twitter:image"
+      content="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/main/docs/twitter-image.png"
+    />
+    <meta property="twitter:creator" content="@belizairesmoy72" />
+
+    <meta name="theme-color" content="#0d80f2" />
+    <meta name="msapplication-TileColor" content="#0d80f2" />
+    <meta name="application-name" content="ImagePickerKMP" />
+
+    <meta name="language" content="English" />
+    <meta name="geo.region" content="US" />
+    <meta name="geo.placename" content="Global" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "ImagePickerKMP",
+        "applicationCategory": "DeveloperApplication",
+        "description": "Cross-platform image picker and camera library for Kotlin Multiplatform supporting Android and iOS with unified API",
+        "url": "https://github.com/ismoy/ImagePickerKMP",
+        "downloadUrl": "https://github.com/ismoy/ImagePickerKMP",
+        "operatingSystem": ["Android", "iOS"],
+        "programmingLanguage": "Kotlin",
+        "author": {
+          "@type": "Person",
+          "name": "Ismoy Belizaire",
+          "url": "https://github.com/ismoy"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "keywords": "ImagePickerKMP, Image Picker, Camera Capture, Kotlin Multiplatform, Compose Multiplatform, Android, iOS, Cross Platform"
+      }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNDggNDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHN0eWxlPkBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsgcGF0aCB7IGZpbGw6ICNmZmZmZmY7IH0gfSBAbWVkaWEgKHByZWZlcnMtY29sb3Itc2NoZW1lOiBsaWdodCkgeyBwYXRoIHsgZmlsbDogIzAwMDAwMDsgfSB9PC9zdHlsZT48cGF0aCBkPSJNNCA0SDE3LjMzMzRWMTcuMzMzNEgzMC42NjY2VjMwLjY2NjZINDRWNDRINFY0WiI+PC9wYXRoPjwvc3ZnPg=="
+    />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+    <script>
+      function toggleTheme() {
+        const html = document.documentElement;
+        const isDark = html.classList.contains("dark");
+
+        if (isDark) {
+          html.classList.remove("dark");
+          localStorage.setItem("theme", "light");
+        } else {
+          html.classList.add("dark");
+          localStorage.setItem("theme", "dark");
+        }
+
+        updateThemeIcon();
+      }
+
+      function updateThemeIcon() {
+        const isDark = document.documentElement.classList.contains("dark");
+        const iconContainer = document.getElementById("theme-icon");
+
+        if (isDark) {
+          iconContainer.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"></path>
+            </svg>
+          `;
+        } else {
+          iconContainer.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+              <path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"></path>
+            </svg>
+          `;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const savedTheme = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+
+        if (savedTheme === "light") {
+          document.documentElement.classList.remove("dark");
+        } else {
+          document.documentElement.classList.add("dark");
+        }
+
+        updateThemeIcon();
+      });
+    </script>
+  </head>
+
+  <body>
+    <div
+      class="relative flex size-full min-h-screen flex-col bg-white dark:bg-gray-900 group/design-root overflow-x-hidden"
+      style="font-family: Inter, 'Noto Sans', sans-serif"
+    >
+      <header
+        class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f5] dark:border-b-gray-700 px-10 py-3 bg-white dark:bg-gray-900"
+      >
+        <div class="flex items-center gap-4 text-[#111418] dark:text-gray-200">
+          <div class="size-4">
+            <svg
+              viewBox="0 0 48 48"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </div>
+          <a
+            href="https://github.com/ismoy/ImagePickerKMP"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <h2
+              class="text-[#111418] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] hover:text-[#0d80f2] dark:hover:text-blue-400 transition-colors cursor-pointer"
+            >
+              ImagePickerKMP
+            </h2>
+          </a>
+        </div>
+        <div class="flex flex-1 justify-end gap-8">
+          <div class="flex items-center gap-9">
+            <a
+              class="text-[#111418] dark:text-gray-200 text-sm font-medium leading-normal hover:text-[#0d80f2] dark:hover:text-blue-400 transition-colors"
+              href="#examples"
+              >Examples</a
+            >
+          </div>
+          <div class="flex gap-2">
+            <a
+              href="https://github.com/ismoy/ImagePickerKMP"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#0d80f2] text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#0c6fd1] transition-colors"
+            >
+              <span class="truncate">Get started</span>
+            </a>
+            <button
+              onclick="toggleTheme()"
+              class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f0f2f5] dark:bg-gray-700 text-[#111418] dark:text-gray-200 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              <div
+                id="theme-icon"
+                class="text-[#111418] dark:text-gray-200"
+                data-icon="Sun"
+                data-size="20px"
+                data-weight="regular"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20px"
+                  height="20px"
+                  fill="currentColor"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"
+                  ></path>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1 overflow-y-auto pt-[90px] pb-[160px]">
+        <div class="px-40 flex flex-1 justify-center py-5">
+          <div
+            class="layout-content-container flex flex-col max-w-[960px] flex-1"
+          >
+            <div class="@container">
+              <div class="@[480px]:p-4">
+                <div
+                  class="hero-section flex min-h-[480px] flex-col gap-6 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 @[480px]:gap-8 @[480px]:rounded-lg items-start justify-end px-4 pb-10 @[480px]:px-10 relative overflow-hidden border border-gray-200 dark:border-gray-600"
+                >
+                  <div class="flex flex-col gap-2 text-left">
+                    <h1
+                      class="text-gray-900 dark:text-gray-100 text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-5xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em]"
+                    >
+                      ImagePickerKMP: Best Cross‑Platform Image Picker & Camera
+                      Capture Library
+                    </h1>
+                    <h2
+                      class="text-gray-700 dark:text-gray-300 text-sm font-normal leading-normal @[480px]:text-base @[480px]:font-normal @[480px]:leading-normal"
+                    >
+                      The ultimate ImagePickerKMP library for cross‑platform
+                      image picker and camera capture on Android & iOS. Built
+                      with Kotlin Multiplatform + Compose Multiplatform +
+                      Kotlin/Native. Seamless photo selection, gallery access,
+                      and camera integration with unified API for mobile
+                      development.
+                    </h2>
+
+                    <div class="flex flex-wrap gap-3 mt-4 items-center">
+                      <div
+                        class="flex items-center gap-2 bg-blue-100 rounded-lg px-3 py-1.5 border border-blue-200"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                            stroke="#2563eb"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                        <span class="text-blue-700 text-xs font-medium"
+                          >Kotlin Multiplatform</span
+                        >
+                      </div>
+                      <div
+                        class="flex items-center gap-2 bg-purple-100 rounded-lg px-3 py-1.5 border border-purple-200"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            x="2"
+                            y="3"
+                            width="20"
+                            height="14"
+                            rx="2"
+                            ry="2"
+                            stroke="#7c3aed"
+                            stroke-width="2"
+                          />
+                          <line
+                            x1="8"
+                            y1="21"
+                            x2="16"
+                            y2="21"
+                            stroke="#7c3aed"
+                            stroke-width="2"
+                          />
+                          <line
+                            x1="12"
+                            y1="17"
+                            x2="12"
+                            y2="21"
+                            stroke="#7c3aed"
+                            stroke-width="2"
+                          />
+                        </svg>
+                        <span class="text-purple-700 text-xs font-medium"
+                          >Compose Multiplatform</span
+                        >
+                      </div>
+                      <div
+                        class="flex items-center gap-2 bg-orange-100 rounded-lg px-3 py-1.5 border border-orange-200"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12 2L2 7l10 5 10-5-10-5z"
+                            stroke="#ea580c"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M2 17l10 5 10-5"
+                            stroke="#ea580c"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M2 12l10 5 10-5"
+                            stroke="#ea580c"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                        <span class="text-orange-700 text-xs font-medium"
+                          >Kotlin</span
+                        >
+                      </div>
+                      <div
+                        class="flex items-center gap-2 bg-green-100 rounded-lg px-3 py-1.5 border border-green-200"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M17.25 6.75L22.5 12L17.25 17.25L22.5 12L17.25 6.75Z"
+                            stroke="#16a34a"
+                            stroke-width="2"
+                          />
+                          <path
+                            d="M6.75 17.25L1.5 12L6.75 6.75L1.5 12L6.75 17.25Z"
+                            stroke="#16a34a"
+                            stroke-width="2"
+                          />
+                          <path
+                            d="M14.25 3.75L9.75 20.25"
+                            stroke="#16a34a"
+                            stroke-width="2"
+                          />
+                        </svg>
+                        <span class="text-green-700 text-xs font-medium"
+                          >iOS</span
+                        >
+                      </div>
+                      <div
+                        class="flex items-center gap-2 bg-emerald-100 rounded-lg px-3 py-1.5 border border-emerald-200"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M6 9L12 15L18 9"
+                            stroke="#059669"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="16"
+                            rx="2"
+                            stroke="#059669"
+                            stroke-width="2"
+                          />
+                        </svg>
+                        <span class="text-emerald-700 text-xs font-medium"
+                          >Android</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h2
+              class="text-[#111418] dark:text-gray-200 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5"
+            >
+              Why Choose ImagePickerKMP for Cross-Platform Development
+            </h2>
+            <div class="flex flex-col gap-10 px-4 py-10 @container">
+              <div class="flex flex-col gap-4">
+                <h1
+                  class="text-[#111418] dark:text-gray-200 tracking-light text-[32px] font-bold leading-tight @[480px]:text-4xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em] max-w-[720px]"
+                >
+                  Powerful Image Picker and Camera Features for Mobile
+                  Development
+                </h1>
+                <p
+                  class="text-[#111418] dark:text-gray-300 text-base font-normal leading-normal max-w-[720px]"
+                >
+                  ImagePickerKMP provides seamless image picker, camera capture,
+                  and photo selection functionality across Android and iOS
+                  platforms with a unified Kotlin Multiplatform API. Perfect for
+                  developers building cross-platform mobile applications.
+                </p>
+              </div>
+              <div
+                class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-0"
+              >
+                <div
+                  class="flex flex-1 gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 flex-col"
+                >
+                  <div
+                    class="text-[#111418] dark:text-gray-200"
+                    data-icon="Code"
+                    data-size="24px"
+                    data-weight="regular"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24px"
+                      height="24px"
+                      fill="currentColor"
+                      viewBox="0 0 256 256"
+                    >
+                      <path
+                        d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <h2
+                      class="text-[#111418] dark:text-gray-200 text-base font-bold leading-tight"
+                    >
+                      Cross-Platform Kotlin Multiplatform Library
+                    </h2>
+                    <p
+                      class="text-[#60758a] dark:text-gray-400 text-sm font-normal leading-normal"
+                    >
+                      Built with Kotlin Multiplatform for maximum code sharing
+                      between Android and iOS image picker implementations,
+                      reducing development time and maintenance overhead for
+                      cross-platform mobile apps.
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-1 gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 flex-col"
+                >
+                  <div
+                    class="text-[#111418] dark:text-gray-200"
+                    data-icon="Camera"
+                    data-size="24px"
+                    data-weight="regular"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24px"
+                      height="24px"
+                      fill="currentColor"
+                      viewBox="0 0 256 256"
+                    >
+                      <path
+                        d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <h2
+                      class="text-[#111418] dark:text-gray-200 text-base font-bold leading-tight"
+                    >
+                      Native Camera Capture & Photo Taking
+                    </h2>
+                    <p
+                      class="text-[#60758a] dark:text-gray-400 text-sm font-normal leading-normal"
+                    >
+                      Native camera access with unified API for capturing photos
+                      and taking pictures directly from your app on both Android
+                      and iOS platforms. Full camera capture functionality with
+                      permission handling.
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-1 gap-3 rounded-lg border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 p-4 flex-col"
+                >
+                  <div
+                    class="text-[#111418] dark:text-gray-200"
+                    data-icon="Image"
+                    data-size="24px"
+                    data-weight="regular"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24px"
+                      height="24px"
+                      fill="currentColor"
+                      viewBox="0 0 256 256"
+                    >
+                      <path
+                        d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM40,56H216V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37ZM216,200H40V172.69l58.34-58.35L147,163a8,8,0,0,0,11.32,0L178.67,142.68,216,180Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <h2
+                      class="text-[#111418] dark:text-gray-200 text-base font-bold leading-tight"
+                    >
+                      Gallery Access & Photo Selection
+                    </h2>
+                    <p
+                      class="text-[#60758a] dark:text-gray-400 text-sm font-normal leading-normal"
+                    >
+                      Seamless gallery integration and photo picker allowing
+                      users to select images and photos from their device's
+                      photo library with native UI components. Support for
+                      single and multiple photo selection.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h2
+              id="examples"
+              class="text-[#111418] dark:text-gray-200 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5"
+            >
+              Code Examples
+            </h2>
+            <p
+              class="text-[#111418] dark:text-gray-300 text-base font-normal leading-normal pb-3 pt-1 px-4"
+            >
+              Discover how ImagePickerKMP leverages Kotlin Multiplatform's
+              expect/actual mechanism to provide a unified API across platforms.
+            </p>
+
+            <div class="px-4 py-6">
+              <h3
+                class="text-[#111418] dark:text-gray-200 text-lg font-semibold mb-4 flex items-center gap-2"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 2L2 7l10 5 10-5-10-5z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M2 17l10 5 10-5"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M2 12l10 5 10-5"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Multiplatform Architecture
+              </h3>
+
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                <div
+                  class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4"
+                >
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                    <span class="text-sm font-medium text-blue-700"
+                      >commonMain</span
+                    >
+                  </div>
+                  <pre
+                    class="text-xs text-gray-800 overflow-x-auto"
+                  ><code>@Composable
+expect fun ImagePickerLauncher(
+    config: ImagePickerConfig
+)
+
+@Composable  
+expect fun GalleryPickerLauncher(
+    onPhotosSelected: (List&lt;PhotoResult&gt;) -&gt; Unit,
+    onError: (Exception) -&gt; Unit,
+    allowMultiple: Boolean = false
+)</code></pre>
+                </div>
+
+                <div
+                  class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4"
+                >
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="text-sm font-medium text-green-700"
+                      >androidMain</span
+                    >
+                  </div>
+                  <pre
+                    class="text-xs text-gray-800 overflow-x-auto"
+                  ><code>@Composable
+actual fun ImagePickerLauncher(
+    config: ImagePickerConfig
+) {
+    val context = LocalContext.current
+    CameraCaptureView(
+        activity = context,
+        onPhotoResult = config.onPhotoCaptured,
+        onError = config.onError
+    )
+}</code></pre>
+                </div>
+
+                <div
+                  class="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg p-4"
+                >
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                    <span class="text-sm font-medium text-purple-700"
+                      >iosMain</span
+                    >
+                  </div>
+                  <pre
+                    class="text-xs text-gray-800 overflow-x-auto"
+                  ><code>@Composable
+actual fun ImagePickerLauncher(
+    config: ImagePickerConfig
+) {
+    var showDialog by remember { 
+        mutableStateOf(true) 
+    }
+    
+    handleImagePickerState(
+        showDialog = showDialog,
+        config = config
+    )
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="px-4 py-6">
+              <h3
+                class="text-[#111418] dark:text-gray-200 text-lg font-semibold mb-4 flex items-center gap-2"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    x="3"
+                    y="3"
+                    width="18"
+                    height="18"
+                    rx="2"
+                    ry="2"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                  <circle
+                    cx="9"
+                    cy="9"
+                    r="2"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                  <path
+                    d="M21 15l-3.086-3.086a2 2 0 00-2.828 0L6 21"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                </svg>
+                Simple Usage in Your App
+              </h3>
+
+              <div
+                class="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-gray-800 dark:text-green-400 font-mono text-sm overflow-x-auto"
+              >
+                <pre><code><span class="text-purple-600 dark:text-purple-400">@Composable</span>
+<span class="text-blue-600 dark:text-blue-400">fun</span> <span class="text-orange-600 dark:text-yellow-300">MyImageScreen</span>() {
+    <span class="text-blue-600 dark:text-blue-400">var</span> showCamera <span class="text-blue-600 dark:text-blue-400">by</span> <span class="text-orange-600 dark:text-yellow-300">remember</span> { <span class="text-orange-600 dark:text-yellow-300">mutableStateOf</span>(<span class="text-red-600 dark:text-red-400">false</span>) }
+    <span class="text-blue-600 dark:text-blue-400">var</span> showGallery <span class="text-blue-600 dark:text-blue-400">by</span> <span class="text-orange-600 dark:text-yellow-300">remember</span> { <span class="text-orange-600 dark:text-yellow-300">mutableStateOf</span>(<span class="text-red-600 dark:text-red-400">false</span>) }
+    <span class="text-blue-600 dark:text-blue-400">var</span> capturedPhoto <span class="text-blue-600 dark:text-blue-400">by</span> <span class="text-orange-600 dark:text-yellow-300">remember</span> { <span class="text-orange-600 dark:text-yellow-300">mutableStateOf</span>&lt;<span class="text-teal-600 dark:text-cyan-300">PhotoResult?</span>&gt;(<span class="text-red-600 dark:text-red-400">null</span>) }
+
+    <span class="text-gray-600 dark:text-gray-500">// Camera Integration</span>
+    <span class="text-blue-600 dark:text-blue-400">if</span> (showCamera) {
+        <span class="text-orange-600 dark:text-yellow-300">ImagePickerLauncher</span>(
+            config = <span class="text-orange-600 dark:text-yellow-300">ImagePickerConfig</span>(
+                onPhotoCaptured = { photo -> capturedPhoto = photo },
+                onError = { <span class="text-gray-600 dark:text-gray-500">/* handle error */</span> },
+                onDismiss = { showCamera = <span class="text-red-600 dark:text-red-400">false</span> }
+            )
+        )
+    }
+
+    <span class="text-gray-600 dark:text-gray-500">// Gallery Integration</span>
+    <span class="text-blue-600 dark:text-blue-400">if</span> (showGallery) {
+        <span class="text-orange-600 dark:text-yellow-300">GalleryPickerLauncher</span>(
+            onPhotosSelected = { photos -> <span class="text-gray-600 dark:text-gray-500">/* handle photos */</span> },
+            onError = { <span class="text-gray-600 dark:text-gray-500">/* handle error */</span> },
+            onDismiss = { showGallery = <span class="text-red-600 dark:text-red-400">false</span> },
+            allowMultiple = <span class="text-red-600 dark:text-red-400">true</span>
+        )
+    }
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="px-4 py-2">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div
+                  class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200"
+                >
+                  <div
+                    class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center"
+                  >
+                    <span class="text-white text-sm font-bold">1</span>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-blue-900">One API</p>
+                    <p class="text-xs text-blue-600">
+                      Write once, run everywhere
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200"
+                >
+                  <div
+                    class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center"
+                  >
+                    <span class="text-white text-sm font-bold">2</span>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-green-900">
+                      Native Performance
+                    </p>
+                    <p class="text-xs text-green-600">
+                      Platform-specific implementations
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200"
+                >
+                  <div
+                    class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center"
+                  >
+                    <span class="text-white text-sm font-bold">3</span>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-purple-900">
+                      Type Safety
+                    </p>
+                    <p class="text-xs text-purple-600">
+                      Kotlin's compile-time guarantees
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h2
+              class="text-[#111418] dark:text-gray-200 text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5"
+            >
+              Get Started with ImagePickerKMP - Free Open Source Library
+            </h2>
+            <p
+              class="text-[#111418] dark:text-gray-300 text-base font-normal leading-normal pb-3 pt-1 px-4"
+            >
+              Ready to add powerful image picker, camera capture, and photo
+              selection capabilities to your mobile app? Download ImagePickerKMP
+              and streamline your cross-platform development with the best
+              Kotlin Multiplatform image library.
+            </p>
+            <div class="flex px-4 py-3 justify-center">
+              <a
+                href="https://github.com/ismoy/ImagePickerKMP"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-[#0d80f2] text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-[#0c6fd1] transition-colors"
+                aria-label="Download ImagePickerKMP from GitHub - Best Cross-Platform Image Picker Library"
+              >
+                <span class="truncate">Download ImagePickerKMP on GitHub</span>
+              </a>
+            </div>
+
+            <div
+              class="px-4 py-8 border-t border-gray-200 dark:border-gray-700 mt-8"
+            >
+              <h2
+                class="text-[#111418] dark:text-gray-200 text-xl font-bold mb-4"
+              >
+                Why ImagePickerKMP is the Best Cross-Platform Image Picker
+                Library for Mobile Developers
+              </h2>
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm text-[#60758a] dark:text-gray-400"
+              >
+                <div>
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+                          stroke="white"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <h3 class="font-semibold text-[#111418] dark:text-gray-200">
+                      Easy Integration & Setup
+                    </h3>
+                  </div>
+                  <p>
+                    ImagePickerKMP provides the simplest API for adding image
+                    picker and camera capture functionality to your Android and
+                    iOS apps. Just a few lines of Kotlin Multiplatform code and
+                    you're ready to go with full photo selection capabilities.
+                  </p>
+                </div>
+                <div>
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect
+                          x="2"
+                          y="3"
+                          width="20"
+                          height="14"
+                          rx="2"
+                          ry="2"
+                          stroke="white"
+                          stroke-width="2"
+                        />
+                        <line
+                          x1="8"
+                          y1="21"
+                          x2="16"
+                          y2="21"
+                          stroke="white"
+                          stroke-width="2"
+                        />
+                        <line
+                          x1="12"
+                          y1="17"
+                          x2="12"
+                          y2="21"
+                          stroke="white"
+                          stroke-width="2"
+                        />
+                      </svg>
+                    </div>
+                    <h3 class="font-semibold text-[#111418] dark:text-gray-200">
+                      True Cross-Platform Compatibility
+                    </h3>
+                  </div>
+                  <p>
+                    Write once, run everywhere. Our Kotlin Multiplatform library
+                    ensures your image picker works seamlessly on both Android
+                    and iOS with the same codebase, reducing development time by
+                    up to 70%.
+                  </p>
+                </div>
+                <div>
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                          stroke="white"
+                          stroke-width="2"
+                        />
+                        <circle
+                          cx="12"
+                          cy="13"
+                          r="4"
+                          stroke="white"
+                          stroke-width="2"
+                        />
+                      </svg>
+                    </div>
+                    <h3 class="font-semibold text-[#111418] dark:text-gray-200">
+                      Complete Camera & Gallery Solution
+                    </h3>
+                  </div>
+                  <p>
+                    From camera capture to gallery access, ImagePickerKMP
+                    handles all aspects of photo selection and image management.
+                    Support for single/multiple selection, image compression,
+                    and native camera integration.
+                  </p>
+                </div>
+                <div>
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                          stroke="white"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <h3 class="font-semibold text-[#111418] dark:text-gray-200">
+                      Fully Customizable UI Design
+                    </h3>
+                  </div>
+                  <p>
+                    Complete UI customization support allows you to adapt the
+                    image picker interface to match your app's design system.
+                    Custom colors, themes, layouts, and branded camera screens
+                    with Compose Multiplatform integration.
+                  </p>
+                </div>
+                <div>
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M9 12l-6.5 6.5a2.5 2.5 0 1 0 3.5 3.5L12 15"
+                          stroke="white"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <path
+                          d="m15 9 6.5-6.5a2.5 2.5 0 1 1-3.5-3.5L12 5"
+                          stroke="white"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <path
+                          d="m9 12 3-3"
+                          stroke="white"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <h3 class="font-semibold text-[#111418] dark:text-gray-200">
+                      Built-in Permission Management
+                    </h3>
+                  </div>
+                  <p>
+                    Zero configuration permission handling for camera and
+                    gallery access on both Android and iOS. ImagePickerKMP
+                    automatically manages runtime permissions, user consent, and
+                    permission explanations without extra setup.
+                  </p>
+                </div>
+                <div>
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"
+                          stroke="white"
+                          stroke-width="2"
+                        />
+                        <path
+                          d="M9 12l2 2 4-4"
+                          stroke="white"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <h3
+                      class="font-semibold text-[#111418] dark:text-gray-200 mb-2"
+                    >
+                      Developer-First Experience
+                    </h3>
+                  </div>
+                  <p>
+                    Comprehensive documentation, type safety with Kotlin, active
+                    community support, and continuous updates make
+                    ImagePickerKMP the go-to choice for professional mobile
+                    developers worldwide.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600"
+              >
+                <h3
+                  class="text-[#111418] dark:text-gray-200 text-lg font-semibold mb-4"
+                >
+                  Advanced ImagePickerKMP Features for Professional Development
+                </h3>
+                <div
+                  class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-[#60758a] dark:text-gray-400"
+                >
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2 mb-2">
+                      <div
+                        class="w-5 h-5 bg-gradient-to-br from-blue-500 to-blue-600 rounded flex items-center justify-center"
+                      >
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                            stroke="white"
+                            stroke-width="2"
+                          />
+                          <circle
+                            cx="12"
+                            cy="13"
+                            r="4"
+                            stroke="white"
+                            stroke-width="2"
+                          />
+                        </svg>
+                      </div>
+                      <p class="font-medium text-[#111418] dark:text-gray-200">
+                        Camera Features
+                      </p>
+                    </div>
+                    <ul class="space-y-1">
+                      <li>• Native camera capture</li>
+                      <li>• Front/back camera switch</li>
+                      <li>• Flash control</li>
+                      <li>• Image quality settings</li>
+                    </ul>
+                  </div>
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2 mb-2">
+                      <div
+                        class="w-5 h-5 bg-gradient-to-br from-green-500 to-green-600 rounded flex items-center justify-center"
+                      >
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            x="3"
+                            y="3"
+                            width="18"
+                            height="18"
+                            rx="2"
+                            ry="2"
+                            stroke="white"
+                            stroke-width="2"
+                          />
+                          <circle
+                            cx="9"
+                            cy="9"
+                            r="2"
+                            stroke="white"
+                            stroke-width="2"
+                          />
+                          <path
+                            d="M21 15l-3.086-3.086a2 2 0 00-2.828 0L6 21"
+                            stroke="white"
+                            stroke-width="2"
+                          />
+                        </svg>
+                      </div>
+                      <p class="font-medium text-[#111418] dark:text-gray-200">
+                        Gallery Integration
+                      </p>
+                    </div>
+                    <ul class="space-y-1">
+                      <li>• Multiple photo selection</li>
+                      <li>• Album browsing</li>
+                      <li>• Image filtering</li>
+                      <li>• Metadata preservation</li>
+                    </ul>
+                  </div>
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2 mb-2">
+                      <div
+                        class="w-5 h-5 bg-gradient-to-br from-purple-500 to-purple-600 rounded flex items-center justify-center"
+                      >
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            x="2"
+                            y="3"
+                            width="20"
+                            height="14"
+                            rx="2"
+                            ry="2"
+                            stroke="white"
+                            stroke-width="2"
+                          />
+                          <line
+                            x1="8"
+                            y1="21"
+                            x2="16"
+                            y2="21"
+                            stroke="white"
+                            stroke-width="2"
+                          />
+                          <line
+                            x1="12"
+                            y1="17"
+                            x2="12"
+                            y2="21"
+                            stroke="white"
+                            stroke-width="2"
+                          />
+                        </svg>
+                      </div>
+                      <p class="font-medium text-[#111418] dark:text-gray-200">
+                        Platform Support
+                      </p>
+                    </div>
+                    <ul class="space-y-1">
+                      <li>• Android 5.0+ (API 21+)</li>
+                      <li>• iOS 12.0+</li>
+                      <li>• Compose Multiplatform</li>
+                      <li>• Kotlin/Native support</li>
+                    </ul>
+                  </div>
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2 mb-2">
+                      <div
+                        class="w-5 h-5 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded flex items-center justify-center"
+                      >
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <polyline
+                            points="16 18 22 12 16 6"
+                            stroke="white"
+                            stroke-width="2"
+                          />
+                          <polyline
+                            points="8 6 2 12 8 18"
+                            stroke="white"
+                            stroke-width="2"
+                          />
+                        </svg>
+                      </div>
+                      <p class="font-medium text-[#111418] dark:text-gray-200">
+                        Developer Tools
+                      </p>
+                    </div>
+                    <ul class="space-y-1">
+                      <li>• Type-safe APIs</li>
+                      <li>• Coroutines support</li>
+                      <li>• Error handling</li>
+                      <li>• Memory optimization</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer
+        class="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-solid border-t-[#f0f2f5] dark:border-t-gray-700"
+      >
+        <div class="flex justify-center">
+          <div class="flex max-w-[960px] flex-1 flex-col">
+            <footer
+              class="flex flex-col gap-4 px-5 py-6 text-center @container"
+            >
+              <div
+                class="flex flex-wrap items-center justify-center gap-6 @[480px]:flex-row @[480px]:justify-around"
+              >
+                <a
+                  class="text-[#60758a] dark:text-gray-400 text-base font-normal leading-normal min-w-40"
+                  >Contact</a
+                >
+              </div>
+              <div class="flex flex-wrap justify-center gap-4">
+                <a
+                  href="https://x.com/belizairesmoy72"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div
+                    class="text-[#60758a] dark:text-gray-400 hover:text-[#0d80f2] dark:hover:text-blue-400 transition-colors"
+                    data-icon="TwitterLogo"
+                    data-size="24px"
+                    data-weight="regular"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24px"
+                      height="24px"
+                      fill="currentColor"
+                      viewBox="0 0 256 256"
+                    >
+                      <path
+                        d="M247.39,68.94A8,8,0,0,0,240,64H209.57A48.66,48.66,0,0,0,168.1,40a46.91,46.91,0,0,0-33.75,13.7A47.9,47.9,0,0,0,120,88v6.09C79.74,83.47,46.81,50.72,46.46,50.37a8,8,0,0,0-13.65,4.92c-4.31,47.79,9.57,79.77,22,98.18a110.93,110.93,0,0,0,21.88,24.2c-15.23,17.53-39.21,26.74-39.47,26.84a8,8,0,0,0-3.85,11.93c.75,1.12,3.75,5.05,11.08,8.72C53.51,229.7,65.48,232,80,232c70.67,0,129.72-54.42,135.75-124.44l29.91-29.9A8,8,0,0,0,247.39,68.94Zm-45,29.41a8,8,0,0,0-2.32,5.14C196,166.58,143.28,216,80,216c-10.56,0-18-1.4-23.22-3.08,11.51-6.25,27.56-17,37.88-32.48A8,8,0,0,0,92,169.08c-.47-.27-43.91-26.34-44-96,16,13,45.25,33.17,78.67,38.79A8,8,0,0,0,136,104V88a32,32,0,0,1,9.6-22.92A30.94,30.94,0,0,1,167.9,56c12.66.16,24.49,7.88,29.44,19.21A8,8,0,0,0,204.67,80h16Z"
+                      ></path>
+                    </svg>
+                  </div>
+                </a>
+                <a
+                  href="https://github.com/ismoy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div
+                    class="text-[#60758a] dark:text-gray-400 hover:text-[#0d80f2] dark:hover:text-blue-400 transition-colors"
+                    data-icon="GithubLogo"
+                    data-size="24px"
+                    data-weight="regular"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24px"
+                      height="24px"
+                      fill="currentColor"
+                      viewBox="0 0 256 256"
+                    >
+                      <path
+                        d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58a43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"
+                      ></path>
+                    </svg>
+                  </div>
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/ismoy-belizaire-a0ba99106/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div
+                    class="text-[#60758a] dark:text-gray-400 hover:text-[#0d80f2] dark:hover:text-blue-400 transition-colors"
+                    data-icon="LinkedinLogo"
+                    data-size="24px"
+                    data-weight="regular"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24px"
+                      height="24px"
+                      fill="currentColor"
+                      viewBox="0 0 256 256"
+                    >
+                      <path
+                        d="M216,24H40A16,16,0,0,0,24,40V216a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V40A16,16,0,0,0,216,24Zm0,192H40V40H216V216ZM96,112v64a8,8,0,0,1-16,0V112a8,8,0,0,1,16,0Zm88,28v36a8,8,0,0,1-16,0V140a20,20,0,0,0-40,0v36a8,8,0,0,1-16,0V112a8,8,0,0,1,15.79-1.78A36,36,0,0,1,184,140ZM100,84A12,12,0,1,1,88,72,12,12,0,0,1,100,84Z"
+                      ></path>
+                    </svg>
+                  </div>
+                </a>
+              </div>
+              <p
+                class="text-[#60758a] dark:text-gray-400 text-sm font-normal leading-normal"
+              >
+                © 2025 ImagePickerKMP. All rights reserved.
+              </p>
+            </footer>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
