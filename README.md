@@ -41,8 +41,8 @@
 ## Demo **Android** And **IOS**
 
 <p align="center">
-  <a href="https://github.com/ismoy/ImagePickerKMP/blob/develop/demo_video_library.gif">
-    <img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/demo_video_library.gif" alt="Demo ImagePickerKMP" width="80%">
+  <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/refs/heads/main/docs/VideoPromogift.gif">
+    <img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/refs/heads/main/docs/VideoPromogift.gif" alt="Demo ImagePickerKMP" width="80%">
   </a>
 </p>
 
