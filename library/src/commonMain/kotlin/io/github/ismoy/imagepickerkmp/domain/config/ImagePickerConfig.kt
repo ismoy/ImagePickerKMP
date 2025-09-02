@@ -88,7 +88,8 @@ data class ImagePickerConfig(
         ) -> Unit
     )? = null,
 
-    val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig()
+    val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(),
+    val directCameraLaunch: Boolean = false
 )
 
 /**

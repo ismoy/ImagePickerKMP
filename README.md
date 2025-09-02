@@ -68,7 +68,7 @@
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.22")//lastversion
+    implementation("io.github.ismoy:imagepickerkmp:1.0.23")//lastversion
 }
 ```
 #### iOS Permissions Setup
@@ -99,7 +99,8 @@ if (showCamera) {
             },
             onDismiss = {
                 showImagePicker = false // Reset state when user doesn't select anything
-            }
+            },
+            directCameraLaunch = false // Set to true if you want to launch the camera directly Only IOS
         )
     )
 }
@@ -139,7 +140,7 @@ Button(onClick = { showGallery = true }) {
 
 #### Step 1: Add the dependency
 ```kotlin
-implementation("io.github.ismoy:imagepickerkmp:1.0.22")
+implementation("io.github.ismoy:imagepickerkmp:1.0.23")
 ```
 #### Step 2: Camera Launcher Example
 ```kotlin
@@ -159,7 +160,8 @@ if (showCamera) {
             },
             onDismiss = {
                 showImagePicker = false // Reset state when user doesn't select anything
-            }
+            },
+            directCameraLaunch = false // Set to true if you want to launch the camera directly Only IOS
         )
     )
 }

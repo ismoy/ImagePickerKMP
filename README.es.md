@@ -68,7 +68,7 @@
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.22")//última versión
+    implementation("io.github.ismoy:imagepickerkmp:1.0.23")//última versión
 }
 ```
 #### Configuración de Permisos iOS
@@ -99,7 +99,8 @@ if (showCamera) {
             },
             onDismiss = {
                 showImagePicker = false // Resetear estado cuando el usuario no selecciona nada
-            }
+            },
+            directCameraLaunch = false // Set to true if you want to launch the camera directly Only IOS
         )
     )
 }
@@ -159,7 +160,8 @@ if (showCamera) {
             },
             onDismiss = {
                 showImagePicker = false // Resetear estado cuando el usuario no selecciona nada
-            }
+            },
+            directCameraLaunch = false // Set to true if you want to launch the camera directly Only IOS
         )
     )
 }
