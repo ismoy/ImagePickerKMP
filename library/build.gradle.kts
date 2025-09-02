@@ -42,7 +42,12 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         "**/presentation/ui/screens/**",
         "**/*Kt.class",
         "**/*\$Companion.class",
-        "**/ComposableSingletons*.*"
+        "**/ComposableSingletons*.*",
+        "**/CameraController\$startCamera\$2.*",
+        "**/CameraController\$takePicture\$1.*",
+        "**/ProcessCameraProvider*.*",
+        "**/ImageCapture*.*",
+        "**/CameraX*.*"
     )
     classDirectories.setFrom(
         files(
@@ -91,7 +96,12 @@ tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
         "**/presentation/ui/screens/**",
         "**/*Kt.class",
         "**/*\$Companion.class",
-        "**/ComposableSingletons*.*"
+        "**/ComposableSingletons*.*",
+        "**/CameraController\$startCamera\$2.*",
+        "**/CameraController\$takePicture\$1.*",
+        "**/ProcessCameraProvider*.*",
+        "**/ImageCapture*.*",
+        "**/CameraX*.*"
     )
     classDirectories.setFrom(
         files(
@@ -124,17 +134,91 @@ tasks.register<JacocoReport>("jacocoBusinessLogicReport") {
         "**/android/databinding/*",
         "**/androidx/databinding/*",
         "**/BR.*",
+        
         "**/presentation/ui/components/**",
         "**/presentation/ui/screens/**",
+        "**/ComposableSingletons*.*",
+        "**/LiveLiterals*.*",
+        
+        "**/data/camera/**",
+        "**/data/processors/ImageOrientationCorrector.*",
+        "**/data/processors/ImageProcessor\$processImage\$1*.*",
+        "**/data/managers/FileManager.*",
+        
+        // Exclude config classes with Compose dependencies
+        "**/domain/config/ImagePickerUiConstants.*",
+        "**/domain/config/UiConfig.*",
+        "**/domain/config/CameraCaptureConfig.*",
+        "**/domain/config/CameraPreviewConfig.*",
+        "**/domain/config/ImagePickerConfig.*",
+        "**/domain/config/CameraPermissionDialogConfig.*",
+        "**/domain/config/PermissionConfig.*",
+        
+        // Keep these business logic classes
+        // "**/domain/models/**",         // ✅ Keep - Pure Kotlin data classes
+        // "**/domain/utils/**",          // ✅ Keep - Logger utilities
+        // "**/domain/exceptions/**",     // ✅ Keep - Exception handling
+        // "**/presentation/viewModel/**", // ✅ Keep - Business logic
+        
+        // Exclude Kotlin compiler generated classes
         "**/*Kt.class",
         "**/*\$Companion.class",
-        "**/ComposableSingletons*.*",
-        "**/LiveLiterals*.*"
+        "**/*\$WhenMappings.class",
+        "**/*\$serializer.class"
     )
     classDirectories.setFrom(
         files(
             fileTree("$buildDir/tmp/kotlin-classes/debug") {
                 exclude(businessLogicFilter)
+            }
+        )
+    )
+    sourceDirectories.setFrom(files("src/commonMain/kotlin", "src/androidMain/kotlin"))
+    executionData.setFrom(
+        fileTree("$buildDir") {
+            include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
+        }
+    )
+}
+
+// Nuevo reporte para SOLO lógica de negocio pura
+tasks.register<JacocoReport>("jacocoCoreBizLogicReport") {
+    group = "verification"
+    description = "Generate JaCoCo coverage report for PURE business logic only (domain models, utils, exceptions, viewModels)"
+    dependsOn("testDebugUnitTest")
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/coreBizLogic/html"))
+        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/coreBizLogic/coreBizLogic.xml"))
+    }
+    
+    // Include ONLY pure business logic packages
+    val coreBusinessLogicIncludes = listOf(
+        "**/domain/models/**",           // Data models
+        "**/domain/utils/**",            // Utilities
+        "**/domain/exceptions/**",       // Exception handling
+        "**/presentation/viewModel/**",  // ViewModels
+        "**/presentation/resources/**"   // String resources
+    )
+    
+    val excludeAllFilter = listOf(
+        "**/**" // Start by excluding everything
+    )
+    
+    classDirectories.setFrom(
+        files(
+            fileTree("$buildDir/tmp/kotlin-classes/debug") {
+                // Include only core business logic
+                include(coreBusinessLogicIncludes)
+                // Exclude test files and generated code
+                exclude("**/*Test*.*")
+                exclude("**/*Kt.class")
+                exclude("**/*\$Companion.class")
+                exclude("**/*\$WhenMappings.class")
+                exclude("**/*\$serializer.class")
+                exclude("**/ComposableSingletons*.*")
+                exclude("**/LiveLiterals*.*")
             }
         )
     )
@@ -343,7 +427,7 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.23"
+        version = "1.0.24"
     )
     pom {
         name.set("ImagePickerKMP")

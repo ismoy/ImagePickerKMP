@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -91,7 +92,7 @@ fun CameraCapturePreview(
                 onError(it)
             },
             allowMultiple = false,
-            mimeTypes = listOf("image/*")
+            mimeTypes = listOf(MimeType.IMAGE_ALL)
         )
     }
 

@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 
 @Suppress("EndOfSentenceFormat")
@@ -49,7 +50,7 @@ data class PermissionAndConfirmationConfig(
  */
 data class GalleryConfig(
     val allowMultiple: Boolean = false,
-    val mimeTypes: List<String> = listOf("image/*"),
+    val mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
     val selectionLimit: Int = 30
 )
 

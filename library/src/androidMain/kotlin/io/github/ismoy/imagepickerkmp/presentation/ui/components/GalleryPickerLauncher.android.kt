@@ -2,6 +2,7 @@ package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
 import androidx.compose.runtime.Composable
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 
 import android.content.Context
 import android.net.Uri
@@ -40,7 +41,7 @@ actual fun GalleryPickerLauncher(
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
     allowMultiple: Boolean,
-    mimeTypes: List<String>,
+    mimeTypes: List<MimeType>,
     selectionLimit: Long,
     cameraCaptureConfig: CameraCaptureConfig?
 ) {
@@ -56,7 +57,7 @@ actual fun GalleryPickerLauncher(
         onError = onError,
         onDismiss = onDismiss,
         allowMultiple = allowMultiple,
-        mimeTypes = mimeTypes,
+        mimeTypes = mimeTypes.map { it.value },
         cameraCaptureConfig = cameraCaptureConfig
     )
     GalleryPickerLauncherContent(config)
