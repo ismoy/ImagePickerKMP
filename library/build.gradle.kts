@@ -281,7 +281,7 @@ kotlin {
 
 android {
     namespace = "io.github.ismoy.imagepickerkmp"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
@@ -343,7 +343,7 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.22"
+        version = "1.0.23"
     )
     pom {
         name.set("ImagePickerKMP")

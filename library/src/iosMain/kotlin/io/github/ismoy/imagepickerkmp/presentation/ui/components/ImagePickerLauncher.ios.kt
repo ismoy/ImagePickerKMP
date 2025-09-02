@@ -25,8 +25,8 @@ import platform.UIKit.UIAlertControllerStyleActionSheet
 actual fun ImagePickerLauncher(
     config: ImagePickerConfig
 ) {
-    var showDialog by remember { mutableStateOf(true) }
-    var askCameraPermission by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(!config.directCameraLaunch) }
+    var askCameraPermission by remember { mutableStateOf(config.directCameraLaunch) }
     var launchCamera by remember { mutableStateOf(false) }
     var launchGallery by remember { mutableStateOf(false) }
     handleImagePickerState(
