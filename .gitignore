@@ -6,6 +6,7 @@ build
 captures
 .externalNativeBuild
 .cxx
+.vscode/settings.json
 local.properties
 xcuserdata
 .kotlin

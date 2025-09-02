@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import io.github.ismoy.imagepickerkmp.data.orchestrators.GalleryPickerOrchestrator
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 
 @Suppress("LongParameterList")
 @Composable
@@ -13,7 +14,7 @@ actual fun GalleryPickerLauncher(
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
     allowMultiple: Boolean,
-    mimeTypes: List<String>,
+    mimeTypes: List<MimeType>,
     selectionLimit: Long,
     cameraCaptureConfig: CameraCaptureConfig?
 ) {

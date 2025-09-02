@@ -125,7 +125,7 @@ if (showGallery) {
             showGallery = false // Resetear estado cuando el usuario no selecciona nada
         }
                 allowMultiple = true, // False para selección simple
-        mimeTypes = listOf("image/jpeg", "image/png") ,// Opcional: filtrar por tipo
+        mimeTypes = listOf(MimeType.IMAGE_PNG) ,// Opcional: filtrar por tipo
     )
 }
 
@@ -190,7 +190,7 @@ if (showGallery) {
             showCamera = false
         },
         allowMultiple = true, // False para selección simple
-        mimeTypes = listOf("image/jpeg", "image/png"), // Opcional: filtrar por tipo
+        mimeTypes = listOf(MimeType.IMAGE_PNG), // Opcional: filtrar por tipo
     )
 }
 
