@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp.domain.config
 
+import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import junit.framework.TestCase
 
 class ConfigurationSimpleTest : TestCase() {

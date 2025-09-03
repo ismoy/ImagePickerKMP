@@ -32,4 +32,3 @@ class PermissionUtilsComprehensiveTest : TestCase() {
         assertEquals(-1, PackageManager.PERMISSION_DENIED)
     }
 }
-}

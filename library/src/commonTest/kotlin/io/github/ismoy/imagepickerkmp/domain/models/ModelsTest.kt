@@ -19,12 +19,4 @@ class PhotoResultTest {
     }
 }
 
-class CapturePhotoPreferenceTest {
 
-    @Test
-    fun `CapturePhotoPreference should have correct values`() {
-        assertEquals("FAST", CapturePhotoPreference.FAST.name)
-        assertEquals("BALANCED", CapturePhotoPreference.BALANCED.name)
-        assertEquals("QUALITY", CapturePhotoPreference.QUALITY.name)
-    }
-}
