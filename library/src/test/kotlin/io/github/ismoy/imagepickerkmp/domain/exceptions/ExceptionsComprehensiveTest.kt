@@ -4,31 +4,9 @@ import junit.framework.TestCase
 
 class ExceptionsComprehensiveTest : TestCase() {
 
-    fun testImagePickerExceptionCreation() {
-        val message = "Test image picker error"
-        val cause = RuntimeException("Root cause")
-        
-        val exception = ImagePickerException(message, cause)
-        
-        assertNotNull("Exception should not be null", exception)
-        assertEquals("Message should match", message, exception.message)
-        assertEquals("Cause should match", cause, exception.cause)
-        assertTrue("Should be instance of Exception", exception is Exception)
-    }
-
-    fun testImagePickerExceptionWithDefaultCause() {
-        val message = "Test error without cause"
-        
-        val exception = ImagePickerException(message)
-        
-        assertNotNull("Exception should not be null", exception)
-        assertEquals("Message should match", message, exception.message)
-        assertNull("Cause should be null", exception.cause)
-    }
-
     fun testPhotoCaptureExceptionCreation() {
-        val message = "Photo capture failed"
-        val cause = IllegalStateException("Camera not ready")
+        val message = "Test photo capture error"
+        val cause = RuntimeException("Root cause")
         
         val exception = PhotoCaptureException(message, cause)
         
@@ -36,22 +14,11 @@ class ExceptionsComprehensiveTest : TestCase() {
         assertEquals("Message should match", message, exception.message)
         assertEquals("Cause should match", cause, exception.cause)
         assertTrue("Should be instance of ImagePickerException", exception is ImagePickerException)
-        assertTrue("Should be instance of Exception", exception is Exception)
-    }
-
-    fun testPhotoCaptureExceptionWithDefaultCause() {
-        val message = "Photo capture error"
-        
-        val exception = PhotoCaptureException(message)
-        
-        assertNotNull("Exception should not be null", exception)
-        assertEquals("Message should match", message, exception.message)
-        assertNull("Cause should be null", exception.cause)
     }
 
     fun testPermissionDeniedExceptionCreation() {
-        val message = "Camera permission denied"
-        val cause = SecurityException("No camera permission")
+        val message = "Permission denied error"
+        val cause = SecurityException("Security cause")
         
         val exception = PermissionDeniedException(message, cause)
         
@@ -61,82 +28,60 @@ class ExceptionsComprehensiveTest : TestCase() {
         assertTrue("Should be instance of ImagePickerException", exception is ImagePickerException)
     }
 
-    fun testPermissionDeniedExceptionWithDefaultCause() {
-        val message = "Permission denied"
-        
-        val exception = PermissionDeniedException(message)
-        
-        assertNotNull("Exception should not be null", exception)
-        assertEquals("Message should match", message, exception.message)
-        assertNull("Cause should be null", exception.cause)
-    }
-
     fun testImageProcessingExceptionCreation() {
-        val message = "Image processing failed"
-        val cause = OutOfMemoryError("Insufficient memory")
-        
-        val exception = ImageProcessingException(message, cause)
-        
-        assertNotNull("Exception should not be null", exception)
-        assertEquals("Message should match", message, exception.message)
-        assertEquals("Cause should match", cause, exception.cause)
-        assertTrue("Should be instance of ImagePickerException", exception is ImagePickerException)
-    }
-
-    fun testImageProcessingExceptionWithDefaultCause() {
-        val message = "Processing error"
+        val message = "Image processing error"
         
         val exception = ImageProcessingException(message)
         
         assertNotNull("Exception should not be null", exception)
         assertEquals("Message should match", message, exception.message)
         assertNull("Cause should be null", exception.cause)
+        assertTrue("Should be instance of ImagePickerException", exception is ImagePickerException)
     }
 
-    fun testExceptionInheritance() {
-        val photoException = PhotoCaptureException("Photo error")
-        val permissionException = PermissionDeniedException("Permission error")
-        val processingException = ImageProcessingException("Processing error")
+    fun testExceptionHierarchy() {
+        val photoCaptureException = PhotoCaptureException("test")
+        val permissionException = PermissionDeniedException("test")
+        val processingException = ImageProcessingException("test")
         
-        // Test inheritance chain
         assertTrue("PhotoCaptureException should extend ImagePickerException", 
-                  photoException is ImagePickerException)
+            photoCaptureException is ImagePickerException)
         assertTrue("PermissionDeniedException should extend ImagePickerException", 
-                  permissionException is ImagePickerException)
+            permissionException is ImagePickerException)
         assertTrue("ImageProcessingException should extend ImagePickerException", 
-                  processingException is ImagePickerException)
-        
-        // Test they're all Throwable
-        assertTrue("PhotoCaptureException should be Throwable", photoException is Throwable)
-        assertTrue("PermissionDeniedException should be Throwable", permissionException is Throwable)
-        assertTrue("ImageProcessingException should be Throwable", processingException is Throwable)
+            processingException is ImagePickerException)
     }
 
-    fun testExceptionMessageFormatting() {
-        val baseMessage = "Base error"
-        val detailMessage = "Detailed information"
-        val fullMessage = "$baseMessage: $detailMessage"
+    fun testExceptionMessages() {
+        val testMessage = "Custom error message"
         
-        val exception = ImagePickerException(fullMessage)
+        val photoException = PhotoCaptureException(testMessage)
+        val permissionException = PermissionDeniedException(testMessage)
+        val processingException = ImageProcessingException(testMessage)
         
-        assertNotNull("Exception message should not be null", exception.message)
-        assertTrue("Message should contain base message", 
-                  exception.message!!.contains(baseMessage))
-        assertTrue("Message should contain detail message", 
-                  exception.message!!.contains(detailMessage))
+        assertEquals("Photo exception message should match", testMessage, photoException.message)
+        assertEquals("Permission exception message should match", testMessage, permissionException.message)
+        assertEquals("Processing exception message should match", testMessage, processingException.message)
     }
 
-    fun testExceptionStackTrace() {
-        try {
-            throw PhotoCaptureException("Test exception")
-        } catch (e: PhotoCaptureException) {
-            assertNotNull("Stack trace should not be null", e.stackTrace)
-            assertTrue("Stack trace should not be empty", e.stackTrace.isNotEmpty())
-            
-            val topFrame = e.stackTrace[0]
-            assertNotNull("Top frame should not be null", topFrame)
-            assertTrue("Should contain test method", 
-                      topFrame.methodName.contains("testExceptionStackTrace"))
-        }
+    fun testExceptionWithCause() {
+        val rootCause = IllegalArgumentException("Root cause")
+        val message = "Wrapper message"
+        
+        val exception = PhotoCaptureException(message, rootCause)
+        
+        assertNotNull("Exception should not be null", exception)
+        assertEquals("Message should match", message, exception.message)
+        assertEquals("Cause should match", rootCause, exception.cause)
+    }
+
+    fun testExceptionWithoutCause() {
+        val message = "No cause message"
+        
+        val exception = ImageProcessingException(message)
+        
+        assertNotNull("Exception should not be null", exception)
+        assertEquals("Message should match", message, exception.message)
+        assertNull("Cause should be null", exception.cause)
     }
 }

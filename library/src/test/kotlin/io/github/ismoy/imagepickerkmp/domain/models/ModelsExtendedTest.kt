@@ -84,9 +84,9 @@ class ModelsExtendedTest : TestCase() {
         assertTrue("Should have at least 3 preferences", preferences.size >= 3)
         
         val expectedPreferences = setOf(
-            CapturePhotoPreference.FRONT,
-            CapturePhotoPreference.BACK,
-            CapturePhotoPreference.NONE
+            CapturePhotoPreference.FAST,
+            CapturePhotoPreference.BALANCED,
+            CapturePhotoPreference.QUALITY
         )
         
         expectedPreferences.forEach { expected ->
@@ -106,11 +106,11 @@ class ModelsExtendedTest : TestCase() {
         assertTrue("Should have at least 5 MIME types", mimeTypes.size >= 5)
         
         val expectedTypes = setOf(
-            MimeType.JPEG,
-            MimeType.PNG,
-            MimeType.GIF,
-            MimeType.BMP,
-            MimeType.WEBP
+            MimeType.IMAGE_JPEG,
+            MimeType.IMAGE_PNG,
+            MimeType.IMAGE_GIF,
+            MimeType.IMAGE_BMP,
+            MimeType.IMAGE_WEBP
         )
         
         expectedTypes.forEach { expected ->
@@ -128,11 +128,11 @@ class ModelsExtendedTest : TestCase() {
 
     fun testMimeTypeValues() {
         val expectedMimeValues = mapOf(
-            MimeType.JPEG to "image/jpeg",
-            MimeType.PNG to "image/png",
-            MimeType.GIF to "image/gif",
-            MimeType.BMP to "image/bmp",
-            MimeType.WEBP to "image/webp"
+            MimeType.IMAGE_JPEG to "image/jpeg",
+            MimeType.IMAGE_PNG to "image/png",
+            MimeType.IMAGE_GIF to "image/gif",
+            MimeType.IMAGE_BMP to "image/bmp",
+            MimeType.IMAGE_WEBP to "image/webp"
         )
         
         expectedMimeValues.forEach { (mimeType, expectedValue) ->

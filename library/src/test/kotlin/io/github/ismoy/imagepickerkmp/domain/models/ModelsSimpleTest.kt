@@ -69,21 +69,23 @@ class ModelsSimpleTest : TestCase() {
     fun testPhotoResultBasicProperties() {
         val testFile = "test_file.jpg"
         val testMimeType = MimeType.IMAGE_JPEG
-        val photoResult = PhotoResult(testFile, testMimeType)
+        val photoResult = PhotoResult(testFile, 800, 600)
         
         assertNotNull("PhotoResult should not be null", photoResult)
-        assertEquals("File should match", testFile, photoResult.file)
-        assertEquals("MimeType should match", testMimeType, photoResult.mimeType)
+        assertEquals("URI should match", testFile, photoResult.uri)
+        assertEquals("Width should match", 800, photoResult.width)
+        assertEquals("Height should match", 600, photoResult.height)
     }
 
     fun testGalleryPhotoResultBasicProperties() {
         val testFile = "gallery_file.png"
         val testMimeType = MimeType.IMAGE_PNG
-        val galleryResult = GalleryPhotoResult(testFile, testMimeType)
+        val galleryResult = GalleryPhotoResult(testFile, 1024, 768)
         
         assertNotNull("GalleryPhotoResult should not be null", galleryResult)
-        assertEquals("File should match", testFile, galleryResult.file)
-        assertEquals("MimeType should match", testMimeType, galleryResult.mimeType)
+        assertEquals("URI should match", testFile, galleryResult.uri)
+        assertEquals("Width should match", 1024, galleryResult.width)
+        assertEquals("Height should match", 768, galleryResult.height)
     }
 
     fun testDataClassEquality() {
@@ -91,9 +93,9 @@ class ModelsSimpleTest : TestCase() {
         val file2 = "test2.jpg"
         val mimeType = MimeType.IMAGE_JPEG
         
-        val result1a = PhotoResult(file1, mimeType)
-        val result1b = PhotoResult(file1, mimeType)
-        val result2 = PhotoResult(file2, mimeType)
+        val result1a = PhotoResult(file1, 800, 600)
+        val result1b = PhotoResult(file1, 800, 600)
+        val result2 = PhotoResult(file2, 800, 600)
         
         // Test equality for same data
         assertEquals("Same data should be equal", result1a, result1b)
@@ -105,8 +107,8 @@ class ModelsSimpleTest : TestCase() {
         val file = "test.jpg"
         val mimeType = MimeType.IMAGE_JPEG
         
-        val result1 = PhotoResult(file, mimeType)
-        val result2 = PhotoResult(file, mimeType)
+        val result1 = PhotoResult(file, 800, 600)
+        val result2 = PhotoResult(file, 800, 600)
         
         assertEquals("Same data should have same hash code", 
                     result1.hashCode(), result2.hashCode())

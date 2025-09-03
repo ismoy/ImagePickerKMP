@@ -6,38 +6,38 @@ import kotlin.test.assertNotNull
 class LoggerTest {
 
     @Test
-    fun `Logger debug should not throw exception`() {
-        // Test that Logger.debug doesn't crash
-        Logger.debug("Test debug message")
-        assertNotNull(Logger)
+    fun `DefaultLogger debug should not throw exception`() {
+        // Test that DefaultLogger.logDebug doesn't crash
+        DefaultLogger.logDebug("Test debug message")
+        assertNotNull(DefaultLogger)
     }
 
     @Test
-    fun `Logger info should not throw exception`() {
-        // Test that Logger.info doesn't crash
-        Logger.info("Test info message")
-        assertNotNull(Logger)
+    fun `DefaultLogger info should not throw exception`() {
+        // Test that DefaultLogger.log doesn't crash
+        DefaultLogger.log("Test info message")
+        assertNotNull(DefaultLogger)
     }
 
     @Test
-    fun `Logger warn should not throw exception`() {
-        // Test that Logger.warn doesn't crash
-        Logger.warn("Test warn message")
-        assertNotNull(Logger)
+    fun `DefaultLogger warn should not throw exception`() {
+        // Test that DefaultLogger.log doesn't crash
+        DefaultLogger.log("Test warn message")
+        assertNotNull(DefaultLogger)
     }
 
     @Test
-    fun `Logger error should not throw exception`() {
-        // Test that Logger.error doesn't crash
-        Logger.error("Test error message")
-        assertNotNull(Logger)
+    fun `DefaultLogger error should not throw exception`() {
+        // Test that DefaultLogger.logError doesn't crash
+        DefaultLogger.logError("Test error message")
+        assertNotNull(DefaultLogger)
     }
 
     @Test
-    fun `Logger error with exception should not throw exception`() {
-        // Test that Logger.error with exception doesn't crash
+    fun `DefaultLogger error with exception should not throw exception`() {
+        // Test that DefaultLogger.logError with exception doesn't crash
         val exception = Exception("Test exception")
-        Logger.error("Test error message", exception)
-        assertNotNull(Logger)
+        DefaultLogger.logError("Test error message", exception)
+        assertNotNull(DefaultLogger)
     }
 }

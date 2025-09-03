@@ -23,7 +23,7 @@ class FileUtilsComprehensiveTest {
         assertEquals(MimeType.IMAGE_ALL, imageAllType)
         
         val unknownType = MimeType.fromString("image/unknown")
-        assertNotNull("Should return some default value", unknownType)
+        assertNull("Should return null for unknown type", unknownType)
     }
 
     @Test

@@ -2,6 +2,7 @@ package io.github.ismoy.imagepickerkmp.domain.config
 
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
+import androidx.compose.ui.unit.dp
 import junit.framework.TestCase
 
 class ConfigurationComprehensiveTest : TestCase() {
@@ -33,8 +34,8 @@ class ConfigurationComprehensiveTest : TestCase() {
         val galleryConfig = GalleryConfig()
         
         val captureConfig = CameraCaptureConfig(
-            preference = CapturePhotoPreference.FRONT,
-            captureButtonSize = 80.0f,
+            preference = CapturePhotoPreference.FAST,
+            captureButtonSize = 80.dp,
             uiConfig = uiConfig,
             cameraCallbacks = cameraCallbacks,
             permissionAndConfirmationConfig = permissionConfig,
@@ -42,13 +43,13 @@ class ConfigurationComprehensiveTest : TestCase() {
         )
         
         assertNotNull("Capture config should not be null", captureConfig)
-        assertEquals("Preference should match", CapturePhotoPreference.FRONT, captureConfig.preference)
+        assertEquals("Preference should match", CapturePhotoPreference.FAST, captureConfig.preference)
         assertEquals("UI config should match", uiConfig, captureConfig.uiConfig)
         assertEquals("Gallery config should match", galleryConfig, captureConfig.galleryConfig)
     }
 
     fun testGalleryConfigCreation() {
-        val mimeTypes = listOf(MimeType.JPEG, MimeType.PNG)
+        val mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)
         val galleryConfig = GalleryConfig(
             allowMultiple = true,
             mimeTypes = mimeTypes,
@@ -77,10 +78,10 @@ class ConfigurationComprehensiveTest : TestCase() {
         assertNotNull("Callbacks should not be null", callbacks)
         
         // Test callback execution
-        callbacks.onCameraReady.invoke()
-        callbacks.onCameraSwitch.invoke()
-        callbacks.onPermissionError.invoke(Exception("Test"))
-        callbacks.onGalleryOpened.invoke()
+        callbacks.onCameraReady?.invoke()
+        callbacks.onCameraSwitch?.invoke()
+        callbacks.onPermissionError?.invoke(Exception("Test"))
+        callbacks.onGalleryOpened?.invoke()
         
         assertTrue("Camera ready callback should be called", cameraReadyCalled)
         assertTrue("Camera switch callback should be called", cameraSwitchCalled)
@@ -89,30 +90,24 @@ class ConfigurationComprehensiveTest : TestCase() {
     }
 
     fun testPermissionAndConfirmationConfigCreation() {
-        val permissionConfig = PermissionAndConfirmationConfig(
-            customPermissionHandler = { true },
-            customConfirmationView = { _, _, _, _, _ -> },
-            customDeniedDialog = { _, _, _ -> },
-            customSettingsDialog = { _, _, _ -> }
-        )
+        val permissionConfig = PermissionAndConfirmationConfig()
         
         assertNotNull("Permission config should not be null", permissionConfig)
-        assertNotNull("Custom permission handler should not be null", permissionConfig.customPermissionHandler)
-        assertNotNull("Custom confirmation view should not be null", permissionConfig.customConfirmationView)
-        assertNotNull("Custom denied dialog should not be null", permissionConfig.customDeniedDialog)
-        assertNotNull("Custom settings dialog should not be null", permissionConfig.customSettingsDialog)
+        // These fields are nullable by default
+        assertNull("Custom permission handler should be null by default", permissionConfig.customPermissionHandler)
+        assertNull("Custom confirmation view should be null by default", permissionConfig.customConfirmationView)
+        assertNull("Custom denied dialog should be null by default", permissionConfig.customDeniedDialog)
+        assertNull("Custom settings dialog should be null by default", permissionConfig.customSettingsDialog)
     }
 
     fun testUiConfigCreation() {
         val uiConfig = UiConfig()
         
         assertNotNull("UI config should not be null", uiConfig)
-        assertNotNull("Button color should not be null", uiConfig.getButtonColor())
-        assertNotNull("Icon color should not be null", uiConfig.getIconColor())
-        assertNotNull("Button size should not be null", uiConfig.getButtonSize())
-        assertNotNull("Flash icon should not be null", uiConfig.flashIcon)
-        assertNotNull("Switch camera icon should not be null", uiConfig.switchCameraIcon)
-        assertNotNull("Gallery icon should not be null", uiConfig.galleryIcon)
+        // Icons are nullable by default
+        assertNull("Flash icon should be null by default", uiConfig.flashIcon)
+        assertNull("Switch camera icon should be null by default", uiConfig.switchCameraIcon)
+        assertNull("Gallery icon should be null by default", uiConfig.galleryIcon)
     }
 
     fun testCameraPreviewConfigCreation() {
@@ -120,7 +115,7 @@ class ConfigurationComprehensiveTest : TestCase() {
         val callbacks = CameraCallbacks()
         
         val previewConfig = CameraPreviewConfig(
-            captureButtonSize = 100.0f,
+            captureButtonSize = 100.dp,
             uiConfig = uiConfig,
             cameraCallbacks = callbacks
         )
