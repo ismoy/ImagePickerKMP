@@ -205,6 +205,114 @@ GalleryPickerLauncher(
 
 ---
 
+## 🗜️ Compresión de Imágenes – Documentación Específica
+
+## Descripción
+La funcionalidad de compresión de imágenes en ImagePickerKMP optimiza automáticamente el tamaño de las imágenes manteniendo una calidad aceptable. Funciona tanto para captura de cámara como selección de galería, con niveles de compresión configurables y procesamiento asíncrono.
+
+---
+
+## Características
+- **Compresión automática**: Aplica compresión de forma transparente durante el procesamiento de imágenes
+- **Niveles configurables**: Opciones de compresión BAJA, MEDIA, ALTA
+- **Soporte multi-formato**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
+- **Procesamiento asíncrono**: UI no bloqueante con Kotlin Coroutines
+- **Optimización inteligente**: Combina escalado de dimensiones + compresión de calidad
+- **Eficiencia de memoria**: Reciclado y limpieza adecuada de bitmaps
+
+---
+
+## Niveles de Compresión
+
+| Nivel | Calidad | Dimensión Máx | Caso de Uso |
+|-------|---------|---------------|-------------|
+| BAJA | 95% | 2560px | Compartir alta calidad, uso profesional |
+| MEDIA | 75% | 1920px | **Recomendado** - Redes sociales, uso general |
+| ALTA | 50% | 1280px | Optimización de almacenamiento, miniaturas |
+
+---
+
+## Cámara con Compresión
+
+```kotlin
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            // result.uri contiene la imagen comprimida
+            val fileSizeKB = (result.fileSize ?: 0) / 1024
+            println("Tamaño de imagen comprimida: ${fileSizeKB}KB")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        },
+        cameraCaptureConfig = CameraCaptureConfig(
+            compressionLevel = CompressionLevel.MEDIUM
+        )
+    )
+)
+```
+
+---
+
+## Galería con Compresión
+
+```kotlin
+GalleryPickerLauncher(
+    onPhotosSelected = { results ->
+        results.forEach { photo ->
+            val fileSizeKB = (photo.fileSize ?: 0) / 1024
+            println("Original: ${photo.fileName}")
+            println("Tamaño comprimido: ${fileSizeKB}KB")
+        }
+    },
+    onError = { exception ->
+        println("Error: ${exception.message}")
+    },
+    allowMultiple = true,
+    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+    cameraCaptureConfig = CameraCaptureConfig(
+        compressionLevel = CompressionLevel.HIGH // Optimizar para almacenamiento
+    )
+)
+```
+
+---
+
+## Proceso de Compresión
+
+1. **Carga de Imagen**: La imagen original se carga desde cámara/galería
+2. **Escalado de Dimensiones**: La imagen se redimensiona si es mayor que la dimensión máxima
+3. **Compresión de Calidad**: Se aplica compresión JPEG basada en el nivel
+4. **Archivo Temporal**: La imagen comprimida se guarda en caché de la app
+5. **Entrega de Resultado**: Se retorna nueva URI con la imagen comprimida
+
+---
+
+## Soporte de Plataforma
+
+| Plataforma | Compresión Cámara | Compresión Galería | Procesamiento Asíncrono |
+|------------|-------------------|-------------------|------------------------|
+| Android | ✅ | ✅ | ✅ Coroutines |
+| iOS | ✅ | ✅ | ✅ Coroutines |
+
+---
+
+## Consideraciones de Rendimiento
+
+- **Uso de Memoria**: Los bitmaps originales se reciclan después de la compresión
+- **Tiempo de Procesamiento**: Se ejecuta en hilos de fondo (Dispatchers.IO)
+- **Almacenamiento**: Las imágenes comprimidas se almacenan en directorio caché de la app
+- **Calidad**: Balance inteligente entre tamaño de archivo y calidad visual
+
+---
+
+## Referencias de Código
+- **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/data/processors/ImageProcessor.kt**: Lógica de compresión de cámara
+- **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/presentation/ui/components/GalleryPickerLauncher.android.kt**: Implementación de compresión de galería
+- **library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/domain/models/CompressionLevel.kt**: Definiciones de niveles de compresión
+
+---
+
 ### ImagePickerLauncher
 
 Composable principal para lanzar el selector de imágenes.
@@ -282,7 +390,9 @@ Representa el resultado de una captura de foto desde la cámara.
 data class PhotoResult(
     val uri: String,
     val width: Int,
-    val height: Int
+    val height: Int,
+    val fileName: String? = null,
+    val fileSize: Long? = null
 )
 ```
 
@@ -673,6 +783,23 @@ try {
 ---
 
 ## Enums
+
+### CompressionLevel
+
+Representa diferentes niveles de compresión para el procesamiento de imágenes.
+
+```kotlin
+enum class CompressionLevel {
+    LOW,    // Compresión baja - mantiene alta calidad pero archivos más grandes (95% calidad, 2560px máx)
+    MEDIUM, // Compresión media - calidad y tamaño equilibrados (75% calidad, 1920px máx)
+    HIGH    // Compresión alta - archivos más pequeños pero menor calidad (50% calidad, 1280px máx)
+}
+```
+
+**Mapeo de Calidad:**
+- `LOW`: 95% calidad, dimensión máxima 2560px - Mejor para compartir alta calidad
+- `MEDIUM`: 75% calidad, dimensión máxima 1920px - Recomendado para la mayoría de casos de uso
+- `HIGH`: 50% calidad, dimensión máxima 1280px - Mejor para optimización de almacenamiento
 
 ### CapturePhotoPreference
 

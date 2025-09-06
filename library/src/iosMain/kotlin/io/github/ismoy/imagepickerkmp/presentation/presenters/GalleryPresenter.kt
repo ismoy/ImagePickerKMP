@@ -2,6 +2,7 @@ package io.github.ismoy.imagepickerkmp.presentation.presenters
 
 import io.github.ismoy.imagepickerkmp.data.delegates.GalleryDelegate
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UIViewController
@@ -18,10 +19,16 @@ object GalleryPresenter {
         viewController: UIViewController,
         onPhotoSelected: (GalleryPhotoResult) -> Unit,
         onError: (Exception) -> Unit,
-        onDismiss: () -> Unit
+        onDismiss: () -> Unit,
+        compressionLevel: CompressionLevel? = null
     ) {
         try {
-            val imagePickerController = createImagePickerController(onPhotoSelected, onError, onDismiss)
+            val imagePickerController = createImagePickerController(
+                onPhotoSelected,
+                onError,
+                onDismiss,
+                compressionLevel
+            )
             viewController.presentViewController(imagePickerController, animated = true, completion = null)
         } catch (e: Exception) {
             onError(Exception("Failed to present gallery: ${e.message}"))
@@ -31,7 +38,8 @@ object GalleryPresenter {
     private fun createImagePickerController(
         onPhotoSelected: (GalleryPhotoResult) -> Unit,
         onError: (Exception) -> Unit,
-        onDismiss: () -> Unit
+        onDismiss: () -> Unit,
+        compressionLevel: CompressionLevel? = null
     ): UIImagePickerController {
         return UIImagePickerController().apply {
             sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypePhotoLibrary
@@ -50,8 +58,7 @@ object GalleryPresenter {
                 onDismiss()
                 cleanup()
             }
-            galleryDelegate =
-                GalleryDelegate(wrappedOnPhotoSelected, wrappedOnError, wrappedOnDismiss)
+            galleryDelegate = GalleryDelegate(wrappedOnPhotoSelected, compressionLevel)
             delegate = galleryDelegate
         }
     }

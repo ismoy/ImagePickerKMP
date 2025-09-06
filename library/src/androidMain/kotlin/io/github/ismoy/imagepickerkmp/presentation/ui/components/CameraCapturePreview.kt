@@ -37,6 +37,7 @@ import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.BackgroundColor
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 
 @Suppress("LongMethod","LongParameterList")
@@ -47,7 +48,8 @@ fun CameraCapturePreview(
     onPhotoResult: (PhotoResult) -> Unit,
     context: Context,
     onError: (Exception) -> Unit,
-    previewConfig: CameraPreviewConfig = CameraPreviewConfig()
+    previewConfig: CameraPreviewConfig = CameraPreviewConfig(),
+    compressionLevel: CompressionLevel? = null
 ) {
     val previewView = remember { PreviewView(context) }
     val coroutineScope = rememberCoroutineScope()
@@ -78,18 +80,25 @@ fun CameraCapturePreview(
                 openGallery = false
                 val result = results.firstOrNull()
                 if (result != null) {
+                    logDebug("Gallery result received - File size: ${result.fileSize}KB")
                     onPhotoResult(
                         PhotoResult(
                             uri = result.uri,
                             width = result.width,
-                            height = result.height
+                            height = result.height,
+                            fileName = result.fileName,
+                            fileSize = result.fileSize
                         )
                     )
+                    logDebug("PhotoResult created with file size: ${result.fileSize}KB")
+                } else {
+                    logDebug("No gallery result received")
                 }
             },
-            onError = {
+            onError = { error ->
                 openGallery = false
-                onError(it)
+                logDebug("Gallery error: ${error.message}")
+                onError(error)
             },
             allowMultiple = false,
             mimeTypes = listOf(MimeType.IMAGE_ALL)
@@ -153,7 +162,7 @@ fun CameraCapturePreview(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
-                    stateHolder.capturePhoto(onPhotoResult, onError)
+                    stateHolder.capturePhoto(onPhotoResult, onError, compressionLevel)
                 }
         )
         Box(
@@ -178,4 +187,8 @@ fun CameraCapturePreview(
         }
         FlashOverlay(visible = stateHolder.showFlashOverlay)
     }
+}
+
+private fun logDebug(message: String) {
+    println("📷 Android CameraCapturePreview: $message")
 }

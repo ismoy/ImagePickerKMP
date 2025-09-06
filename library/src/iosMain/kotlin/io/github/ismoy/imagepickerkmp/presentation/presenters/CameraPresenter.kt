@@ -3,6 +3,7 @@ package io.github.ismoy.imagepickerkmp.presentation.presenters
 import io.github.ismoy.imagepickerkmp.data.delegates.CameraDelegate
 import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UIViewController
@@ -20,10 +21,16 @@ object CameraPresenter {
         viewController: UIViewController,
         onPhotoCaptured: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
-        onDismiss: () -> Unit
+        onDismiss: () -> Unit,
+        compressionLevel: CompressionLevel? = null
     ) {
         try {
-            val imagePickerController = createImagePickerController(onPhotoCaptured, onError, onDismiss)
+            val imagePickerController = createImagePickerController(
+                onPhotoCaptured,
+                onError,
+                onDismiss,
+                compressionLevel
+            )
             viewController.presentViewController(imagePickerController, animated = true, completion = null)
         } catch (e: Exception) {
             onError(PhotoCaptureException("Failed to present camera: ${e.message}"))
@@ -33,7 +40,8 @@ object CameraPresenter {
     private fun createImagePickerController(
         onPhotoCaptured: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
-        onDismiss: () -> Unit
+        onDismiss: () -> Unit,
+        compressionLevel: CompressionLevel? = null
     ): UIImagePickerController {
         return UIImagePickerController().apply {
             sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
@@ -52,7 +60,12 @@ object CameraPresenter {
                 onDismiss()
                 cleanup()
             }
-            cameraDelegate = CameraDelegate(wrappedOnPhotoCaptured, wrappedOnError, wrappedOnDismiss)
+            cameraDelegate = CameraDelegate(
+                wrappedOnPhotoCaptured,
+                wrappedOnError,
+                wrappedOnDismiss,
+                compressionLevel
+            )
             delegate = cameraDelegate
         }
     }

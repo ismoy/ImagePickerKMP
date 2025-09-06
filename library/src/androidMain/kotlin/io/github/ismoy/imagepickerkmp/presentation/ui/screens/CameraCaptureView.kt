@@ -13,7 +13,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
-import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
 import io.github.ismoy.imagepickerkmp.domain.config.PermissionConfig
@@ -142,7 +141,8 @@ private fun CameraAndPreview(
             captureButtonSize = cameraCaptureConfig.captureButtonSize,
             uiConfig = cameraCaptureConfig.uiConfig,
             cameraCallbacks = cameraCaptureConfig.cameraCallbacks
-        )
+        ),
+        compressionLevel = cameraCaptureConfig.compressionLevel
     )
 }
 

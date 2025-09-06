@@ -3,6 +3,7 @@ package io.github.ismoy.imagepickerkmp.presentation.presenters
 import io.github.ismoy.imagepickerkmp.data.delegates.PHPickerDelegate
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.SELECTION_LIMIT
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import platform.PhotosUI.PHPickerConfiguration
 import platform.PhotosUI.PHPickerFilter
 import platform.PhotosUI.PHPickerViewController
@@ -21,11 +22,18 @@ object PHPickerPresenter {
         onPhotoSelected: (GalleryPhotoResult) -> Unit,
         onError: (Exception) -> Unit,
         onDismiss: () -> Unit,
-        selectionLimit: Long
+        selectionLimit: Long,
+        compressionLevel: CompressionLevel? = null
     ) {
         require(selectionLimit <= SELECTION_LIMIT) {"Selection limit cannot exceed $SELECTION_LIMIT"}
         try {
-            val pickerViewController = createPHPickerController(onPhotoSelected, onError, onDismiss, selectionLimit)
+            val pickerViewController = createPHPickerController(
+                onPhotoSelected,
+                onError,
+                onDismiss,
+                selectionLimit,
+                compressionLevel
+            )
             viewController.presentViewController(pickerViewController,
                 animated = true, completion = null)
         } catch (e: Exception) {
@@ -37,7 +45,8 @@ object PHPickerPresenter {
         onPhotoSelected: (GalleryPhotoResult) -> Unit,
         onError: (Exception) -> Unit,
         onDismiss: () -> Unit,
-        selectionLimit: Long
+        selectionLimit: Long,
+        compressionLevel: CompressionLevel? = null
     ): PHPickerViewController {
         val configuration = PHPickerConfiguration()
         configuration.selectionLimit = selectionLimit
@@ -56,7 +65,12 @@ object PHPickerPresenter {
             onDismiss()
             cleanup()
         }
-        pickerDelegate = PHPickerDelegate(wrappedOnPhotoSelected, wrappedOnError, wrappedOnDismiss)
+        pickerDelegate = PHPickerDelegate(
+            wrappedOnPhotoSelected,
+            wrappedOnError,
+            wrappedOnDismiss,
+            compressionLevel
+        )
         return PHPickerViewController(configuration).apply {
             delegate = pickerDelegate
         }

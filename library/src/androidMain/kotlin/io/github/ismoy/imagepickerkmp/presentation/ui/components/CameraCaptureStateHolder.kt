@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController
 import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.DELAY_TO_TAKE_PHOTO
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
@@ -85,10 +86,11 @@ class CameraCaptureStateHolder(
 
     fun capturePhoto(
         onPhotoResult: (PhotoResult) -> Unit,
-        onError: (Exception) -> Unit
+        onError: (Exception) -> Unit,
+        compressionLevel: CompressionLevel? = null
     ) {
         showFlashOverlay = true
-        cameraManager.takePicture(onPhotoResult, onError)
+        cameraManager.takePicture(onPhotoResult, onError, compressionLevel)
         coroutineScope.launch {
             delay(DELAY_TO_TAKE_PHOTO)
             showFlashOverlay = false

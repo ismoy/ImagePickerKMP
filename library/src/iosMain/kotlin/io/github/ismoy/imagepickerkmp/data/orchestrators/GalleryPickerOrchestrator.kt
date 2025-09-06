@@ -4,6 +4,7 @@ import io.github.ismoy.imagepickerkmp.presentation.presenters.GalleryPresenter
 import io.github.ismoy.imagepickerkmp.domain.utils.ViewControllerProvider
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.SELECTION_LIMIT
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.presentation.presenters.PHPickerPresenter
 
 /**
@@ -17,7 +18,8 @@ object GalleryPickerOrchestrator {
         onError: (Exception) -> Unit,
         onDismiss: () -> Unit,
         allowMultiple: Boolean = false,
-        selectionLimit: Long = SELECTION_LIMIT
+        selectionLimit: Long = SELECTION_LIMIT,
+        compressionLevel: CompressionLevel? = null
     ) {
         try {
             val rootViewController = ViewControllerProvider.getRootViewController()
@@ -31,10 +33,17 @@ object GalleryPickerOrchestrator {
                     onPhotoSelected,
                     onError,
                     onDismiss,
-                    selectionLimit
+                    selectionLimit,
+                    compressionLevel
                 )
             } else {
-                GalleryPresenter.presentGallery(rootViewController, onPhotoSelected, onError, onDismiss)
+                GalleryPresenter.presentGallery(
+                    rootViewController,
+                    onPhotoSelected,
+                    onError,
+                    onDismiss,
+                    compressionLevel
+                )
             }
         } catch (e: Exception) {
             onError(Exception("Failed to launch gallery: ${e.message}"))

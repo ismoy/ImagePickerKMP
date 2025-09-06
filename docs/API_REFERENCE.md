@@ -205,6 +205,114 @@ GalleryPickerLauncher(
 
 ---
 
+## 🗜️ Image Compression – Specific Documentation
+
+## Description
+The image compression functionality in ImagePickerKMP automatically optimizes image size while maintaining acceptable quality. It works for both camera capture and gallery selection, with configurable compression levels and async processing.
+
+---
+
+## Features
+- **Automatic compression**: Applies compression transparently during image processing
+- **Configurable levels**: LOW, MEDIUM, HIGH compression options
+- **Multi-format support**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
+- **Async processing**: Non-blocking UI with Kotlin Coroutines
+- **Smart optimization**: Combines dimension scaling + quality compression
+- **Memory efficient**: Proper bitmap recycling and cleanup
+
+---
+
+## Compression Levels
+
+| Level | Quality | Max Dimension | Use Case |
+|-------|---------|---------------|----------|
+| LOW | 95% | 2560px | High-quality sharing, professional use |
+| MEDIUM | 75% | 1920px | **Recommended** - Social media, general use |
+| HIGH | 50% | 1280px | Storage optimization, thumbnails |
+
+---
+
+## Camera with Compression
+
+```kotlin
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            // result.uri contains the compressed image
+            val fileSizeKB = (result.fileSize ?: 0) / 1024
+            println("Compressed image size: ${fileSizeKB}KB")
+        },
+        onError = { exception ->
+            println("Error: ${exception.message}")
+        },
+        cameraCaptureConfig = CameraCaptureConfig(
+            compressionLevel = CompressionLevel.MEDIUM
+        )
+    )
+)
+```
+
+---
+
+## Gallery with Compression
+
+```kotlin
+GalleryPickerLauncher(
+    onPhotosSelected = { results ->
+        results.forEach { photo ->
+            val fileSizeKB = (photo.fileSize ?: 0) / 1024
+            println("Original: ${photo.fileName}")
+            println("Compressed size: ${fileSizeKB}KB")
+        }
+    },
+    onError = { exception ->
+        println("Error: ${exception.message}")
+    },
+    allowMultiple = true,
+    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+    cameraCaptureConfig = CameraCaptureConfig(
+        compressionLevel = CompressionLevel.HIGH // Optimize for storage
+    )
+)
+```
+
+---
+
+## Compression Process
+
+1. **Image Loading**: Original image is loaded from camera/gallery
+2. **Dimension Scaling**: Image is resized if larger than max dimension
+3. **Quality Compression**: JPEG compression is applied based on level
+4. **Temporary File**: Compressed image is saved to app cache
+5. **Result Delivery**: New URI with compressed image is returned
+
+---
+
+## Platform Support
+
+| Platform | Camera Compression | Gallery Compression | Async Processing |
+|----------|-------------------|---------------------|------------------|
+| Android | ✅ | ✅ | ✅ Coroutines |
+| iOS | ✅ | ✅ | ✅ Coroutines |
+
+---
+
+## Performance Considerations
+
+- **Memory Usage**: Original bitmaps are recycled after compression
+- **Processing Time**: Runs on background threads (Dispatchers.IO)
+- **Storage**: Compressed images are stored in app cache directory
+- **Quality**: Smart balance between file size and visual quality
+
+---
+
+## Code References
+- **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/data/processors/ImageProcessor.kt**: Camera compression logic
+- **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/presentation/ui/components/GalleryPickerLauncher.android.kt**: Gallery compression implementation
+- **library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/domain/models/CompressionLevel.kt**: Compression level definitions
+
+---
+
 ### ImagePickerLauncher
 
 Main composable for launching the image picker.
@@ -282,7 +390,9 @@ Represents the result of a photo capture from camera.
 data class PhotoResult(
     val uri: String,
     val width: Int,
-    val height: Int
+    val height: Int,
+    val fileName: String? = null,
+    val fileSize: Long? = null
 )
 ```
 
@@ -331,10 +441,42 @@ Configuration for camera capture.
 data class CameraCaptureConfig(
     val preference: CapturePhotoPreference = CapturePhotoPreference.QUALITY,
     val captureButtonSize: Dp = 72.dp,
+    val compressionLevel: CompressionLevel? = null, // null = no compression
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
     val galleryConfig: GalleryConfig = GalleryConfig()
+)
+```
+
+**Parameters:**
+- `preference` - Photo capture quality preference
+- `captureButtonSize` - Size of the capture button
+- `compressionLevel` - **NEW**: Automatic image compression level (null = disabled, MEDIUM = recommended)
+- `uiConfig` - UI customization configuration
+- `cameraCallbacks` - Camera lifecycle callbacks
+- `permissionAndConfirmationConfig` - Permission and confirmation dialogs
+- `galleryConfig` - Gallery selection configuration
+
+**Image Compression Examples:**
+
+```kotlin
+// No compression (default)
+CameraCaptureConfig()
+
+// Medium compression (recommended)
+CameraCaptureConfig(
+    compressionLevel = CompressionLevel.MEDIUM
+)
+
+// High compression for storage optimization
+CameraCaptureConfig(
+    compressionLevel = CompressionLevel.HIGH
+)
+
+// Low compression for maximum quality
+CameraCaptureConfig(
+    compressionLevel = CompressionLevel.LOW
 )
 ```
 
@@ -673,6 +815,23 @@ try {
 ---
 
 ## Enums
+
+### CompressionLevel
+
+Represents different compression levels for image processing.
+
+```kotlin
+enum class CompressionLevel {
+    LOW,    // Low compression - maintains high quality but larger file size (95% quality, 2560px max)
+    MEDIUM, // Medium compression - balanced quality and file size (75% quality, 1920px max)
+    HIGH    // High compression - smaller file size but lower quality (50% quality, 1280px max)
+}
+```
+
+**Quality Mapping:**
+- `LOW`: 95% quality, maximum dimension 2560px - Best for high-quality sharing
+- `MEDIUM`: 75% quality, maximum dimension 1920px - Recommended for most use cases
+- `HIGH`: 50% quality, maximum dimension 1280px - Best for storage optimization
 
 ### CapturePhotoPreference
 

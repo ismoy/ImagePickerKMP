@@ -51,6 +51,11 @@
 ## Acerca de ImagePickerKMP
 - **Multiplataforma**: Funciona perfectamente en Android e iOS
 - **Integración de Cámara**: Acceso directo a la cámara con captura de fotos
+- **Selección de Galería**: Selecciona imágenes de la galería del dispositivo con soporte de compresión
+- **Compresión Automática de Imágenes**: Optimiza el tamaño de imagen manteniendo la calidad
+- **Niveles de Compresión Configurables**: Opciones de compresión BAJA, MEDIA, ALTA
+- **Procesamiento Asíncrono**: UI no bloqueante con integración de Kotlin Coroutines
+- **Soporte de Múltiples Formatos**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
 - **UI Personalizable**: Diálogos personalizados y vistas de confirmación
 - **Manejo de Permisos**: Gestión inteligente de permisos para ambas plataformas
 - **Fácil Integración**: API simple con Compose Multiplatform
@@ -133,6 +138,62 @@ Button(onClick = { showGallery = true }) {
     Text("Elegir de la Galería")
 }
 ```
+
+## Compresión de Imágenes
+**Optimiza automáticamente el tamaño de imagen manteniendo la calidad con niveles de compresión configurables.**
+
+### Niveles de Compresión
+- **BAJA (LOW)**: 95% calidad, máx 2560px dimensión - Mejor calidad, archivos más grandes
+- **MEDIA (MEDIUM)**: 75% calidad, máx 1920px dimensión - Calidad/tamaño equilibrado
+- **ALTA (HIGH)**: 50% calidad, máx 1280px dimensión - Archivos más pequeños, bueno para almacenamiento
+
+### Cámara con Compresión
+```kotlin
+if (showCamera) {
+    ImagePickerLauncher(
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                capturedPhoto = result
+                showCamera = false
+            },
+            onError = { showCamera = false },
+            onDismiss = { showCamera = false },
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = CompressionLevel.MEDIUM // Habilitar compresión
+            )
+        )
+    )
+}
+```
+
+### Galería con Compresión
+```kotlin
+if (showGallery) {
+    GalleryPickerLauncher(
+        onPhotosSelected = { photos ->
+            selectedImages = photos
+            showGallery = false
+        },
+        onError = { showGallery = false },
+        onDismiss = { showGallery = false },
+        allowMultiple = true,
+        mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+        cameraCaptureConfig = CameraCaptureConfig(
+            compressionLevel = CompressionLevel.HIGH // Optimizar para almacenamiento
+        )
+    )
+}
+```
+
+### Formatos de Imagen Soportados
+- **JPEG** (image/jpeg) - Soporte completo de compresión
+- **PNG** (image/png) - Soporte completo de compresión
+- **HEIC** (image/heic) - Soporte completo de compresión
+- **HEIF** (image/heif) - Soporte completo de compresión
+- **WebP** (image/webp) - Soporte completo de compresión
+- **GIF** (image/gif) - Soporte completo de compresión
+- **BMP** (image/bmp) - Soporte completo de compresión
+
 ### Para más personalización (vistas de confirmación, filtrado MIME, etc.), [consulta la guía de integración para KMP.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.es.md)
 
 ### Usando ImagePickerKMP en Android Nativo (Jetpack Compose)

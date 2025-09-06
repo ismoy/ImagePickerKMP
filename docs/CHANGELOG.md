@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **🗜️ Automatic Image Compression**: Complete compression system for both camera and gallery
+  - **Configurable Compression Levels**: LOW (95% quality, 2560px), MEDIUM (75% quality, 1920px), HIGH (50% quality, 1280px)
+  - **Multi-format Support**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP compression
+  - **Async Processing**: Non-blocking UI with Kotlin Coroutines integration
+  - **Smart Optimization**: Combines dimension scaling + quality compression
+  - **Memory Efficient**: Automatic bitmap recycling and cleanup
+  - **Unified API**: Same compression logic for camera capture and gallery selection
+  - **Cross-platform**: Works on both Android and iOS
+  - **Performance Optimized**: Background processing with proper thread management
+
+### Changed
+
+- Updated `CameraCaptureConfig` with new `compressionLevel: CompressionLevel?` parameter
+- Enhanced `GalleryPickerLauncher` to support compression through `cameraCaptureConfig`
+- Improved image processing pipeline with unified compression architecture
+- Updated documentation with comprehensive compression examples and guides
+
+### Fixed
+
+- Fixed inverted compression logic (HIGH compression now produces smaller files as expected)
+- Corrected image scaling algorithm for consistent quality across compression levels
+- Resolved CompressionConfig test failures by excluding IMAGE_ALL wildcard from supported formats
+
 ## [1.0.22] - 2024-12-XX
 
 ### Added
