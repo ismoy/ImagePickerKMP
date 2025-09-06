@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.camera.view.PreviewView
 import io.github.ismoy.imagepickerkmp.data.processors.ImageProcessor
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 
@@ -35,11 +36,18 @@ class CameraXManager(
     }
     fun takePicture(
         onPhotoResult: (PhotoResult) -> Unit,
-        onError: (Exception) -> Unit
+        onError: (Exception) -> Unit,
+        compressionLevel: CompressionLevel? = null
     ){
         cameraController.takePicture(
             onImageCaptured = { imageFile, cameraType ->
-                imageProcessor.processImage(imageFile, cameraType, onPhotoResult, onError)
+                imageProcessor.processImage(
+                    imageFile = imageFile,
+                    cameraType = cameraType,
+                    compressionLevel = compressionLevel,
+                    onPhotoCaptured = onPhotoResult,
+                    onError = onError
+                )
             },
             onError = onError
         )

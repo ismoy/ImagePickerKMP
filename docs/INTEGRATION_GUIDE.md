@@ -623,3 +623,140 @@ fun CameraScreen() {
       }
     }
 ```
+
+## Image Compression Integration
+
+ImagePickerKMP includes automatic image compression to optimize file sizes while maintaining quality. This feature works for both camera capture and gallery selection.
+
+### Basic Compression Setup
+
+#### Camera with Compression
+```kotlin
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            // result.uri contains the compressed image
+            photoResult = result
+            showCameraPicker = false
+        },
+        onError = { 
+            showCameraPicker = false 
+        },
+        onDismiss = { 
+            showCameraPicker = false 
+        },
+        cameraCaptureConfig = CameraCaptureConfig(
+            compressionLevel = CompressionLevel.MEDIUM // Enable compression
+        )
+    )
+)
+```
+
+#### Gallery with Compression
+```kotlin
+GalleryPickerLauncher(
+    onPhotosSelected = { photos ->
+        selectedImages = photos
+        showGalleryPicker = false
+    },
+    onError = { 
+        showGalleryPicker = false 
+    },
+    onDismiss = { 
+        showGalleryPicker = false 
+    },
+    allowMultiple = true,
+    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+    cameraCaptureConfig = CameraCaptureConfig(
+        compressionLevel = CompressionLevel.HIGH // Optimize for storage
+    )
+)
+```
+
+### Compression Levels
+
+Choose the appropriate compression level based on your use case:
+
+```kotlin
+// Low compression - High quality, larger files (95% quality, 2560px max)
+CameraCaptureConfig(
+    compressionLevel = CompressionLevel.LOW
+)
+
+// Medium compression - Balanced quality/size (75% quality, 1920px max) 
+// RECOMMENDED for most applications
+CameraCaptureConfig(
+    compressionLevel = CompressionLevel.MEDIUM
+)
+
+// High compression - Smaller files, good quality (50% quality, 1280px max)
+CameraCaptureConfig(
+    compressionLevel = CompressionLevel.HIGH
+)
+
+// No compression (default)
+CameraCaptureConfig()
+```
+
+### Supported Image Formats
+
+All common image formats are supported for compression:
+- **JPEG** (image/jpeg) - Full compression support
+- **PNG** (image/png) - Full compression support  
+- **HEIC** (image/heic) - Full compression support
+- **HEIF** (image/heif) - Full compression support
+- **WebP** (image/webp) - Full compression support
+- **GIF** (image/gif) - Full compression support
+- **BMP** (image/bmp) - Full compression support
+
+### Performance Considerations
+
+- **Async Processing**: Compression runs on background threads (Dispatchers.IO)
+- **Memory Management**: Original bitmaps are automatically recycled
+- **Storage**: Compressed images are saved to app cache directory
+- **Quality**: Smart balance between file size reduction and visual quality
+
+### Real-world Example
+
+```kotlin
+@Composable
+fun PhotoCaptureWithCompression() {
+    var showCamera by remember { mutableStateOf(false) }
+    var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
+    
+    Column {
+        Button(onClick = { showCamera = true }) {
+            Text("Capture Photo (Compressed)")
+        }
+        
+        capturedPhoto?.let { photo ->
+            Text("Photo captured!")
+            Text("Size: ${photo.fileSize} bytes")
+            Text("Dimensions: ${photo.width}x${photo.height}")
+            
+            AsyncImage(
+                model = photo.uri,
+                contentDescription = "Captured photo",
+                modifier = Modifier.size(200.dp)
+            )
+        }
+        
+        if (showCamera) {
+            ImagePickerLauncher(
+                config = ImagePickerConfig(
+                    onPhotoCaptured = { result ->
+                        capturedPhoto = result
+                        showCamera = false
+                    },
+                    onError = { showCamera = false },
+                    onDismiss = { showCamera = false },
+                    cameraCaptureConfig = CameraCaptureConfig(
+                        compressionLevel = CompressionLevel.MEDIUM,
+                        preference = CapturePhotoPreference.QUALITY
+                    )
+                )
+            )
+        }
+    }
+}
+```

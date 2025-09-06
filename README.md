@@ -51,6 +51,11 @@
 ## About ImagePickerKMP
 - **Cross-platform**: Works seamlessly on Android and iOS
 - **Camera Integration**: Direct camera access with photo capture
+- **Gallery Selection**: Pick images from device gallery with compression support
+- **Automatic Image Compression**: Optimize image size while maintaining quality
+- **Configurable Compression Levels**: LOW, MEDIUM, HIGH compression options
+- **Async Processing**: Non-blocking UI with Kotlin Coroutines integration
+- **Multiple Format Support**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
 - **Customizable UI**: Custom dialogs and confirmation views
 - **Permission Handling**: Smart permission management for both platforms
 - **Easy Integration**: Simple API with Compose Multiplatform
@@ -92,6 +97,9 @@ if (showCamera) {
         config = ImagePickerConfig(
             onPhotoCaptured = { result ->
                 capturedPhoto = result
+                // Now you can access result.fileSize for camera captures too!
+                val fileSizeKB = (result.fileSize ?: 0) / 1024
+                println("Camera photo size: ${fileSizeKB}KB")
                 showCamera = false
             },
             onError = {
@@ -133,6 +141,68 @@ Button(onClick = { showGallery = true }) {
     Text("Choose from Gallery")
 }
 ```
+
+## Image Compression
+**Automatically optimize image size while maintaining quality with configurable compression levels.**
+
+### Compression Levels
+- **LOW**: 95% quality, max 2560px dimension - Best quality, larger files
+- **MEDIUM**: 75% quality, max 1920px dimension - Balanced quality/size 
+- **HIGH**: 50% quality, max 1280px dimension - Smaller files, good for storage
+
+### Camera with Compression
+```kotlin
+if (showCamera) {
+    ImagePickerLauncher(
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                capturedPhoto = result
+                val fileSizeKB = (result.fileSize ?: 0) / 1024
+                println("Compressed camera photo: ${fileSizeKB}KB")
+                showCamera = false
+            },
+            onError = { showCamera = false },
+            onDismiss = { showCamera = false },
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = CompressionLevel.MEDIUM // Enable compression
+            )
+        )
+    )
+}
+```
+
+### Gallery with Compression
+```kotlin
+if (showGallery) {
+    GalleryPickerLauncher(
+        onPhotosSelected = { photos ->
+            photos.forEach { photo ->
+                val fileSizeKB = (photo.fileSize ?: 0) / 1024
+                println("Gallery photo: ${photo.fileName} - ${fileSizeKB}KB")
+            }
+            selectedImages = photos
+            showGallery = false
+        },
+        onError = { showGallery = false },
+        onDismiss = { showGallery = false },
+        allowMultiple = true,
+        mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+        cameraCaptureConfig = CameraCaptureConfig(
+            compressionLevel = CompressionLevel.HIGH // Optimize for storage
+        )
+    )
+}
+```
+
+### Supported Image Formats
+- **JPEG** (image/jpeg) - Full compression support
+- **PNG** (image/png) - Full compression support  
+- **HEIC** (image/heic) - Full compression support
+- **HEIF** (image/heif) - Full compression support
+- **WebP** (image/webp) - Full compression support
+- **GIF** (image/gif) - Full compression support
+- **BMP** (image/bmp) - Full compression support
+
 ### For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for KMP.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md)
 
 ### Using ImagePickerKMP in Android Native (Jetpack Compose)
@@ -196,9 +266,81 @@ if (showGallery) {
 
 Button(onClick = { showGallery = true }) {
     Text("Choose from Gallery")
+Button(onClick = { showGallery = true }) {
+    Text("Choose from Gallery")
+}
+```
+
+### Android Native with Compression
+```kotlin
+// Camera with compression
+if (showCamera) {
+    ImagePickerLauncher(
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                capturedPhoto = result
+                val fileSizeKB = (result.fileSize ?: 0) / 1024
+                println("Camera photo compressed to: ${fileSizeKB}KB")
+                showCamera = false
+            },
+            onError = { showCamera = false },
+            onDismiss = { showCamera = false },
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = CompressionLevel.MEDIUM
+            )
+        )
+    )
+}
+
+// Gallery with compression
+if (showGallery) {
+    GalleryPickerLauncher(
+        onPhotosSelected = { photos ->
+            photos.forEach { photo ->
+                val fileSizeKB = (photo.fileSize ?: 0) / 1024
+                println("${photo.fileName}: ${fileSizeKB}KB")
+            }
+            selectedImages = photos
+            showGallery = false
+        },
+        onError = { showGallery = false },
+        onDismiss = { showGallery = false },
+        allowMultiple = true,
+        mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+        cameraCaptureConfig = CameraCaptureConfig(
+            compressionLevel = CompressionLevel.HIGH
+        )
+    )
 }
 ```
 ### For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for Native.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md)
+
+## File Size Utilities
+
+### Converting Bytes to Readable Format
+```kotlin
+// Extension function for cleaner file size display
+fun Long?.toReadableFileSize(): String {
+    if (this == null || this == 0L) return "Unknown size"
+    
+    return when {
+        this < 1024 -> "${this}B"
+        this < 1024 * 1024 -> "${this / 1024}KB"
+        else -> "${"%.1f".format(this / (1024.0 * 1024.0))}MB"
+    }
+}
+
+// Usage examples:
+onPhotoCaptured = { result ->
+    println("Camera photo: ${result.fileSize.toReadableFileSize()}")
+}
+
+onPhotosSelected = { photos ->
+    photos.forEach { photo ->
+        println("${photo.fileName}: ${photo.fileSize.toReadableFileSize()}")
+    }
+}
+```
 
 ## Platform Support
 <p align="center">

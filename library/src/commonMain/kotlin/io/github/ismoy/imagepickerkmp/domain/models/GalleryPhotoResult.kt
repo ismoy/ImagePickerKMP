@@ -7,7 +7,7 @@ package io.github.ismoy.imagepickerkmp.domain.models
  * @property width The width of the photo in pixels.
  * @property height The height of the photo in pixels.
  * @property fileName The name of the file, if available.
- * @property fileSize The size of the file in bytes, if available.
+ * @property fileSize The size of the file in KB, if available.
  */
 data class GalleryPhotoResult(
     val uri: String,

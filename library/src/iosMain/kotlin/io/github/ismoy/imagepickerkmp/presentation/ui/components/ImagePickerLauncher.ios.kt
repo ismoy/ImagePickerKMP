@@ -14,6 +14,7 @@ import io.github.ismoy.imagepickerkmp.domain.config.CameraPermissionDialogConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import platform.Foundation.setValue
 import platform.UIKit.UIAlertAction
 import platform.UIKit.UIAlertController
@@ -114,7 +115,8 @@ private fun handleImagePickerState(
             onPhotoCaptured = config.onPhotoCaptured,
             onError = config.onError,
             onDismiss = config.onDismiss,
-            onFinish = onCameraFinished
+            onFinish = onCameraFinished,
+            compressionLevel = config.cameraCaptureConfig?.compressionLevel
         )
     }
 
@@ -122,17 +124,23 @@ private fun handleImagePickerState(
         launchGalleryInternal(
             onPhotoSelected = { result ->
                 config.onPhotosSelected?.invoke(listOf(result))
+                println("📱 iOS ImagePickerLauncher DEBUG:")
+                println("   Gallery result fileSize: ${result.fileSize}KB")
                 config.onPhotoCaptured(
                     PhotoResult(
                         uri = result.uri,
                         width = result.width,
-                        height = result.height
+                        height = result.height,
+                        fileName = result.fileName,
+                        fileSize = result.fileSize
                     )
                 )
+                println("   PhotoResult fileSize: ${result.fileSize}KB")
             },
             onError = config.onError,
             onDismiss = config.onDismiss,
-            onFinish = onGalleryFinished
+            onFinish = onGalleryFinished,
+            compressionLevel = config.cameraCaptureConfig?.compressionLevel
         )
     }
 }
@@ -196,7 +204,8 @@ private fun launchCameraInternal(
     onPhotoCaptured: (PhotoResult) -> Unit,
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
-    onFinish: () -> Unit
+    onFinish: () -> Unit,
+    compressionLevel: CompressionLevel? = null
 ) {
     LaunchedEffect(Unit) {
         PhotoCaptureOrchestrator.launchCamera(
@@ -211,7 +220,8 @@ private fun launchCameraInternal(
             onDismiss = {
                 onDismiss()
                 onFinish()
-            }
+            },
+            compressionLevel = compressionLevel
         )
     }
 }
@@ -221,7 +231,8 @@ private fun launchGalleryInternal(
     onPhotoSelected: (GalleryPhotoResult) -> Unit,
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
-    onFinish: () -> Unit
+    onFinish: () -> Unit,
+    compressionLevel: CompressionLevel? = null
 ) {
     LaunchedEffect(Unit) {
         GalleryPickerOrchestrator.launchGallery(
@@ -233,7 +244,8 @@ private fun launchGalleryInternal(
                 onError(it)
                 onFinish()
             },
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
+            compressionLevel = compressionLevel
         )
     }
 }

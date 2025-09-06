@@ -6,14 +6,261 @@ This document provides comprehensive examples for using ImagePickerKMP in variou
 
 ## Table of Contents
 
+- [Image Compression Examples](#image-compression-examples)
 - [Basic Usage](#basic-usage)
 - [Advanced Customization](#advanced-customization)
 - [Permission Handling](#permission-handling)
 - [Gallery Selection](#gallery-selection)
-
 - [Internationalization (i18n)](#internationalization-i18n)
 - [Error Handling](#error-handling)
 - [Platform-Specific Examples](#platform-specific-examples)
+
+## Image Compression Examples
+
+### Camera Capture with Different Compression Levels
+
+```kotlin
+@Composable
+fun CameraWithCompressionLevels() {
+    var showCamera by remember { mutableStateOf(false) }
+    var compressionLevel by remember { mutableStateOf(CompressionLevel.MEDIUM) }
+    var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
+
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text("Select Compression Level:")
+        
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = { compressionLevel = CompressionLevel.LOW }) {
+                Text("LOW (Best Quality)")
+            }
+            Button(onClick = { compressionLevel = CompressionLevel.MEDIUM }) {
+                Text("MEDIUM")
+            }
+            Button(onClick = { compressionLevel = CompressionLevel.HIGH }) {
+                Text("HIGH (Smallest)")
+            }
+        }
+        
+        Button(onClick = { showCamera = true }) {
+            Text("Capture Photo with ${compressionLevel.name} Compression")
+        }
+        
+        capturedPhoto?.let { photo ->
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("Photo Captured!")
+                    Text("Size: ${photo.fileSize / 1024} KB")
+                    Text("Dimensions: ${photo.width}×${photo.height}")
+                    Text("Compression: ${compressionLevel.name}")
+                    
+                    AsyncImage(
+                        model = photo.uri,
+                        contentDescription = "Captured photo",
+                        modifier = Modifier.size(200.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
+        
+        if (showCamera) {
+            ImagePickerLauncher(
+                config = ImagePickerConfig(
+                    onPhotoCaptured = { result ->
+                        capturedPhoto = result
+                        showCamera = false
+                    },
+                    onError = { showCamera = false },
+                    onDismiss = { showCamera = false },
+                    cameraCaptureConfig = CameraCaptureConfig(
+                        compressionLevel = compressionLevel
+                    )
+                )
+            )
+        }
+    }
+}
+```
+
+### Gallery Selection with Compression
+
+```kotlin
+@Composable
+fun GalleryWithCompression() {
+    var showGallery by remember { mutableStateOf(false) }
+    var selectedImages by remember { mutableStateOf<List<GalleryPhotoResult>>(emptyList()) }
+    var compressionLevel by remember { mutableStateOf(CompressionLevel.MEDIUM) }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Compression:")
+            SegmentedButton(
+                options = listOf("LOW", "MEDIUM", "HIGH"),
+                selectedOption = compressionLevel.name,
+                onSelectionChanged = { selected ->
+                    compressionLevel = CompressionLevel.valueOf(selected)
+                }
+            )
+        }
+        
+        Button(
+            onClick = { showGallery = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Select Images from Gallery")
+        }
+        
+        if (selectedImages.isNotEmpty()) {
+            Text("Selected ${selectedImages.size} images:")
+            LazyColumn {
+                items(selectedImages) { photo ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AsyncImage(
+                                model = photo.uri,
+                                contentDescription = null,
+                                modifier = Modifier.size(60.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = photo.fileName ?: "Unknown",
+                                    style = MaterialTheme.typography.body2
+                                )
+                                Text(
+                                    text = "${(photo.fileSize ?: 0) / 1024}KB",
+                                    style = MaterialTheme.typography.caption
+                                )
+                                Text(
+                                    text = "${photo.width}×${photo.height}",
+                                    style = MaterialTheme.typography.caption
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (showGallery) {
+            GalleryPickerLauncher(
+                onPhotosSelected = { photos ->
+                    selectedImages = photos
+                    showGallery = false
+                },
+                onError = { showGallery = false },
+                onDismiss = { showGallery = false },
+                allowMultiple = true,
+                mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+                cameraCaptureConfig = CameraCaptureConfig(
+                    compressionLevel = compressionLevel
+                )
+            )
+        }
+    }
+}
+```
+
+### Compression Comparison Tool
+
+```kotlin
+@Composable
+fun CompressionComparisonTool() {
+    var showCamera by remember { mutableStateOf(false) }
+    var originalPhoto by remember { mutableStateOf<PhotoResult?>(null) }
+    var compressedPhotos by remember { mutableStateOf<Map<CompressionLevel, PhotoResult>>(emptyMap()) }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(
+            onClick = { showCamera = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Capture Photo for Comparison")
+        }
+        
+        if (compressedPhotos.isNotEmpty()) {
+            Text(
+                "Compression Comparison Results:",
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+            
+            LazyColumn {
+                items(CompressionLevel.values().toList()) { level ->
+                    compressedPhotos[level]?.let { photo ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "${level.name} Compression",
+                                    style = MaterialTheme.typography.subtitle1
+                                )
+                                Text("Size: ${photo.fileSize / 1024} KB")
+                                Text("Dimensions: ${photo.width}×${photo.height}")
+                                
+                                val qualityInfo = when (level) {
+                                    CompressionLevel.LOW -> "95% quality, 2560px max"
+                                    CompressionLevel.MEDIUM -> "75% quality, 1920px max"
+                                    CompressionLevel.HIGH -> "50% quality, 1280px max"
+                                }
+                                Text("Settings: $qualityInfo")
+                                
+                                AsyncImage(
+                                    model = photo.uri,
+                                    contentDescription = "${level.name} compressed image",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp)
+                                        .padding(top = 8.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (showCamera) {
+            // Capture original photo first, then compress with all levels
+            ImagePickerLauncher(
+                config = ImagePickerConfig(
+                    onPhotoCaptured = { result ->
+                        originalPhoto = result
+                        showCamera = false
+                        
+                        // Trigger compression with all levels
+                        // (This would need additional implementation to capture
+                        // the same image with different compression levels)
+                    },
+                    onError = { showCamera = false },
+                    onDismiss = { showCamera = false },
+                    cameraCaptureConfig = CameraCaptureConfig(
+                        compressionLevel = null // No compression for original
+                    )
+                )
+            )
+        }
+    }
+}
+```
 
 ## Basic Usage
 

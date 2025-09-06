@@ -19,6 +19,8 @@ actual fun GalleryPickerLauncher(
     cameraCaptureConfig: CameraCaptureConfig?
 ) {
     LaunchedEffect(Unit) {
+        val compressionLevel = cameraCaptureConfig?.compressionLevel
+        
         if (allowMultiple) {
             val selectedImages = mutableListOf<GalleryPhotoResult>()
             GalleryPickerOrchestrator.launchGallery(
@@ -29,7 +31,8 @@ actual fun GalleryPickerLauncher(
                 onError = onError,
                 onDismiss = onDismiss,
                 allowMultiple = true,
-                selectionLimit = selectionLimit
+                selectionLimit = selectionLimit,
+                compressionLevel = compressionLevel
             )
         } else {
             GalleryPickerOrchestrator.launchGallery(
@@ -37,7 +40,8 @@ actual fun GalleryPickerLauncher(
                 onError = onError,
                 onDismiss = onDismiss,
                 allowMultiple = false,
-                selectionLimit = 1
+                selectionLimit = 1,
+                compressionLevel = compressionLevel
             )
         }
     }
