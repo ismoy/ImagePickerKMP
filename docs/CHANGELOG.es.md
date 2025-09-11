@@ -9,6 +9,50 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## [Sin Publicar]
 
+### Añadido
+
+- **🗜️ Compresión Automática de Imágenes**: Sistema completo de compresión para cámara y galería
+  - **Niveles de Compresión Configurables**: LOW (95% calidad, 2560px), MEDIUM (75% calidad, 1920px), HIGH (50% calidad, 1280px)
+  - **Soporte Multi-formato**: Compresión JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
+  - **Procesamiento Asíncrono**: UI no bloqueante con integración de Kotlin Coroutines
+  - **Optimización Inteligente**: Combina escalado de dimensiones + compresión de calidad
+  - **Eficiencia de Memoria**: Reciclaje automático de bitmaps y limpieza
+  - **API Unificada**: Misma lógica de compresión para captura de cámara y selección de galería
+  - **Multiplataforma**: Funciona en Android e iOS
+  - **Optimizado para Rendimiento**: Procesamiento en segundo plano con manejo adecuado de hilos
+
+- **🔄 Gestión Automática de Contexto**: La función `applyCrop` ahora maneja automáticamente la gestión de contexto de Android
+  - **Integración @Composable**: La función ahora es `@Composable` y usa `LocalContext.current` internamente
+  - **API Simplificada**: Los desarrolladores ya no necesitan proporcionar manualmente el contexto de Android
+  - **Consistencia Multiplataforma**: Misma signatura de API para implementaciones de Android e iOS
+
+### Cambiado
+
+- Actualizado `CameraCaptureConfig` con nuevo parámetro `compressionLevel: CompressionLevel?`
+- Mejorado `GalleryPickerLauncher` para soportar compresión a través de `cameraCaptureConfig`
+- Mejorado pipeline de procesamiento de imágenes con arquitectura unificada de compresión
+- Actualizada documentación con ejemplos y guías completas de compresión
+- **Función `applyCrop` convertida a @Composable**: Signatura de función actualizada para eliminar requisito de parámetro de contexto manual
+- **Cálculos mejorados de relación de aspecto de crop**: Mejor manejo de relaciones de aspecto verticales (como 9:16) con mejor gestión de espacio
+
+### Corregido
+
+- Corregida lógica de compresión invertida (HIGH compresión ahora produce archivos más pequeños como se esperaba)
+- Corregido algoritmo de escalado de imagen para calidad consistente entre niveles de compresión
+- Resueltas fallas de pruebas CompressionConfig excluyendo comodín IMAGE_ALL de formatos soportados
+- **🖼️ Corregidos Cálculos de Coordenadas de Crop en iOS**: Resueltos problemas de recorte de imagen en iOS donde las imágenes recortadas aparecían incorrectamente centradas
+  - **Comportamiento Multiplataforma Consistente**: iOS ahora usa la misma lógica de cálculo de coordenadas que Android
+  - **Posicionamiento Preciso de Imagen**: Corregidos cálculos de `displayedImageSize` e `imageOffset` para escalado y centrado adecuado de imagen
+  - **Mapeo Corregido de Rectángulo de Crop**: Implementado cálculo adecuado de `adjustedCropRect` con factores de escalado precisos
+- **🎯 Corregidos Conflictos de Z-Index en Layout**: Resueltos problemas donde los controles de crop aparecían en orden de capa incorrecto
+  - **Eliminado zIndex Problemático**: Eliminados modificadores `zIndex` que causaban que el área de crop apareciera debajo de los controles del header
+  - **Mejor Apilamiento de Componentes**: El flujo natural de layout ahora maneja correctamente la disposición en capas de componentes
+  - **Mejor Soporte para Relación de Aspecto 9:16**: El rectángulo de crop ahora se ajusta correctamente dentro del espacio disponible del canvas para relaciones de aspecto verticales
+- **📱 Corregidos Problemas de Superposición de Zoom**: Resuelto problema donde las imágenes con zoom aparecían sobre los controles del header de crop
+  - **Agregado Recorte de Límites**: Implementado `clipToBounds()` para contener contenido con zoom dentro del área designada
+  - **Mantenida Jerarquía de UI**: La funcionalidad de zoom ahora respeta los límites del layout y no interfiere con los controles del header
+  - **Experiencia de Usuario Mejorada**: Los controles de crop permanecen accesibles y visibles durante las operaciones de zoom
+
 ## [1.0.22] - 2024-12-XX
 
 ### Añadido

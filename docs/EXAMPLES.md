@@ -7,6 +7,7 @@ This document provides comprehensive examples for using ImagePickerKMP in variou
 ## Table of Contents
 
 - [Image Compression Examples](#image-compression-examples)
+- [Image Crop Examples](#image-crop-examples)
 - [Basic Usage](#basic-usage)
 - [Advanced Customization](#advanced-customization)
 - [Permission Handling](#permission-handling)
@@ -258,6 +259,401 @@ fun CompressionComparisonTool() {
                 )
             )
         }
+    }
+}
+```
+
+## Image Crop Examples
+
+### Simple Crop with Default Options
+
+```kotlin
+@Composable
+fun SimpleCropExample() {
+    var showImagePicker by remember { mutableStateOf(false) }
+    var selectedImage by remember { mutableStateOf<ByteArray?>(null) }
+    var showCropView by remember { mutableStateOf(false) }
+    var croppedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Button(
+            onClick = { showImagePicker = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Select Image to Crop")
+        }
+
+        selectedImage?.let { imageBytes ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Original Image:")
+            Image(
+                bitmap = imageBytes.toComposeImageBitmap(),
+                contentDescription = "Original image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            
+            Button(
+                onClick = { showCropView = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Crop Image")
+            }
+        }
+
+        croppedImageBytes?.let { croppedBytes ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Cropped Image:")
+            Image(
+                bitmap = croppedBytes.toComposeImageBitmap(),
+                contentDescription = "Cropped image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+
+    if (showImagePicker) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { photos ->
+                photos.firstOrNull()?.let { photo ->
+                    selectedImage = photo.photoBytes
+                }
+                showImagePicker = false
+            },
+            onError = { showImagePicker = false },
+            onDismiss = { showImagePicker = false },
+            allowMultiple = false
+        )
+    }
+
+    if (showCropView && selectedImage != null) {
+        ImageCropView(
+            originalImageBytes = selectedImage!!,
+            onCropComplete = { croppedBytes ->
+                croppedImageBytes = croppedBytes
+                showCropView = false
+            },
+            onDismiss = { showCropView = false }
+        )
+    }
+}
+```
+
+### Crop with Aspect Ratio Selection
+
+```kotlin
+@Composable
+fun CropWithAspectRatios() {
+    var showImagePicker by remember { mutableStateOf(false) }
+    var selectedImage by remember { mutableStateOf<ByteArray?>(null) }
+    var showCropView by remember { mutableStateOf(false) }
+    var croppedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
+    var selectedAspectRatio by remember { mutableStateOf<AspectRatio?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Button(
+            onClick = { showImagePicker = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Select Image to Crop")
+        }
+
+        selectedImage?.let { imageBytes ->
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text("Select Aspect Ratio:")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { selectedAspectRatio = AspectRatio.SQUARE }
+                ) {
+                    Text("1:1")
+                }
+                Button(
+                    onClick = { selectedAspectRatio = AspectRatio.RATIO_4_3 }
+                ) {
+                    Text("4:3")
+                }
+                Button(
+                    onClick = { selectedAspectRatio = AspectRatio.RATIO_16_9 }
+                ) {
+                    Text("16:9")
+                }
+                Button(
+                    onClick = { selectedAspectRatio = AspectRatio.RATIO_9_16 }
+                ) {
+                    Text("9:16")
+                }
+            }
+            
+            selectedAspectRatio?.let { ratio ->
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Selected: ${ratio.displayName}")
+                
+                Button(
+                    onClick = { showCropView = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Crop with ${ratio.displayName} Ratio")
+                }
+            }
+        }
+
+        croppedImageBytes?.let { croppedBytes ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Cropped Image (${selectedAspectRatio?.displayName}):")
+            Image(
+                bitmap = croppedBytes.toComposeImageBitmap(),
+                contentDescription = "Cropped image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+
+    if (showImagePicker) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { photos ->
+                photos.firstOrNull()?.let { photo ->
+                    selectedImage = photo.photoBytes
+                }
+                showImagePicker = false
+            },
+            onError = { showImagePicker = false },
+            onDismiss = { showImagePicker = false },
+            allowMultiple = false
+        )
+    }
+
+    if (showCropView && selectedImage != null && selectedAspectRatio != null) {
+        ImageCropView(
+            originalImageBytes = selectedImage!!,
+            onCropComplete = { croppedBytes ->
+                croppedImageBytes = croppedBytes
+                showCropView = false
+            },
+            onDismiss = { showCropView = false },
+            initialAspectRatio = selectedAspectRatio
+        )
+    }
+}
+```
+
+### Advanced Crop with Custom Configuration
+
+```kotlin
+@Composable
+fun AdvancedCropExample() {
+    var showImagePicker by remember { mutableStateOf(false) }
+    var selectedImage by remember { mutableStateOf<ByteArray?>(null) }
+    var showCropView by remember { mutableStateOf(false) }
+    var croppedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
+    var allowFreeform by remember { mutableStateOf(true) }
+    var enableZoom by remember { mutableStateOf(true) }
+    var showGrid by remember { mutableStateOf(true) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Button(
+            onClick = { showImagePicker = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Select Image to Crop")
+        }
+
+        selectedImage?.let { imageBytes ->
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text("Crop Configuration:")
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = allowFreeform,
+                    onCheckedChange = { allowFreeform = it }
+                )
+                Text("Allow Freeform Crop")
+            }
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = enableZoom,
+                    onCheckedChange = { enableZoom = it }
+                )
+                Text("Enable Zoom")
+            }
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = showGrid,
+                    onCheckedChange = { showGrid = it }
+                )
+                Text("Show Grid Lines")
+            }
+            
+            Button(
+                onClick = { showCropView = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Open Crop View")
+            }
+        }
+
+        croppedImageBytes?.let { croppedBytes ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Cropped Image:")
+            Image(
+                bitmap = croppedBytes.toComposeImageBitmap(),
+                contentDescription = "Cropped image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+
+    if (showImagePicker) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { photos ->
+                photos.firstOrNull()?.let { photo ->
+                    selectedImage = photo.photoBytes
+                }
+                showImagePicker = false
+            },
+            onError = { showImagePicker = false },
+            onDismiss = { showImagePicker = false },
+            allowMultiple = false
+        )
+    }
+
+    if (showCropView && selectedImage != null) {
+        ImageCropView(
+            originalImageBytes = selectedImage!!,
+            onCropComplete = { croppedBytes ->
+                croppedImageBytes = croppedBytes
+                showCropView = false
+            },
+            onDismiss = { showCropView = false },
+            allowFreeformCrop = allowFreeform,
+            enableZoom = enableZoom,
+            showGridLines = showGrid
+        )
+    }
+}
+```
+
+### Direct Camera Capture with Crop
+
+```kotlin
+@Composable
+fun CameraCropWorkflow() {
+    var showCamera by remember { mutableStateOf(false) }
+    var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
+    var showCropView by remember { mutableStateOf(false) }
+    var croppedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Button(
+            onClick = { showCamera = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Capture Photo")
+        }
+
+        capturedPhoto?.let { photo ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Captured Photo:")
+            Image(
+                bitmap = photo.photoBytes.toComposeImageBitmap(),
+                contentDescription = "Captured photo",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            
+            Button(
+                onClick = { showCropView = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Crop Photo")
+            }
+        }
+
+        croppedImageBytes?.let { croppedBytes ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Final Cropped Photo:")
+            Image(
+                bitmap = croppedBytes.toComposeImageBitmap(),
+                contentDescription = "Final cropped photo",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+
+    if (showCamera) {
+        CameraCaptureView(
+            onPhotoTaken = { photo ->
+                capturedPhoto = photo
+                showCamera = false
+            },
+            onError = { showCamera = false },
+            onDismiss = { showCamera = false }
+        )
+    }
+
+    if (showCropView && capturedPhoto != null) {
+        ImageCropView(
+            originalImageBytes = capturedPhoto!!.photoBytes,
+            onCropComplete = { croppedBytes ->
+                croppedImageBytes = croppedBytes
+                showCropView = false
+            },
+            onDismiss = { showCropView = false },
+            initialAspectRatio = AspectRatio.SQUARE
+        )
     }
 }
 ```

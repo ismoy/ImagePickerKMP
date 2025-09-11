@@ -57,6 +57,18 @@ data class GalleryConfig(
 
 @Suppress("EndOfSentenceFormat")
 /**
+ * Configuration for crop functionality
+ */
+data class CropConfig(
+    val enabled: Boolean = false,
+    val aspectRatioLocked: Boolean = false,
+    val circularCrop: Boolean = false,
+    val squareCrop: Boolean = true,
+    val freeformCrop: Boolean = false
+)
+
+@Suppress("EndOfSentenceFormat")
+/**
  * Main configuration for camera capture
  */
 data class CameraCaptureConfig(
@@ -66,7 +78,8 @@ data class CameraCaptureConfig(
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
-    val galleryConfig: GalleryConfig = GalleryConfig()
+    val galleryConfig: GalleryConfig = GalleryConfig(),
+    val cropConfig: CropConfig = CropConfig()
 )
 
 /**
@@ -92,7 +105,8 @@ data class ImagePickerConfig(
     )? = null,
 
     val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(),
-    val directCameraLaunch: Boolean = false
+    val directCameraLaunch: Boolean = false,
+    val enableCrop: Boolean = false
 )
 
 /**

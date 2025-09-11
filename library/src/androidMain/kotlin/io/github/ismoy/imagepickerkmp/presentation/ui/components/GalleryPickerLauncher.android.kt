@@ -1,9 +1,5 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
-import androidx.compose.runtime.Composable
-import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
-import io.github.ismoy.imagepickerkmp.domain.models.MimeType
-
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory.decodeByteArray
@@ -12,22 +8,27 @@ import android.provider.OpenableColumns
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.graphics.scale
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
+import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
+import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
+import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
 import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
+import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import androidx.core.graphics.scale
 
 private data class GalleryPickerConfig(
     val context: ComponentActivity,
@@ -36,7 +37,8 @@ private data class GalleryPickerConfig(
     val onDismiss: () -> Unit,
     val allowMultiple: Boolean,
     val mimeTypes: List<String>,
-    val cameraCaptureConfig: CameraCaptureConfig?
+    val cameraCaptureConfig: CameraCaptureConfig?,
+    val enableCrop: Boolean = false
 )
 
 @Suppress("ReturnCount","LongParameterList")
@@ -48,7 +50,8 @@ actual fun GalleryPickerLauncher(
     allowMultiple: Boolean,
     mimeTypes: List<MimeType>,
     selectionLimit: Long,
-    cameraCaptureConfig: CameraCaptureConfig?
+    cameraCaptureConfig: CameraCaptureConfig?,
+    enableCrop: Boolean
 ) {
     val context = LocalContext.current
     if (context !is ComponentActivity) {
@@ -63,7 +66,8 @@ actual fun GalleryPickerLauncher(
         onDismiss = onDismiss,
         allowMultiple = allowMultiple,
         mimeTypes = mimeTypes.map { it.value },
-        cameraCaptureConfig = cameraCaptureConfig
+        cameraCaptureConfig = cameraCaptureConfig,
+        enableCrop = enableCrop
     )
     GalleryPickerLauncherContent(config)
 }
@@ -72,12 +76,16 @@ actual fun GalleryPickerLauncher(
 private fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
     var shouldLaunch by remember { mutableStateOf(false) }
     var selectedPhotoForConfirmation by remember { mutableStateOf<GalleryPhotoResult?>(null) }
+    var showCropView by remember { mutableStateOf(false) }
 
     val singlePickerLauncher = rememberSinglePickerLauncher(
         config.context,
         { photoResult ->
             if (config.cameraCaptureConfig?.permissionAndConfirmationConfig?.customConfirmationView != null) {
                 selectedPhotoForConfirmation = photoResult
+            } else if (config.enableCrop) {
+                selectedPhotoForConfirmation = photoResult
+                showCropView = true
             } else {
                 config.onPhotosSelected(listOf(photoResult))
             }
@@ -115,30 +123,64 @@ private fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
     }
 
     selectedPhotoForConfirmation?.let { photoResult ->
-        config.cameraCaptureConfig?.permissionAndConfirmationConfig?.customConfirmationView?.invoke(
-            PhotoResult(
-                uri = photoResult.uri,
-                width = photoResult.width,
-                height = photoResult.height,
-                fileName = photoResult.fileName,
-                fileSize = photoResult.fileSize
-            ),
-            { confirmedResult ->
-                val galleryResult = GalleryPhotoResult(
-                    uri = confirmedResult.uri,
-                    width = confirmedResult.width,
-                    height = confirmedResult.height,
+        if (showCropView) {
+            ImageCropView(
+                photoResult = PhotoResult(
+                    uri = photoResult.uri,
+                    width = photoResult.width,
+                    height = photoResult.height,
                     fileName = photoResult.fileName,
                     fileSize = photoResult.fileSize
-                )
-                config.onPhotosSelected(listOf(galleryResult))
-                selectedPhotoForConfirmation = null
-            },
-            {
-                selectedPhotoForConfirmation = null
-                shouldLaunch = true
-            }
-        )
+                ),
+                cropConfig = CropConfig(
+                    enabled = true,
+                    circularCrop = false,
+                    squareCrop = true
+                ),
+                onAccept = { croppedResult: PhotoResult ->
+                    val galleryResult = GalleryPhotoResult(
+                        uri = croppedResult.uri,
+                        width = croppedResult.width,
+                        height = croppedResult.height,
+                        fileName = photoResult.fileName,
+                        fileSize = photoResult.fileSize
+                    )
+                    config.onPhotosSelected(listOf(galleryResult))
+                    selectedPhotoForConfirmation = null
+                    showCropView = false
+                },
+                onCancel = {
+                    selectedPhotoForConfirmation = null
+                    showCropView = false
+                    shouldLaunch = true
+                }
+            )
+        } else {
+            config.cameraCaptureConfig?.permissionAndConfirmationConfig?.customConfirmationView?.invoke(
+                PhotoResult(
+                    uri = photoResult.uri,
+                    width = photoResult.width,
+                    height = photoResult.height,
+                    fileName = photoResult.fileName,
+                    fileSize = photoResult.fileSize
+                ),
+                { confirmedResult ->
+                    val galleryResult = GalleryPhotoResult(
+                        uri = confirmedResult.uri,
+                        width = confirmedResult.width,
+                        height = confirmedResult.height,
+                        fileName = photoResult.fileName,
+                        fileSize = photoResult.fileSize
+                    )
+                    config.onPhotosSelected(listOf(galleryResult))
+                    selectedPhotoForConfirmation = null
+                },
+                {
+                    selectedPhotoForConfirmation = null
+                    shouldLaunch = true
+                }
+            )
+        }
     }
 }
 
@@ -414,5 +456,5 @@ private fun createTempImageFile(context: Context, imageBytes: ByteArray): java.i
 private fun bytesToKB(bytes: Long): Long = maxOf(1L, bytes / 1024)
 
 private fun logDebug(message: String) {
-    println(" Android GalleryPickerLauncher: $message")
+    DefaultLogger.logDebug("📱 Android GalleryPickerLauncher: $message")
 }

@@ -12,6 +12,7 @@ import io.github.ismoy.imagepickerkmp.domain.utils.ViewControllerProvider
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPermissionDialogConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
+import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
@@ -30,74 +31,52 @@ actual fun ImagePickerLauncher(
     var askCameraPermission by remember { mutableStateOf(config.directCameraLaunch) }
     var launchCamera by remember { mutableStateOf(false) }
     var launchGallery by remember { mutableStateOf(false) }
-    handleImagePickerState(
-        showDialog = showDialog,
-        askCameraPermission = askCameraPermission,
-        launchCamera = launchCamera,
-        launchGallery = launchGallery,
-        config = config,
-        onDismissDialog = { showDialog = false },
-        onCancelDialog = {
-
-            showDialog = false
-            config.onDismiss()
-        },
-        onRequestCameraPermission = { askCameraPermission = true },
-        onRequestGallery = { launchGallery = true },
-        onCameraPermissionGranted = {
-            askCameraPermission = false
-            launchCamera = true
-        },
-        onCameraPermissionDenied = {
-            askCameraPermission = false
-            config.onDismiss()
-        },
-        onCameraFinished = { launchCamera = false },
-        onGalleryFinished = { launchGallery = false }
-    )
-}
-@Suppress("LongParameterList","LongMethod")
-@Composable
-private fun handleImagePickerState(
-    showDialog: Boolean,
-    askCameraPermission: Boolean,
-    launchCamera: Boolean,
-    launchGallery: Boolean,
-    config: ImagePickerConfig,
-    onDismissDialog: () -> Unit,
-    onCancelDialog: () -> Unit,
-    onRequestCameraPermission: () -> Unit,
-    onRequestGallery: () -> Unit,
-    onCameraPermissionGranted: () -> Unit,
-    onCameraPermissionDenied: () -> Unit,
-    onCameraFinished: () -> Unit,
-    onGalleryFinished: () -> Unit
-) {
+    
+    var selectedPhotoForCrop by remember { mutableStateOf<PhotoResult?>(null) }
+    var showCropView by remember { mutableStateOf(false) }
+    
+    val onCameraPermissionGranted = {
+        askCameraPermission = false
+        launchCamera = true
+    }
+    val onCameraPermissionDenied = {
+        askCameraPermission = false
+        config.onDismiss()
+    }
+    val onCameraFinished = { launchCamera = false }
+    val onGalleryFinished = { launchGallery = false }
+    
     if (showDialog) {
         if (config.customPickerDialog != null) {
             config.customPickerDialog.invoke(
                 {
-                    onDismissDialog()
-                    onRequestCameraPermission()
+                    showDialog = false
+                    askCameraPermission = true
                 },
                 {
-                    onDismissDialog()
-                    onRequestGallery()
+                    showDialog = false
+                    launchGallery = true
                 },
-                onCancelDialog
+                {
+                    showDialog = false
+                    config.onDismiss()
+                }
             )
         } else {
             showImagePickerDialog(
                 config = config,
                 onTakePhoto = {
-                    onDismissDialog()
-                    onRequestCameraPermission()
+                    showDialog = false
+                    askCameraPermission = true
                 },
                 onSelectFromGallery = {
-                    onDismissDialog()
-                    onRequestGallery()
+                    showDialog = false
+                    launchGallery = true
                 },
-                onCancel = onCancelDialog
+                onCancel = {
+                    showDialog = false
+                    config.onDismiss()
+                }
             )
         }
     }
@@ -112,35 +91,68 @@ private fun handleImagePickerState(
 
     if (launchCamera) {
         launchCameraInternal(
-            onPhotoCaptured = config.onPhotoCaptured,
+            onPhotoCaptured = { result ->
+                if (config.enableCrop) {
+                    selectedPhotoForCrop = result
+                    showCropView = true
+                } else {
+                    config.onPhotoCaptured(result)
+                }
+            },
             onError = config.onError,
             onDismiss = config.onDismiss,
             onFinish = onCameraFinished,
-            compressionLevel = config.cameraCaptureConfig?.compressionLevel
+            compressionLevel = config.cameraCaptureConfig.compressionLevel
         )
     }
 
     if (launchGallery) {
         launchGalleryInternal(
             onPhotoSelected = { result ->
-                config.onPhotosSelected?.invoke(listOf(result))
-                println("📱 iOS ImagePickerLauncher DEBUG:")
-                println("   Gallery result fileSize: ${result.fileSize}KB")
-                config.onPhotoCaptured(
-                    PhotoResult(
-                        uri = result.uri,
-                        width = result.width,
-                        height = result.height,
-                        fileName = result.fileName,
-                        fileSize = result.fileSize
-                    )
+                val photoResult = PhotoResult(
+                    uri = result.uri,
+                    width = result.width,
+                    height = result.height,
+                    fileName = result.fileName,
+                    fileSize = result.fileSize
                 )
-                println("   PhotoResult fileSize: ${result.fileSize}KB")
+                
+                if (config.enableCrop) {
+                    selectedPhotoForCrop = photoResult
+                    showCropView = true
+                } else {
+                    config.onPhotosSelected?.invoke(listOf(result))
+                    config.onPhotoCaptured(photoResult)
+                }
             },
             onError = config.onError,
             onDismiss = config.onDismiss,
             onFinish = onGalleryFinished,
-            compressionLevel = config.cameraCaptureConfig?.compressionLevel
+            compressionLevel = config.cameraCaptureConfig.compressionLevel
+        )
+    }
+    
+    if (showCropView && selectedPhotoForCrop != null) {
+        val cropConfig = CropConfig(
+            enabled = true,
+            circularCrop = false,
+            squareCrop = true,
+            freeformCrop = true
+        )
+        
+        ImageCropView(
+            photoResult = selectedPhotoForCrop!!,
+            cropConfig = cropConfig,
+            onAccept = { croppedResult ->
+                config.onPhotoCaptured(croppedResult)
+                showCropView = false
+                selectedPhotoForCrop = null
+            },
+            onCancel = {
+                showCropView = false
+                selectedPhotoForCrop = null
+                config.onDismiss()
+            }
         )
     }
 }

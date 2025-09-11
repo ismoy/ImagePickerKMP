@@ -267,6 +267,8 @@ kotlin {
                 implementation("io.coil-kt.coil3:coil-compose:3.2.0")
                 implementation("io.insert-koin:koin-core:3.5.3")
                 implementation("io.insert-koin:koin-compose:1.1.2")
+                implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
+                implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
             }
         }
         val androidMain by getting {
@@ -281,7 +283,7 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.androidx.ui)
                 implementation(libs.androidx.ui.tooling.preview)
-                implementation("androidx.compose.material:material-icons-extended:1.5.4")
+                implementation("androidx.compose.material:material-icons-extended:1.7.8")
                 
                 // Koin for Android
                 implementation("io.insert-koin:koin-android:3.5.3")
@@ -391,7 +393,7 @@ android {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
             all { test ->
-                test.ignoreFailures = true  // Permitir continuar con fallos
+                test.ignoreFailures = true
             }
         }
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
@@ -427,7 +429,7 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.23-beta-3"
+        version = "1.0.24-beta"
     )
     pom {
         name.set("ImagePickerKMP")

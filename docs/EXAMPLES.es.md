@@ -12,14 +12,357 @@ Este documento proporciona ejemplos completos para usar ImagePickerKMP en varios
 
 ## Tabla de Contenidos
 
+- [Ejemplos de Compresión de Imágenes](#ejemplos-de-compresión-de-imágenes)
+- [Ejemplos de Recorte de Imágenes](#ejemplos-de-recorte-de-imágenes)
 - [Uso Básico](#uso-básico)
 - [Personalización Avanzada](#personalización-avanzada)
 - [Manejo de Permisos](#manejo-de-permisos)
 - [Selección de Galería](#selección-de-galería)
-
 - [Internacionalización (i18n)](#internacionalización-i18n)
 - [Manejo de Errores](#manejo-de-errores)
 - [Ejemplos Específicos de Plataforma](#ejemplos-específicos-de-plataforma)
+
+## Ejemplos de Compresión de Imágenes
+
+### Captura de Cámara con Diferentes Niveles de Compresión
+
+```kotlin
+@Composable
+fun CamaraConNivelesCompresion() {
+    var mostrarCamara by remember { mutableStateOf(false) }
+    var nivelCompresion by remember { mutableStateOf(CompressionLevel.MEDIUM) }
+    var fotoCapturada by remember { mutableStateOf<PhotoResult?>(null) }
+
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text("Selecciona Nivel de Compresión:")
+        
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = { nivelCompresion = CompressionLevel.LOW }) {
+                Text("BAJA (Mejor Calidad)")
+            }
+            Button(onClick = { nivelCompresion = CompressionLevel.MEDIUM }) {
+                Text("MEDIA")
+            }
+            Button(onClick = { nivelCompresion = CompressionLevel.HIGH }) {
+                Text("ALTA (Menor Tamaño)")
+            }
+        }
+        
+        Button(onClick = { mostrarCamara = true }) {
+            Text("Capturar Foto con Compresión ${nivelCompresion.name}")
+        }
+        
+        fotoCapturada?.let { foto ->
+            Text("Foto capturada - Tamaño: ${(foto.fileSize ?: 0) / 1024}KB")
+            Image(
+                bitmap = foto.photoBytes.toComposeImageBitmap(),
+                contentDescription = "Foto capturada",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+
+    if (mostrarCamara) {
+        CameraCaptureView(
+            onPhotoTaken = { foto ->
+                fotoCapturada = foto
+                mostrarCamara = false
+            },
+            onError = { mostrarCamara = false },
+            onDismiss = { mostrarCamara = false },
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = nivelCompresion
+            )
+        )
+    }
+}
+```
+
+## Ejemplos de Recorte de Imágenes
+
+### Recorte Simple con Opciones Predeterminadas
+
+```kotlin
+@Composable
+fun EjemploRecorteSimple() {
+    var mostrarSelectorImagen by remember { mutableStateOf(false) }
+    var imagenSeleccionada by remember { mutableStateOf<ByteArray?>(null) }
+    var mostrarVistaRecorte by remember { mutableStateOf(false) }
+    var bytesImagenRecortada by remember { mutableStateOf<ByteArray?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Button(
+            onClick = { mostrarSelectorImagen = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Seleccionar Imagen para Recortar")
+        }
+
+        imagenSeleccionada?.let { bytesImagen ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Imagen Original:")
+            Image(
+                bitmap = bytesImagen.toComposeImageBitmap(),
+                contentDescription = "Imagen original",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            
+            Button(
+                onClick = { mostrarVistaRecorte = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Recortar Imagen")
+            }
+        }
+
+        bytesImagenRecortada?.let { bytesRecortados ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Imagen Recortada:")
+            Image(
+                bitmap = bytesRecortados.toComposeImageBitmap(),
+                contentDescription = "Imagen recortada",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+
+    if (mostrarSelectorImagen) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { fotos ->
+                fotos.firstOrNull()?.let { foto ->
+                    imagenSeleccionada = foto.photoBytes
+                }
+                mostrarSelectorImagen = false
+            },
+            onError = { mostrarSelectorImagen = false },
+            onDismiss = { mostrarSelectorImagen = false },
+            allowMultiple = false
+        )
+    }
+
+    if (mostrarVistaRecorte && imagenSeleccionada != null) {
+        ImageCropView(
+            originalImageBytes = imagenSeleccionada!!,
+            onCropComplete = { bytesRecortados ->
+                bytesImagenRecortada = bytesRecortados
+                mostrarVistaRecorte = false
+            },
+            onDismiss = { mostrarVistaRecorte = false }
+        )
+    }
+}
+```
+
+### Recorte con Selección de Relación de Aspecto
+
+```kotlin
+@Composable
+fun RecorteConRelacionesAspecto() {
+    var mostrarSelectorImagen by remember { mutableStateOf(false) }
+    var imagenSeleccionada by remember { mutableStateOf<ByteArray?>(null) }
+    var mostrarVistaRecorte by remember { mutableStateOf(false) }
+    var bytesImagenRecortada by remember { mutableStateOf<ByteArray?>(null) }
+    var relacionAspectoSeleccionada by remember { mutableStateOf<AspectRatio?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Button(
+            onClick = { mostrarSelectorImagen = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Seleccionar Imagen para Recortar")
+        }
+
+        imagenSeleccionada?.let { bytesImagen ->
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text("Selecciona Relación de Aspecto:")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { relacionAspectoSeleccionada = AspectRatio.SQUARE }
+                ) {
+                    Text("1:1")
+                }
+                Button(
+                    onClick = { relacionAspectoSeleccionada = AspectRatio.RATIO_4_3 }
+                ) {
+                    Text("4:3")
+                }
+                Button(
+                    onClick = { relacionAspectoSeleccionada = AspectRatio.RATIO_16_9 }
+                ) {
+                    Text("16:9")
+                }
+                Button(
+                    onClick = { relacionAspectoSeleccionada = AspectRatio.RATIO_9_16 }
+                ) {
+                    Text("9:16")
+                }
+            }
+            
+            relacionAspectoSeleccionada?.let { relacion ->
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Seleccionado: ${relacion.displayName}")
+                
+                Button(
+                    onClick = { mostrarVistaRecorte = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Recortar con Relación ${relacion.displayName}")
+                }
+            }
+        }
+
+        bytesImagenRecortada?.let { bytesRecortados ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Imagen Recortada (${relacionAspectoSeleccionada?.displayName}):")
+            Image(
+                bitmap = bytesRecortados.toComposeImageBitmap(),
+                contentDescription = "Imagen recortada",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+
+    if (mostrarSelectorImagen) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { fotos ->
+                fotos.firstOrNull()?.let { foto ->
+                    imagenSeleccionada = foto.photoBytes
+                }
+                mostrarSelectorImagen = false
+            },
+            onError = { mostrarSelectorImagen = false },
+            onDismiss = { mostrarSelectorImagen = false },
+            allowMultiple = false
+        )
+    }
+
+    if (mostrarVistaRecorte && imagenSeleccionada != null && relacionAspectoSeleccionada != null) {
+        ImageCropView(
+            originalImageBytes = imagenSeleccionada!!,
+            onCropComplete = { bytesRecortados ->
+                bytesImagenRecortada = bytesRecortados
+                mostrarVistaRecorte = false
+            },
+            onDismiss = { mostrarVistaRecorte = false },
+            initialAspectRatio = relacionAspectoSeleccionada
+        )
+    }
+}
+```
+
+### Flujo de Trabajo Cámara con Recorte
+
+```kotlin
+@Composable
+fun FlujoCamaraRecorte() {
+    var mostrarCamara by remember { mutableStateOf(false) }
+    var fotoCapturada by remember { mutableStateOf<PhotoResult?>(null) }
+    var mostrarVistaRecorte by remember { mutableStateOf(false) }
+    var bytesImagenRecortada by remember { mutableStateOf<ByteArray?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Button(
+            onClick = { mostrarCamara = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Capturar Foto")
+        }
+
+        fotoCapturada?.let { foto ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Foto Capturada:")
+            Image(
+                bitmap = foto.photoBytes.toComposeImageBitmap(),
+                contentDescription = "Foto capturada",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            
+            Button(
+                onClick = { mostrarVistaRecorte = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Recortar Foto")
+            }
+        }
+
+        bytesImagenRecortada?.let { bytesRecortados ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Foto Final Recortada:")
+            Image(
+                bitmap = bytesRecortados.toComposeImageBitmap(),
+                contentDescription = "Foto final recortada",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+
+    if (mostrarCamara) {
+        CameraCaptureView(
+            onPhotoTaken = { foto ->
+                fotoCapturada = foto
+                mostrarCamara = false
+            },
+            onError = { mostrarCamara = false },
+            onDismiss = { mostrarCamara = false }
+        )
+    }
+
+    if (mostrarVistaRecorte && fotoCapturada != null) {
+        ImageCropView(
+            originalImageBytes = fotoCapturada!!.photoBytes,
+            onCropComplete = { bytesRecortados ->
+                bytesImagenRecortada = bytesRecortados
+                mostrarVistaRecorte = false
+            },
+            onDismiss = { mostrarVistaRecorte = false },
+            initialAspectRatio = AspectRatio.SQUARE
+        )
+    }
+}
+```
 
 ## Ejemplos Básicos
 

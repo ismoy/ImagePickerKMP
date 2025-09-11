@@ -1,11 +1,12 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import io.github.ismoy.imagepickerkmp.data.orchestrators.GalleryPickerOrchestrator
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
+import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
+import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 
 @Suppress("LongParameterList")
 @Composable
@@ -16,8 +17,12 @@ actual fun GalleryPickerLauncher(
     allowMultiple: Boolean,
     mimeTypes: List<MimeType>,
     selectionLimit: Long,
-    cameraCaptureConfig: CameraCaptureConfig?
+    cameraCaptureConfig: CameraCaptureConfig?,
+    enableCrop: Boolean
 ) {
+    var selectedPhotoForCrop by remember { mutableStateOf<GalleryPhotoResult?>(null) }
+    var showCropView by remember { mutableStateOf(false) }
+    
     LaunchedEffect(Unit) {
         val compressionLevel = cameraCaptureConfig?.compressionLevel
         
@@ -25,8 +30,13 @@ actual fun GalleryPickerLauncher(
             val selectedImages = mutableListOf<GalleryPhotoResult>()
             GalleryPickerOrchestrator.launchGallery(
                 onPhotoSelected = { result ->
-                    selectedImages.add(result)
-                    onPhotosSelected(selectedImages.toList())
+                    if (enableCrop && selectedImages.isEmpty()) {
+                        selectedPhotoForCrop = result
+                        showCropView = true
+                    } else {
+                        selectedImages.add(result)
+                        onPhotosSelected(selectedImages.toList())
+                    }
                 },
                 onError = onError,
                 onDismiss = onDismiss,
@@ -36,7 +46,14 @@ actual fun GalleryPickerLauncher(
             )
         } else {
             GalleryPickerOrchestrator.launchGallery(
-                onPhotoSelected = { result -> onPhotosSelected(listOf(result)) },
+                onPhotoSelected = { result -> 
+                    if (enableCrop) {
+                        selectedPhotoForCrop = result
+                        showCropView = true
+                    } else {
+                        onPhotosSelected(listOf(result))
+                    }
+                },
                 onError = onError,
                 onDismiss = onDismiss,
                 allowMultiple = false,
@@ -44,5 +61,42 @@ actual fun GalleryPickerLauncher(
                 compressionLevel = compressionLevel
             )
         }
+    }
+    
+    if (showCropView && selectedPhotoForCrop != null) {
+        val cropConfig = CropConfig(
+            enabled = true,
+            circularCrop = false,
+            squareCrop = true,
+            freeformCrop = true
+        )
+        
+        ImageCropView(
+            photoResult = PhotoResult(
+                uri = selectedPhotoForCrop!!.uri,
+                width = selectedPhotoForCrop!!.width,
+                height = selectedPhotoForCrop!!.height,
+                fileName = selectedPhotoForCrop!!.fileName,
+                fileSize = selectedPhotoForCrop!!.fileSize
+            ),
+            cropConfig = cropConfig,
+            onAccept = { croppedResult ->
+                val croppedGalleryResult = GalleryPhotoResult(
+                    uri = croppedResult.uri,
+                    width = croppedResult.width,
+                    height = croppedResult.height,
+                    fileName = croppedResult.fileName,
+                    fileSize = croppedResult.fileSize
+                )
+                onPhotosSelected(listOf(croppedGalleryResult))
+                showCropView = false
+                selectedPhotoForCrop = null
+            },
+            onCancel = {
+                showCropView = false
+                selectedPhotoForCrop = null
+                onDismiss()
+            }
+        )
     }
 }

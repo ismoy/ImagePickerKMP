@@ -37,14 +37,17 @@
 </p>
 
 ---
+## Demos Android & iOS
 
-## Demo **Android** And **IOS**
+### Android
+| Camera Usage | Crop Mode |
+|--------------|-----------|
+| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif" alt="Android Camera Demo" width="250"></a> | <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif" alt="Android Crop Demo" width="250"></a> |
 
-<p align="center">
-  <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/refs/heads/main/docs/Gifpro.gif">
-    <img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/refs/heads/main/docs/Gifpro.gif" alt="Demo ImagePickerKMP" width="80%">
-  </a>
-</p>
+### iOS
+| Camera Usage | Crop Mode |
+|--------------|-----------|
+| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif" alt="iOS Camera Demo" width="250"></a> | <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif" alt="iOS Crop Demo" width="250"></a> |
 
 ---
 
@@ -52,6 +55,7 @@
 - **Cross-platform**: Works seamlessly on Android and iOS
 - **Camera Integration**: Direct camera access with photo capture
 - **Gallery Selection**: Pick images from device gallery with compression support
+- **Advanced Image Cropping**: Cross-platform crop functionality with automatic context management
 - **Automatic Image Compression**: Optimize image size while maintaining quality
 - **Configurable Compression Levels**: LOW, MEDIUM, HIGH compression options
 - **Async Processing**: Non-blocking UI with Kotlin Coroutines integration
@@ -59,6 +63,7 @@
 - **Customizable UI**: Custom dialogs and confirmation views
 - **Permission Handling**: Smart permission management for both platforms
 - **Easy Integration**: Simple API with Compose Multiplatform
+- **Enhanced User Experience**: Improved layout system with proper zoom and aspect ratio handling
 - **Highly Configurable**: Extensive customization options
 
 ---
@@ -73,8 +78,15 @@
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.23")//lastversion
+    implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta")//lastversion
 }
+```
+### Using ImagePickerKMP in Android Native (Jetpack Compose)
+<p>Even if you're not using KMP, you can use ImagePickerKMP in pure Android projects with Jetpack Compose.</p>
+
+#### Step 1: Add the dependency
+```kotlin
+implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta")
 ```
 #### iOS Permissions Setup
 <p>Don't forget to configure iOS-specific permissions in your <code>Info.plist</code> file:</p>
@@ -84,22 +96,21 @@ dependencies {
 <string>We need access to the camera to capture a photo.</string>
 ```
 <h1>Basic Use</h1>
-<p>With basic use, default designs will be used.</p>
 
 #### Step 2: Launch the Camera
 ```kotlin
  var showCamera by remember { mutableStateOf(false) }
-var capturedPhoto by remember { mutableStateOf<CameraPhotoHandler.PhotoResult?>(null) }
+ var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
 ```
 ```kotlin
 if (showCamera) {
     ImagePickerLauncher(
         config = ImagePickerConfig(
+            enableCrop = false, // Set to true if you want Crop option
             onPhotoCaptured = { result ->
                 capturedPhoto = result
                 // Now you can access result.fileSize for camera captures too!
-                val fileSizeKB = (result.fileSize ?: 0) / 1024
-                println("Camera photo size: ${fileSizeKB}KB")
+                println("Camera photo size: ${result.fileSize}KB")
                 showCamera = false
             },
             onError = {
@@ -108,7 +119,12 @@ if (showCamera) {
             onDismiss = {
                 showImagePicker = false // Reset state when user doesn't select anything
             },
-            directCameraLaunch = false // Set to true if you want to launch the camera directly Only IOS
+            directCameraLaunch = false, // Set to true if you want to launch the camera directly Only IOS
+            // It is possible to compress images, by default it is with low compression in the library
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = CompressionLevel.HIGH
+            )
+
         )
     )
 }
@@ -131,8 +147,9 @@ if (showGallery) {
         onDismiss = {
             println("User cancelled or dismissed the picker")
             showGallery = false // Reset state when user doesn't select anything
-        }
-                allowMultiple = true, // False for single selection
+        },
+        enableCrop = false, // Set to true if you want Crop option 
+        allowMultiple = true, // False for single selection
         mimeTypes = listOf(MimeType.IMAGE_PNG) ,// Optional: filter by type
     )
 }
@@ -142,213 +159,39 @@ Button(onClick = { showGallery = true }) {
 }
 ```
 
+### For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for KMP.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md)
+
 ## Image Compression
 **Automatically optimize image size while maintaining quality with configurable compression levels.**
 
 ### Compression Levels
 - **LOW**: 95% quality, max 2560px dimension - Best quality, larger files
-- **MEDIUM**: 75% quality, max 1920px dimension - Balanced quality/size 
+- **MEDIUM**: 75% quality, max 1920px dimension - Balanced quality/size
 - **HIGH**: 50% quality, max 1280px dimension - Smaller files, good for storage
-
-### Camera with Compression
-```kotlin
-if (showCamera) {
-    ImagePickerLauncher(
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result ->
-                capturedPhoto = result
-                val fileSizeKB = (result.fileSize ?: 0) / 1024
-                println("Compressed camera photo: ${fileSizeKB}KB")
-                showCamera = false
-            },
-            onError = { showCamera = false },
-            onDismiss = { showCamera = false },
-            cameraCaptureConfig = CameraCaptureConfig(
-                compressionLevel = CompressionLevel.MEDIUM // Enable compression
-            )
-        )
-    )
-}
-```
-
-### Gallery with Compression
-```kotlin
-if (showGallery) {
-    GalleryPickerLauncher(
-        onPhotosSelected = { photos ->
-            photos.forEach { photo ->
-                val fileSizeKB = (photo.fileSize ?: 0) / 1024
-                println("Gallery photo: ${photo.fileName} - ${fileSizeKB}KB")
-            }
-            selectedImages = photos
-            showGallery = false
-        },
-        onError = { showGallery = false },
-        onDismiss = { showGallery = false },
-        allowMultiple = true,
-        mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
-        cameraCaptureConfig = CameraCaptureConfig(
-            compressionLevel = CompressionLevel.HIGH // Optimize for storage
-        )
-    )
-}
-```
 
 ### Supported Image Formats
 - **JPEG** (image/jpeg) - Full compression support
-- **PNG** (image/png) - Full compression support  
+- **PNG** (image/png) - Full compression support
 - **HEIC** (image/heic) - Full compression support
 - **HEIF** (image/heif) - Full compression support
 - **WebP** (image/webp) - Full compression support
 - **GIF** (image/gif) - Full compression support
 - **BMP** (image/bmp) - Full compression support
 
-### For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for KMP.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md)
-
-### Using ImagePickerKMP in Android Native (Jetpack Compose)
-<p>Even if you're not using KMP, you can use ImagePickerKMP in pure Android projects with Jetpack Compose.</p>
-
-#### Step 1: Add the dependency
-```kotlin
-implementation("io.github.ismoy:imagepickerkmp:1.0.23")
-```
-#### Step 2: Camera Launcher Example
-```kotlin
-var showCamera by remember { mutableStateOf(false) }
-var capturedPhoto by remember { mutableStateOf<CameraPhotoHandler.PhotoResult?>(null) }
-```
-```kotlin
-if (showCamera) {
-    ImagePickerLauncher(
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result ->
-                capturedPhoto = result
-                showCamera = false
-            },
-            onError = {
-                showCamera = false
-            },
-            onDismiss = {
-                showImagePicker = false // Reset state when user doesn't select anything
-            },
-            directCameraLaunch = false // Set to true if you want to launch the camera directly Only IOS
-        )
-    )
-}
-
-Button(onClick = { showCamera = true }) {
-    Text("Take Photo")
-}
-```
-
-#### Step 3: Gallery Picker Example
-```kotlin
-var showGallery by remember { mutableStateOf(false) }
-var selectedImages by remember { mutableStateOf<List<GalleryPhotoHandler.PhotoResult>>(emptyList()) }
-```
-```kotlin
-if (showGallery) {
-    GalleryPickerLauncher(
-        onPhotosSelected = { photos ->
-            selectedImages = photos
-            showGallery = false
-        },
-        onError = { error ->
-            showGallery = false
-        },
-        onDismiss = {
-            showCamera = false
-        },
-        allowMultiple = true, // False for single selection
-        mimeTypes = listOf(MimeType.IMAGE_PNG), // Optional: filter by type
-    )
-}
-
-Button(onClick = { showGallery = true }) {
-    Text("Choose from Gallery")
-Button(onClick = { showGallery = true }) {
-    Text("Choose from Gallery")
-}
-```
-
-### Android Native with Compression
-```kotlin
-// Camera with compression
-if (showCamera) {
-    ImagePickerLauncher(
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result ->
-                capturedPhoto = result
-                val fileSizeKB = (result.fileSize ?: 0) / 1024
-                println("Camera photo compressed to: ${fileSizeKB}KB")
-                showCamera = false
-            },
-            onError = { showCamera = false },
-            onDismiss = { showCamera = false },
-            cameraCaptureConfig = CameraCaptureConfig(
-                compressionLevel = CompressionLevel.MEDIUM
-            )
-        )
-    )
-}
-
-// Gallery with compression
-if (showGallery) {
-    GalleryPickerLauncher(
-        onPhotosSelected = { photos ->
-            photos.forEach { photo ->
-                val fileSizeKB = (photo.fileSize ?: 0) / 1024
-                println("${photo.fileName}: ${fileSizeKB}KB")
-            }
-            selectedImages = photos
-            showGallery = false
-        },
-        onError = { showGallery = false },
-        onDismiss = { showGallery = false },
-        allowMultiple = true,
-        mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
-        cameraCaptureConfig = CameraCaptureConfig(
-            compressionLevel = CompressionLevel.HIGH
-        )
-    )
-}
-```
-### For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for Native.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md)
-
-## File Size Utilities
-
-### Converting Bytes to Readable Format
-```kotlin
-// Extension function for cleaner file size display
-fun Long?.toReadableFileSize(): String {
-    if (this == null || this == 0L) return "Unknown size"
-    
-    return when {
-        this < 1024 -> "${this}B"
-        this < 1024 * 1024 -> "${this / 1024}KB"
-        else -> "${"%.1f".format(this / (1024.0 * 1024.0))}MB"
-    }
-}
-
-// Usage examples:
-onPhotoCaptured = { result ->
-    println("Camera photo: ${result.fileSize.toReadableFileSize()}")
-}
-
-onPhotosSelected = { photos ->
-    photos.forEach { photo ->
-        println("${photo.fileName}: ${photo.fileSize.toReadableFileSize()}")
-    }
-}
-```
-
 ## Platform Support
 <p align="center">
-  <strong>Cross-platform compatibility with intelligent context management</strong>
+  <strong>Cross-platform compatibility with intelligent context management and enhanced crop functionality</strong>
 </p>
 
 - **Android:** The library automatically manages the context using `LocalContext.current`. No need to pass context manually.
-- **iOS:** Context is not required as the library uses native iOS APIs.
+- **iOS:** Context is not required as the library uses native iOS APIs. Enhanced crop coordinate calculations ensure consistent behavior with Android.
+- **Cross-platform Crop:** Unified `applyCrop` function with automatic context management and consistent coordinate calculations across platforms.
+
+### Recent Improvements
+- **🔄 Automatic Context Management**: The `applyCrop` function is now `@Composable` and handles Android context automatically
+- **🖼️ Enhanced iOS Crop Accuracy**: Fixed coordinate calculations for precise image cropping on iOS
+- **🎯 Improved Layout System**: Resolved z-index conflicts and zoom overlay issues for better user experience
+- **📱 Better Aspect Ratio Support**: Enhanced handling of vertical aspect ratios (like 9:16) with improved space management
 
 | Platform                | Minimum Version | Status |
 |-------------------------|----------------|--------|
