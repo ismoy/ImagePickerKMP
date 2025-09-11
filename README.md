@@ -78,7 +78,7 @@
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.23")//lastversion
+    implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta")//lastversion
 }
 ```
 ### Using ImagePickerKMP in Android Native (Jetpack Compose)
@@ -86,7 +86,7 @@ dependencies {
 
 #### Step 1: Add the dependency
 ```kotlin
-implementation("io.github.ismoy:imagepickerkmp:1.0.23")
+implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta")
 ```
 #### iOS Permissions Setup
 <p>Don't forget to configure iOS-specific permissions in your <code>Info.plist</code> file:</p>

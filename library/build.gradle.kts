@@ -429,7 +429,7 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.24-beta-1"
+        version = "1.0.24-beta"
     )
     pom {
         name.set("ImagePickerKMP")
