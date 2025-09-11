@@ -19,18 +19,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Cross-platform**: Works on both Android and iOS
   - **Performance Optimized**: Background processing with proper thread management
 
+- **🔄 Automatic Context Management**: The `applyCrop` function now automatically handles Android context management
+  - **@Composable Integration**: The function is now `@Composable` and uses `LocalContext.current` internally
+  - **Simplified API**: Developers no longer need to manually provide Android context
+  - **Cross-platform Consistency**: Same API signature for both Android and iOS implementations
+
 ### Changed
 
 - Updated `CameraCaptureConfig` with new `compressionLevel: CompressionLevel?` parameter
 - Enhanced `GalleryPickerLauncher` to support compression through `cameraCaptureConfig`
 - Improved image processing pipeline with unified compression architecture
 - Updated documentation with comprehensive compression examples and guides
+- **Made `applyCrop` function @Composable**: Function signature updated to remove manual context parameter requirement
+- **Enhanced crop aspect ratio calculations**: Improved handling of vertical aspect ratios (like 9:16) with better space management
 
 ### Fixed
 
 - Fixed inverted compression logic (HIGH compression now produces smaller files as expected)
 - Corrected image scaling algorithm for consistent quality across compression levels
 - Resolved CompressionConfig test failures by excluding IMAGE_ALL wildcard from supported formats
+- **🖼️ Fixed iOS Crop Coordinate Calculations**: Resolved image cropping issues on iOS where cropped images appeared incorrectly centered
+  - **Consistent Cross-platform Behavior**: iOS now uses the same coordinate calculation logic as Android
+  - **Accurate Image Positioning**: Fixed `displayedImageSize` and `imageOffset` calculations for proper image scaling and centering
+  - **Corrected Crop Rectangle Mapping**: Implemented proper `adjustedCropRect` calculation with accurate scaling factors
+- **🎯 Fixed Layout Z-Index Conflicts**: Resolved issues where crop controls appeared in wrong layer order
+  - **Removed Problematic zIndex**: Eliminated `zIndex` modifiers that caused crop area to appear below header controls
+  - **Improved Component Stacking**: Natural layout flow now handles component layering correctly
+  - **Better 9:16 Aspect Ratio Support**: Crop rectangle now properly fits within available canvas space for vertical aspect ratios
+- **📱 Fixed Zoom Overlay Issues**: Resolved problem where zoomed images appeared above crop header controls
+  - **Added Bounds Clipping**: Implemented `clipToBounds()` to contain zoomed content within designated area
+  - **Maintained UI Hierarchy**: Zoom functionality now respects layout boundaries and doesn't interfere with header controls
+  - **Enhanced User Experience**: Crop controls remain accessible and visible during zoom operations
 
 ## [1.0.22] - 2024-12-XX
 

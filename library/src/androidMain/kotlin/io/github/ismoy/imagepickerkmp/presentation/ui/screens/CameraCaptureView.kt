@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
+import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.domain.config.PermissionConfig
 import io.github.ismoy.imagepickerkmp.domain.config.UiConfig
 import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
@@ -28,6 +29,7 @@ import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.CameraCapturePreview
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageConfirmationViewWithCustomButtons
+import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.RequestCameraPermission
 
 @Suppress("LongMethod","LongParameterList")
@@ -38,10 +40,12 @@ fun CameraCaptureView(
     onPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = null,
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit = {},
-    cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(preference = CapturePhotoPreference.QUALITY)
+    cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(preference = CapturePhotoPreference.QUALITY),
+    enableCrop: Boolean = false
 ) {
     val context = LocalContext.current
     var photoResult by remember { mutableStateOf<PhotoResult?>(null) }
+    var showCropView by remember { mutableStateOf(false) }
     var hasPermission by remember { mutableStateOf(false) }
     val cameraManager = remember { CameraXManager(context, activity) }
 
@@ -62,9 +66,27 @@ fun CameraCaptureView(
 
     Box(modifier = Modifier.fillMaxSize()) {
         when {
+            enableCrop && showCropView && photoResult != null -> {
+                ImageCropView(
+                    photoResult = photoResult!!,
+                    cropConfig = CropConfig(
+                        enabled = true,
+                        circularCrop = false,
+                        squareCrop = true
+                    ),
+                    onAccept = { croppedResult: PhotoResult ->
+                        showCropView = false
+                        onPhotoResult(croppedResult)
+                    },
+                    onCancel = {
+                        showCropView = false
+                        photoResult = null
+                    }
+                )
+            }
             cameraCaptureConfig.galleryConfig.allowMultiple && onPhotosSelected != null -> {
                 GalleryPickerLauncher(
-                    onPhotosSelected = { results -> onPhotosSelected(results) },
+                    onPhotosSelected = { results: List<GalleryPhotoResult> -> onPhotosSelected(results) },
                     onError = onError,
                     onDismiss = onDismiss,
                     allowMultiple = true,
@@ -78,7 +100,11 @@ fun CameraCaptureView(
                     context = context,
                     onPhotoResult = { result ->
                         photoResult = result
-                        playShutterSound()
+                        if (enableCrop) {
+                            showCropView = true
+                        } else {
+                            playShutterSound()
+                        }
                     },
                     onError = onError
                 )
@@ -117,7 +143,7 @@ private fun PermissionHandler(
             onPermissionPermanentlyDenied = {
                 onError(PhotoCaptureException(getStringResource(StringResource.CAMERA_PERMISSION_PERMANENTLY_DENIED)))
             },
-            onResult = { granted -> onPermissionGranted() },
+            onResult = { _: Boolean -> onPermissionGranted() },
             customPermissionHandler = null
         )
     }

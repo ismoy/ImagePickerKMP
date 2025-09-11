@@ -31,6 +31,7 @@ actual fun ImagePickerLauncher(
         onDismiss = config.onDismiss,
         cameraCaptureConfig = config.cameraCaptureConfig.copy(
             preference = config.cameraCaptureConfig.preference
-        )
+        ),
+        enableCrop = config.enableCrop
     )
 }
