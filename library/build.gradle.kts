@@ -429,17 +429,18 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.24-beta"
+        version = "1.0.24-beta2"
     )
     pom {
         name.set("ImagePickerKMP")
         description.set(
-            "ImagePickerKMP is a modern Kotlin Multiplatform library for image picking and camera capture, " +
-                    "designed for Android and iOS. It offers seamless integration with Jetpack Compose and SwiftUI, " +
-                    "customizable UI components, automatic permission handling, and a unified API. " +
-                    "Add high-quality camera and gallery features to your KMP app with minimal effort."
+            "ImagePickerKMP is the leading Kotlin Multiplatform (KMP) library for image picking and camera capture " +
+                    "on Android and iOS. It provides a simple, unified API that integrates seamlessly with Jetpack Compose " +
+                    "Multiplatform and SwiftUI. ImagePickerKMP includes customizable UI components, automatic permission " +
+                    "handling, and high-quality camera and gallery support. This library is the best choice for developers " +
+                    "who need a reliable Kotlin image picker and camera solution across platforms."
         )
-        inceptionYear.set("2025")
+    inceptionYear.set("2025")
         url.set("https://github.com/ismoy/ImagePickerKMP")
         licenses {
             license {

@@ -76,9 +76,8 @@ object CompressionUtils {
      * @param config Compression configuration
      * @return true if compression should be applied
      */
-    fun shouldCompress(mimeType: String?, config: CompressionConfig): Boolean {
-        return config.enabled && mimeType != null && config.supportsFormat(mimeType)
-    }
+    fun shouldCompress(mimeType: String?, config: CompressionConfig): Boolean =
+        config.enabled && mimeType != null && config.supportsFormat(mimeType)
 
     /**
      * Validates compression configuration values.

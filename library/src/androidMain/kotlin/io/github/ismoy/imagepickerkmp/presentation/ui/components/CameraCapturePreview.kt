@@ -1,6 +1,5 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
-import android.content.Context
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -26,38 +25,48 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
+import io.github.ismoy.imagepickerkmp.data.camera.CameraController
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.BackgroundColor
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
+import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
+import android.view.ViewGroup.LayoutParams
+
+private const val CAMERA_INITIALIZATION_DELAY = 100L
 
 @Suppress("LongMethod","LongParameterList")
 @Composable
 fun CameraCapturePreview(
-    cameraManager: CameraXManager,
     preference: CapturePhotoPreference,
     onPhotoResult: (PhotoResult) -> Unit,
-    context: Context,
     onError: (Exception) -> Unit,
     previewConfig: CameraPreviewConfig = CameraPreviewConfig(),
     compressionLevel: CompressionLevel? = null
 ) {
-    val previewView = remember { PreviewView(context) }
-    val coroutineScope = rememberCoroutineScope()
-    val stateHolder = remember {
-        CameraCaptureStateHolder(
-            cameraManager, previewView,
-            preference, coroutineScope
-        )
+    var previewView by remember { mutableStateOf<PreviewView?>(null) }
+    val stateHolder: CameraCaptureStateHolder? = previewView?.let { view ->
+        koinInject {
+            parametersOf(
+                view,
+                preference,
+                CoroutineScope(Dispatchers.Main + SupervisorJob())
+            )
+        }
     }
     var openGallery by remember { mutableStateOf(false) }
     val isDark = isSystemInDarkTheme()
@@ -66,21 +75,24 @@ fun CameraCapturePreview(
     val resolvedIconColor = previewConfig.uiConfig.iconColor ?: Color.White
     val resolvedButtonSize = previewConfig.uiConfig.buttonSize ?: 56.dp
     val captureButtonSize = previewConfig.captureButtonSize
-    LaunchedEffect(Unit) {
-        stateHolder.startCamera(
-            onError = onError,
-            onCameraReady = previewConfig.cameraCallbacks.onCameraReady,
-            onPermissionError = previewConfig.cameraCallbacks.onPermissionError
-        )
+    
+    LaunchedEffect(stateHolder) {
+        stateHolder?.let { holder ->
+            delay(CAMERA_INITIALIZATION_DELAY)
+            holder.startCamera(
+                onError = onError,
+                onCameraReady = previewConfig.cameraCallbacks.onCameraReady,
+                onPermissionError = previewConfig.cameraCallbacks.onPermissionError
+            )
+        }
     }
 
     if (openGallery) {
         GalleryPickerLauncher(
-            onPhotosSelected = { results ->
+            onPhotosSelected = { results: List<GalleryPhotoResult> ->
                 openGallery = false
                 val result = results.firstOrNull()
                 if (result != null) {
-                    logDebug("Gallery result received - File size: ${result.fileSize}KB")
                     onPhotoResult(
                         PhotoResult(
                             uri = result.uri,
@@ -90,31 +102,49 @@ fun CameraCapturePreview(
                             fileSize = result.fileSize
                         )
                     )
-                    logDebug("PhotoResult created with file size: ${result.fileSize}KB")
-                } else {
-                    logDebug("No gallery result received")
                 }
             },
-            onError = { error ->
+            onError = { error: Exception ->
                 openGallery = false
-                logDebug("Gallery error: ${error.message}")
                 onError(error)
             },
+            onDismiss = { openGallery = false },
             allowMultiple = false,
-            mimeTypes = listOf(MimeType.IMAGE_ALL)
+            mimeTypes = listOf(MimeType.IMAGE_ALL),
+            selectionLimit = 1L,
+            cameraCaptureConfig = null,
+            enableCrop = false
         )
     }
 
     Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
         AnimatedVisibility(
-            visible = !stateHolder.isLoading,
+            visible = stateHolder?.isLoading != true,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize())
+            AndroidView(
+                factory = { context ->
+                    PreviewView(context).apply {
+                        scaleType = PreviewView.ScaleType.FILL_CENTER
+                        implementationMode = PreviewView.ImplementationMode.PERFORMANCE
+                        
+                        layoutParams = LayoutParams(
+                            LayoutParams.MATCH_PARENT,
+                            LayoutParams.MATCH_PARENT
+                        )
+                        previewView = this
+                    }
+                },
+                modifier = Modifier.fillMaxSize(),
+                update = { view ->
+                    view.requestLayout()
+                    view.invalidate()
+                }
+            )
         }
         AnimatedVisibility(
-            visible = stateHolder.isLoading,
+            visible = stateHolder?.isLoading == true,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
@@ -126,10 +156,10 @@ fun CameraCapturePreview(
             }
         }
         FlashToggleButton(
-            flashMode = stateHolder.flashMode,
+            flashMode = stateHolder?.flashMode ?: CameraController.FlashMode.AUTO,
             iconColor = resolvedIconColor,
             flashIcon = previewConfig.uiConfig.flashIcon,
-            onToggle = { stateHolder.toggleFlash() }
+            onToggle = { stateHolder?.toggleFlash() }
         )
         Box(
             modifier = Modifier
@@ -162,7 +192,7 @@ fun CameraCapturePreview(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
-                    stateHolder.capturePhoto(onPhotoResult, onError, compressionLevel)
+                    stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel)
                 }
         )
         Box(
@@ -175,7 +205,7 @@ fun CameraCapturePreview(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
-                    stateHolder.switchCamera(onError, previewConfig.cameraCallbacks.onCameraSwitch)
+                    stateHolder?.switchCamera(onError, previewConfig.cameraCallbacks.onCameraSwitch)
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -185,10 +215,6 @@ fun CameraCapturePreview(
                 tint = resolvedIconColor
             )
         }
-        FlashOverlay(visible = stateHolder.showFlashOverlay)
+        FlashOverlay(visible = stateHolder?.showFlashOverlay ?: false)
     }
-}
-
-private fun logDebug(message: String) {
-    println("📷 Android CameraCapturePreview: $message")
 }

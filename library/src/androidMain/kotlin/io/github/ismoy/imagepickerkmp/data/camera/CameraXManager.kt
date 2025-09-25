@@ -1,9 +1,6 @@
 package io.github.ismoy.imagepickerkmp.data.camera
 
-import android.content.Context
-import androidx.activity.ComponentActivity
 import androidx.camera.view.PreviewView
-import io.github.ismoy.imagepickerkmp.data.processors.ImageProcessor
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
@@ -16,17 +13,8 @@ import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
  */
 class CameraXManager(
     private val cameraController: CameraController,
-    private val imageProcessor: ImageProcessor
+    private val imageProcessor: io.github.ismoy.imagepickerkmp.data.processors.ImageProcessor
 ) {
-    
-    // Secondary constructor for backward compatibility
-    constructor(context: Context, activity: ComponentActivity) : this(
-        cameraController = CameraController(context, activity),
-        imageProcessor = ImageProcessor(
-            fileManager = io.github.ismoy.imagepickerkmp.data.managers.FileManager(context),
-            orientationCorrector = io.github.ismoy.imagepickerkmp.data.processors.ImageOrientationCorrector()
-        )
-    )
 
     suspend fun startCamera(
         previewView: PreviewView,

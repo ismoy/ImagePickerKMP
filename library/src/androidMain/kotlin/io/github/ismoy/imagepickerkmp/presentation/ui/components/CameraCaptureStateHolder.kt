@@ -6,9 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController
 import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
-import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.DELAY_TO_TAKE_PHOTO
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

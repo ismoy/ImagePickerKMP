@@ -91,9 +91,9 @@ class ImageProcessor(
     ): Bitmap {
         // Correct logic: HIGH compression = smaller image, LOW compression = larger image
         val maxDimension = when (compressionLevel) {
-            CompressionLevel.HIGH -> 1280  // Más compresión = imagen más pequeña
-            CompressionLevel.MEDIUM -> 1920 // Compresión media
-            CompressionLevel.LOW -> 2560   // Menos compresión = imagen más grande
+            CompressionLevel.HIGH -> 1280  // More compression = smaller image
+            CompressionLevel.MEDIUM -> 1920 // Medium compression
+            CompressionLevel.LOW -> 2560   // Less compression = larger image
         }
         
         val currentMaxDimension = maxOf(bitmap.width, bitmap.height)

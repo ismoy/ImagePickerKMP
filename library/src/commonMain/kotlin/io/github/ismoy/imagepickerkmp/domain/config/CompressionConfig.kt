@@ -24,16 +24,13 @@ data class CompressionConfig(
     val supportedFormats: List<MimeType> = MimeType.ALL_SUPPORTED_TYPES.filter { it != MimeType.IMAGE_ALL }
 ) {
     /**
-     * Gets the effective quality value, prioritizing customQuality over compressionLevel
+     * Gets the effective quality value, prioritizing customQuality over compressionLevel.
      */
-    fun getQuality(): Double {
-        return customQuality ?: compressionLevel.toQualityValue()
-    }
+    fun getQuality(): Double = customQuality ?: compressionLevel.toQualityValue()
 
     /**
-     * Checks if the given format supports compression
+     * Checks if the given format supports compression.
      */
-    fun supportsFormat(mimeType: String): Boolean {
-        return supportedFormats.any { it.value.equals(mimeType, ignoreCase = true) }
-    }
+    fun supportsFormat(mimeType: String): Boolean = 
+        supportedFormats.any { it.value.equals(mimeType, ignoreCase = true) }
 }

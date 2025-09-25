@@ -38,16 +38,18 @@ fun CropControlsPanel(
     onZoomChange: (Float) -> Unit,
     onRotationChange: (Float) -> Unit
 ) {
+    val defaultPadding = 16.dp
+    
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color(0xFF1A1A1A))
-            .padding(16.dp)
+            .padding(defaultPadding)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(bottom = defaultPadding),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(

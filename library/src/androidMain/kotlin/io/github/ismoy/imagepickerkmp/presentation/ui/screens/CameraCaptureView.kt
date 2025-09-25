@@ -1,6 +1,5 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.screens
 
-import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.domain.config.PermissionConfig
@@ -31,6 +32,7 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLa
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageConfirmationViewWithCustomButtons
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.RequestCameraPermission
+import io.github.ismoy.imagepickerkmp.presentation.viewModel.ImagePickerViewModel
 
 @Suppress("LongMethod","LongParameterList")
 @Composable
@@ -47,7 +49,10 @@ fun CameraCaptureView(
     var photoResult by remember { mutableStateOf<PhotoResult?>(null) }
     var showCropView by remember { mutableStateOf(false) }
     var hasPermission by remember { mutableStateOf(false) }
-    val cameraManager = remember { CameraXManager(context, activity) }
+    
+    val imagePickerViewModel: ImagePickerViewModel = koinInject()
+    
+     val cameraManager: CameraXManager = koinInject { parametersOf(context, activity) }
 
     DisposableEffect(Unit) {
         onDispose { cameraManager.stopCamera() }
@@ -59,7 +64,10 @@ fun CameraCaptureView(
             customDeniedDialog = cameraCaptureConfig.permissionAndConfirmationConfig.customDeniedDialog,
             customSettingsDialog = cameraCaptureConfig.permissionAndConfirmationConfig.customSettingsDialog,
             onPermissionGranted = { hasPermission = true },
-            onError = onError
+            onError = { exception ->
+                imagePickerViewModel.onError(exception)
+                onError(exception)
+            }
         )
         return
     }
@@ -87,7 +95,10 @@ fun CameraCaptureView(
             cameraCaptureConfig.galleryConfig.allowMultiple && onPhotosSelected != null -> {
                 GalleryPickerLauncher(
                     onPhotosSelected = { results: List<GalleryPhotoResult> -> onPhotosSelected(results) },
-                    onError = onError,
+                    onError = { exception: Exception ->
+                        imagePickerViewModel.onError(exception)
+                        onError(exception)
+                    },
                     onDismiss = onDismiss,
                     allowMultiple = true,
                     mimeTypes = cameraCaptureConfig.galleryConfig.mimeTypes
@@ -95,9 +106,7 @@ fun CameraCaptureView(
             }
             photoResult == null -> {
                 CameraAndPreview(
-                    cameraManager = cameraManager,
                     cameraCaptureConfig = cameraCaptureConfig,
-                    context = context,
                     onPhotoResult = { result ->
                         photoResult = result
                         if (enableCrop) {
@@ -106,7 +115,10 @@ fun CameraCaptureView(
                             playShutterSound()
                         }
                     },
-                    onError = onError
+                    onError = { exception: Exception ->
+                        imagePickerViewModel.onError(exception)
+                        onError(exception)
+                    }
                 )
             }
             else -> {
@@ -151,17 +163,13 @@ private fun PermissionHandler(
 
 @Composable
 private fun CameraAndPreview(
-    cameraManager: CameraXManager,
     cameraCaptureConfig: CameraCaptureConfig,
-    context: Context,
     onPhotoResult: (PhotoResult) -> Unit,
     onError: (Exception) -> Unit
 ) {
     CameraCapturePreview(
-        cameraManager = cameraManager,
         preference = cameraCaptureConfig.preference,
         onPhotoResult = onPhotoResult,
-        context = context,
         onError = onError,
         previewConfig = CameraPreviewConfig(
             captureButtonSize = cameraCaptureConfig.captureButtonSize,

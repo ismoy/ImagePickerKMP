@@ -6,6 +6,10 @@ import io.github.ismoy.imagepickerkmp.domain.models.CropHandle
 import io.github.ismoy.imagepickerkmp.domain.utils.centerX
 import io.github.ismoy.imagepickerkmp.domain.utils.centerY
 
+/**
+ * Utility object containing helper functions for crop functionality.
+ * Provides methods for handle detection and area calculations.
+ */
 object CropUtils {
      fun detectHandle(offset: Offset, cropRect: Rect): CropHandle? {
         val handleSize = 40f

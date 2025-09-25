@@ -9,10 +9,11 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import io.github.ismoy.imagepickerkmp.data.dataSource.getCaptureMode
+import io.github.ismoy.imagepickerkmp.data.dataSource.getCaptureMode as getCaptureModeFn
 import io.github.ismoy.imagepickerkmp.data.managers.FileManager
 import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -21,10 +22,13 @@ import java.io.File
  * Controls camera operations such as starting, stopping, capturing photos, and switching cameras.
  *
  * This class manages the camera lifecycle and configuration for photo capture.
+ * 
+ * SOLID: Dependency Inversion - Dependencies injected via constructor
  */
 class CameraController(
     private val context: Context,
-    private val lifecycleOwner: LifecycleOwner
+    private val lifecycleOwner: LifecycleOwner,
+    private val fileManager: FileManager
 ) {
     /**
      * Enum representing the available flash modes for the camera.
@@ -40,7 +44,6 @@ class CameraController(
     }
     private var imageCapture: ImageCapture? = null
     private var cameraProvider: ProcessCameraProvider? = null
-    private val fileManager = FileManager(context)
     private var currentFlashMode: FlashMode = FlashMode.AUTO
     private var currentCameraType: CameraType = CameraType.BACK
 
@@ -52,30 +55,32 @@ class CameraController(
             ProcessCameraProvider.getInstance(context).get()
         }
 
-        val preview = Preview.Builder().build().also {
-            it.surfaceProvider = previewView.surfaceProvider
-        }
+        withContext(Dispatchers.Main) {
+            val preview = Preview.Builder().build().also {
+                it.surfaceProvider = previewView.surfaceProvider
+            }
 
-        imageCapture = ImageCapture.Builder()
-            .setCaptureMode(getCaptureMode(preference))
-            .setFlashMode(getImageCaptureFlashMode(currentFlashMode))
-            .build()
+            imageCapture = ImageCapture.Builder()
+                .setCaptureMode(getCaptureModeFn(preference))
+                .setFlashMode(getImageCaptureFlashMode(currentFlashMode))
+                .build()
 
-        val cameraSelector = when (currentCameraType) {
-            CameraType.BACK -> CameraSelector.DEFAULT_BACK_CAMERA
-            CameraType.FRONT -> CameraSelector.DEFAULT_FRONT_CAMERA
-        }
+            val cameraSelector = when (currentCameraType) {
+                CameraType.BACK -> CameraSelector.DEFAULT_BACK_CAMERA
+                CameraType.FRONT -> CameraSelector.DEFAULT_FRONT_CAMERA
+            }
 
-        try {
-            cameraProvider?.unbindAll()
-            cameraProvider?.bindToLifecycle(
-                lifecycleOwner,
-                cameraSelector,
-                preview,
-                imageCapture
-            )
-        } catch (exc: Exception) {
-            throw PhotoCaptureException("Failed to bind camera use cases: \\${exc}") as Throwable
+            try {
+                cameraProvider?.unbindAll()
+                cameraProvider?.bindToLifecycle(
+                    lifecycleOwner,
+                    cameraSelector,
+                    preview,
+                    imageCapture
+                )
+            } catch (exc: Exception) {
+                throw PhotoCaptureException("Failed to bind camera use cases: ${exc.message}")
+            }
         }
     }
 
