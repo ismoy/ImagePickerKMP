@@ -1,14 +1,12 @@
 package io.github.ismoy.imagepickerkmp.data.processors
 
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
-import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
 import platform.Foundation.NSFileManager
-import platform.Foundation.NSNumber
 import platform.Foundation.NSURL
 import platform.Foundation.NSUUID
 import platform.Foundation.temporaryDirectory
@@ -18,7 +16,6 @@ import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
-import platform.UIKit.drawInRect
 
 /**
  * Handles image processing operations for iOS, including compression and conversion.
@@ -33,18 +30,10 @@ object ImageProcessor {
         return try {
             val quality = compressionLevel.toQualityValue()
             val maxDimension = when (compressionLevel) {
-                CompressionLevel.HIGH -> 1280.0   // Más compresión = imagen más pequeña
-                CompressionLevel.MEDIUM -> 1920.0 // Compresión media
-                CompressionLevel.LOW -> 2560.0    // Menos compresión = imagen más grande
+                CompressionLevel.HIGH -> 1280.0
+                CompressionLevel.MEDIUM -> 1920.0
+                CompressionLevel.LOW -> 2560.0
             }
-            
-            // Debug logs
-            println("📸 iOS Camera ImageProcessor DEBUG:")
-            println("   CompressionLevel: $compressionLevel")
-            println("   Quality: $quality")
-            println("   MaxDimension: $maxDimension")
-            println("   Original size: ${image.size.useContents { "$width x $height" }}")
-            
             val processedImage = resizeImageIfNeeded(image, maxDimension)
             val result = UIImageJPEGRepresentation(processedImage, quality)
             
@@ -62,18 +51,10 @@ object ImageProcessor {
         return try {
             val quality = compressionLevel.toQualityValue()
             val maxDimension = when (compressionLevel) {
-                CompressionLevel.HIGH -> 1280.0   // Más compresión = imagen más pequeña
-                CompressionLevel.MEDIUM -> 1920.0 // Compresión media
-                CompressionLevel.LOW -> 2560.0    // Menos compresión = imagen más grande
+                CompressionLevel.HIGH -> 1280.0
+                CompressionLevel.MEDIUM -> 1920.0
+                CompressionLevel.LOW -> 2560.0
             }
-            
-            // Debug logs
-            println("🔧 iOS ImageProcessor DEBUG:")
-            println("   CompressionLevel: $compressionLevel")
-            println("   Quality: $quality")
-            println("   MaxDimension: $maxDimension")
-            println("   Original size: ${image.size.useContents { "$width x $height" }}")
-            
             val processedImage = resizeImageIfNeeded(image, maxDimension)
             val result = UIImageJPEGRepresentation(processedImage, quality)
             
@@ -125,7 +106,7 @@ object ImageProcessor {
         return try {
             val tempDir = NSFileManager.defaultManager.temporaryDirectory
             val fileName = "${NSUUID().UUIDString}.jpg"
-            val fileURL = tempDir?.URLByAppendingPathComponent(fileName)
+            val fileURL = tempDir.URLByAppendingPathComponent(fileName)
             
             fileURL?.let { url ->
                 if (imageData.writeToURL(url, true)) {
@@ -134,20 +115,7 @@ object ImageProcessor {
                     null
                 }
             }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    /**
-     * Get file size for a given URL
-     */
-    private fun getFileSize(fileURL: NSURL): Long? {
-        return try {
-            val fileManager = NSFileManager.defaultManager
-            val attributes = fileManager.attributesOfItemAtPath(fileURL.path!!, null)
-            (attributes?.get("NSFileSize") as? NSNumber)?.longValue
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

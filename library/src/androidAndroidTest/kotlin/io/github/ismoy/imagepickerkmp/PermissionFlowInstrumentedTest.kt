@@ -21,7 +21,7 @@ class PermissionFlowInstrumentedTest {
                 onError = { errorCalled = true }
             )
         }
-        // Aquí deberías simular la denegación de permisos usando GrantPermissionRule o UI Automator
+        // Here you should simulate permission denial using GrantPermissionRule or UI Automator
         // Este paso depende del entorno y configuración de test
         // Por ahora, solo estructura el test para que puedas completarlo según tu flujo real
         composeTestRule.runOnIdle {

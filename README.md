@@ -16,8 +16,8 @@
   <img src="https://img.shields.io/badge/Compose%20Multiplatform-green" alt="Compose Multiplatform">
   <img src="https://img.shields.io/badge/Platform-Android-green" alt="Android">
   <img src="https://img.shields.io/badge/Platform-iOS-blue" alt="iOS">
-  <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml">
-  <img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a>
+ <!-- <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml">
+  <img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a>-->
 </p>
 
 ---
@@ -60,6 +60,7 @@
 - **Configurable Compression Levels**: LOW, MEDIUM, HIGH compression options
 - **Async Processing**: Non-blocking UI with Kotlin Coroutines integration
 - **Multiple Format Support**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
+- **Extension Functions**: Built-in extension functions for easy image display and manipulation
 - **Customizable UI**: Custom dialogs and confirmation views
 - **Permission Handling**: Smart permission management for both platforms
 - **Easy Integration**: Simple API with Compose Multiplatform
@@ -78,7 +79,7 @@
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta")//lastversion
+    implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta2")//lastversion
 }
 ```
 ### Using ImagePickerKMP in Android Native (Jetpack Compose)
@@ -86,7 +87,7 @@ dependencies {
 
 #### Step 1: Add the dependency
 ```kotlin
-implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta")
+implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta2")
 ```
 #### iOS Permissions Setup
 <p>Don't forget to configure iOS-specific permissions in your <code>Info.plist</code> file:</p>
@@ -160,6 +161,96 @@ Button(onClick = { showGallery = true }) {
 ```
 
 ### For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for KMP.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md)
+
+## Extension Functions for Image Processing
+
+ImagePickerKMP includes built-in extension functions that simplify image handling and display. These extensions work seamlessly with both `ImagePickerLauncher` and `GalleryPickerLauncher`, providing a unified API for image processing across platforms.
+
+### Available Extension Functions
+
+The library provides four main extension functions for easy image conversion:
+
+- **`loadBytes()`** - Returns image as ByteArray for file operations and storage
+- **`loadPainter()`** - Returns image as Painter for direct display in Compose UI
+- **`loadImageBitmap()`** - Returns image as ImageBitmap for Compose graphics operations
+- **`loadBase64()`** - Returns image as Base64 string for API calls and network transmission
+
+### Benefits
+
+- **Simplified Integration**: No need for complex image conversion logic
+- **Multiple Format Support**: Get images in different formats with single function calls
+- **Performance Optimized**: Direct conversion without intermediate processing steps
+- **Cross-platform Consistency**: Same API works identically on Android and iOS
+- **Memory Efficient**: Optimized memory usage during image conversion
+
+### Usage Examples
+
+```kotlin
+// State variables
+var showCamera by remember { mutableStateOf(false) }
+var showGallery by remember { mutableStateOf(false) }
+var capturedImage by remember { mutableStateOf<Painter?>(null) }
+var selectedPhotos by remember { mutableStateOf<List<GalleryPhotoHandler.PhotoResult>>(emptyList()) }
+
+// Camera with extension functions
+if (showCamera) {
+    ImagePickerLauncher(
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                // Use extension functions to get different formats
+                val imageBytes = result.loadBytes()        // For file operations
+                val imagePainter = result.loadPainter()    // For UI display
+                val imageBitmap = result.loadImageBitmap() // For graphics operations
+                val imageBase64 = result.loadBase64()      // For API calls
+                
+                // Store the painter to display later
+                capturedImage = imagePainter
+                showCamera = false
+            },
+            onError = { showCamera = false },
+            onDismiss = { showCamera = false },
+            directCameraLaunch = true
+        )
+    )
+}
+
+// Gallery with extension functions
+if (showGallery) {
+    GalleryPickerLauncher(
+        onPhotosSelected = { photos ->
+            selectedPhotos = photos
+            showGallery = false
+        },
+        onError = { showGallery = false },
+        onDismiss = { showGallery = false },
+        allowMultiple = true
+    )
+}
+
+// Display captured image
+capturedImage?.let { painter ->
+    Image(
+        painter = painter,
+        contentDescription = "Captured photo",
+        modifier = Modifier.size(200.dp)
+    )
+}
+
+// Display selected photos
+LazyColumn {
+    items(selectedPhotos) { photo ->
+        photo.loadPainter()?.let { painter ->
+            Image(
+                painter = painter,
+                contentDescription = "Selected photo",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
+        }
+    }
+}
+```
 
 ## Image Compression
 **Automatically optimize image size while maintaining quality with configurable compression levels.**

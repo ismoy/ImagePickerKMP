@@ -15,6 +15,7 @@ This document provides comprehensive examples for using ImagePickerKMP in variou
 - [Internationalization (i18n)](#internationalization-i18n)
 - [Error Handling](#error-handling)
 - [Platform-Specific Examples](#platform-specific-examples)
+- [ByteArray Support Examples](#bytearray-support-examples)
 
 ## Image Compression Examples
 
@@ -2021,3 +2022,215 @@ fun CustomImagePicker() {
     }
 }
 ```
+
+## ByteArray Support Examples
+
+### Loading Image Data as ByteArray
+
+The library now supports loading image data as `ByteArray` for both `PhotoResult` and `GalleryPhotoResult`. This gives you control over when the full image data is loaded into memory.
+
+#### Basic Usage
+
+```kotlin
+@Composable
+fun ByteArrayExample() {
+    var photoResult by remember { mutableStateOf<PhotoResult?>(null) }
+    var galleryResult by remember { mutableStateOf<GalleryPhotoResult?>(null) }
+    var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
+    
+    Column(modifier = Modifier.padding(16.dp)) {
+        // Camera capture
+        ImagePickerLauncher(
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    photoResult = result
+                }
+            )
+        )
+        
+        // Gallery selection
+        GalleryPickerLauncher(
+            config = GalleryPickerConfig(
+                onPhotoSelected = { result ->
+                    galleryResult = result
+                }
+            )
+        )
+        
+        // Load bytes from camera result - Zero config!
+        photoResult?.let { photo ->
+            Button(
+                onClick = {
+                    // Just works - no setup required!
+                    imageBytes = photo.loadBytes()
+                }
+            ) {
+                Text("Load Camera Photo as ByteArray")
+            }
+        }
+        
+        // Load bytes from gallery result - Zero config!
+        galleryResult?.let { gallery ->
+            Button(
+                onClick = {
+                    // Just works - no setup required!
+                    imageBytes = gallery.loadBytes()
+                }
+            ) {
+                Text("Load Gallery Photo as ByteArray")
+            }
+        }
+        
+        // Display byte array info
+        imageBytes?.let { bytes ->
+            Text("Image loaded: ${bytes.size} bytes")
+        }
+    }
+}
+```
+
+#### Processing Image Data
+
+```kotlin
+@Composable
+fun ImageProcessingExample() {
+    var photoResult by remember { mutableStateOf<PhotoResult?>(null) }
+    var processedImage by remember { mutableStateOf<String?>(null) }
+    
+    LaunchedEffect(photoResult) {
+        photoResult?.let { photo ->
+            // Load image data in background thread
+            withContext(Dispatchers.IO) {
+                // Zero-config loading
+                val imageBytes = photo.loadBytes()
+                
+                if (imageBytes.isNotEmpty()) {
+                    // Process the image data
+                    val base64 = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+                    processedImage = "data:image/jpeg;base64,$base64"
+                    
+                    // Or save to file
+                    saveImageToFile(imageBytes, "processed_image.jpg")
+                    
+                    // Or upload to server
+                    uploadImageToServer(imageBytes)
+                }
+            }
+        }
+    }
+    
+    ImagePickerLauncher(
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                photoResult = result
+            }
+        )
+    )
+}
+
+private suspend fun saveImageToFile(bytes: ByteArray, fileName: String) {
+    // Implementation to save bytes to file
+}
+
+private suspend fun uploadImageToServer(bytes: ByteArray) {
+    // Implementation to upload bytes to server
+}
+```
+
+#### Error Handling with ByteArray
+
+```kotlin
+@Composable
+fun SafeByteArrayExample() {
+    var photoResult by remember { mutableStateOf<PhotoResult?>(null) }
+    var loadingState by remember { mutableStateOf<LoadingState>(LoadingState.Idle) }
+    
+    sealed class LoadingState {
+        object Idle : LoadingState()
+        object Loading : LoadingState()
+        data class Success(val bytes: ByteArray) : LoadingState()
+        data class Error(val message: String) : LoadingState()
+    }
+    
+    LaunchedEffect(photoResult) {
+        photoResult?.let { photo ->
+            loadingState = LoadingState.Loading
+            
+            try {
+                withContext(Dispatchers.IO) {
+                    // Zero-config loading
+                    val imageBytes = photo.loadBytes()
+                    
+                    if (imageBytes.isNotEmpty()) {
+                        loadingState = LoadingState.Success(imageBytes)
+                    } else {
+                        loadingState = LoadingState.Error("Failed to load image data")
+                    }
+                }
+            } catch (e: Exception) {
+                loadingState = LoadingState.Error("Error loading image: ${e.message}")
+            }
+        }
+    }
+    
+    Column {
+        ImagePickerLauncher(
+            config = ImagePickerConfig(
+                onPhotoCaptured = { result ->
+                    photoResult = result
+                }
+            )
+        )
+        
+        when (loadingState) {
+            is LoadingState.Idle -> Text("No image selected")
+            is LoadingState.Loading -> CircularProgressIndicator()
+            is LoadingState.Success -> Text("Image loaded: ${loadingState.bytes.size} bytes")
+            is LoadingState.Error -> Text("Error: ${loadingState.message}", color = Color.Red)
+        }
+    }
+}
+```
+
+#### CommonMain Usage (Cross-platform)
+
+```kotlin
+// In your commonMain code - works on both Android and iOS
+class ImageProcessor {
+    fun processPhoto(photoResult: PhotoResult): ProcessedImage? {
+        return try {
+            // Zero-config loading works on all platforms
+            val imageBytes = photoResult.loadBytes()
+            
+            if (imageBytes.isNotEmpty()) {
+                // Process the raw image bytes
+                ProcessedImage(
+                    data = imageBytes,
+                    size = imageBytes.size,
+                    format = detectImageFormat(imageBytes)
+                )
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+    
+    private fun detectImageFormat(bytes: ByteArray): String {
+        return when {
+            bytes.size >= 2 && bytes[0] == 0xFF.toByte() && bytes[1] == 0xD8.toByte() -> "JPEG"
+            bytes.size >= 8 && bytes.sliceArray(1..3).contentEquals("PNG".toByteArray()) -> "PNG"
+            else -> "UNKNOWN"
+        }
+    }
+}
+
+data class ProcessedImage(
+    val data: ByteArray,
+    val size: Int,
+    val format: String
+)
+```
+
+For more details about ByteArray support, see [BYTEARRAY_SUPPORT.md](BYTEARRAY_SUPPORT.md).

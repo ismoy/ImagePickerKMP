@@ -16,8 +16,8 @@
   <img src="https://img.shields.io/badge/Compose%20Multiplatform-green" alt="Compose Multiplatform">
   <img src="https://img.shields.io/badge/Platform-Android-green" alt="Android">
   <img src="https://img.shields.io/badge/Platform-iOS-blue" alt="iOS">
-  <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml">
-  <img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a>
+  <!-- <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml">
+  <img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a> -->
 </p>
 
 ---
@@ -60,6 +60,7 @@
 - **Niveles de Compresión Configurables**: Opciones de compresión BAJA, MEDIA, ALTA
 - **Procesamiento Asíncrono**: UI no bloqueante con integración de Kotlin Coroutines
 - **Soporte de Múltiples Formatos**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
+- **Funciones de Extensión**: Funciones de extensión integradas para facilitar la visualización y manipulación de imágenes
 - **UI Personalizable**: Diálogos personalizados y vistas de confirmación
 - **Manejo de Permisos**: Gestión inteligente de permisos para ambas plataformas
 - **Integración Fácil**: API simple con Compose Multiplatform
@@ -160,6 +161,96 @@ Button(onClick = { showGallery = true }) {
 ```
 
 ### Para más personalización (vistas de confirmación, filtrado MIME, etc.), [consulta la guía de integración para KMP.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.es.md)
+
+## Funciones de Extensión para Procesamiento de Imágenes
+
+ImagePickerKMP incluye funciones de extensión integradas que simplifican el manejo y visualización de imágenes. Estas extensiones funcionan perfectamente tanto con `ImagePickerLauncher` como con `GalleryPickerLauncher`, proporcionando una API unificada para el procesamiento de imágenes multiplataforma.
+
+### Funciones de Extensión Disponibles
+
+La librería proporciona cuatro funciones de extensión principales para la conversión fácil de imágenes:
+
+- **`loadBytes()`** - Devuelve la imagen como ByteArray para operaciones de archivo y almacenamiento
+- **`loadPainter()`** - Devuelve la imagen como Painter para mostrar directamente en UI de Compose
+- **`loadImageBitmap()`** - Devuelve la imagen como ImageBitmap para operaciones gráficas de Compose
+- **`loadBase64()`** - Devuelve la imagen como string Base64 para llamadas API y transmisión de red
+
+### Beneficios
+
+- **Integración Simplificada**: No necesitas lógica compleja de conversión de imágenes
+- **Soporte de Múltiples Formatos**: Obtén imágenes en diferentes formatos con llamadas de función únicas
+- **Optimizado para Rendimiento**: Conversión directa sin pasos de procesamiento intermedios
+- **Consistencia Multiplataforma**: La misma API funciona idénticamente en Android e iOS
+- **Eficiente en Memoria**: Uso optimizado de memoria durante la conversión de imágenes
+
+### Ejemplos de Uso
+
+```kotlin
+// Variables de estado
+var showCamera by remember { mutableStateOf(false) }
+var showGallery by remember { mutableStateOf(false) }
+var capturedImage by remember { mutableStateOf<Painter?>(null) }
+var selectedPhotos by remember { mutableStateOf<List<GalleryPhotoHandler.PhotoResult>>(emptyList()) }
+
+// Cámara con funciones de extensión
+if (showCamera) {
+    ImagePickerLauncher(
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result ->
+                // Usar funciones de extensión para obtener diferentes formatos
+                val imageBytes = result.loadBytes()        // Para operaciones de archivo
+                val imagePainter = result.loadPainter()    // Para mostrar en UI
+                val imageBitmap = result.loadImageBitmap() // Para operaciones gráficas
+                val imageBase64 = result.loadBase64()      // Para llamadas API
+                
+                // Guardar el painter para mostrar después
+                capturedImage = imagePainter
+                showCamera = false
+            },
+            onError = { showCamera = false },
+            onDismiss = { showCamera = false },
+            directCameraLaunch = true
+        )
+    )
+}
+
+// Galería con funciones de extensión
+if (showGallery) {
+    GalleryPickerLauncher(
+        onPhotosSelected = { photos ->
+            selectedPhotos = photos
+            showGallery = false
+        },
+        onError = { showGallery = false },
+        onDismiss = { showGallery = false },
+        allowMultiple = true
+    )
+}
+
+// Mostrar imagen capturada
+capturedImage?.let { painter ->
+    Image(
+        painter = painter,
+        contentDescription = "Foto capturada",
+        modifier = Modifier.size(200.dp)
+    )
+}
+
+// Mostrar fotos seleccionadas
+LazyColumn {
+    items(selectedPhotos) { photo ->
+        photo.loadPainter()?.let { painter ->
+            Image(
+                painter = painter,
+                contentDescription = "Foto seleccionada",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
+        }
+    }
+}
+```
 
 ## Compresión de Imágenes
 **Optimiza automáticamente el tamaño de imagen manteniendo la calidad con niveles de compresión configurables.**
