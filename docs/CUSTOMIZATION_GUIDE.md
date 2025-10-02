@@ -198,7 +198,7 @@ fun CameraScreen(context: Any?) {
                                     isPickerSheetVisible = false
                                     println("DEBUG: Camera picker dismissed")
                                 },
-                                directCameraLaunch = true,
+                                directCameraLaunch = false,
                                 enableCrop = false,
                                 customPickerDialog = { onTakePhoto, onSelectFromGallery, onCancel ->
                                     CustomIOSBottomSheet(
