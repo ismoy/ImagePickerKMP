@@ -15,6 +15,7 @@ This guide explains how to customize ImagePickerKMP to match your app's design a
 - [Custom Callbacks](#custom-callbacks)
 - [Examples](#examples)
 - [Corrección Automática de Orientación](#corrección-automática-de-orientación)
+- [Full custom implementation](#full-custom-implementation)
 
 ## Overview
 
@@ -26,6 +27,626 @@ ImagePickerKMP provides extensive customization options to ensure it fits seamle
 - **Callback Customization**: Handle events your way
 
 ## UI Customization
+
+## Full custom implementation
+```kotlin
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import coil3.compose.AsyncImage
+import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
+import io.github.ismoy.imagepickerkmp.domain.config.PermissionAndConfirmationConfig
+import io.github.ismoy.imagepickerkmp.domain.extensions.loadBytes
+import io.github.ismoy.imagepickerkmp.domain.extensions.loadPainter
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
+import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
+import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
+import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImagePickerLauncher
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun CameraScreen(context: Any?) {
+    var showGalleryPicker by remember { mutableStateOf(false) }
+    var showCameraPicker by remember { mutableStateOf(false) }
+    var isPickerSheetVisible by remember { mutableStateOf(false) }
+    var selectedImages by remember { mutableStateOf<List<GalleryPhotoResult>>(emptyList()) }
+    var cameraPhoto by remember { mutableStateOf<PhotoResult?>(null) }
+    var showScanner by remember { mutableStateOf(false) }
+    var showCamera by remember { mutableStateOf(false) }
+    var valorBase64 by remember { mutableStateOf("") }
+
+
+    Scaffold (
+        bottomBar = {
+            if (!isPickerSheetVisible) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 32.dp),
+
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            selectedImages = emptyList()
+                            cameraPhoto = null
+                            showCameraPicker = true
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Text("Open Camera")
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedButton(
+                        onClick = {
+                            selectedImages = emptyList()
+                            cameraPhoto = null
+                            showGalleryPicker = true
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray)
+                    ) {
+                        Text("Select from Gallery", color = Color.White)
+                    }
+                }
+            }
+        }
+    ){ innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                when {
+                    showGalleryPicker -> {
+                        GalleryPickerLauncher(
+                            onPhotosSelected = { results ->
+                                selectedImages = results
+                                showGalleryPicker = false
+                                results.forEach { result ->
+                                    println("URI: Tamaño: ${result.fileSize}")
+                                }
+                            },
+                            onError = {
+                                showGalleryPicker = false
+                            },
+                            onDismiss = {
+                                showGalleryPicker = false
+                            },
+                            mimeTypes = MimeType.ALL_SUPPORTED_TYPES,
+                            allowMultiple = true
+                        )
+                    }
+
+                    showCameraPicker -> {
+                        ImagePickerLauncher(
+                            config = ImagePickerConfig(
+                                onPhotoCaptured = { result ->
+                                    cameraPhoto = result
+                                    println("DEBUG: Photo captured: ${result.uri}")
+                                    val imageBytes = result.loadBytes()
+                                    println("DEBUG: Image byte array: ${imageBytes.size}")
+                                    showCameraPicker = false
+                                    isPickerSheetVisible = false
+                                },
+                                onError = {
+                                    showCameraPicker = false
+                                    isPickerSheetVisible = false
+                                },
+                                onDismiss = {
+                                    showCameraPicker = false
+                                    isPickerSheetVisible = false
+                                    println("DEBUG: Camera picker dismissed")
+                                },
+                                directCameraLaunch = false,
+                                enableCrop = false,
+                                customPickerDialog = { onTakePhoto, onSelectFromGallery, onCancel ->
+                                    CustomIOSBottomSheet(
+                                        onTakePhoto = onTakePhoto,
+                                        onSelectFromGallery = onSelectFromGallery,
+                                        onDismiss = {
+                                            isPickerSheetVisible = false
+                                            onCancel()
+                                            showCameraPicker = false
+                                        }
+                                    )
+                                },
+                                cameraCaptureConfig = CameraCaptureConfig(
+                                    compressionLevel = CompressionLevel.HIGH,
+                                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                                        customConfirmationView = { photoResult, onConfirm, onRetry ->
+                                            CustomAndroidConfirmationView(
+                                                result = photoResult,
+                                                onConfirm = onConfirm,
+                                                onRetry = onRetry
+                                            )
+                                        },
+                                        customDeniedDialog = { onRetry ->
+                                            CustomPermissionDialog(
+                                                title = "🎥 Permiso Necesario",
+                                                message = "Necesitamos acceso a la cámara para tomar fotos",
+                                                onRetry = onRetry
+                                            )
+                                        },
+                                        customSettingsDialog = { onOpenSettings ->
+                                            CustomPermissionSettingsDialog(
+                                                title = "⚙️ Ir a Configuración",
+                                                message = "Ve a Configuración > Permisos > Cámara",
+                                                onOpenSettings = onOpenSettings
+                                            )
+                                        }
+                                    )
+                                )
+                            )
+                        )
+                    }
+
+                    selectedImages.isNotEmpty() -> {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(8.dp)
+                        ) {
+                            items(selectedImages) { photo ->
+                                Card(
+                                    modifier = Modifier
+                                        .padding(6.dp)
+                                        .fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    elevation = 6.dp,
+                                ) {
+                                    photo.loadPainter()?.let {
+                                        Image(
+                                            painter = it,
+                                            contentDescription = "Selected image",
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    cameraPhoto != null -> {
+                        Card(
+                            shape = RoundedCornerShape(16.dp),
+                            elevation = 8.dp,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp)
+                        ) {
+                            AsyncImage(
+                                    model = cameraPhoto!!.uri,
+                                    contentDescription = "Captured photo",
+                                    modifier = Modifier.fillMaxSize()
+                                )
+
+
+                        }
+                    }
+
+                    else -> {
+                        Text("No image selected", color = Color.Gray)
+                    }
+                }
+            }
+        }
+
+    }
+    }
+
+    @Composable
+    fun CustomPermissionSettingsDialog(title: String, message: String, onOpenSettings: () -> Unit) {
+        Dialog(onDismissRequest = { }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "⚙️",
+                        fontSize = 48.sp,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    Text(
+                        text = title,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    Text(
+                        text = message,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
+
+                    Button(
+                        onClick = onOpenSettings,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Black,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Abrir Configuración")
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun CustomPermissionDialog(
+        title: String,
+        message: String,
+        onRetry: () -> Unit
+    ) {
+        Dialog(onDismissRequest = { }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "📸",
+                        fontSize = 48.sp,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    Text(
+                        text = title,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    Text(
+                        text = message,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
+
+                    Button(
+                        onClick = onRetry,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Black,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Conceder Permiso")
+                    }
+                }
+            }
+        }
+    }
+
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun CustomIOSBottomSheet(
+    onTakePhoto: () -> Unit,
+    onSelectFromGallery: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val bottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Expanded,
+        skipHalfExpanded = true
+    )
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(bottomSheetState.currentValue) {
+        if (bottomSheetState.currentValue == ModalBottomSheetValue.Hidden) {
+            onDismiss()
+        }
+    }
+
+    ModalBottomSheetLayout(
+        sheetState = bottomSheetState,
+        sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        sheetElevation = 16.dp,
+        sheetBackgroundColor = MaterialTheme.colors.surface,
+        scrimColor = Color.Black.copy(alpha = 0.35f),
+        sheetContent = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, start = 20.dp, end = 20.dp, bottom = 28.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(44.dp)
+                        .height(5.dp)
+                        .padding(bottom = 20.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .then(
+                            Modifier
+                                .padding(top = 2.dp)
+                        )
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(5.dp)
+                            .align(Alignment.Center)
+                            .padding(horizontal = 12.dp)
+                            .background(
+                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.18f),
+                                shape = RoundedCornerShape(50)
+                            )
+                    )
+                }
+
+                Text(
+                    text = "Select image source",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.87f),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Text(
+                    text = "Choose an option to continue",
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                    modifier = Modifier.padding(bottom = 20.dp)
+                )
+
+                SheetAction(
+                    emoji = "📷",
+                    title = "Take a photo",
+                    subtitle = "Open the camera",
+                    tint = MaterialTheme.colors.primary,
+                    onClick = {
+                        coroutineScope.launch {
+                            bottomSheetState.hide()
+                            onTakePhoto()
+                        }
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                SheetAction(
+                    emoji = "🖼️",
+                    title = "Select from gallery",
+                    subtitle = "Explore images from your device",
+                    tint = MaterialTheme.colors.primary,
+                    onClick = {
+                        coroutineScope.launch {
+                            bottomSheetState.hide()
+                            onSelectFromGallery()
+                        }
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                TextButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            bottomSheetState.hide()
+                            onDismiss()
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                ) {
+                    Text(
+                        text = "Cancel",
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                        fontSize = 15.sp
+                    )
+                }
+            }
+        },
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Box(modifier = Modifier.fillMaxSize())
+    }
+}
+
+@Composable
+private fun SheetAction(
+    emoji: String,
+    title: String,
+    subtitle: String?,
+    tint: Color,
+    onClick: () -> Unit
+) {
+    val shape = RoundedCornerShape(14.dp)
+    androidx.compose.material.Surface(
+        shape = shape,
+        color = MaterialTheme.colors.onSurface.copy(alpha = 0.04f),
+        contentColor = MaterialTheme.colors.onSurface,
+        elevation = 0.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .clip(shape)
+            .padding(0.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .clickable { onClick() },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(40.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(tint.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = emoji, fontSize = 20.sp)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colors.onSurface
+                )
+                if (subtitle != null) {
+                    Text(
+                        text = subtitle,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CustomAndroidConfirmationView(
+    result: PhotoResult,
+    onConfirm: (PhotoResult) -> Unit,
+    onRetry: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Review photo",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.9f),
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
+
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            elevation = 10.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            AsyncImage(
+                model = result.uri,
+                contentDescription = "Captured photo preview",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            OutlinedButton(
+                onClick = { onRetry() },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(52.dp)
+            ) {
+                Text(text = "Retry")
+            }
+
+            Button(
+                onClick = { onConfirm(result) },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(text = "Confirm", color = Color.White)
+            }
+        }
+    }
+}
+```
 
 ### 1. Custom Permission Dialogs
 
