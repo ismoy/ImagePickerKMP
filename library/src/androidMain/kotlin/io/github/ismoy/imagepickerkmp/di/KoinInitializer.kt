@@ -18,6 +18,11 @@ import org.koin.core.logger.Level
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 
+/**
+ * Platform-specific typealias for Koin configuration on Android.
+ */
+actual typealias KoinConfiguration = KoinApplication
+
 val androidImagePickerModule = module {
     
     factory { (context: Context) ->
@@ -65,9 +70,9 @@ val androidImagePickerModule = module {
  * Android-specific Koin initialization.
  * Configures Koin with common modules and Android-specific modules.
  */
-actual fun initKoin(configuration: KoinApplication.() -> Unit) {
+actual fun initKoin(configuration: KoinConfiguration.() -> Unit) {
     startKoin {
-        configuration(this)
+        configuration()
         androidLogger(Level.ERROR)
         modules(imagePickerCommonModule, androidImagePickerModule)
     }

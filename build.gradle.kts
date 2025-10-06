@@ -6,3 +6,5 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
     id("jacoco")
 }
+
+version = "1.0.24"

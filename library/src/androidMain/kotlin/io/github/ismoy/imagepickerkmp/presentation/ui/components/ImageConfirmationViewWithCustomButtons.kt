@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.runtime.remember
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -35,6 +38,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
 import coil3.compose.AsyncImage
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants
 import io.github.ismoy.imagepickerkmp.domain.config.UiConfig
@@ -58,6 +63,12 @@ fun ImageConfirmationViewWithCustomButtons(
     val resolvedButtonColor = uiConfig.buttonColor ?: ImagePickerUiConstants.ConfirmationCardBackgroundColor
     val resolvedIconColor = uiConfig.iconColor ?: ImagePickerUiConstants.ConfirmationCardIconColor
     val resolvedButtonSize = uiConfig.buttonSize ?: ImagePickerUiConstants.ConfirmationCardButtonSize
+    
+    val configuration = LocalConfiguration.current
+    val isLandscape = remember(configuration) { 
+        configuration.screenWidthDp > configuration.screenHeightDp 
+    }
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -65,7 +76,18 @@ fun ImageConfirmationViewWithCustomButtons(
             .padding(horizontal = ImagePickerUiConstants.ConfirmationCardDialogHorizontalPadding),
         contentAlignment = Alignment.Center
     ) {
-        Card(
+        if (isLandscape) {
+            LandscapeConfirmationLayout(
+                result = result,
+                onConfirm = onConfirm,
+                onRetry = onRetry,
+                resolvedButtonColor = resolvedButtonColor,
+                resolvedIconColor = resolvedIconColor,
+                resolvedButtonSize = resolvedButtonSize,
+                uiConfig = uiConfig
+            )
+        } else {
+            Card(
                 modifier = Modifier
                     .widthIn(max = ImagePickerUiConstants.ConfirmationCardMaxWidth),
                 shape = RoundedCornerShape(ImagePickerUiConstants.ConfirmationCardCornerRadius),
@@ -181,6 +203,7 @@ fun ImageConfirmationViewWithCustomButtons(
                     }
                 }
             }
-
+        }
     }
 }
+

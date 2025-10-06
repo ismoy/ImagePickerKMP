@@ -51,7 +51,8 @@ actual fun GalleryPickerLauncher(
     mimeTypes: List<MimeType>,
     selectionLimit: Long,
     cameraCaptureConfig: CameraCaptureConfig?,
-    enableCrop: Boolean
+    enableCrop: Boolean,
+    fileFilterDescription: String
 ) {
     val context = LocalContext.current
     if (context !is ComponentActivity) {

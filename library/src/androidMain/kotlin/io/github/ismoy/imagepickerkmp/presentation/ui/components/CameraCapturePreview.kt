@@ -47,7 +47,7 @@ import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 import android.view.ViewGroup.LayoutParams
 
-private const val CAMERA_INITIALIZATION_DELAY = 100L
+private const val CAMERA_INITIALIZATION_DELAY = 1L
 
 @Suppress("LongMethod","LongParameterList")
 @Composable

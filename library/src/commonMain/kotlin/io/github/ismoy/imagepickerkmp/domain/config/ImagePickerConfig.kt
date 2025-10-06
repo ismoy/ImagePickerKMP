@@ -37,12 +37,18 @@ data class CameraCallbacks(
 @Suppress("EndOfSentenceFormat","MaxLineLength")
 /**
  * Configuration for permissions and confirmation
+ * @param customPermissionHandler Custom handler for permission configuration
+ * @param customConfirmationView Custom composable for photo confirmation view
+ * @param customDeniedDialog Custom dialog when permission is denied
+ * @param customSettingsDialog Custom dialog for opening settings
+ * @param skipConfirmation If true, automatically confirms the photo without showing confirmation screen
  */
 data class PermissionAndConfirmationConfig(
     val customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
     val customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
     val customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))? = null,
-    val customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null
+    val customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null,
+    val skipConfirmation: Boolean = false
 )
 
 @Suppress("EndOfSentenceFormat")

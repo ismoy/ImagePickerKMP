@@ -77,6 +77,35 @@ ImagePickerLauncher(
 )
 ```
 
+## Ejemplo: Deshabilitar pantalla de confirmación (solo Android)
+
+```kotlin
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            // La foto se toma automáticamente sin confirmación
+            cameraPhoto = result
+            showCameraPicker = false
+        },
+        onError = { exception ->
+            // Manejar errores
+            showCameraPicker = false
+        },
+        onDismiss = {
+            // Manejar cancelación
+            showCameraPicker = false
+        },
+        // Configuración para saltar la confirmación
+        cameraCaptureConfig = CameraCaptureConfig(
+            preference = CapturePhotoPreference.QUALITY,
+            permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                skipConfirmation = true // ¡Nuevo! Evita la pantalla de confirmación
+            )
+        )
+    )
+)
+```
+
 ---
 
 ## Parámetros relevantes
@@ -457,7 +486,8 @@ data class PermissionAndConfirmationConfig(
     val customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
     val customConfirmationView: (@Composable (CameraPhotoHandler.PhotoResult, (CameraPhotoHandler.PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
     val customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))? = null,
-    val customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null
+    val customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null,
+    val skipConfirmation: Boolean = false
 )
 ```
 
@@ -467,6 +497,7 @@ data class PermissionAndConfirmationConfig(
 - `customConfirmationView: (@Composable (...) -> Unit)?` - Composable personalizado para confirmación de foto
 - `customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))?` - Diálogo composable personalizado cuando se deniega el permiso
 - `customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))?` - Diálogo composable personalizado para abrir configuración
+- `skipConfirmation: Boolean` - Si es true, confirma automáticamente la foto sin mostrar la pantalla de confirmación (solo Android)
 
 ### UiConfig
 

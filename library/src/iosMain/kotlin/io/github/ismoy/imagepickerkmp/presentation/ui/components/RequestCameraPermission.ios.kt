@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPermissionDialogConfig
+import io.github.ismoy.imagepickerkmp.domain.utils.AppLifecycleObserver
 import io.github.ismoy.imagepickerkmp.domain.utils.openSettings
 import io.github.ismoy.imagepickerkmp.domain.utils.requestCameraAccess
 import platform.AVFoundation.AVAuthorizationStatusAuthorized
@@ -27,6 +28,29 @@ actual fun RequestCameraPermission(
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var isPermissionDeniedPermanently by remember { mutableStateOf(false) }
+    var isProcessingSettingsAction by remember { mutableStateOf(false) }
+    var hasNavigatedToSettings by remember { mutableStateOf(false) }
+
+    AppLifecycleObserver(
+        onAppBecomeActive = {
+            if (hasNavigatedToSettings && isProcessingSettingsAction) {
+                val currentStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
+                if (currentStatus == AVAuthorizationStatusAuthorized) {
+                    showDialog = false
+                    isProcessingSettingsAction = false
+                    hasNavigatedToSettings = false
+                    onResult(true)
+                } else {
+                    isProcessingSettingsAction = false
+                }
+            }
+        },
+        onAppResignActive = {
+            if (isProcessingSettingsAction) {
+                hasNavigatedToSettings = true
+            }
+        }
+    )
 
     LaunchedEffect(Unit) {
         val currentStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
@@ -53,15 +77,22 @@ actual fun RequestCameraPermission(
 
     if (showDialog && isPermissionDeniedPermanently) {
         if (dialogConfig.customSettingsDialog != null) {
-            dialogConfig.customSettingsDialog { openSettings() }
+            dialogConfig.customSettingsDialog { 
+                if (!isProcessingSettingsAction) {
+                    isProcessingSettingsAction = true
+                    openSettings()
+                }
+            }
         } else {
             CustomPermissionDialog(
                 title = dialogConfig.titleDialogDenied,
                 description = dialogConfig.descriptionDialogDenied,
                 confirmationButtonText = dialogConfig.btnDialogDenied,
                 onConfirm = {
-                    openSettings()
-                    showDialog = false
+                    if (!isProcessingSettingsAction) {
+                        isProcessingSettingsAction = true
+                        openSettings()
+                    }
                 }
             )
         }

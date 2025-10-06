@@ -77,6 +77,35 @@ ImagePickerLauncher(
 )
 ```
 
+## Example: Skip confirmation screen (Android only)
+
+```kotlin
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            // Photo is captured automatically without confirmation
+            cameraPhoto = result
+            showCameraPicker = false
+        },
+        onError = { exception ->
+            // Handle errors
+            showCameraPicker = false
+        },
+        onDismiss = {
+            // Handle cancellation
+            showCameraPicker = false
+        },
+        // Configuration to skip confirmation
+        cameraCaptureConfig = CameraCaptureConfig(
+            preference = CapturePhotoPreference.QUALITY,
+            permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                skipConfirmation = true // NEW! Skips the confirmation screen
+            )
+        )
+    )
+)
+```
+
 ---
 
 ## Relevant parameters
@@ -489,7 +518,8 @@ data class PermissionAndConfirmationConfig(
     val customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
     val customConfirmationView: (@Composable (CameraPhotoHandler.PhotoResult, (CameraPhotoHandler.PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
     val customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))? = null,
-    val customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null
+    val customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null,
+    val skipConfirmation: Boolean = false
 )
 ```
 
@@ -499,6 +529,7 @@ data class PermissionAndConfirmationConfig(
 - `customConfirmationView: (@Composable (...) -> Unit)?` - Custom composable for photo confirmation
 - `customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))?` - Custom composable dialog when permission is denied
 - `customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))?` - Custom composable dialog for opening settings
+- `skipConfirmation: Boolean` - If true, automatically confirms the photo without showing confirmation screen (Android only)
 
 ### UiConfig
 

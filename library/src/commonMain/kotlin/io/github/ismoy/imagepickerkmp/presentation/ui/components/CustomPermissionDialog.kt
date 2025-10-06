@@ -6,15 +6,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,18 +39,31 @@ fun CustomPermissionDialog(
     confirmationButtonText: String,
     onConfirm: () -> Unit
 ) {
+    var isProcessing by remember { mutableStateOf(false) }
+    
     Dialog(
-        onDismissRequest = {},
+        onDismissRequest = {
+            // Solo permitir cerrar si no está procesando
+            if (!isProcessing) {
+                // Opcional: agregar callback para onDismiss si fuera necesario
+            }
+        },
         properties = DialogProperties(
             dismissOnClickOutside = false,
-            dismissOnBackPress = true
+            dismissOnBackPress = !isProcessing // Evitar cerrar mientras procesa
         )
     ) {
         DialogContent(
             title = title,
             description = description,
             confirmationButtonText = confirmationButtonText,
-            onConfirm = onConfirm
+            isProcessing = isProcessing,
+            onConfirm = {
+                if (!isProcessing) {
+                    isProcessing = true
+                    onConfirm()
+                }
+            }
         )
     }
 }
@@ -54,6 +73,7 @@ private fun DialogContent(
     title: String,
     description: String,
     confirmationButtonText: String,
+    isProcessing: Boolean,
     onConfirm: () -> Unit
 ) {
     Box(
@@ -74,7 +94,11 @@ private fun DialogContent(
             Spacer(modifier = Modifier.height(8.dp))
             DialogDescription(description)
             Spacer(modifier = Modifier.height(24.dp))
-            DialogButtons(confirmationButtonText, onConfirm)
+            DialogButtons(
+                confirmationButtonText = confirmationButtonText,
+                isProcessing = isProcessing,
+                onConfirm = onConfirm
+            )
         }
     }
 }
@@ -108,6 +132,7 @@ private fun DialogDescription(description: String) {
 @Composable
 private fun DialogButtons(
     confirmationButtonText: String,
+    isProcessing: Boolean,
     onConfirm: () -> Unit
 ) {
     Row(
@@ -116,25 +141,49 @@ private fun DialogButtons(
     ) {
         OutlinedButton(
             onClick = onConfirm,
+            enabled = !isProcessing,
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = Color.Black
+                contentColor = if (isProcessing) Color.Gray else Color.Black,
+                disabledContentColor = Color.Gray
             ),
             border = BorderStroke(
                 1.dp,
-                color = Color.Blue
+                color = if (isProcessing) Color.Gray else Color.Blue
             ),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .weight(1f)
                 .height(48.dp)
         ) {
-            Text(
-                text = confirmationButtonText,
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+            if (isProcessing) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = 8.dp),
+                        color = Color.Gray,
+                        strokeWidth = 2.dp
+                    )
+                    Text(
+                        text = "Abriendo...",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
+            } else {
+                Text(
+                    text = confirmationButtonText,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 )
-            )
+            }
         }
     }
 }
