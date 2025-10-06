@@ -7,6 +7,8 @@
 
 <p align="center">
   <a href="https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp.svg?label=Maven%20Central" alt="Maven Central"></a>
+  <a href="https://www.npmjs.com/package/imagepickerkmp"><img src="https://img.shields.io/npm/v/imagepickerkmp.svg?label=NPM" alt="NPM Version"></a>
+  <a href="https://www.npmjs.com/package/imagepickerkmp"><img src="https://img.shields.io/npm/dt/imagepickerkmp.svg" alt="NPM Downloads"></a>
   <a href="https://github.com/ismoy/ImagePickerKMP/releases"><img src="https://img.shields.io/github/v/release/ismoy/ImagePickerKMP?label=GitHub%20Release" alt="GitHub Release"></a>
   <a href="https://github.com/ismoy/ImagePickerKMP/stargazers"><img src="https://img.shields.io/github/stars/ismoy/ImagePickerKMP?style=social" alt="GitHub Repo stars"></a>
     <a href="https://github.com/ismoy/ImagePickerKMP/commits/main"><img src="https://img.shields.io/github/last-commit/ismoy/ImagePickerKMP" alt="GitHub last commit"></a>
@@ -16,6 +18,9 @@
   <img src="https://img.shields.io/badge/Compose%20Multiplatform-green" alt="Compose Multiplatform">
   <img src="https://img.shields.io/badge/Platform-Android-green" alt="Android">
   <img src="https://img.shields.io/badge/Platform-iOS-blue" alt="iOS">
+  <img src="https://img.shields.io/badge/Platform-Desktop-orange" alt="Desktop">
+  <img src="https://img.shields.io/badge/Platform-JS-yellow" alt="JavaScript">
+  <img src="https://img.shields.io/badge/Platform-WASM-purple" alt="WebAssembly">
  <!-- <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml">
   <img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a>-->
 </p>
@@ -25,7 +30,7 @@
 <h1 align="center">ImagePickerKMP</h1>
 
 <p align="center">
-  <strong>Cross‑platform Image Picker & Camera Library (Android & iOS)</strong><br>
+  <strong>Cross‑platform Image Picker & Camera Library (Android, iOS & Desktop)</strong><br>
   Built with <strong>Kotlin Multiplatform</strong> + <strong>Compose Multiplatform</strong> + <strong>Kotlin/Native</strong>
 </p>
 
@@ -33,8 +38,28 @@
   <a href="README.es.md">Español</a> • 
   <a href="https://github.com/ismoy/ImagePickerKMP">GitHub</a> • 
   <a href="https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp">Maven Central</a> • 
+  <a href="https://www.npmjs.com/package/imagepickerkmp">NPM Package</a> • 
+  <a href="REACT_INTEGRATION_GUIDE.md">React Guide</a> • 
   <a href="https://discord.gg/EjSQTeyh">Discord</a>
 </p>
+
+---
+
+##  Documentation
+
+<p align="center">
+  <strong>Comprehensive guides and references for every aspect of ImagePickerKMP</strong>
+</p>
+
+-  **[Integration Guide](docs/INTEGRATION_GUIDE.md)** - Complete setup and integration guide
+-  **[Customization Guide](docs/CUSTOMIZATION_GUIDE.md)** - UI and behavior customization
+-  **[React Integration Guide](REACT_INTEGRATION_GUIDE.md)** - Complete React/NPM integration guide
+-  **[Internationalization Guide](docs/I18N_GUIDE.md)** - Multi-language support guide
+-  **[Permissions Guide](library/PERMISSION.md)** - Permission handling details
+-  **[Coverage Guide](docs/COVERAGE_GUIDE.md)** - Code coverage and testing guide
+-  **[Notifications Setup](docs/NOTIFICATIONS_SETUP.md)** - Discord notifications setup
+-  **[API Reference](docs/API_REFERENCE.md)** - Complete API documentation
+-  **[Examples](docs/EXAMPLES.md)** - Code examples and use cases
 
 ---
 ## Demos Android & iOS
@@ -48,6 +73,37 @@
 | Camera Usage | Crop Mode |
 |--------------|-----------|
 | <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif" alt="iOS Camera Demo" width="250"></a> | <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif" alt="iOS Crop Demo" width="250"></a> |
+
+### Desktop
+| Choose file|
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif" alt="Desktop Camera Demo" width="1080"></a> |
+
+### Web
+| Choose file|
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif" alt="Desktop Camera Demo" width="1080"></a> |
+
+---
+
+##  Now Available for Web Development!
+
+### React/JavaScript Integration
+**ImagePickerKMP is now available as an NPM package for web development!**
+
+```bash
+npm install imagepickerkmp
+```
+
+ **[Complete React Integration Guide →](REACT_INTEGRATION_GUIDE.md)**
+
+Features for web:
+-  **React Components** ready to use
+-  **TypeScript Support** with full type definitions  
+-  **Camera Access** via WebRTC (mobile & desktop)
+-  **File Picker** with drag & drop support
+-  **Image Processing** (Base64, Bytes)
+-  **Cross-Framework** (React, Vue, Angular, Vanilla JS)
 
 ---
 
@@ -79,7 +135,7 @@
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta2")//lastversion
+    implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta22")//lastversion
 }
 ```
 ### Using ImagePickerKMP in Android Native (Jetpack Compose)
@@ -123,7 +179,11 @@ if (showCamera) {
             directCameraLaunch = false, // Set to true if you want to launch the camera directly Only IOS
             // It is possible to compress images, by default it is with low compression in the library
             cameraCaptureConfig = CameraCaptureConfig(
-                compressionLevel = CompressionLevel.HIGH
+                compressionLevel = CompressionLevel.HIGH,
+                // Skip confirmationView in Android
+                 permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                   skipConfirmation = true // by default it is false 
+                   )
             )
 
         )
@@ -279,16 +339,17 @@ LazyColumn {
 - **Cross-platform Crop:** Unified `applyCrop` function with automatic context management and consistent coordinate calculations across platforms.
 
 ### Recent Improvements
-- **🔄 Automatic Context Management**: The `applyCrop` function is now `@Composable` and handles Android context automatically
-- **🖼️ Enhanced iOS Crop Accuracy**: Fixed coordinate calculations for precise image cropping on iOS
-- **🎯 Improved Layout System**: Resolved z-index conflicts and zoom overlay issues for better user experience
-- **📱 Better Aspect Ratio Support**: Enhanced handling of vertical aspect ratios (like 9:16) with improved space management
+- ** Automatic Context Management**: The `applyCrop` function is now `@Composable` and handles Android context automatically
+- ** Enhanced iOS Crop Accuracy**: Fixed coordinate calculations for precise image cropping on iOS
+- ** Improved Layout System**: Resolved z-index conflicts and zoom overlay issues for better user experience
+- ** Better Aspect Ratio Support**: Enhanced handling of vertical aspect ratios (like 9:16) with improved space management
 
-| Platform                | Minimum Version | Status |
-|-------------------------|----------------|--------|
-| Android                 | API 21+        | ✅     |
-| iOS                     | iOS 12.0+      | ✅     |
-| Compose Multiplatform   | 1.5.0+         | ✅     |
+| Plataforma             | Versión Mínima | Estado |
+|------------------------|----------------|--------|
+| Android                | API 21+        | ✅     |
+| iOS                    | iOS 12.0+      | ✅     |
+| Compose Multiplatform  | 1.5.0+         | ✅     |
+| Desktop (JVM)          | JDK 11+        | ✅     |
 
 ## Why Choose ImagePickerKMP?
 
@@ -328,20 +389,8 @@ LazyColumn {
 - Xcode 14+
 - Kotlin Multiplatform
 
-## Documentation
-
-<p align="center">
-  <strong>Comprehensive guides and references for every aspect of ImagePickerKMP</strong>
-</p>
-
--  [Integration Guide](docs/INTEGRATION_GUIDE.md) - Complete setup and integration guide
--  [Customization Guide](docs/CUSTOMIZATION_GUIDE.md) - UI and behavior customization
--  [Internationalization Guide](docs/I18N_GUIDE.md) - Multi-language support guide
--  [Permissions Guide](docs/PERMISSION.md) - Permission handling details
--  [Coverage Guide](docs/COVERAGE_GUIDE.md) - Code coverage and testing guide
--  [Notifications Setup](docs/NOTIFICATIONS_SETUP.md) - Discord notifications setup
--  [API Reference](docs/API_REFERENCE.md) - Complete API documentation
--  [Examples](docs/EXAMPLES.md) - Code examples and use cases
+### Desktop
+- JDK 11+
 
 ## Contributing
 

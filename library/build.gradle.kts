@@ -1,5 +1,7 @@
 import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
 import java.util.Properties
 
 plugins {
@@ -12,6 +14,8 @@ plugins {
     id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.dokka") version "1.9.20"
 }
+
+version = rootProject.version
 
 jacoco {
     toolVersion = "0.8.11"
@@ -153,13 +157,7 @@ tasks.register<JacocoReport>("jacocoBusinessLogicReport") {
         "**/domain/config/ImagePickerConfig.*",
         "**/domain/config/CameraPermissionDialogConfig.*",
         "**/domain/config/PermissionConfig.*",
-        
-        // Keep these business logic classes
-        // "**/domain/models/**",         // ✅ Keep - Pure Kotlin data classes
-        // "**/domain/utils/**",          // ✅ Keep - Logger utilities
-        // "**/domain/exceptions/**",     // ✅ Keep - Exception handling
-        // "**/presentation/viewModel/**", // ✅ Keep - Business logic
-        
+
         // Exclude Kotlin compiler generated classes
         "**/*Kt.class",
         "**/*\$Companion.class",
@@ -181,7 +179,6 @@ tasks.register<JacocoReport>("jacocoBusinessLogicReport") {
     )
 }
 
-// Nuevo reporte para SOLO lógica de negocio pura
 tasks.register<JacocoReport>("jacocoCoreBizLogicReport") {
     group = "verification"
     description = "Generate JaCoCo coverage report for PURE business logic only (domain models, utils, exceptions, viewModels)"
@@ -195,16 +192,13 @@ tasks.register<JacocoReport>("jacocoCoreBizLogicReport") {
     
     // Include ONLY pure business logic packages
     val coreBusinessLogicIncludes = listOf(
-        "**/domain/models/**",           // Data models
-        "**/domain/utils/**",            // Utilities
-        "**/domain/exceptions/**",       // Exception handling
-        "**/presentation/viewModel/**",  // ViewModels
-        "**/presentation/resources/**"   // String resources
+        "**/domain/models/**",
+        "**/domain/utils/**",
+        "**/domain/exceptions/**",
+        "**/presentation/viewModel/**",
+        "**/presentation/resources/**"
     )
-    
-    val excludeAllFilter = listOf(
-        "**/**" // Start by excluding everything
-    )
+
     
     classDirectories.setFrom(
         files(
@@ -232,7 +226,8 @@ tasks.register<JacocoReport>("jacocoCoreBizLogicReport") {
 
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    kotlin.applyDefaultHierarchyTemplate()
+    targetHierarchy.default()
+    
     androidTarget {
         publishLibraryVariants("release")
         compilations.all {
@@ -241,6 +236,123 @@ kotlin {
             }
         }
     }
+    
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "11"
+        }
+    }
+    
+    // JS target for web compatibility and NPM publishing
+    js(IR) {
+        browser {
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                }
+            }
+            // Configuration for web development
+            webpackTask {
+                cssSupport {
+                    enabled.set(true)
+                }
+            }
+            runTask {
+                cssSupport {
+                    enabled.set(true)
+                }
+            }
+        }
+        nodejs()
+        
+        // Generate library for NPM package usage
+        binaries.library()
+        
+        // Complete package.json configuration for NPM
+        compilations["main"].packageJson {
+            // Basic package information
+            name = "imagepickerkmp"
+            version = project.version.toString() // Automatically takes the project version
+            
+            // Metadata
+            customField("description", "ImagePicker KMP library with camera support for React/Vue/Angular applications")
+            customField("keywords", arrayOf(
+                "image-picker", 
+                "camera", 
+                "react", 
+                "vue", 
+                "angular",
+                "kotlin", 
+                "multiplatform",
+                "webrtc",
+                "photo-capture",
+                "file-picker"
+            ))
+            customField("author", mapOf(
+                "name" to "ismoy",
+                "url" to "https://github.com/ismoy"
+            ))
+            customField("license", "MIT")
+            customField("homepage", "https://github.com/ismoy/ImagePickerKMP")
+            customField("repository", mapOf(
+                "type" to "git",
+                "url" to "https://github.com/ismoy/ImagePickerKMP.git"
+            ))
+            customField("bugs", mapOf(
+                "url" to "https://github.com/ismoy/ImagePickerKMP/issues"
+            ))
+            
+            // File configuration - point to the single bundle
+            customField("main", "ImagePickerKMP-bundle.js")
+            customField("types", "ImagePickerKMP-bundle.d.ts")
+            customField("module", "ImagePickerKMP-bundle.js")
+            customField("browser", "ImagePickerKMP-bundle.js")
+            
+            // Files included in the package
+            customField("files", arrayOf(
+                "kotlin/",
+                "*.md",
+                "package.json",
+                "ImagePickerKMP-bundle.js",
+                "ImagePickerKMP-bundle.d.ts"
+            ))
+            
+            // Engines and compatibility
+            customField("engines", mapOf(
+                "node" to ">=14.0.0"
+            ))
+            
+            // Configuration for bundlers
+            customField("sideEffects", false)
+            
+            // Useful NPM scripts
+            customField("scripts", mapOf(
+                "test" to "echo \"No test specified\"",
+                "build" to "echo \"Already built\"",
+                "prepublishOnly" to "echo \"Package ready for publishing\""
+            ))
+            
+            // Peer dependencies for React (optional)
+            customField("peerDependencies", mapOf(
+                "react" to ">=16.8.0"
+            ))
+            customField("peerDependenciesMeta", mapOf(
+                "react" to mapOf("optional" to true)
+            ))
+        }
+    }
+    
+    // WASM target for modern web compatibility
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser {
+            // Disable tests temporarily due to skiko.mjs resolution issues in Compose Multiplatform WASM
+            testTask {
+                enabled = false
+            }
+        }
+    }
+    
     listOf(
         iosX64(),
         iosArm64(),
@@ -265,8 +377,6 @@ kotlin {
                 implementation(libs.compose.material)
                 implementation(libs.kotlinx.coroutines.core.v1102)
                 implementation("io.coil-kt.coil3:coil-compose:3.2.0")
-                implementation("io.insert-koin:koin-core:3.5.3")
-                implementation("io.insert-koin:koin-compose:1.1.2")
                 implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
             }
@@ -298,9 +408,49 @@ kotlin {
                 duplicatesStrategy = DuplicatesStrategy.INCLUDE
             }
             resources.srcDir("src/commonMain/resources")
-            dependencies {}
+            dependencies {
+                // Koin for iOS
+                implementation("io.insert-koin:koin-core:3.5.3")
+                implementation("io.insert-koin:koin-compose:1.1.2")
+            }
         }
         
+        val jvmMain by getting {
+            dependencies {
+                implementation(libs.compose.ui)
+                implementation(libs.compose.material)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.runtime)
+                implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
+                // Koin for JVM
+                implementation("io.insert-koin:koin-core:3.5.3")
+                implementation("io.insert-koin:koin-compose:1.1.2")
+            }
+        }
+        
+        val jsMain by getting {
+            dependencies {
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material)
+                implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+                // Note: Koin is not available for JS platform
+            }
+        }
+        
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material)
+                implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+                // Note: Koin is not available for WASM platform
+            }
+        }
+
         tasks.register("copyLocalizationResources") {
             dependsOn("linkReleaseFrameworkIosArm64")
             
@@ -314,9 +464,9 @@ kotlin {
                         into("${frameworkDir}/Resources")
                         include("**/*.lproj/**")
                     }
-                    println("✅ Localization resources copied to framework")
+                    println("Localization resources copied to framework")
                 } else {
-                    println("⚠️  Framework or resources directory not found")
+                    println("WARNING: Framework or resources directory not found")
                 }
             }
         }
@@ -334,14 +484,12 @@ kotlin {
                 implementation("androidx.test.ext:junit:1.1.5")
                 implementation("androidx.compose.material3:material3:1.2.0")
                 
-                // MockK for mocking
                 implementation("io.mockk:mockk:1.13.8")
                 implementation("io.mockk:mockk-android:1.13.8")
                 
                 // Coroutines test
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
                 
-                // Koin test - excluding conflicting dependencies
                 implementation("io.insert-koin:koin-test:3.5.3") {
                     exclude(group = "org.jetbrains.kotlin", module = "kotlin-test")
                     exclude(group = "org.jetbrains.kotlin", module = "kotlin-test-junit")
@@ -357,6 +505,15 @@ kotlin {
             }
         }
         val androidInstrumentedTest by getting {}
+        
+        val jvmTest by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test:2.1.21")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+                implementation("junit:junit:4.13.2")
+            }
+        }
+        
         val commonTest by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-test:2.1.21")
@@ -429,7 +586,7 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = "1.0.24-beta2"
+        version = project.version.toString()
     )
     pom {
         name.set("ImagePickerKMP")
@@ -538,4 +695,408 @@ detekt {
         txt.enabled = true
         sarif.enabled = true
     }
+}
+
+// ========================================
+// SPECIFIC TASKS FOR NPM PUBLISHING
+// ========================================
+
+// Directory where JS packages are generated
+val jsPackageOutputDir = layout.buildDirectory.dir("js/packages/ImagePickerKMP-library")
+
+// Task to prepare the NPM package
+tasks.register<Copy>("prepareNpmPackage") {
+    group = "npm"
+    description = "Prepares the NPM package with additional files"
+    
+    dependsOn("jsJar", "compileKotlinJs")
+    
+    // Copy additional files to package
+    from(rootProject.file("README.md")) {
+        into(".")
+    }
+    from(rootProject.file("LICENSE")) {
+        into(".")
+    }
+    from(projectDir.resolve("src/jsMain/resources")) {
+        into("resources")
+        include("**/*")
+    }
+    
+    // Copy the main JavaScript library file and package.json
+    from(layout.buildDirectory.dir("dist/js/productionLibrary")) {
+        into("kotlin")
+        include("ImagePickerKMP-library.js")
+    }
+    from(layout.buildDirectory.dir("dist/js/productionLibrary")) {
+        into(".")
+        include("package.json")
+    }
+    
+    // Create NPM-specific files
+    doLast {
+        val packageDir = jsPackageOutputDir.get().asFile
+        
+        // Create NPM-specific README
+        val npmReadme = File(packageDir, "README.md")
+        if (!npmReadme.exists()) {
+            npmReadme.writeText("""
+# ImagePickerKMP - JavaScript Package
+
+A Kotlin Multiplatform library for image picking with camera support, compiled to JavaScript for use in web applications.
+
+## Quick Start
+
+```javascript
+// Import the library
+const { createImagePicker, isMobileDevice, hasCameraSupport } = require('imagepickerkmp');
+
+// Create picker instance
+const picker = createImagePicker();
+
+// Use in your application
+const images = await picker.openPicker({
+  allowMultiple: true,
+  preferCamera: true
+});
+```
+
+## Documentation
+
+For complete documentation, examples, and integration guides, visit:
+https://github.com/ismoy/ImagePickerKMP
+
+## Features
+
+- Camera capture with WebRTC
+- File selection
+- Mobile-first design
+- Desktop compatibility
+- React/Vue/Angular ready
+- TypeScript definitions included
+
+## License
+
+MIT License - see LICENSE file for details
+            """.trimIndent())
+        }
+        
+        val dtsFile = File(packageDir, "kotlin/imagepickerkmp.d.ts")
+        dtsFile.parentFile.mkdirs()
+        dtsFile.writeText("""
+declare module 'imagepickerkmp' {
+  export interface PhotoResult {
+    uri: string;
+    width: number;
+    height: number;
+    fileName: string;
+    fileSize: number;
+  }
+  
+  export interface ImagePickerOptions {
+    allowMultiple?: boolean;
+    maxImages?: number;
+    preferCamera?: boolean;
+    quality?: number;
+    maxWidth?: number;
+    maxHeight?: number;
+    mimeTypes?: string[];
+  }
+  
+  export interface CameraOptions {
+    quality?: number;
+    maxWidth?: number;
+    maxHeight?: number;
+    facingMode?: 'user' | 'environment';
+  }
+  
+  export interface FilePickerOptions {
+    allowMultiple?: boolean;
+    mimeTypes?: string[];
+    maxFileSize?: number;
+  }
+  
+  export interface ImagePickerInstance {
+    openPicker(options?: ImagePickerOptions): Promise<PhotoResult[]>;
+    capturePhoto(options?: CameraOptions): Promise<PhotoResult[]>;
+    selectFiles(options?: FilePickerOptions): Promise<PhotoResult[]>;
+    cleanup(): void;
+  }
+  
+  export function createImagePicker(): ImagePickerInstance;
+  export function isMobileDevice(): boolean;
+  export function hasCameraSupport(): boolean;
+}
+            """.trimIndent())
+    }
+    
+    into(jsPackageOutputDir)
+}
+
+tasks.register("validateNpmPackage") {
+    group = "npm"
+    description = "Validates that the NPM package is complete and correct"
+    
+    dependsOn("prepareNpmPackage")
+    
+    doLast {
+        val packageDir = jsPackageOutputDir.get().asFile
+        val packageJson = File(packageDir, "package.json")
+        val mainJs = File(packageDir, "kotlin/ImagePickerKMP-library.js")
+        val typeDefs = File(packageDir, "kotlin/imagepickerkmp.d.ts")
+        
+        println("Validating NPM package...")
+        
+        val requiredFiles = listOf(
+            packageJson to "package.json",
+            mainJs to "kotlin/ImagePickerKMP-library.js", 
+            typeDefs to "kotlin/imagepickerkmp.d.ts"
+        )
+        
+        var allValid = true
+        requiredFiles.forEach { (file, name) ->
+            if (file.exists()) {
+                println("OK: $name")
+            } else {
+                println("MISSING: $name")
+                allValid = false
+            }
+        }
+        
+        if (mainJs.exists()) {
+            val sizeKB = mainJs.length() / 1024
+            println("Bundle size: ${sizeKB}KB")
+            if (sizeKB > 500) {
+                println("WARNING: Bundle size is large (${sizeKB}KB)")
+            }
+        }
+        
+        if (allValid) {
+            println("NPM Package validation passed!")
+            println("Package location: $packageDir")
+        } else {
+            throw GradleException("NPM Package validation failed!")
+        }
+    }
+}
+
+tasks.register<Exec>("publishNpmLocal") {
+    group = "npm"
+    description = "Publishes the package to local NPM for testing"
+    
+    dependsOn("buildNpmZeroConfig")
+    
+    // Use production library directory with the bundle
+    val productionLibDir = layout.buildDirectory.dir("dist/js/productionLibrary").get().asFile
+    workingDir(productionLibDir)
+    commandLine("npm", "pack")
+    
+    doLast {
+        val packageDir = productionLibDir
+        val tarFiles = packageDir.listFiles { _, name -> name.endsWith(".tgz") }
+        
+        if (tarFiles?.isNotEmpty() == true) {
+            println(" Package created: ${tarFiles.first().name}")
+            println(" Location: ${tarFiles.first().absolutePath}")
+            println(" To install locally run:")
+            println(" npm install ${tarFiles.first().absolutePath}")
+            println("")
+            println(" Or create a test project:")
+            println("   mkdir test-project && cd test-project")
+            println("   npm init -y")
+            println("   npm install ${tarFiles.first().absolutePath}")
+        } else {
+            println(" No .tgz files found in ${packageDir}")
+        }
+    }
+}
+
+tasks.register<Exec>("publishNpm") {
+    group = "npm"
+    description = "Publishes the package to the public NPM registry"
+    
+    dependsOn("buildNpmZeroConfig")
+    
+    // Use production library directory with the bundle
+    val productionLibDir = layout.buildDirectory.dir("dist/js/productionLibrary").get().asFile
+    workingDir(productionLibDir)
+    commandLine("npm", "publish")
+    
+    doFirst {
+        println(" Publishing to NPM registry...")
+        println(" From: ${productionLibDir}")
+    }
+    
+    doLast {
+        println(" Package published successfully!")
+        println(" Install with: npm install imagepickerkmp")
+    }
+}
+
+// Task to clean NPM packages
+tasks.register<Delete>("cleanNpmPackages") {
+    group = "npm" 
+    description = "Cleans generated NPM packages"
+    
+    delete(layout.buildDirectory.dir("js"))
+}
+
+// Helper task to show package information
+tasks.register("npmPackageInfo") {
+    group = "npm"
+    description = "Shows information about the generated NPM package"
+    
+    dependsOn("prepareNpmPackage")
+    
+    doLast {
+        val packageDir = jsPackageOutputDir.get().asFile
+        val packageJson = File(packageDir, "package.json")
+        
+        if (packageJson.exists()) {
+            println("Package NPM Information:")
+            println("Location: $packageDir")
+            println("Package.json preview:")
+            println(packageJson.readText().lines().take(20).joinToString("\n"))
+        } else {
+            println("Package not found. Run 'prepareNpmPackage' first.")
+        }
+    }
+}
+
+// Task to verify version synchronization
+tasks.register("checkVersionSync") {
+    group = "verification"
+    description = "Verifies that all versions are synchronized"
+    
+    doLast {
+        val projectVersion = project.version.toString()
+        val rootVersion = rootProject.version.toString()
+        
+        println("Checking version synchronization...")
+        println("Root project: $rootVersion")
+        println("Library project: $projectVersion")
+        
+        // Check Maven configuration
+        println("Maven coordinates: io.github.ismoy:imagepickerkmp:$projectVersion")
+        
+        // Verify versions match
+        if (projectVersion == rootVersion) {
+            println("All versions are synchronized")
+            println("NPM will automatically take version: $projectVersion")
+        } else {
+            println("WARNING: Versions are desynchronized!")
+            println("   Root: $rootVersion")
+            println("   Library: $projectVersion")
+        }
+    }
+}
+
+// Task to generate zero-config NPM bundle
+tasks.register<Exec>("createZeroConfigBundle") {
+    group = "npm"
+    description = "Creates a zero-config NPM bundle with all dependencies included"
+    
+    dependsOn("jsBrowserProductionLibraryDistribution")
+    
+    workingDir = projectDir.parentFile
+    commandLine("node", "create-bundle.js")
+    
+    doFirst {
+        println("Generating zero-config bundle...")
+    }
+    
+    doLast {
+        // Try both possible locations for the bundle - relative to project root
+        val rootBuildDir = File(projectDir.parentFile, "build")
+        val bundleFile1 = File(rootBuildDir, "js/packages/ImagePickerKMP-library/ImagePickerKMP-bundle.js")
+        val bundleFile2 = File(rootBuildDir, "js/packages/library-library/ImagePickerKMP-bundle.js")
+        
+        val bundleFile = when {
+            bundleFile1.exists() -> bundleFile1
+            bundleFile2.exists() -> bundleFile2
+            else -> null
+        }
+        
+        if (bundleFile != null && bundleFile.exists()) {
+            val sizeKB = bundleFile.length() / 1024
+            println("Zero-config bundle found!")
+            println("Size: ${sizeKB} KB")
+            println("Location: ${bundleFile.absolutePath}")
+            
+            // Copy to the production library directory for npm publishing
+            val productionLibDir = layout.buildDirectory.dir("dist/js/productionLibrary").get().asFile
+            val targetBundle = File(productionLibDir, "ImagePickerKMP-bundle.js")
+            productionLibDir.mkdirs()
+            bundleFile.copyTo(targetBundle, overwrite = true)
+            println("Bundle copied to production library directory: ${targetBundle.absolutePath}")
+            
+            // Also copy TypeScript declarations if they exist
+            val bundleTypeFile1 = File(rootBuildDir, "js/packages/ImagePickerKMP-library/ImagePickerKMP-bundle.d.ts")
+            val bundleTypeFile2 = File(rootBuildDir, "js/packages/library-library/ImagePickerKMP-bundle.d.ts")
+            
+            val bundleTypeFile = when {
+                bundleTypeFile1.exists() -> bundleTypeFile1
+                bundleTypeFile2.exists() -> bundleTypeFile2
+                else -> null
+            }
+            
+            if (bundleTypeFile != null && bundleTypeFile.exists()) {
+                val targetTypeFile = File(productionLibDir, "ImagePickerKMP-bundle.d.ts")
+                bundleTypeFile.copyTo(targetTypeFile, overwrite = true)
+                println("Bundle TypeScript declarations copied: ${targetTypeFile.absolutePath}")
+            }
+        } else {
+            println("Warning: Bundle file not found in any expected location")
+            println("Checked: ${bundleFile1.absolutePath}")
+            println("Checked: ${bundleFile2.absolutePath}")
+        }
+    }
+}
+
+// Main task for zero-config NPM
+tasks.register("buildNpmZeroConfig") {
+    group = "npm"
+    description = "Builds a complete zero-config NPM package"
+    
+    dependsOn("createZeroConfigBundle")
+    
+    doLast {
+        val packageDir = layout.buildDirectory.dir("js/packages/${project.name}-library").get().asFile
+        println("Zero-config NPM package ready!")
+        println("Location: ${packageDir.absolutePath}")
+        println("Install with: npm install ${packageDir.absolutePath}")
+        println("")
+        println("Usage example:")
+        println("   // ES6 Import")
+        println("   import ImagePickerKMP from 'imagepickerkmp';")
+        println("")  
+        println("   // CommonJS")
+        println("   const ImagePickerKMP = require('imagepickerkmp');")
+        println("")
+        println("   // Usage")
+        println("   ImagePickerKMP.ImagePickerLauncher(onSuccess, onError, onCancel);")
+        println("")
+        println("Test: open ${packageDir.absolutePath}/test-zero-config.html")
+    }
+}
+
+// Add clean dependencies
+tasks.named("clean") {
+    dependsOn("cleanNpmPackages")
+}
+
+// AUTOMATIC CONFIGURATION: Run buildNpmZeroConfig automatically
+// Make 'assemble' always generate the NPM bundle
+tasks.named("assemble") {
+    finalizedBy("buildNpmZeroConfig")
+}
+
+// Make 'build' also generate the NPM bundle
+tasks.named("build") {
+    finalizedBy("buildNpmZeroConfig")
+}
+
+// Make 'publishToMavenLocal' generate the NPM bundle before publishing
+tasks.withType<PublishToMavenLocal> {
+    dependsOn("buildNpmZeroConfig")
 }

@@ -23,7 +23,8 @@ actual fun GalleryPickerLauncher(
     mimeTypes: List<MimeType>,
     selectionLimit: Long,
     cameraCaptureConfig: CameraCaptureConfig?,
-    enableCrop: Boolean
+    enableCrop: Boolean,
+    fileFilterDescription: String
 ) {
     var selectedPhotoForCrop by remember { mutableStateOf<GalleryPhotoResult?>(null) }
     var showCropView by remember { mutableStateOf(false) }

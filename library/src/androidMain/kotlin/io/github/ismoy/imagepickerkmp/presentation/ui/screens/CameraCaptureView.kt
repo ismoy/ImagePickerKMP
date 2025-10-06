@@ -32,7 +32,8 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLa
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageConfirmationViewWithCustomButtons
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.RequestCameraPermission
-import io.github.ismoy.imagepickerkmp.presentation.viewModel.ImagePickerViewModel
+import io.github.ismoy.imagepickerkmp.presentation.di.rememberCameraManager
+import io.github.ismoy.imagepickerkmp.presentation.di.rememberImagePickerViewModel
 
 @Suppress("LongMethod","LongParameterList")
 @Composable
@@ -50,9 +51,13 @@ fun CameraCaptureView(
     var showCropView by remember { mutableStateOf(false) }
     var hasPermission by remember { mutableStateOf(false) }
     
-    val imagePickerViewModel: ImagePickerViewModel = koinInject()
+    val imagePickerViewModel = rememberImagePickerViewModel()
+    val cameraManager = rememberCameraManager(context, activity)
     
-     val cameraManager: CameraXManager = koinInject { parametersOf(context, activity) }
+    if (cameraManager == null) {
+        onError(Exception("Camera dependencies not available. Please ensure Koin is properly initialized."))
+        return
+    }
 
     DisposableEffect(Unit) {
         onDispose { cameraManager.stopCamera() }
@@ -113,6 +118,10 @@ fun CameraCaptureView(
                             showCropView = true
                         } else {
                             playShutterSound()
+                            if (cameraCaptureConfig.permissionAndConfirmationConfig.skipConfirmation) {
+                                onPhotoResult(result)
+                                photoResult = null
+                            }
                         }
                     },
                     onError = { exception: Exception ->
@@ -121,7 +130,7 @@ fun CameraCaptureView(
                     }
                 )
             }
-            else -> {
+            photoResult != null && !cameraCaptureConfig.permissionAndConfirmationConfig.skipConfirmation -> {
                 ConfirmationView(
                     photoResult = photoResult!!,
                     onConfirm = { onPhotoResult(it) },

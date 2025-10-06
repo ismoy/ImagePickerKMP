@@ -16,6 +16,7 @@ expect fun GalleryPickerLauncher(
     mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
     selectionLimit: Long = SELECTION_LIMIT,
     cameraCaptureConfig: CameraCaptureConfig? = null,
-    enableCrop: Boolean = false
+    enableCrop: Boolean = false,
+    fileFilterDescription: String = "Image files"
 )
 
