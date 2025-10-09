@@ -62,29 +62,32 @@
 -  **[Examples](docs/EXAMPLES.md)** - Code examples and use cases
 
 ---
-## Demos Android & iOS
+## Demos Android, iOS, Desktop & Web
 
-### Android
-| Camera Usage | Crop Mode |
-|--------------|-----------|
-| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif" alt="Android Camera Demo" width="250"></a> | <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif" alt="Android Crop Demo" width="250"></a> |
-
-### iOS
-| Camera Usage | Crop Mode |
-|--------------|-----------|
-| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif" alt="iOS Camera Demo" width="250"></a> | <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif" alt="iOS Crop Demo" width="250"></a> |
-
-### Desktop
-| Choose file|
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif" alt="Desktop Camera Demo" width="1080"></a> |
-
-### Web
-| Choose file|
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif" alt="Desktop Camera Demo" width="1080"></a> |
-
----
+<table>
+  <tr>
+    <th>Android Camera</th>
+    <th>Android Crop</th>
+    <th>iOS Camera</th>
+    <th>iOS Crop</th>
+  </tr>
+  <tr>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif" alt="Android Camera Demo" width="200"></a></td>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif" alt="Android Crop Demo" width="200"></a></td>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif" alt="iOS Camera Demo" width="200"></a></td>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif" alt="iOS Crop Demo" width="200"></a></td>
+  </tr>
+  <tr>
+    <th>Desktop</th>
+    <th>Web</th>
+    <th colspan="2"></th>
+  </tr>
+  <tr>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif" alt="Desktop Demo" width="300"></a></td>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif" alt="Web Demo" width="300"></a></td>
+    <td colspan="2"></td>
+  </tr>
+</table>
 
 ##  Now Available for Web Development!
 
@@ -135,7 +138,7 @@ Features for web:
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta22")//lastversion
+    implementation("io.github.ismoy:imagepickerkmp:{$lastVersion}")
 }
 ```
 ### Using ImagePickerKMP in Android Native (Jetpack Compose)
@@ -143,7 +146,7 @@ dependencies {
 
 #### Step 1: Add the dependency
 ```kotlin
-implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta2")
+implementation("io.github.ismoy:imagepickerkmp:{$lastVersion}")
 ```
 #### iOS Permissions Setup
 <p>Don't forget to configure iOS-specific permissions in your <code>Info.plist</code> file:</p>
