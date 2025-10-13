@@ -11,10 +11,7 @@ actual fun RequestCameraPermission(
     onResult: (Boolean) -> Unit,
     customPermissionHandler: (() -> Unit)?
 ) {
-    // En navegadores web, no necesitamos permisos explícitos para acceso a archivos
-    // El navegador maneja los permisos automáticamente cuando el usuario interactúa
     LaunchedEffect(dialogConfig) {
-        // Simulamos que siempre tenemos permiso para seleccionar archivos
         onResult(true)
     }
 }

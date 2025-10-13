@@ -30,8 +30,8 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLa
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageConfirmationViewWithCustomButtons
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.RequestCameraPermission
-import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
-import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberImagePickerViewModel
+import io.github.ismoy.imagepickerkmp.presentation.di.rememberCameraManager
+import io.github.ismoy.imagepickerkmp.presentation.di.rememberImagePickerViewModel
 
 @Suppress("LongMethod","LongParameterList")
 @Composable
