@@ -41,6 +41,7 @@ object GalleryPickerOrchestrator {
                     rootViewController,
                     onPhotoSelected,
                     onError,
+                    onDismiss,
                     compressionLevel
                 )
             }
