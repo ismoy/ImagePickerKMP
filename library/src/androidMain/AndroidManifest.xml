@@ -5,8 +5,8 @@
     <uses-feature android:name="android.hardware.camera" android:required="true" />
     
 
-    <application
-        android:name="io.github.ismoy.imagepickerkmp.MainApp">
+    <application>
+        <!-- FileProvider for sharing images -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

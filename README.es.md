@@ -62,27 +62,32 @@
 -  **[Ejemplos](docs/EXAMPLES.es.md)** - Ejemplos de código y casos de uso
 
 ---
-## Demos Android e iOS
+## Demos Android, iOS, Desktop y Web
 
-### Android
-| Uso de Cámara | Modo Recorte |
-|---------------|--------------|
-| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif" alt="Demo Cámara Android" width="250"></a> | <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif" alt="Demo Recorte Android" width="250"></a> |
-
-### iOS
-| Uso de Cámara | Modo Recorte |
-|---------------|--------------|
-| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif" alt="Demo Cámara iOS" width="250"></a> | <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif" alt="Demo Recorte iOS" width="250"></a> |
-
-### Desktop
-| Elegir archivo|
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif" alt="Demo Desktop" width="1080"></a> |
-
-### Web
-| Elegir archivo|
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif" alt="Demo Web" width="1080"></a> |
+<table>
+  <tr>
+    <th>Cámara Android</th>
+    <th>Recorte Android</th>
+    <th>Cámara iOS</th>
+    <th>Recorte iOS</th>
+  </tr>
+  <tr>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif" alt="Demo Cámara Android" width="200"></a></td>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif" alt="Demo Recorte Android" width="200"></a></td>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif" alt="Demo Cámara iOS" width="200"></a></td>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif" alt="Demo Recorte iOS" width="200"></a></td>
+  </tr>
+  <tr>
+    <th>Desktop</th>
+    <th>Web</th>
+    <th colspan="2"></th>
+  </tr>
+  <tr>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif" alt="Demo Desktop" width="300"></a></td>
+    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif" alt="Demo Web" width="300"></a></td>
+    <td colspan="2"></td>
+  </tr>
+</table>
 
 ---
 
@@ -135,7 +140,7 @@ Características para web:
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta22")//últimaversión
+    implementation("io.github.ismoy:imagepickerkmp:{$lastVersion}")
 }
 ```
 ### Usando ImagePickerKMP en Android Nativo (Jetpack Compose)
@@ -143,7 +148,7 @@ dependencies {
 
 #### Paso 1: Añadir la dependencia
 ```kotlin
-implementation("io.github.ismoy:imagepickerkmp:1.0.24-beta")
+implementation("io.github.ismoy:imagepickerkmp:{$lastVersion}")
 ```
 #### Configuración de Permisos iOS
 <p>No olvides configurar los permisos específicos de iOS en tu archivo <code>Info.plist</code>:</p>
@@ -369,61 +374,6 @@ LazyColumn {
 | **Soporte de Galería**        | ✅ Selección múltiple 
 | **API Multiplataforma**       | ✅ Base de código única
 
-## Compresión de Imágenes
-**Optimiza automáticamente el tamaño de imagen manteniendo la calidad con niveles de compresión configurables.**
-
-### Niveles de Compresión
-- **BAJA**: 95% calidad, dimensión máx 2560px - Mejor calidad, archivos más grandes
-- **MEDIA**: 75% calidad, dimensión máx 1920px - Calidad/tamaño balanceado
-- **ALTA**: 50% calidad, dimensión máx 1280px - Archivos más pequeños, bueno para almacenamiento
-
-### Formatos de Imagen Soportados
-- **JPEG** (image/jpeg) - Soporte completo de compresión
-- **PNG** (image/png) - Soporte completo de compresión
-- **HEIC** (image/heic) - Soporte completo de compresión
-- **HEIF** (image/heif) - Soporte completo de compresión
-- **WebP** (image/webp) - Soporte completo de compresión
-- **GIF** (image/gif) - Soporte completo de compresión
-- **BMP** (image/bmp) - Soporte completo de compresión
-
-## Soporte de Plataformas
-<p align="center">
-  <strong>Compatibilidad multiplataforma con gestión inteligente de contexto y funcionalidad de recorte mejorada</strong>
-</p>
-
-- **Android:** La librería gestiona automáticamente el contexto usando `LocalContext.current`. No es necesario pasar contexto manualmente.
-- **iOS:** No se requiere contexto ya que la librería usa APIs nativas de iOS. Los cálculos mejorados de coordenadas de recorte aseguran comportamiento consistente con Android.
-- **Recorte Multiplataforma:** Función `applyCrop` unificada con gestión automática de contexto y cálculos consistentes de coordenadas entre plataformas.
-
-### Mejoras Recientes
-- ** Gestión Automática de Contexto**: La función `applyCrop` ahora es `@Composable` y maneja el contexto Android automáticamente
-- ** Precisión Mejorada de Recorte iOS**: Cálculos de coordenadas corregidos para recorte preciso de imágenes en iOS
-- ** Sistema de Layout Mejorado**: Conflictos de z-index resueltos y problemas de overlay de zoom para mejor experiencia de usuario
-- ** Mejor Soporte de Relación de Aspecto**: Manejo mejorado de relaciones de aspecto verticales (como 9:16) con gestión mejorada de espacio
-
-| Plataforma             | Versión Mínima | Estado |
-|------------------------|----------------|--------|
-| Android                | API 21+        | ✅     |
-| iOS                    | iOS 12.0+      | ✅     |
-| Compose Multiplatform  | 1.5.0+         | ✅     |
-| Desktop (JVM)          | JDK 11+        | ✅     |
-
-## ¿Por qué Elegir ImagePickerKMP?
-
-<p align="center">
-  <strong>El selector de imágenes más completo y amigable para desarrolladores para Kotlin Multiplatform</strong>
-</p>
-
-| Característica                 | ImagePickerKMP            
-|--------------------------------|----------------|
-| **Soporte Compose Multiplatform** | ✅ Nativo      
-| **Personalización UI**         | ✅ Control total 
-| **Permisos Unificados**        | ✅ Manejo inteligente 
-| **Manejo de Errores**          | ✅ Completo 
-| **Integración de Cámara**      | ✅ Acceso directo 
-| **Soporte de Galería**         | ✅ Multi-selección 
-| **API Multiplataforma**        | ✅ Código único
-
 ### Ventajas Clave
 
 - ** Nativo de Compose Multiplatform**: Construido específicamente para Compose Multiplatform, asegurando comportamiento consistente entre plataformas
@@ -459,36 +409,6 @@ LazyColumn {
 
 <p align="center">
   <strong>Obtén ayuda, reporta problemas o únete a nuestra comunidad</strong>
-</p>
-
-<p align="center">
-  <a href="mailto:belizairesmoy72@gmail.com">📧 Email</a> • 
-  <a href="https://github.com/ismoy/ImagePickerKMP/issues">🐛 Problemas</a> • 
-  <a href="https://github.com/ismoy/ImagePickerKMP/wiki">📖 Wiki</a> • 
-  <a href="https://discord.com/channels/1393705692484993114/1393706133864190133">💬 Discord</a>
-</p>
-
-<p align="center">
-  <strong>Hecho con ❤️ para la comunidad Kotlin Multiplatform</strong><br>
-  <em>¡Dale una estrella ⭐ a este repo si te ayudó!</em>
-</p>
--  [Configuración de Notificaciones](docs/NOTIFICATIONS_SETUP.es.md) - Configuración de notificaciones Discord
--  [Referencia API](docs/API_REFERENCE.es.md) - Documentación completa de la API
--  [Ejemplos](docs/EXAMPLES.es.md) - Ejemplos de código y casos de uso
-
-## Contribuir
-
-<p align="center">
-  <strong>¡Damos la bienvenida a contribuciones de la comunidad!</strong><br>
-  Consulta nuestra <a href="docs/CONTRIBUTING.es.md">Guía de Contribución</a> para detalles.
-</p>
-
----
-
-## Soporte y Comunidad
-
-<p align="center">
-  <strong>Obtén ayuda, reporta problemas, o únete a nuestra comunidad</strong>
 </p>
 
 <p align="center">

@@ -39,7 +39,6 @@ private fun isMobileContext(): Boolean {
         userAgent.contains("android") || 
         userAgent.contains("iphone") || 
         userAgent.contains("ipad") ||
-        // También detectar si es una pantalla táctil
         js("'ontouchstart' in window || navigator.maxTouchPoints > 0").unsafeCast<Boolean>()
     } catch (e: Exception) {
         false
