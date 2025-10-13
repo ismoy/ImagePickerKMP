@@ -21,6 +21,7 @@ import platform.darwin.NSObject
 @OptIn(ExperimentalForeignApi::class)
 class GalleryDelegate(
     private val onImagePicked: (GalleryPhotoResult) -> Unit,
+    private val onDismiss: () -> Unit,
     private val compressionLevel: CompressionLevel? = null
 ) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
 
@@ -37,6 +38,7 @@ class GalleryDelegate(
     }
 
     override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        onDismiss()
         dismissPicker(picker)
     }
 
