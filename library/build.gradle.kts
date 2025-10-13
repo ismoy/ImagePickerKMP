@@ -394,10 +394,6 @@ kotlin {
                 implementation(libs.androidx.ui)
                 implementation(libs.androidx.ui.tooling.preview)
                 implementation("androidx.compose.material:material-icons-extended:1.7.8")
-                
-                // Koin for Android
-                implementation("io.insert-koin:koin-android:3.5.3")
-                implementation("io.insert-koin:koin-androidx-compose:3.5.3")
             }
         }
         val iosResourcesDir =
@@ -409,9 +405,6 @@ kotlin {
             }
             resources.srcDir("src/commonMain/resources")
             dependencies {
-                // Koin for iOS
-                implementation("io.insert-koin:koin-core:3.5.3")
-                implementation("io.insert-koin:koin-compose:1.1.2")
             }
         }
         
@@ -423,9 +416,6 @@ kotlin {
                 implementation(libs.compose.runtime)
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
-                // Koin for JVM
-                implementation("io.insert-koin:koin-core:3.5.3")
-                implementation("io.insert-koin:koin-compose:1.1.2")
             }
         }
         
@@ -436,7 +426,6 @@ kotlin {
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material)
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
-                // Note: Koin is not available for JS platform
             }
         }
         
@@ -447,7 +436,6 @@ kotlin {
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material)
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
-                // Note: Koin is not available for WASM platform
             }
         }
 

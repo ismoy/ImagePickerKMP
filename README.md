@@ -347,7 +347,7 @@ LazyColumn {
 - ** Improved Layout System**: Resolved z-index conflicts and zoom overlay issues for better user experience
 - ** Better Aspect Ratio Support**: Enhanced handling of vertical aspect ratios (like 9:16) with improved space management
 
-| Plataforma             | Versión Mínima | Estado |
+| Platform               | Minimum Version | Status |
 |------------------------|----------------|--------|
 | Android                | API 21+        | ✅     |
 | iOS                    | iOS 12.0+      | ✅     |

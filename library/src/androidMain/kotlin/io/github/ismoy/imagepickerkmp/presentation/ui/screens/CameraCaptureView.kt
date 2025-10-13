@@ -13,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
-import org.koin.compose.koinInject
-import org.koin.core.parameter.parametersOf
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.domain.config.PermissionConfig
@@ -32,8 +30,8 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLa
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageConfirmationViewWithCustomButtons
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.RequestCameraPermission
-import io.github.ismoy.imagepickerkmp.presentation.di.rememberCameraManager
-import io.github.ismoy.imagepickerkmp.presentation.di.rememberImagePickerViewModel
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberImagePickerViewModel
 
 @Suppress("LongMethod","LongParameterList")
 @Composable
@@ -55,7 +53,7 @@ fun CameraCaptureView(
     val cameraManager = rememberCameraManager(context, activity)
     
     if (cameraManager == null) {
-        onError(Exception("Camera dependencies not available. Please ensure Koin is properly initialized."))
+        onError(Exception("Camera dependencies not available. Please check camera permissions and device capabilities."))
         return
     }
 

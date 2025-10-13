@@ -43,9 +43,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import org.koin.compose.koinInject
-import org.koin.core.parameter.parametersOf
 import android.view.ViewGroup.LayoutParams
+import androidx.compose.ui.platform.LocalContext
+import androidx.activity.ComponentActivity
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 
 private const val CAMERA_INITIALIZATION_DELAY = 1L
 
@@ -58,14 +59,21 @@ fun CameraCapturePreview(
     previewConfig: CameraPreviewConfig = CameraPreviewConfig(),
     compressionLevel: CompressionLevel? = null
 ) {
+    val context = LocalContext.current
+    val activity = context as? ComponentActivity
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
+    
+    val cameraManager = rememberCameraManager(context, activity ?: return)
     val stateHolder: CameraCaptureStateHolder? = previewView?.let { view ->
-        koinInject {
-            parametersOf(
-                view,
-                preference,
-                CoroutineScope(Dispatchers.Main + SupervisorJob())
-            )
+        cameraManager?.let { manager ->
+            remember(view, preference, manager) {
+                CameraCaptureStateHolder(
+                    cameraManager = manager,
+                    previewView = view,
+                    preference = preference,
+                    coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+                )
+            }
         }
     }
     var openGallery by remember { mutableStateOf(false) }
