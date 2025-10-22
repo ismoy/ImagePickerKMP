@@ -77,7 +77,7 @@ actual fun RequestCameraPermission(
 
     if (showDialog && isPermissionDeniedPermanently) {
         if (dialogConfig.customSettingsDialog != null) {
-            dialogConfig.customSettingsDialog { 
+            dialogConfig.customSettingsDialog.invoke { 
                 if (!isProcessingSettingsAction) {
                     isProcessingSettingsAction = true
                     openSettings()
@@ -88,12 +88,14 @@ actual fun RequestCameraPermission(
                 title = dialogConfig.titleDialogDenied,
                 description = dialogConfig.descriptionDialogDenied,
                 confirmationButtonText = dialogConfig.btnDialogDenied,
+                cancelButtonText = dialogConfig.cancelButtonText,
                 onConfirm = {
                     if (!isProcessingSettingsAction) {
                         isProcessingSettingsAction = true
                         openSettings()
                     }
-                }
+                },
+                onCancel = dialogConfig.onCancelPermissionConfigIOS
             )
         }
         LaunchedEffect(Unit) {

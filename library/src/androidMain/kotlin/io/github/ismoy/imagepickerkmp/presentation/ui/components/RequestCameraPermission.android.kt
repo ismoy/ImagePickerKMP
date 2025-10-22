@@ -63,7 +63,7 @@ actual fun RequestCameraPermission(
     }
     if (showRationale) {
         if (dialogConfig.customDeniedDialog != null) {
-            dialogConfig.customDeniedDialog {
+            dialogConfig.customDeniedDialog.invoke {
                 showRationale = false
                 permissionLauncher.launch(Manifest.permission.CAMERA)
             }
@@ -82,7 +82,7 @@ actual fun RequestCameraPermission(
 
     if (permissionDeniedPermanently && !hasCalledPermanentlyDenied){
         if (dialogConfig.customSettingsDialog != null){
-            dialogConfig.customSettingsDialog {
+            dialogConfig.customSettingsDialog.invoke {
 
                 openAppSettings(context)
                 hasCalledPermanentlyDenied = true

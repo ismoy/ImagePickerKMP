@@ -37,20 +37,20 @@ fun CustomPermissionDialog(
     title: String,
     description: String,
     confirmationButtonText: String,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
+    cancelButtonText: String? = null,
+    onCancel: (() -> Unit)? = null
 ) {
     var isProcessing by remember { mutableStateOf(false) }
     
     Dialog(
         onDismissRequest = {
-            // Solo permitir cerrar si no está procesando
             if (!isProcessing) {
-                // Opcional: agregar callback para onDismiss si fuera necesario
             }
         },
         properties = DialogProperties(
             dismissOnClickOutside = false,
-            dismissOnBackPress = !isProcessing // Evitar cerrar mientras procesa
+            dismissOnBackPress = !isProcessing 
         )
     ) {
         DialogContent(
@@ -58,12 +58,14 @@ fun CustomPermissionDialog(
             description = description,
             confirmationButtonText = confirmationButtonText,
             isProcessing = isProcessing,
+            cancelButtonText = cancelButtonText,
             onConfirm = {
                 if (!isProcessing) {
                     isProcessing = true
                     onConfirm()
                 }
-            }
+            },
+            onCancel = onCancel
         )
     }
 }
@@ -74,7 +76,9 @@ private fun DialogContent(
     description: String,
     confirmationButtonText: String,
     isProcessing: Boolean,
-    onConfirm: () -> Unit
+    cancelButtonText: String? = null,
+    onConfirm: () -> Unit,
+    onCancel: (() -> Unit)? = null
 ) {
     Box(
         modifier = Modifier
@@ -97,7 +101,9 @@ private fun DialogContent(
             DialogButtons(
                 confirmationButtonText = confirmationButtonText,
                 isProcessing = isProcessing,
-                onConfirm = onConfirm
+                cancelButtonText = cancelButtonText,
+                onConfirm = onConfirm,
+                onCancel = onCancel
             )
         }
     }
@@ -133,57 +139,125 @@ private fun DialogDescription(description: String) {
 private fun DialogButtons(
     confirmationButtonText: String,
     isProcessing: Boolean,
-    onConfirm: () -> Unit
+    cancelButtonText: String? = null,
+    onConfirm: () -> Unit,
+    onCancel: (() -> Unit)? = null
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        OutlinedButton(
-            onClick = onConfirm,
-            enabled = !isProcessing,
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = if (isProcessing) Color.Gray else Color.Black,
-                disabledContentColor = Color.Gray
-            ),
-            border = BorderStroke(
-                1.dp,
-                color = if (isProcessing) Color.Gray else Color.Blue
-            ),
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .weight(1f)
-                .height(48.dp)
+    if (cancelButtonText != null && onCancel != null) {
+        // Botones verticales (uno sobre otro) para iOS
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (isProcessing) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(16.dp)
-                            .padding(end = 8.dp),
-                        color = Color.Gray,
-                        strokeWidth = 2.dp
-                    )
-                    Text(
-                        text = "Abriendo...",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                }
-            } else {
+            ConfirmButton(
+                text = confirmationButtonText,
+                isProcessing = isProcessing,
+                onClick = onConfirm
+            )
+            CancelButton(
+                text = cancelButtonText,
+                isProcessing = isProcessing,
+                onClick = onCancel
+            )
+        }
+    } else {
+        // Botón único horizontal (comportamiento original)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            ConfirmButton(
+                text = confirmationButtonText,
+                isProcessing = isProcessing,
+                onClick = onConfirm
+            )
+        }
+    }
+}
+
+@Composable
+private fun ConfirmButton(
+    text: String,
+    isProcessing: Boolean,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onClick,
+        enabled = !isProcessing,
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = if (isProcessing) Color.Gray else Color.Black,
+            disabledContentColor = Color.Gray
+        ),
+        border = BorderStroke(
+            1.dp,
+            color = if (isProcessing) Color.Gray else Color.Blue
+        ),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+    ) {
+        if (isProcessing) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .padding(end = 8.dp),
+                    color = Color.Gray,
+                    strokeWidth = 2.dp
+                )
                 Text(
-                    text = confirmationButtonText,
+                    text = "Opening...",
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 )
             }
+        } else {
+            Text(
+                text = text,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
         }
+    }
+}
+
+@Composable
+private fun CancelButton(
+    text: String,
+    isProcessing: Boolean,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onClick,
+        enabled = !isProcessing,
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = if (isProcessing) Color.Gray else Color.Black,
+            disabledContentColor = Color.Gray
+        ),
+        border = BorderStroke(
+            1.dp,
+            color = if (isProcessing) Color.Gray else Color.Gray
+        ),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+    ) {
+        Text(
+            text = text,
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = if (isProcessing) Color.Gray else Color.Gray
+            )
+        )
     }
 }

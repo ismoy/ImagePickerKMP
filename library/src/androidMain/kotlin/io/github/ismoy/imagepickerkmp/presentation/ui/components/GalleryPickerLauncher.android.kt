@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.graphics.scale
+import io.github.ismoy.imagepickerkmp.data.processors.ImageOrientationCorrector
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
@@ -258,16 +259,17 @@ private suspend fun processSelectedImageSuspend(
             if (originalBytes != null) {
                 val fileName = getFileName(context, uri)
                 
-                if (compressionLevel != null) {
-                    val bitmap = decodeByteArray(originalBytes, 0, originalBytes.size)
-                    if (bitmap != null) {
-                        val processedBitmap = processImageWithCompression(bitmap, compressionLevel)
+                // Process bitmap with orientation correction
+                val processedBitmap = processBitmapFromGallery(context, uri, originalBytes, compressionLevel)
+                
+                if (processedBitmap != null) {
+                    if (compressionLevel != null) {
                         val compressedBytes = compressBitmapToByteArray(processedBitmap, compressionLevel)
-                        
                         val tempFile = createTempImageFile(context, compressedBytes)
+                        
                         if (tempFile != null) {
                             val fileSizeInKB = bytesToKB(compressedBytes.size.toLong())
-                            logDebug("Compressed image - File size: ${fileSizeInKB}KB (${compressedBytes.size} bytes)")
+                            logDebug("✅ Compressed gallery image with orientation correction - File size: ${fileSizeInKB}KB (${compressedBytes.size} bytes)")
                             return@withContext GalleryPhotoResult(
                                 uri = Uri.fromFile(tempFile).toString(),
                                 width = processedBitmap.width,
@@ -276,9 +278,26 @@ private suspend fun processSelectedImageSuspend(
                                 fileSize = fileSizeInKB
                             )
                         }
+                    } else {
+                        // Save the orientation-corrected bitmap without compression
+                        val originalQualityBytes = compressBitmapToByteArray(processedBitmap, CompressionLevel.LOW) // Use low compression to maintain quality
+                        val tempFile = createTempImageFile(context, originalQualityBytes)
+                        
+                        if (tempFile != null) {
+                            val fileSizeInKB = bytesToKB(originalQualityBytes.size.toLong())
+                            logDebug("✅ Gallery image with orientation correction (no compression) - File size: ${fileSizeInKB}KB (${originalQualityBytes.size} bytes)")
+                            return@withContext GalleryPhotoResult(
+                                uri = Uri.fromFile(tempFile).toString(),
+                                width = processedBitmap.width,
+                                height = processedBitmap.height,
+                                fileName = fileName,
+                                fileSize = fileSizeInKB
+                            )
+                        }
                     }
                 }
                 
+                // Fallback to original behavior if processing fails
                 val options = android.graphics.BitmapFactory.Options().apply {
                     inJustDecodeBounds = true
                 }
@@ -286,7 +305,7 @@ private suspend fun processSelectedImageSuspend(
                 val width = options.outWidth
                 val height = options.outHeight
                 val fileSizeInKB = bytesToKB(originalBytes.size.toLong())
-                logDebug("Original image - File size: ${fileSizeInKB}KB (${originalBytes.size} bytes)")
+                logDebug("⚠️ Fallback: Original image without orientation correction - File size: ${fileSizeInKB}KB (${originalBytes.size} bytes)")
                 GalleryPhotoResult(
                     uri = uri.toString(),
                     width = width,
@@ -320,16 +339,17 @@ private suspend fun processSelectedImage(
             if (originalBytes != null) {
                 val fileName = getFileName(context, uri)
                 
-                if (compressionLevel != null) {
-                    val bitmap = decodeByteArray(originalBytes, 0, originalBytes.size)
-                    if (bitmap != null) {
-                        val processedBitmap = processImageWithCompression(bitmap, compressionLevel)
+                // Process bitmap with orientation correction
+                val processedBitmap = processBitmapFromGallery(context, uri, originalBytes, compressionLevel)
+                
+                if (processedBitmap != null) {
+                    if (compressionLevel != null) {
                         val compressedBytes = compressBitmapToByteArray(processedBitmap, compressionLevel)
-                        
                         val tempFile = createTempImageFile(context, compressedBytes)
+                        
                         if (tempFile != null) {
                             val fileSizeInKB = bytesToKB(compressedBytes.size.toLong())
-                            logDebug("Compressed image processed - File size: ${fileSizeInKB}KB (${compressedBytes.size} bytes)")
+                            logDebug("✅ Compressed gallery image with orientation correction - File size: ${fileSizeInKB}KB (${compressedBytes.size} bytes)")
                             onPhotoSelected(
                                 GalleryPhotoResult(
                                     uri = Uri.fromFile(tempFile).toString(),
@@ -341,9 +361,29 @@ private suspend fun processSelectedImage(
                             )
                             return@withContext
                         }
+                    } else {
+                        // Save the orientation-corrected bitmap without compression
+                        val originalQualityBytes = compressBitmapToByteArray(processedBitmap, CompressionLevel.LOW)
+                        val tempFile = createTempImageFile(context, originalQualityBytes)
+                        
+                        if (tempFile != null) {
+                            val fileSizeInKB = bytesToKB(originalQualityBytes.size.toLong())
+                            logDebug("✅ Gallery image with orientation correction (no compression) - File size: ${fileSizeInKB}KB (${originalQualityBytes.size} bytes)")
+                            onPhotoSelected(
+                                GalleryPhotoResult(
+                                    uri = Uri.fromFile(tempFile).toString(),
+                                    width = processedBitmap.width,
+                                    height = processedBitmap.height,
+                                    fileName = fileName,
+                                    fileSize = fileSizeInKB
+                                )
+                            )
+                            return@withContext
+                        }
                     }
                 }
                 
+                // Fallback to original behavior if processing fails
                 val options = android.graphics.BitmapFactory.Options().apply {
                     inJustDecodeBounds = true
                 }
@@ -351,7 +391,7 @@ private suspend fun processSelectedImage(
                 val width = options.outWidth
                 val height = options.outHeight
                 val fileSizeInKB = bytesToKB(originalBytes.size.toLong())
-                logDebug("Original image processed - File size: ${fileSizeInKB}KB (${originalBytes.size} bytes)")
+                logDebug("⚠️ Fallback: Original image without orientation correction - File size: ${fileSizeInKB}KB (${originalBytes.size} bytes)")
                 onPhotoSelected(
                     GalleryPhotoResult(
                         uri = uri.toString(),
@@ -388,6 +428,64 @@ private fun getFileName(context: Context, uri: Uri): String? {
         }
     }
     return result
+}
+
+/**
+ * Process bitmap from gallery with orientation correction and compression
+ */
+private fun processBitmapFromGallery(
+    context: Context,
+    uri: Uri,
+    originalBytes: ByteArray,
+    compressionLevel: CompressionLevel? = null
+): Bitmap? {
+    return try {
+        // First, create a temporary file to use with ImageOrientationCorrector
+        val tempFile = java.io.File.createTempFile(
+            "gallery_temp_${System.currentTimeMillis()}",
+            ".jpg",
+            context.cacheDir
+        )
+        
+        java.io.FileOutputStream(tempFile).use { outputStream ->
+            outputStream.write(originalBytes)
+        }
+        
+        // Use ImageOrientationCorrector to fix orientation (same as camera)
+        val orientationCorrector = ImageOrientationCorrector()
+        val correctedFile = orientationCorrector.correctImageOrientation(
+            tempFile, 
+            io.github.ismoy.imagepickerkmp.data.camera.CameraController.CameraType.BACK
+        )
+        
+        // Decode the corrected image
+        val correctedBitmap = android.graphics.BitmapFactory.decodeFile(correctedFile.absolutePath)
+        
+        // Clean up temp files
+        tempFile.delete()
+        if (correctedFile != tempFile) {
+            correctedFile.delete()
+        }
+        
+        // Apply compression if needed
+        val finalBitmap = if (correctedBitmap != null && compressionLevel != null) {
+            processImageWithCompression(correctedBitmap, compressionLevel)
+        } else {
+            correctedBitmap
+        }
+        
+        logDebug("🔄 Gallery image processed with orientation correction")
+        finalBitmap
+    } catch (e: Exception) {
+        logDebug("❌ Error processing gallery image with orientation correction: ${e.message}")
+        // Fallback to original behavior without orientation correction
+        val bitmap = decodeByteArray(originalBytes, 0, originalBytes.size)
+        if (bitmap != null && compressionLevel != null) {
+            processImageWithCompression(bitmap, compressionLevel)
+        } else {
+            bitmap
+        }
+    }
 }
 
 /**
