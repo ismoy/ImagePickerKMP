@@ -42,13 +42,17 @@ data class CameraCallbacks(
  * @param customDeniedDialog Custom dialog when permission is denied
  * @param customSettingsDialog Custom dialog for opening settings
  * @param skipConfirmation If true, automatically confirms the photo without showing confirmation screen
+ * @param cancelButtonTextIOS Text for the cancel button in iOS permission dialogs (default: "Cancel")
+ * @param onCancelPermissionConfigIOS Callback executed when user cancels the permission configuration dialog on iOS
  */
 data class PermissionAndConfirmationConfig(
     val customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
     val customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
     val customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))? = null,
     val customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null,
-    val skipConfirmation: Boolean = false
+    val skipConfirmation: Boolean = false,
+    val cancelButtonTextIOS: String? = "Cancel",
+    val onCancelPermissionConfigIOS: (() -> Unit)? = null
 )
 
 @Suppress("EndOfSentenceFormat")
@@ -103,11 +107,11 @@ data class ImagePickerConfig(
     val cancelText: String = "Cancel",
 
     val customPickerDialog: (
-        @Composable (
-            onTakePhoto: () -> Unit,
-            onSelectFromGallery: () -> Unit,
-            onCancel: () -> Unit
-        ) -> Unit
+    @Composable (
+        onTakePhoto: () -> Unit,
+        onSelectFromGallery: () -> Unit,
+        onCancel: () -> Unit
+    ) -> Unit
     )? = null,
 
     val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(),
@@ -125,7 +129,18 @@ data class CameraPreviewConfig(
 )
 
 /**
- * Configuration for camera capture preference.
+ * Configuration for camera permission dialogs.
+ * 
+ * @param titleDialogConfig Title text for the permission configuration dialog
+ * @param descriptionDialogConfig Description text for the permission configuration dialog
+ * @param btnDialogConfig Button text for the permission configuration dialog
+ * @param titleDialogDenied Title text when permission is denied
+ * @param descriptionDialogDenied Description text when permission is denied
+ * @param btnDialogDenied Button text when permission is denied
+ * @param customDeniedDialog Custom composable dialog when permission is denied
+ * @param customSettingsDialog Custom composable dialog for opening settings
+ * @param cancelButtonText Text for the cancel button (iOS only, default: "Cancel")
+ * @param onCancelPermissionConfigIOS Callback when user cancels permission config dialog (iOS only)
  */
 data class CameraPermissionDialogConfig(
     val titleDialogConfig: String,
@@ -135,5 +150,7 @@ data class CameraPermissionDialogConfig(
     val descriptionDialogDenied: String,
     val btnDialogDenied: String,
     val customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)? = null,
-    val customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)? = null
+    val customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)? = null,
+    val cancelButtonText: String? = "Cancel",
+    val onCancelPermissionConfigIOS: (() -> Unit)? = null
 )

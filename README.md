@@ -182,6 +182,11 @@ if (showCamera) {
             directCameraLaunch = false, // Set to true if you want to launch the camera directly Only IOS
             // It is possible to compress images, by default it is with low compression in the library
             cameraCaptureConfig = CameraCaptureConfig(
+                cancelButtonTextIOS = "Your custom text", // Optional
+                onCancelPermissionConfigIOS = { // Required for enabled Cancel Button in modal permission only IOS
+                    showCameraPicker = false
+                    println("User cancelled dialog on iOS")
+                },
                 compressionLevel = CompressionLevel.HIGH,
                 // Skip confirmationView in Android
                  permissionAndConfirmationConfig = PermissionAndConfirmationConfig(

@@ -201,12 +201,14 @@ private fun handleCameraPermission(
         descriptionDialogDenied = "Camera permission is required to capture photos. Please grant the permissions",
         btnDialogDenied = "Open settings",
         customDeniedDialog = cameraCaptureConfig.permissionAndConfirmationConfig.customDeniedDialog,
-        customSettingsDialog = cameraCaptureConfig.permissionAndConfirmationConfig.customSettingsDialog
+        customSettingsDialog = cameraCaptureConfig.permissionAndConfirmationConfig.customSettingsDialog,
+        cancelButtonText = cameraCaptureConfig.permissionAndConfirmationConfig.cancelButtonTextIOS,
+        onCancelPermissionConfigIOS = cameraCaptureConfig.permissionAndConfirmationConfig.onCancelPermissionConfigIOS
     )
     RequestCameraPermission(
         dialogConfig = dialogConfig,
         onPermissionPermanentlyDenied = {},
-        onResult = { granted -> if (granted) onGranted() else onDenied() },
+        onResult = { granted: Boolean -> if (granted) onGranted() else onDenied() },
         customPermissionHandler = null
     )
 }

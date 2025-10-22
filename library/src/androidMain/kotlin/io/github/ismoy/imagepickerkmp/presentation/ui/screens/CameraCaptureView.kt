@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
@@ -30,8 +29,8 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLa
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageConfirmationViewWithCustomButtons
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.RequestCameraPermission
-import io.github.ismoy.imagepickerkmp.presentation.di.rememberCameraManager
-import io.github.ismoy.imagepickerkmp.presentation.di.rememberImagePickerViewModel
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberImagePickerViewModel
 
 @Suppress("LongMethod","LongParameterList")
 @Composable
