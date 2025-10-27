@@ -46,9 +46,13 @@ import kotlinx.coroutines.delay
 import android.view.ViewGroup.LayoutParams
 import androidx.compose.ui.platform.LocalContext
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 
-private const val CAMERA_INITIALIZATION_DELAY = 1L
+private const val CAMERA_INITIALIZATION_DELAY = 0L
 
 @Suppress("LongMethod","LongParameterList")
 @Composable
@@ -62,7 +66,7 @@ fun CameraCapturePreview(
     val context = LocalContext.current
     val activity = context as? ComponentActivity
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
-    
+
     val cameraManager = rememberCameraManager(context, activity ?: return)
     val stateHolder: CameraCaptureStateHolder? = previewView?.let { view ->
         cameraManager?.let { manager ->
@@ -83,7 +87,7 @@ fun CameraCapturePreview(
     val resolvedIconColor = previewConfig.uiConfig.iconColor ?: Color.White
     val resolvedButtonSize = previewConfig.uiConfig.buttonSize ?: 56.dp
     val captureButtonSize = previewConfig.captureButtonSize
-    
+
     LaunchedEffect(stateHolder) {
         stateHolder?.let { holder ->
             delay(CAMERA_INITIALIZATION_DELAY)
@@ -126,43 +130,36 @@ fun CameraCapturePreview(
     }
 
     Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
-        AnimatedVisibility(
-            visible = stateHolder?.isLoading != true,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            AndroidView(
+        AndroidView(
                 factory = { context ->
                     PreviewView(context).apply {
                         scaleType = PreviewView.ScaleType.FILL_CENTER
                         implementationMode = PreviewView.ImplementationMode.PERFORMANCE
-                        
                         layoutParams = LayoutParams(
                             LayoutParams.MATCH_PARENT,
                             LayoutParams.MATCH_PARENT
                         )
+                        setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
+                        setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                        alpha = 0f
+                        post {
+                            animate()
+                                .alpha(1f)
+                                .setDuration(100)
+                                .setStartDelay(50)
+                                .start()
+                        }
                         previewView = this
                     }
                 },
                 modifier = Modifier.fillMaxSize(),
                 update = { view ->
-                    view.requestLayout()
-                    view.invalidate()
+                    if (view.display != null) {
+                        view.requestLayout()
+                    }
                 }
             )
-        }
-        AnimatedVisibility(
-            visible = stateHolder?.isLoading == true,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = Color.White)
-            }
-        }
+
         FlashToggleButton(
             flashMode = stateHolder?.flashMode ?: CameraController.FlashMode.AUTO,
             iconColor = resolvedIconColor,

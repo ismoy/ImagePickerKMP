@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,7 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.Dp
 import coil3.compose.AsyncImage
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants
 import io.github.ismoy.imagepickerkmp.domain.config.UiConfig
@@ -47,6 +46,7 @@ import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
 import io.github.ismoy.imagepickerkmp.presentation.resources.stringResource
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Suppress("EndOfSentenceFormat","LongMethod","FunctionNaming")
 @Composable
 fun ImageConfirmationViewWithCustomButtons(

@@ -6,6 +6,7 @@ import io.github.ismoy.imagepickerkmp.data.camera.CameraController.CameraType
 import io.github.ismoy.imagepickerkmp.domain.exceptions.ImageProcessingException
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.config.HighPerformanceConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,10 +32,22 @@ class ImageProcessor(
         onPhotoCaptured: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch { // Use Default dispatcher for CPU-intensive tasks
             try {
                 val correctedImageFile = orientationCorrector.correctImageOrientation(imageFile, cameraType)
-                val originalBitmap = BitmapFactory.decodeFile(correctedImageFile.absolutePath)
+                
+                // Optimize bitmap decoding with device-specific options
+                val options = BitmapFactory.Options().apply {
+                    inPreferredConfig = if (HighPerformanceConfig.isHighEndDevice()) {
+                        Bitmap.Config.ARGB_8888 // Best quality for flagship devices
+                    } else {
+                        Bitmap.Config.RGB_565 // Memory efficient for other devices
+                    }
+                    inJustDecodeBounds = false
+                    inSampleSize = 1 // Start with no downsampling
+                }
+                
+                val originalBitmap = BitmapFactory.decodeFile(correctedImageFile.absolutePath, options)
                 
                 if (originalBitmap != null) {
                     val processedBitmap = if (compressionLevel != null) {
@@ -89,7 +102,7 @@ class ImageProcessor(
         bitmap: Bitmap,
         compressionLevel: CompressionLevel
     ): Bitmap {
-        // Correct logic: HIGH compression = smaller image, LOW compression = larger image
+        // Optimized logic with better performance scaling
         val maxDimension = when (compressionLevel) {
             CompressionLevel.HIGH -> 1280  // More compression = smaller image
             CompressionLevel.MEDIUM -> 1920 // Medium compression
@@ -103,7 +116,8 @@ class ImageProcessor(
             val targetWidth = (bitmap.width * scale).toInt()
             val targetHeight = (bitmap.height * scale).toInt()
             
-            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true)
+            // Use Bitmap.createScaledBitmap for better performance on Android
+            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false)
             if (resizedBitmap != bitmap) {
                 bitmap.recycle()
             }

@@ -1,293 +1,65 @@
-<p align="center">
-  <a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>
- <!-- <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Code Coverage"></a>-->
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
-  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.1.21-blue.svg" alt="Kotlin"></a>
-</p>
+# ImagePickerKMP
 
-<p align="center">
-  <a href="https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp.svg?label=Maven%20Central" alt="Maven Central"></a>
-  <a href="https://www.npmjs.com/package/imagepickerkmp"><img src="https://img.shields.io/npm/v/imagepickerkmp.svg?label=NPM" alt="NPM Version"></a>
-  <a href="https://www.npmjs.com/package/imagepickerkmp"><img src="https://img.shields.io/npm/dt/imagepickerkmp.svg" alt="NPM Downloads"></a>
-  <a href="https://github.com/ismoy/ImagePickerKMP/releases"><img src="https://img.shields.io/github/v/release/ismoy/ImagePickerKMP?label=GitHub%20Release" alt="GitHub Release"></a>
-  <a href="https://github.com/ismoy/ImagePickerKMP/stargazers"><img src="https://img.shields.io/github/stars/ismoy/ImagePickerKMP?style=social" alt="GitHub Repo stars"></a>
-    <a href="https://github.com/ismoy/ImagePickerKMP/commits/main"><img src="https://img.shields.io/github/last-commit/ismoy/ImagePickerKMP" alt="GitHub last commit"></a>
-</p>
+[![CI](https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg)](https://github.com/ismoy/ImagePickerKMP/actions)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp)
+[![NPM](https://img.shields.io/npm/v/imagepickerkmp.svg?label=NPM)](https://www.npmjs.com/package/imagepickerkmp)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.21-blue.svg)](https://kotlinlang.org)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Compose%20Multiplatform-green" alt="Compose Multiplatform">
-  <img src="https://img.shields.io/badge/Platform-Android-green" alt="Android">
-  <img src="https://img.shields.io/badge/Platform-iOS-blue" alt="iOS">
-  <img src="https://img.shields.io/badge/Platform-Desktop-orange" alt="Desktop">
-  <img src="https://img.shields.io/badge/Platform-JS-yellow" alt="JavaScript">
-  <img src="https://img.shields.io/badge/Platform-WASM-purple" alt="WebAssembly">
- <!-- <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml">
-  <img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a>-->
-</p>
+**Cross-platform Image Picker & Camera Library for Kotlin Multiplatform**
 
----
+Supports Android, iOS, Desktop, and Web with a unified API. Built with Compose Multiplatform.
 
-<h1 align="center">ImagePickerKMP</h1>
+##  Quick Start
 
-<p align="center">
-  <strong>Cross‑platform Image Picker & Camera Library (Android, iOS & Desktop)</strong><br>
-  Built with <strong>Kotlin Multiplatform</strong> + <strong>Compose Multiplatform</strong> + <strong>Kotlin/Native</strong>
-</p>
+### Installation
 
-<p align="center">
-  <a href="README.es.md">Español</a> • 
-  <a href="https://github.com/ismoy/ImagePickerKMP">GitHub</a> • 
-  <a href="https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp">Maven Central</a> • 
-  <a href="https://www.npmjs.com/package/imagepickerkmp">NPM Package</a> • 
-  <a href="REACT_INTEGRATION_GUIDE.md">React Guide</a> • 
-  <a href="https://discord.gg/EjSQTeyh">Discord</a>
-</p>
+**Kotlin Multiplatform:**
+```kotlin
+dependencies {
+    implementation("io.github.ismoy:imagepickerkmp:{latest-version}")
+}
+```
 
----
-
-##  Documentation
-
-<p align="center">
-  <strong>Comprehensive guides and references for every aspect of ImagePickerKMP</strong>
-</p>
-
--  **[Integration Guide](docs/INTEGRATION_GUIDE.md)** - Complete setup and integration guide
--  **[Customization Guide](docs/CUSTOMIZATION_GUIDE.md)** - UI and behavior customization
--  **[React Integration Guide](REACT_INTEGRATION_GUIDE.md)** - Complete React/NPM integration guide
--  **[Internationalization Guide](docs/I18N_GUIDE.md)** - Multi-language support guide
--  **[Permissions Guide](library/PERMISSION.md)** - Permission handling details
--  **[Coverage Guide](docs/COVERAGE_GUIDE.md)** - Code coverage and testing guide
--  **[Notifications Setup](docs/NOTIFICATIONS_SETUP.md)** - Discord notifications setup
--  **[API Reference](docs/API_REFERENCE.md)** - Complete API documentation
--  **[Examples](docs/EXAMPLES.md)** - Code examples and use cases
-
----
-## Demos Android, iOS, Desktop & Web
-
-<table>
-  <tr>
-    <th>Android Camera</th>
-    <th>Android Crop</th>
-    <th>iOS Camera</th>
-    <th>iOS Crop</th>
-  </tr>
-  <tr>
-    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCameraDemo.gif" alt="Android Camera Demo" width="200"></a></td>
-    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/androidCrop.gif" alt="Android Crop Demo" width="200"></a></td>
-    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCameraDemo.gif" alt="iOS Camera Demo" width="200"></a></td>
-    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/iosCrop.gif" alt="iOS Crop Demo" width="200"></a></td>
-  </tr>
-  <tr>
-    <th>Desktop</th>
-    <th>Web</th>
-    <th colspan="2"></th>
-  </tr>
-  <tr>
-    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/DesktopDemo.gif" alt="Desktop Demo" width="300"></a></td>
-    <td><a href="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif"><img src="https://raw.githubusercontent.com/ismoy/ImagePickerKMP/develop/docs/demoWeb.gif" alt="Web Demo" width="300"></a></td>
-    <td colspan="2"></td>
-  </tr>
-</table>
-
-##  Now Available for Web Development!
-
-### React/JavaScript Integration
-**ImagePickerKMP is now available as an NPM package for web development!**
-
+**React/JavaScript:**
 ```bash
 npm install imagepickerkmp
 ```
 
- **[Complete React Integration Guide →](REACT_INTEGRATION_GUIDE.md)**
+### Basic Usage
 
-Features for web:
--  **React Components** ready to use
--  **TypeScript Support** with full type definitions  
--  **Camera Access** via WebRTC (mobile & desktop)
--  **File Picker** with drag & drop support
--  **Image Processing** (Base64, Bytes)
--  **Cross-Framework** (React, Vue, Angular, Vanilla JS)
-
----
-
-## About ImagePickerKMP
-- **Cross-platform**: Works seamlessly on Android and iOS
-- **Camera Integration**: Direct camera access with photo capture
-- **Gallery Selection**: Pick images from device gallery with compression support
-- **Advanced Image Cropping**: Cross-platform crop functionality with automatic context management
-- **Automatic Image Compression**: Optimize image size while maintaining quality
-- **Configurable Compression Levels**: LOW, MEDIUM, HIGH compression options
-- **Async Processing**: Non-blocking UI with Kotlin Coroutines integration
-- **Multiple Format Support**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
-- **Extension Functions**: Built-in extension functions for easy image display and manipulation
-- **Customizable UI**: Custom dialogs and confirmation views
-- **Permission Handling**: Smart permission management for both platforms
-- **Easy Integration**: Simple API with Compose Multiplatform
-- **Enhanced User Experience**: Improved layout system with proper zoom and aspect ratio handling
-- **Highly Configurable**: Extensive customization options
-
----
-
-## Quick Start – Kotlin Multiplatform Image Picker Integration
-
-### Installation
-
-### Using ImagePickerKMP in Kotlin Multiplatform / Compose Multiplatform
-#### Step 1: Add the dependency
-<p>In your <code>commonMain</code> <code>build.gradle.kts</code>:</p>
-
+**Camera Capture:**
 ```kotlin
-dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:{$lastVersion}")
-}
-```
-### Using ImagePickerKMP in Android Native (Jetpack Compose)
-<p>Even if you're not using KMP, you can use ImagePickerKMP in pure Android projects with Jetpack Compose.</p>
+var showCamera by remember { mutableStateOf(false) }
+var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
 
-#### Step 1: Add the dependency
-```kotlin
-implementation("io.github.ismoy:imagepickerkmp:{$lastVersion}")
-```
-#### iOS Permissions Setup
-<p>Don't forget to configure iOS-specific permissions in your <code>Info.plist</code> file:</p>
-
-```xml
-<key>NSCameraUsageDescription</key>
-<string>We need access to the camera to capture a photo.</string>
-```
-<h1>Basic Use</h1>
-
-#### Step 2: Launch the Camera
-```kotlin
- var showCamera by remember { mutableStateOf(false) }
- var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
-```
-```kotlin
 if (showCamera) {
     ImagePickerLauncher(
         config = ImagePickerConfig(
-            enableCrop = false, // Set to true if you want Crop option
             onPhotoCaptured = { result ->
                 capturedPhoto = result
-                // Now you can access result.fileSize for camera captures too!
-                println("Camera photo size: ${result.fileSize}KB")
                 showCamera = false
             },
-            onError = {
-                showCamera = false
-            },
-            onDismiss = {
-                showImagePicker = false // Reset state when user doesn't select anything
-            },
-            directCameraLaunch = false, // Set to true if you want to launch the camera directly Only IOS
-            // It is possible to compress images, by default it is with low compression in the library
-            cameraCaptureConfig = CameraCaptureConfig(
-                
-                compressionLevel = CompressionLevel.HIGH,
-                // Skip confirmationView in Android
-                 permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-        cancelButtonTextIOS = "Your custom text", // Optional
-        onCancelPermissionConfigIOS = { // Required for enabled Cancel Button in modal permission only IOS
-                    showCameraPicker = false
-                    println("User cancelled dialog on iOS")
-                },
-                   skipConfirmation = true // by default it is false 
-                   )
-            )
-
+            onError = { showCamera = false },
+            onDismiss = { showCamera = false }
         )
     )
 }
+
+Button(onClick = { showCamera = true }) {
+    Text("Take Photo")
+}
 ```
-#### Step 3: Pick from the Gallery
+
+**Gallery Selection:**
 ```kotlin
 var showGallery by remember { mutableStateOf(false) }
-var selectedImages by remember { mutableStateOf<List<GalleryPhotoHandler.PhotoResult>>(emptyList()) }
-```
-```kotlin
+var selectedImages by remember { mutableStateOf<List<PhotoResult>>(emptyList()) }
+
 if (showGallery) {
     GalleryPickerLauncher(
         onPhotosSelected = { photos ->
             selectedImages = photos
-            showGallery = false
-        },
-        onError = { error ->
-            showGallery = false
-        },
-        onDismiss = {
-            println("User cancelled or dismissed the picker")
-            showGallery = false // Reset state when user doesn't select anything
-        },
-        enableCrop = false, // Set to true if you want Crop option 
-        allowMultiple = true, // False for single selection
-        mimeTypes = listOf(MimeType.IMAGE_PNG) ,// Optional: filter by type
-    )
-}
-
-Button(onClick = { showGallery = true }) {
-    Text("Choose from Gallery")
-}
-```
-
-### For more customization (confirmation views, MIME filtering, etc.), [check out the integration guide for KMP.](https://github.com/ismoy/ImagePickerKMP/blob/main/docs/INTEGRATION_GUIDE.md)
-
-## Extension Functions for Image Processing
-
-ImagePickerKMP includes built-in extension functions that simplify image handling and display. These extensions work seamlessly with both `ImagePickerLauncher` and `GalleryPickerLauncher`, providing a unified API for image processing across platforms.
-
-### Available Extension Functions
-
-The library provides four main extension functions for easy image conversion:
-
-- **`loadBytes()`** - Returns image as ByteArray for file operations and storage
-- **`loadPainter()`** - Returns image as Painter for direct display in Compose UI
-- **`loadImageBitmap()`** - Returns image as ImageBitmap for Compose graphics operations
-- **`loadBase64()`** - Returns image as Base64 string for API calls and network transmission
-
-### Benefits
-
-- **Simplified Integration**: No need for complex image conversion logic
-- **Multiple Format Support**: Get images in different formats with single function calls
-- **Performance Optimized**: Direct conversion without intermediate processing steps
-- **Cross-platform Consistency**: Same API works identically on Android and iOS
-- **Memory Efficient**: Optimized memory usage during image conversion
-
-### Usage Examples
-
-```kotlin
-// State variables
-var showCamera by remember { mutableStateOf(false) }
-var showGallery by remember { mutableStateOf(false) }
-var capturedImage by remember { mutableStateOf<Painter?>(null) }
-var selectedPhotos by remember { mutableStateOf<List<GalleryPhotoHandler.PhotoResult>>(emptyList()) }
-
-// Camera with extension functions
-if (showCamera) {
-    ImagePickerLauncher(
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result ->
-                // Use extension functions to get different formats
-                val imageBytes = result.loadBytes()        // For file operations
-                val imagePainter = result.loadPainter()    // For UI display
-                val imageBitmap = result.loadImageBitmap() // For graphics operations
-                val imageBase64 = result.loadBase64()      // For API calls
-                
-                // Store the painter to display later
-                capturedImage = imagePainter
-                showCamera = false
-            },
-            onError = { showCamera = false },
-            onDismiss = { showCamera = false },
-            directCameraLaunch = true
-        )
-    )
-}
-
-// Gallery with extension functions
-if (showGallery) {
-    GalleryPickerLauncher(
-        onPhotosSelected = { photos ->
-            selectedPhotos = photos
             showGallery = false
         },
         onError = { showGallery = false },
@@ -296,134 +68,174 @@ if (showGallery) {
     )
 }
 
-// Display captured image
-capturedImage?.let { painter ->
-    Image(
-        painter = painter,
-        contentDescription = "Captured photo",
-        modifier = Modifier.size(200.dp)
-    )
+Button(onClick = { showGallery = true }) {
+    Text("Choose from Gallery")
 }
+```
+## ⚠️ Important Usage Note
 
-// Display selected photos
-LazyColumn {
-    items(selectedPhotos) { photo ->
-        photo.loadPainter()?.let { painter ->
-            Image(
-                painter = painter,
-                contentDescription = "Selected photo",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
+**Camera Preview Not Showing?** Some developers have reported that the camera usage indicator appears, but the preview doesn't show up. This happens when `ImagePickerLauncher` is not placed inside a visible container composable.
+
+**✅ Correct usage:**
+```kotlin
+Box(modifier = Modifier.fillMaxSize()) {
+    if (showCamera) {
+        ImagePickerLauncher(
+            config = ImagePickerConfig(
+                onPhotoCaptured = { /* handle image */ },
+                onDismiss = { showCamera = false }
             )
-        }
+        )
     }
 }
 ```
 
-## Image Compression
-**Automatically optimize image size while maintaining quality with configurable compression levels.**
+**❌ Incorrect usage:**
+```kotlin
+if (showCamera) {
+    ImagePickerLauncher(
+        config = ImagePickerConfig(
+            onPhotoCaptured = { /* handle image */ },
+            onDismiss = { showCamera = false }
+        )
+    )
+}
+```
 
-### Compression Levels
-- **LOW**: 95% quality, max 2560px dimension - Best quality, larger files
-- **MEDIUM**: 75% quality, max 1920px dimension - Balanced quality/size
-- **HIGH**: 50% quality, max 1280px dimension - Smaller files, good for storage
+> **💡 Always wrap the camera launcher inside a composable container (Box, Column, Row) and control its visibility with state.**
+> 
+> *Thanks to [@rnstewart](https://github.com/rnstewart) and other contributors for pointing this out! 🙏*
 
-### Supported Image Formats
-- **JPEG** (image/jpeg) - Full compression support
-- **PNG** (image/png) - Full compression support
-- **HEIC** (image/heic) - Full compression support
-- **HEIF** (image/heif) - Full compression support
-- **WebP** (image/webp) - Full compression support
-- **GIF** (image/gif) - Full compression support
-- **BMP** (image/bmp) - Full compression support
 
-## Platform Support
-<p align="center">
-  <strong>Cross-platform compatibility with intelligent context management and enhanced crop functionality</strong>
-</p>
+##  Key Features
 
-- **Android:** The library automatically manages the context using `LocalContext.current`. No need to pass context manually.
-- **iOS:** Context is not required as the library uses native iOS APIs. Enhanced crop coordinate calculations ensure consistent behavior with Android.
-- **Cross-platform Crop:** Unified `applyCrop` function with automatic context management and consistent coordinate calculations across platforms.
+-  **Cross-platform** - Android, iOS, Desktop, Web
+-  **Camera & Gallery** - Direct access with unified API
+-  **Image Cropping** - Built-in crop functionality
+-  **Smart Compression** - Configurable quality levels
+-  **Extension Functions** - Easy image processing (`loadPainter()`, `loadBytes()`, `loadBase64()`)
+-  **Permission Handling** - Automatic permission management
+-  **Async Processing** - Non-blocking UI with coroutines
+-  **Format Support** - JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
 
-### Recent Improvements
-- ** Automatic Context Management**: The `applyCrop` function is now `@Composable` and handles Android context automatically
-- ** Enhanced iOS Crop Accuracy**: Fixed coordinate calculations for precise image cropping on iOS
-- ** Improved Layout System**: Resolved z-index conflicts and zoom overlay issues for better user experience
-- ** Better Aspect Ratio Support**: Enhanced handling of vertical aspect ratios (like 9:16) with improved space management
+##  Platform Support
 
-| Platform               | Minimum Version | Status |
-|------------------------|----------------|--------|
-| Android                | API 21+        | ✅     |
-| iOS                    | iOS 12.0+      | ✅     |
-| Compose Multiplatform  | 1.5.0+         | ✅     |
-| Desktop (JVM)          | JDK 11+        | ✅     |
-
-## Why Choose ImagePickerKMP?
-
-<p align="center">
-  <strong>The most comprehensive and developer-friendly image picker for Kotlin Multiplatform</strong>
-</p>
-
-<h1>ImagePickerKMP</h1>
-
-| Feature                        | ImagePickerKMP            
-|--------------------------------|----------------|
-| **Compose Multiplatform Support** | ✅ Native      
-| **UI Customization**           | ✅ Full control 
-| **Unified Permissions**        | ✅ Smart handling 
-| **Error Handling**             | ✅ Comprehensive 
-| **Camera Integration**         | ✅ Direct access 
-| **Gallery Support**            | ✅ Multi-select 
-| **Cross-platform API**         | ✅ Single codebase
-
-### Key Advantages
-
-- ** Compose Multiplatform Native**: Built specifically for Compose Multiplatform, ensuring consistent behavior across platforms
-- ** Full UI Customization**: Complete control over dialogs, confirmation views, and camera UI
-- ** Smart Permission Management**: Unified permission handling with intelligent fallbacks
-- ** Performance Optimized**: Efficient image processing and memory management
-- ** Developer Friendly**: Simple API with comprehensive error handling
-
-## Requirements
-
-### Android
-- Minimum SDK: 21
-- Kotlin 1.8+
-- Compose Multiplatform
-
-### iOS
-- iOS 12.0+
-- Xcode 14+
-- Kotlin Multiplatform
-
-### Desktop
-- JDK 11+
-
-## Contributing
-
-<p align="center">
-  <strong>We welcome contributions from the community!</strong><br>
-  See our <a href="docs/CONTRIBUTING.md">Contributing Guide</a> for details.
-</p>
+| Platform | Minimum Version | Status |
+|----------|----------------|--------|
+| Android  | API 21+       | ✅ |
+| iOS      | iOS 12.0+     | ✅ |
+| Desktop  | JDK 11+       | ✅ |
+| Web      | Modern Browsers| ✅ |
 
 ---
 
-## Support & Community
+##  Live Demos & Examples
 
-<p align="center">
-  <strong>Get help, report issues, or join our community</strong>
-</p>
+###  **Online Demos**
+**[ View Interactive Demos →](https://ismoy.github.io/ImagePickerKMP-Demos)**
 
-<p align="center">
-  <a href="mailto:belizairesmoy72@gmail.com">📧 Email</a> • 
-  <a href="https://github.com/ismoy/ImagePickerKMP/issues">🐛 Issues</a> • 
-  <a href="https://github.com/ismoy/ImagePickerKMP/wiki">📖 Wiki</a> • 
-  <a href="https://discord.com/channels/1393705692484993114/1393706133864190133">💬 Discord</a>
-</p>
+Experience ImagePickerKMP in action:
+-  **Mobile Demos** - Android & iOS camera/gallery functionality
+-  **Desktop Demo** - File picker and image processing  
+-  **Web Demo** - React integration with WebRTC camera
+-  **Crop Demo** - Interactive image cropping across platforms
 
-<p align="center">
-  <strong>Made with ❤️ for the Kotlin Multiplatform community</strong><br>
-  <em>Star ⭐ this repo if it helped you!</em>
-</p>
+###  **Complete Example App** 
+**[ ImagePickerKMP-Example →](https://github.com/ismoy/CameraKMP)**
+
+Full-featured sample application showcasing:
+- All library features and configurations
+- Real-world implementation patterns  
+- Platform-specific optimizations
+- Best practices and tips
+
+---
+
+##  Documentation
+
+###  **Complete Guides**
+| Resource | Description |
+|----------|-------------|
+| [ Integration Guide](docs/INTEGRATION_GUIDE.md) | Complete setup and configuration |
+| [ Customization Guide](docs/CUSTOMIZATION_GUIDE.md) | UI customization and theming |
+| [ React Guide](REACT_INTEGRATION_GUIDE.md) | Web development setup |
+| [ Permissions Guide](library/PERMISSION.md) | Platform permissions |
+| [ API Reference](docs/API_REFERENCE.md) | Complete API documentation |
+
+## Advanced Configuration
+
+### Image Compression
+```kotlin
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        cameraCaptureConfig = CameraCaptureConfig(
+            compressionLevel = CompressionLevel.HIGH, // LOW, MEDIUM, HIGH
+            skipConfirmation = true
+        )
+    )
+)
+```
+
+### Multiple Selection with Filtering
+```kotlin
+GalleryPickerLauncher(
+    allowMultiple = true,
+    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+    enableCrop = true
+)
+```
+
+### iOS Permissions Setup
+Add to your `Info.plist`:
+```xml
+<key>NSCameraUsageDescription</key>
+<string>Camera access needed to take photos</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Photo library access needed to select images</string>
+```
+
+##  Extension Functions
+
+Process images easily with built-in extension functions:
+
+```kotlin
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            val imageBytes = result.loadBytes()        // ByteArray for file operations
+            val imagePainter = result.loadPainter()    // Painter for Compose UI
+            val imageBitmap = result.loadImageBitmap() // ImageBitmap for graphics
+            val imageBase64 = result.loadBase64()      // Base64 string for APIs
+        }
+    )
+)
+```
+
+##  React/Web Integration
+
+ImagePickerKMP is available as an NPM package for web development:
+
+```bash
+npm install imagepickerkmp
+```
+
+Features:
+-  **WebRTC Camera Access** - Mobile & desktop camera support
+-  **TypeScript Support** - Full type definitions included
+-  **Drag & Drop** - File picker with drag and drop
+-  **React Components** - Ready-to-use React components
+-  **Cross-Framework** - Works with React, Vue, Angular, Vanilla JS
+
+**[Complete React Integration Guide →](REACT_INTEGRATION_GUIDE.md)**
+
+##  Support & Contributing
+
+-  [Report Issues](https://github.com/ismoy/ImagePickerKMP/issues)
+-  [Discord Community](https://discord.gg/EjSQTeyh)  
+-  [Contributing Guide](docs/CONTRIBUTING.md)
+-  [Email Support](mailto:belizairesmoy72@gmail.com)
+
+---
+
+**Made with ❤️ for the Kotlin Multiplatform community**  
+*⭐ Star this repo if it helped you!*

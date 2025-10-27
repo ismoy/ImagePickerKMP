@@ -13,6 +13,7 @@ import io.github.ismoy.imagepickerkmp.data.dataSource.getCaptureMode as getCaptu
 import io.github.ismoy.imagepickerkmp.data.managers.FileManager
 import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
+import io.github.ismoy.imagepickerkmp.domain.config.HighPerformanceConfig
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -63,6 +64,7 @@ class CameraController(
             imageCapture = ImageCapture.Builder()
                 .setCaptureMode(getCaptureModeFn(preference))
                 .setFlashMode(getImageCaptureFlashMode(currentFlashMode))
+                .setJpegQuality(HighPerformanceConfig.getOptimalJpegQuality()) // Dynamic quality based on device
                 .build()
 
             val cameraSelector = when (currentCameraType) {
