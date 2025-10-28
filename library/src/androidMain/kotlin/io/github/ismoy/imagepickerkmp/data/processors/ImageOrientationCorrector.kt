@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController.CameraType
+import io.github.ismoy.imagepickerkmp.domain.config.HighPerformanceConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIENTATION_FLIP_HORIZONTAL_X
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIENTATION_FLIP_HORIZONTAL_Y
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIENTATION_FLIP_VERTICAL_X
@@ -34,7 +35,22 @@ class ImageOrientationCorrector {
                 ExifInterface.ORIENTATION_NORMAL
             )
 
-            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath) ?: return imageFile
+            // Quick check if no correction is needed
+            val needsCorrection = orientation != ExifInterface.ORIENTATION_NORMAL || cameraType == CameraType.FRONT
+            if (!needsCorrection) {
+                return imageFile
+            }
+
+            // Use optimized bitmap decoding based on device capabilities
+            val options = BitmapFactory.Options().apply {
+                inPreferredConfig = if (HighPerformanceConfig.isHighEndDevice()) {
+                    Bitmap.Config.ARGB_8888 // Best quality for flagship devices
+                } else {
+                    Bitmap.Config.RGB_565 // Memory efficient for other devices
+                }
+                inSampleSize = 1
+            }
+            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath, options) ?: return imageFile
 
             val matrix = getRotationMatrix(orientation)
 
@@ -45,7 +61,7 @@ class ImageOrientationCorrector {
             val finalBitmap = if (matrix.isIdentity) {
                 bitmap
             } else {
-                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true).also {
+                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false).also {
                     bitmap.recycle()
                 }
             }
@@ -55,7 +71,7 @@ class ImageOrientationCorrector {
             } else {
                 val correctedFile = File(imageFile.parentFile, "corrected_${imageFile.name}")
                 FileOutputStream(correctedFile).use { out ->
-                    finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+                    finalBitmap.compress(Bitmap.CompressFormat.JPEG, 95, out) // Slightly higher quality for better performance trade-off
                 }
                 finalBitmap.recycle()
                 correctedFile
