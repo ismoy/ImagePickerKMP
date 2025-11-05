@@ -3,23 +3,22 @@
 We welcome contributions to **ImagePickerKMP**!  
 
 ##  Steps to Contribute
-1. **Fork & Clone**  
+1. **Fork**
+2. fork the proyect fisrt 
    ```bash
-   git clone https://github.com/your-username/ImagePickerKMP.git
-   cd ImagePickerKMP
    git checkout -b feature/your-feature
    ```
-2. **Build & Test**  
+3. **Build & Test**  
    ```bash
    ./gradlew build test androidTest iosTest
    ./gradlew detekt   # run static analysis
    ```
-3. **Code Style**  
+4. **Code Style**  
    - Follow [Kotlin conventions](https://kotlinlang.org/docs/coding-conventions.html).  
    - 4 spaces indent, ≤120 chars per line, trailing commas.  
    - Use `expect/actual` for platform-specific code.  
 
-4. **Commit & PR**  
+5. **Commit & PR**  
    ```bash
    git commit -m "feat: add custom permission dialog"
    git push origin feature/your-feature
