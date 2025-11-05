@@ -1,9 +1,8 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
+import android.view.ViewGroup.LayoutParams
+import androidx.activity.ComponentActivity
 import androidx.camera.view.PreviewView
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,9 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
@@ -29,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController
@@ -38,19 +36,11 @@ import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import android.view.ViewGroup.LayoutParams
-import androidx.compose.ui.platform.LocalContext
-import androidx.activity.ComponentActivity
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 
 private const val CAMERA_INITIALIZATION_DELAY = 0L
 
@@ -61,7 +51,8 @@ fun CameraCapturePreview(
     onPhotoResult: (PhotoResult) -> Unit,
     onError: (Exception) -> Unit,
     previewConfig: CameraPreviewConfig = CameraPreviewConfig(),
-    compressionLevel: CompressionLevel? = null
+    compressionLevel: CompressionLevel? = null,
+    includeExif: Boolean = false
 ) {
     val context = LocalContext.current
     val activity = context as? ComponentActivity
@@ -111,7 +102,9 @@ fun CameraCapturePreview(
                             width = result.width,
                             height = result.height,
                             fileName = result.fileName,
-                            fileSize = result.fileSize
+                            fileSize = result.fileSize,
+                            mimeType = result.mimeType,
+                            exif = result.exif
                         )
                     )
                 }
@@ -122,10 +115,11 @@ fun CameraCapturePreview(
             },
             onDismiss = { openGallery = false },
             allowMultiple = false,
-            mimeTypes = listOf(MimeType.IMAGE_ALL),
+            mimeTypes = previewConfig.galleryConfig.mimeTypes,
             selectionLimit = 1L,
             cameraCaptureConfig = null,
-            enableCrop = false
+            enableCrop = false,
+            includeExif = previewConfig.galleryConfig.includeExif
         )
     }
 
@@ -197,7 +191,7 @@ fun CameraCapturePreview(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
-                    stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel)
+                    stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif)
                 }
         )
         Box(

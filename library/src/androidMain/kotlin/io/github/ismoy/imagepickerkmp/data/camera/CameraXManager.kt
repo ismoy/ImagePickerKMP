@@ -7,9 +7,6 @@ import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 
 /**
  * High-level manager for camera operations, providing an interface to start, stop, and control the camera.
- * 
- * SOLID: Dependency Inversion - Depends on injected dependencies instead of creating them
- * SOLID: Single Responsibility - Only manages camera operations coordination
  */
 class CameraXManager(
     private val cameraController: CameraController,
@@ -25,7 +22,8 @@ class CameraXManager(
     fun takePicture(
         onPhotoResult: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
-        compressionLevel: CompressionLevel? = null
+        compressionLevel: CompressionLevel? = null,
+        includeExif: Boolean = false
     ){
         cameraController.takePicture(
             onImageCaptured = { imageFile, cameraType ->
@@ -33,6 +31,7 @@ class CameraXManager(
                     imageFile = imageFile,
                     cameraType = cameraType,
                     compressionLevel = compressionLevel,
+                    includeExif = includeExif,
                     onPhotoCaptured = onPhotoResult,
                     onError = onError
                 )

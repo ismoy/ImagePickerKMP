@@ -103,7 +103,12 @@ fun CameraCaptureView(
                     },
                     onDismiss = onDismiss,
                     allowMultiple = true,
-                    mimeTypes = cameraCaptureConfig.galleryConfig.mimeTypes
+                    mimeTypes = cameraCaptureConfig.galleryConfig.mimeTypes,
+                    selectionLimit = cameraCaptureConfig.galleryConfig.selectionLimit.toLong(),
+                    cameraCaptureConfig = cameraCaptureConfig,
+                    enableCrop = false,
+                    fileFilterDescription = "Image files",
+                    includeExif = cameraCaptureConfig.galleryConfig.includeExif
                 )
             }
             photoResult == null -> {
@@ -180,9 +185,11 @@ private fun CameraAndPreview(
         previewConfig = CameraPreviewConfig(
             captureButtonSize = cameraCaptureConfig.captureButtonSize,
             uiConfig = cameraCaptureConfig.uiConfig,
-            cameraCallbacks = cameraCaptureConfig.cameraCallbacks
+            cameraCallbacks = cameraCaptureConfig.cameraCallbacks,
+            galleryConfig = cameraCaptureConfig.galleryConfig
         ),
-        compressionLevel = cameraCaptureConfig.compressionLevel
+        compressionLevel = cameraCaptureConfig.compressionLevel,
+        includeExif = cameraCaptureConfig.includeExif
     )
 }
 

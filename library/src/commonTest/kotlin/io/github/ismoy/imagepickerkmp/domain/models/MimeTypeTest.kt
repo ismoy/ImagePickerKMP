@@ -18,6 +18,7 @@ class MimeTypeTest {
         assertEquals("image/bmp", MimeType.IMAGE_BMP.value)
         assertEquals("image/heic", MimeType.IMAGE_HEIC.value)
         assertEquals("image/heif", MimeType.IMAGE_HEIF.value)
+        assertEquals("application/pdf", MimeType.APPLICATION_PDF.value)
     }
 
     @Test
@@ -75,6 +76,7 @@ class MimeTypeTest {
         assertEquals(MimeType.IMAGE_JPEG, MimeType.fromString("image/jpeg"))
         assertEquals(MimeType.IMAGE_PNG, MimeType.fromString("image/png"))
         assertEquals(MimeType.IMAGE_ALL, MimeType.fromString("image/*"))
+        assertEquals(MimeType.APPLICATION_PDF, MimeType.fromString("application/pdf"))
     }
 
     @Test
@@ -87,7 +89,7 @@ class MimeTypeTest {
     @Test
     fun `fromString should return null for unknown MIME type`() {
         assertNull(MimeType.fromString("video/mp4"))
-        assertNull(MimeType.fromString("application/pdf"))
+        assertNull(MimeType.fromString("text/plain"))
         assertNull(MimeType.fromString("unknown/type"))
         assertNull(MimeType.fromString(""))
     }
@@ -103,7 +105,10 @@ class MimeTypeTest {
     fun `value property should return correct string`() {
         MimeType.values().forEach { mimeType ->
             assertNotNull(mimeType.value)
-            assertTrue(mimeType.value.startsWith("image/"))
+            when (mimeType) {
+                MimeType.APPLICATION_PDF -> assertTrue(mimeType.value.startsWith("application/"))
+                else -> assertTrue(mimeType.value.startsWith("image/"))
+            }
         }
     }
 

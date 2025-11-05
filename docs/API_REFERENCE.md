@@ -1034,3 +1034,281 @@ fun ImagePickerLauncher(
 - `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Custom permission handling
 - `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Custom confirmation view
 - `preference: CapturePhotoPreference?` - Photo capture preferences
+
+---
+
+## 📄 OCR Text Recognition – Specific Documentation
+
+## Description
+The OCR (Optical Character Recognition) functionality in ImagePickerKMP allows developers to extract text from images using both local and cloud-based analysis. It integrates seamlessly with the existing camera and gallery features to provide a complete text extraction solution.
+
+---
+
+## Basic OCR example with local analysis
+
+```kotlin
+ImagePickerKMP.scanOCR(
+    mode = ScanMode.Local,
+    onResult = { result ->
+        // Handle the OCR result
+        println("Extracted text: ${result.text}")
+        println("Lines found: ${result.lines.size}")
+    },
+    onError = { exception ->
+        // Handle errors
+        println("OCR Error: ${exception.message}")
+    }
+)
+```
+
+---
+
+## Advanced OCR example with cloud analysis (Gemini API)
+
+```kotlin
+ImagePickerKMP.scanOCR(
+    mode = ScanMode.Cloud(apiKey = "YOUR_GEMINI_API_KEY"),
+    onResult = { result ->
+        // Handle advanced OCR result
+        println("Text: ${result.text}")
+        println("Language: ${result.language}")
+        println("Confidence: ${result.confidence}")
+        println("Metadata: ${result.metadata}")
+    },
+    onError = { exception ->
+        // Handle errors
+        println("Cloud OCR Error: ${exception.message}")
+    }
+)
+```
+
+---
+
+## OCR with Composable UI integration
+
+```kotlin
+@Composable
+fun OCRExample() {
+    var showScanner by remember { mutableStateOf(false) }
+    var ocrResult by remember { mutableStateOf<OCRResult?>(null) }
+    
+    Column {
+        Button(onClick = { showScanner = true }) {
+            Text("Scan Text")
+        }
+        
+        ocrResult?.let { result ->
+            Text("Result: ${result.text}")
+        }
+    }
+    
+    if (showScanner) {
+        OCRScanner(
+            mode = ScanMode.Local,
+            onResult = { result ->
+                ocrResult = result
+                showScanner = false
+            },
+            onError = { error ->
+                showScanner = false
+            },
+            onDismiss = { showScanner = false }
+        )
+    }
+}
+```
+
+---
+
+## Direct OCR analysis from existing image URI
+
+```kotlin
+// Analyze existing image
+ImagePickerKMP.scanOCRFromUri(
+    imageUri = "file://path/to/image.jpg",
+    mode = ScanMode.Cloud("API_KEY"),
+    onResult = { result ->
+        println("Text found: ${result.text}")
+    },
+    onError = { error ->
+        println("Analysis failed: ${error.message}")
+    }
+)
+
+// Or using suspend function
+suspend fun analyzeImage() {
+    try {
+        val result = scanOCR(
+            mode = ScanMode.Local,
+            imageUri = "content://..."
+        )
+        println("OCR Result: ${result.text}")
+    } catch (e: Exception) {
+        println("Error: ${e.message}")
+    }
+}
+```
+
+---
+
+## OCR Data Classes
+
+### ScanMode
+
+```kotlin
+sealed class ScanMode {
+    object Local : ScanMode()                    // Offline OCR analysis
+    data class Cloud(val apiKey: String) : ScanMode()  // Cloud OCR with Gemini API
+}
+```
+
+### OCRResult
+
+```kotlin
+data class OCRResult(
+    val text: String,                        // Complete extracted text
+    val lines: List<String>,                 // Individual text lines
+    val language: String? = null,            // Detected language (if available)
+    val confidence: Float? = null,           // Analysis confidence (0.0 to 1.0)
+    val metadata: Map<String, Any>? = null   // Additional analysis data
+)
+```
+
+---
+
+## Platform Support
+
+| Platform | Local OCR | Cloud OCR | Technology |
+|----------|-----------|-----------|------------|
+| Android | ✅ ML Kit Text Recognition | ✅ Gemini API | Offline + Online |
+| iOS | ✅ VisionKit Text Recognition | ✅ Gemini API | Offline + Online |
+
+---
+
+## OCR Functions
+
+### ImagePickerKMP.scanOCR
+
+Main OCR function that handles camera/gallery integration and text analysis.
+
+```kotlin
+suspend fun scanOCR(
+    mode: ScanMode,
+    onResult: (OCRResult) -> Unit,
+    onError: (Throwable) -> Unit
+)
+```
+
+#### Parameters
+
+- `mode: ScanMode` - Analysis mode (Local or Cloud with API key)
+- `onResult: (OCRResult) -> Unit` - Callback with successful OCR result
+- `onError: (Throwable) -> Unit` - Callback with error information
+
+### ImagePickerKMP.scanOCRFromUri
+
+Direct OCR analysis from existing image URI.
+
+```kotlin
+suspend fun scanOCRFromUri(
+    imageUri: String,
+    mode: ScanMode,
+    onResult: (OCRResult) -> Unit,
+    onError: (Throwable) -> Unit
+)
+```
+
+#### Parameters
+
+- `imageUri: String` - URI of the image to analyze
+- `mode: ScanMode` - Analysis mode (Local or Cloud with API key)
+- `onResult: (OCRResult) -> Unit` - Callback with successful OCR result
+- `onError: (Throwable) -> Unit` - Callback with error information
+
+### OCRScanner Composable
+
+Composable UI component for OCR integration.
+
+```kotlin
+@Composable
+fun OCRScanner(
+    mode: ScanMode,
+    onResult: (OCRResult) -> Unit,
+    onError: (Throwable) -> Unit,
+    onDismiss: () -> Unit = {}
+)
+```
+
+#### Parameters
+
+- `mode: ScanMode` - Analysis mode (Local or Cloud with API key)
+- `onResult: (OCRResult) -> Unit` - Callback with successful OCR result
+- `onError: (Throwable) -> Unit` - Callback with error information
+- `onDismiss: () -> Unit` - Callback when picker is dismissed
+
+---
+
+## OCR Exceptions
+
+### OCRException
+
+Base exception for OCR-related errors.
+
+```kotlin
+open class OCRException(message: String, cause: Throwable? = null) : Exception(message, cause)
+```
+
+### LocalOCRException
+
+Exception for local OCR analysis failures.
+
+```kotlin
+class LocalOCRException(message: String, cause: Throwable? = null) : OCRException(message, cause)
+```
+
+### CloudOCRException
+
+Exception for cloud OCR analysis failures.
+
+```kotlin
+class CloudOCRException(message: String, cause: Throwable? = null) : OCRException(message, cause)
+```
+
+### InvalidAPIKeyException
+
+Exception for invalid or missing API keys.
+
+```kotlin
+class InvalidAPIKeyException(message: String = "Invalid or missing API key") : OCRException(message)
+```
+
+---
+
+## Setup Requirements
+
+### For Local OCR
+
+- **Android**: Automatic (ML Kit included in dependencies)
+- **iOS**: Automatic (VisionKit is part of the system)
+
+### For Cloud OCR
+
+1. Get a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Use it in your application:
+
+```kotlin
+val apiKey = "AIzaSyC..." // Your Gemini API key
+ImagePickerKMP.scanOCR(ScanMode.Cloud(apiKey)) { result ->
+    // Process result
+}
+```
+
+---
+
+## Code References
+
+- **library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/ocr/ImagePickerOCR.kt**: Main OCR API
+- **library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/ocr/OCRScanner.kt**: Composable UI integration
+- **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/data/analyzers/LocalOCRAnalyzer.kt**: Android ML Kit implementation
+- **library/src/iosMain/kotlin/io/github/ismoy/imagepickerkmp/data/analyzers/LocalOCRAnalyzer.kt**: iOS VisionKit implementation
+- **library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/data/integration/GeminiService.kt**: Gemini API integration

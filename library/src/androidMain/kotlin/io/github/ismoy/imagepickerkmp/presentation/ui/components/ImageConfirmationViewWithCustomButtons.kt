@@ -110,7 +110,7 @@ fun ImageConfirmationViewWithCustomButtons(
                                    topEnd = ImagePickerUiConstants.ConfirmationCardCornerRadius)),
                            contentScale = ContentScale.Crop
                        )
-                       val isHD = result.width >= 1280 && result.height >= 720
+                       val isHD = (result.width ?: 0) >= 1280 && (result.height ?: 0) >= 720
                        Column( modifier = Modifier
                            .align(Alignment.TopEnd)
                            .padding(ImagePickerUiConstants.ConfirmationCardPadding),

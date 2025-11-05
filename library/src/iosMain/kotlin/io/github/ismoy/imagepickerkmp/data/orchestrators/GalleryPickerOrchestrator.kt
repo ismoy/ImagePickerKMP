@@ -19,7 +19,9 @@ object GalleryPickerOrchestrator {
         onDismiss: () -> Unit,
         allowMultiple: Boolean = false,
         selectionLimit: Long = SELECTION_LIMIT,
-        compressionLevel: CompressionLevel? = null
+        compressionLevel: CompressionLevel? = null,
+        includeExif: Boolean = false,
+        onPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = null
     ) {
         try {
             val rootViewController = ViewControllerProvider.getRootViewController()
@@ -34,7 +36,9 @@ object GalleryPickerOrchestrator {
                     onError,
                     onDismiss,
                     selectionLimit,
-                    compressionLevel
+                    compressionLevel,
+                    includeExif,
+                    onPhotosSelected
                 )
             } else {
                 GalleryPresenter.presentGallery(
@@ -42,7 +46,8 @@ object GalleryPickerOrchestrator {
                     onPhotoSelected,
                     onError,
                     onDismiss,
-                    compressionLevel
+                    compressionLevel,
+                    includeExif
                 )
             }
         } catch (e: Exception) {

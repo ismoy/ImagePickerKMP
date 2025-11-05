@@ -24,7 +24,8 @@ fun createFileChooser(
                 MimeType.IMAGE_BMP -> listOf("bmp")
                 MimeType.IMAGE_HEIC -> listOf("heic")
                 MimeType.IMAGE_HEIF -> listOf("heif")
-                MimeType.IMAGE_ALL -> listOf("jpg", "jpeg", "png", "gif", "webp", "bmp", "heic", "heif")
+                MimeType.APPLICATION_PDF -> listOf("pdf")
+                MimeType.IMAGE_ALL -> listOf("jpg", "jpeg", "png", "gif", "webp", "bmp", "heic", "heif","pdf")
             }
         }
 

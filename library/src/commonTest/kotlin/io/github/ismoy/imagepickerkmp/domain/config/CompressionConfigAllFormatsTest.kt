@@ -27,8 +27,17 @@ class CompressionConfigAllFormatsTest {
     fun `default config should have all supported MIME types count`() {
         val defaultConfig = CompressionConfig()
         
-        // Should have 7 specific image types (excluding IMAGE_ALL which is a wildcard)
-        val expectedCount = 7
+        // Should have image types supported by CompressionConfig (excluding IMAGE_ALL which is a wildcard and APPLICATION_PDF which is not compressible)
+        val expectedImageFormats = listOf(
+            MimeType.IMAGE_JPEG,
+            MimeType.IMAGE_PNG,
+            MimeType.IMAGE_WEBP,
+            MimeType.IMAGE_HEIC,
+            MimeType.IMAGE_HEIF,
+            MimeType.IMAGE_GIF,
+            MimeType.IMAGE_BMP
+        )
+        val expectedCount = expectedImageFormats.size
         assertTrue(
             defaultConfig.supportedFormats.size == expectedCount,
             "Expected $expectedCount formats, but got ${defaultConfig.supportedFormats.size}"

@@ -12,7 +12,8 @@ enum class MimeType(val value: String) {
     IMAGE_WEBP("image/webp"),
     IMAGE_BMP("image/bmp"),
     IMAGE_HEIC("image/heic"),
-    IMAGE_HEIF("image/heif");
+    IMAGE_HEIF("image/heif"),
+    APPLICATION_PDF("application/pdf");
 
     /**
      * Companion object containing utility functions and constants for MIME type operations.

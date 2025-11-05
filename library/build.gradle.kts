@@ -13,6 +13,7 @@ plugins {
     id("jacoco")
     id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.dokka") version "1.9.20"
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 version = rootProject.version
@@ -381,6 +382,13 @@ kotlin {
                 implementation("io.coil-kt.coil3:coil-compose:3.2.0")
                 implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+                // OCR dependencies
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+                // Ktor dependencies for HTTP client
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.ktor.client.logging)
             }
         }
         val androidMain by getting {
@@ -396,6 +404,12 @@ kotlin {
                 implementation(libs.androidx.ui)
                 implementation(libs.androidx.ui.tooling.preview)
                 implementation("androidx.compose.material:material-icons-extended:1.7.8")
+                // EXIF interface for metadata extraction
+                implementation("androidx.exifinterface:exifinterface:1.3.7")
+                // ML Kit for OCR
+                implementation("com.google.mlkit:text-recognition:16.0.1")
+                // Ktor Android engine
+                implementation(libs.ktor.client.okhttp)
             }
         }
         val iosResourcesDir =
@@ -407,6 +421,8 @@ kotlin {
             }
             resources.srcDir("src/commonMain/resources")
             dependencies {
+                // Ktor iOS engine
+                implementation(libs.ktor.client.darwin)
             }
         }
         

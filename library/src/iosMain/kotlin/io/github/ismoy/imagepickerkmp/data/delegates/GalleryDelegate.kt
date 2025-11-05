@@ -1,6 +1,7 @@
 package io.github.ismoy.imagepickerkmp.data.delegates
 
 import io.github.ismoy.imagepickerkmp.data.processors.ImageProcessor
+import io.github.ismoy.imagepickerkmp.domain.utils.ExifDataExtractor
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -22,7 +23,8 @@ import platform.darwin.NSObject
 class GalleryDelegate(
     private val onImagePicked: (GalleryPhotoResult) -> Unit,
     private val onDismiss: () -> Unit,
-    private val compressionLevel: CompressionLevel? = null
+    private val compressionLevel: CompressionLevel? = null,
+    private val includeExif: Boolean = false
 ) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
 
     override fun imagePickerController(
@@ -60,12 +62,27 @@ class GalleryDelegate(
                 if (tempURL != null) {
                     val fileSizeInBytes = processedData.length.toLong()
                     val fileSizeInKB = bytesToKB(fileSizeInBytes)
+                    
+                    // Extract EXIF data if requested
+                    logDebug("EXIF extraction - includeExif: $includeExif, tempURL.path: ${tempURL.path}")
+                    val exifData = if (includeExif) {
+                        logDebug("Calling ExifDataExtractor.extractExifData for path: ${tempURL.path ?: "NULL"}")
+                        val result = ExifDataExtractor.extractExifData(tempURL.path ?: "")
+                        logDebug("ExifDataExtractor result: ${result != null}")
+                        result
+                    } else {
+                        logDebug("EXIF extraction skipped (includeExif = false)")
+                        null
+                    }
+                    
                     val galleryResult = GalleryPhotoResult(
                         uri = tempURL.absoluteString ?: "",
                         width = image.size.useContents { width.toInt() },
                         height = image.size.useContents { height.toInt() },
                         fileName = tempURL.lastPathComponent,
-                        fileSize = fileSizeInKB
+                        fileSize = fileSizeInKB,
+                        mimeType = "image/jpeg",
+                        exif = exifData
                     )
                     logDebug("Final result - File size: ${fileSizeInKB}KB (${fileSizeInBytes} bytes)")
                     onImagePicked(galleryResult)
