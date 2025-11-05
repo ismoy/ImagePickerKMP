@@ -17,11 +17,9 @@ gradle.local.properties
 build/
 
 library/build/
-
-# Generated JavaScript files and caches
-kotlin/
-kotlin-js-store/
-
 # NPM packages (generated)
 *.tgz
 node_modules/
+ocr-feature/
+react-native/
+
