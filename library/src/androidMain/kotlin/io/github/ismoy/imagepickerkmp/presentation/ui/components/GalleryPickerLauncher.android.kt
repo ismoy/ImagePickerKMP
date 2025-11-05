@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,7 +20,7 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery.remembe
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery.rememberMultiplePickerLauncher
 
 private data class GalleryPickerConfig(
-    val context: ComponentActivity,
+    val context: Context,
     val onPhotosSelected: (List<GalleryPhotoResult>) -> Unit,
     val onError: (Exception) -> Unit,
     val onDismiss: () -> Unit,
@@ -52,7 +53,7 @@ actual fun GalleryPickerLauncher(
     }
 
     val config = GalleryPickerConfig(
-        context = activity,
+        context = context,
         onPhotosSelected = onPhotosSelected,
         onError = onError,
         onDismiss = onDismiss,

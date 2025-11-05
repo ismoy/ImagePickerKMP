@@ -35,7 +35,9 @@ import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.Backg
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +57,7 @@ fun CameraCapturePreview(
     includeExif: Boolean = false
 ) {
     val context = LocalContext.current
-    val activity = context as? ComponentActivity
+    val activity = context.activity as? ComponentActivity
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
 
     val cameraManager = rememberCameraManager(context, activity ?: return)
