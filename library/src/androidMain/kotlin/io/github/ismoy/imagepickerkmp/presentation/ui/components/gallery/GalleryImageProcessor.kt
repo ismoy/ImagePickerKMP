@@ -88,14 +88,14 @@ internal object GalleryImageProcessor {
             try {
                 ExifDataExtractor.extractExifDataWithFallbacks(context, uri)
             } catch (e: Exception) {
-                logDebug("⚠ Error extracting EXIF data: ${e.message}")
+                logDebug(" Error extracting EXIF data: ${e.message}")
                 null
             }
         } else {
             if (!includeExif) {
-                logDebug("ℹ EXIF extraction disabled by configuration")
+                logDebug(" EXIF extraction disabled by configuration")
             } else {
-                logDebug("ℹ EXIF extraction skipped - Not an image file: $mimeType")
+                logDebug(" EXIF extraction skipped - Not an image file: $mimeType")
             }
             null
         }

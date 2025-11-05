@@ -29,11 +29,11 @@ fun rememberCameraManager(
     context: Context,
     lifecycleOwner: LifecycleOwner
 ): CameraXManager? {
-    return remember(context, lifecycleOwner) {
+    return remember(lifecycleOwner) {
         try {
             val fileManager = FileManager(context)
             val orientationCorrector = ImageOrientationCorrector()
-            val imageProcessor = ImageProcessor(fileManager, orientationCorrector)
+            val imageProcessor = ImageProcessor(context,fileManager, orientationCorrector)
             val cameraController = CameraController(context, lifecycleOwner, fileManager)
             
             CameraXManager(cameraController, imageProcessor)

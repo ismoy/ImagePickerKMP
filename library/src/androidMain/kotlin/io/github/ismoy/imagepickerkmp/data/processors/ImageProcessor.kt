@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp.data.processors
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -25,7 +26,7 @@ import androidx.core.graphics.scale
  * SOLID: Dependency Inversion - Dependencies injected via constructor
  */
 class ImageProcessor(
-    private val context: android.content.Context,
+    private val context: Context,
     private val fileManager: io.github.ismoy.imagepickerkmp.data.managers.FileManager,
     private val orientationCorrector: ImageOrientationCorrector
 ) {

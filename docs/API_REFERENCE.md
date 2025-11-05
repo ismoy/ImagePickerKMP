@@ -421,7 +421,9 @@ data class PhotoResult(
     val width: Int,
     val height: Int,
     val fileName: String? = null,
-    val fileSize: Long? = null
+    val fileSize: Long? = null,
+    val mimeType: String? = null,
+    val exif: ExifData? = null  // EXIF metadata (Android/iOS only)
 )
 ```
 
@@ -435,7 +437,9 @@ data class PhotoResult(
     val width: Int,
     val height: Int,
     val fileName: String? = null,
-    val fileSize: Long? = null
+    val fileSize: Long? = null,
+    val mimeType: String? = null,
+    val exif: ExifData? = null  // EXIF metadata (Android/iOS only)
 )
 ```
 
@@ -471,6 +475,7 @@ data class CameraCaptureConfig(
     val preference: CapturePhotoPreference = CapturePhotoPreference.QUALITY,
     val captureButtonSize: Dp = 72.dp,
     val compressionLevel: CompressionLevel? = null, // null = no compression
+    val includeExif: Boolean = false, // Extract EXIF metadata (GPS, camera info)
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
@@ -481,7 +486,8 @@ data class CameraCaptureConfig(
 **Parameters:**
 - `preference` - Photo capture quality preference
 - `captureButtonSize` - Size of the capture button
-- `compressionLevel` - **NEW**: Automatic image compression level (null = disabled, MEDIUM = recommended)
+- `compressionLevel` - Automatic image compression level (null = disabled, MEDIUM = recommended)
+- `includeExif` - **NEW**: Extract EXIF metadata including GPS, camera model, timestamps (Android/iOS only)
 - `uiConfig` - UI customization configuration
 - `cameraCallbacks` - Camera lifecycle callbacks
 - `permissionAndConfirmationConfig` - Permission and confirmation dialogs
@@ -558,6 +564,87 @@ data class CameraCallbacks(
     val onGalleryOpened: (() -> Unit)? = null
 )
 ```
+
+### ExifData
+
+Contains comprehensive EXIF metadata extracted from images. **Available on Android and iOS only.**
+
+```kotlin
+data class ExifData(
+    // GPS Data
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val altitude: Double? = null,
+    
+    // Date & Time
+    val dateTaken: String? = null,
+    val dateTime: String? = null,
+    val digitizedTime: String? = null,
+    val originalTime: String? = null,
+    
+    // Camera Information
+    val cameraModel: String? = null,
+    val cameraManufacturer: String? = null,
+    val software: String? = null,
+    val owner: String? = null,
+    
+    // Image Properties
+    val orientation: String? = null,
+    val colorSpace: String? = null,
+    val whiteBalance: String? = null,
+    val flash: String? = null,
+    val focalLength: String? = null,
+    val aperture: String? = null,
+    val shutterSpeed: String? = null,
+    val iso: String? = null,
+    val imageWidth: Int? = null,
+    val imageHeight: Int? = null
+)
+```
+
+**Example Usage:**
+
+```kotlin
+// Single image with EXIF
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            // Access EXIF data
+            result.exif?.let { exif ->
+                println("📍 GPS: ${exif.latitude}, ${exif.longitude}")
+                println("📷 Camera: ${exif.cameraModel}")
+                println("📅 Date: ${exif.dateTaken}")
+                println("⚙️ Settings: ISO ${exif.iso}, f/${exif.aperture}")
+            }
+        },
+        cameraCaptureConfig = CameraCaptureConfig(
+            includeExif = true  // Enable EXIF extraction
+        )
+    )
+)
+
+// Multiple images with EXIF - Each image has its own EXIF data
+GalleryPickerLauncher(
+    onPhotosSelected = { results ->
+        // Each result in the array has its own EXIF data
+        results.forEachIndexed { index, result ->
+            println("Image $index:")
+            result.exif?.let { exif ->
+                println("   Location: ${exif.latitude}, ${exif.longitude}")
+                println("   Camera: ${exif.cameraModel}")
+                println("   Date: ${exif.dateTaken}")
+            } ?: println("   No EXIF data available")
+        }
+    },
+    allowMultiple = true,
+    includeExif = true  // Enable EXIF for all selected images
+)
+```
+
+**Platform Support:**
+- ✅ **Android**: Full support via `androidx.exifinterface`
+- ✅ **iOS**: Full support via native ImageIO framework
+- ❌ **Desktop/Web/Wasm**: Not supported (returns null)
 
 ### GalleryConfig
 
@@ -1302,13 +1389,3 @@ ImagePickerKMP.scanOCR(ScanMode.Cloud(apiKey)) { result ->
     // Process result
 }
 ```
-
----
-
-## Code References
-
-- **library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/ocr/ImagePickerOCR.kt**: Main OCR API
-- **library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/ocr/OCRScanner.kt**: Composable UI integration
-- **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/data/analyzers/LocalOCRAnalyzer.kt**: Android ML Kit implementation
-- **library/src/iosMain/kotlin/io/github/ismoy/imagepickerkmp/data/analyzers/LocalOCRAnalyzer.kt**: iOS VisionKit implementation
-- **library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/data/integration/GeminiService.kt**: Gemini API integration

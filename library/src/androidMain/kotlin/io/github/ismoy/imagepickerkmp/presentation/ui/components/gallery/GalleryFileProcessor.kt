@@ -44,7 +44,7 @@ internal object GalleryFileProcessor {
                     }
                 }
             } catch (e: Exception) {
-                logDebug("❌ Error processing selected file: ${e.message}")
+                logDebug(" Error processing selected file: ${e.message}")
                 null
             }
         }

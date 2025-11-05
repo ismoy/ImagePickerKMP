@@ -102,7 +102,8 @@ actual fun ImagePickerLauncher(
             onError = config.onError,
             onDismiss = config.onDismiss,
             onFinish = onCameraFinished,
-            compressionLevel = config.cameraCaptureConfig.compressionLevel
+            compressionLevel = config.cameraCaptureConfig.compressionLevel,
+            includeExif = config.cameraCaptureConfig.includeExif
         )
     }
 
@@ -219,7 +220,8 @@ private fun launchCameraInternal(
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
     onFinish: () -> Unit,
-    compressionLevel: CompressionLevel? = null
+    compressionLevel: CompressionLevel? = null,
+    includeExif: Boolean = false
 ) {
     LaunchedEffect(Unit) {
         PhotoCaptureOrchestrator.launchCamera(
@@ -235,7 +237,8 @@ private fun launchCameraInternal(
                 onDismiss()
                 onFinish()
             },
-            compressionLevel = compressionLevel
+            compressionLevel = compressionLevel,
+            includeExif = includeExif
         )
     }
 }

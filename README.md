@@ -136,18 +136,21 @@ if (showCamera) {
 -  **Camera & Gallery** - Direct access with unified API
 -  **Image Cropping** - Built-in crop functionality
 -  **Smart Compression** - Configurable quality levels
+-  **EXIF Metadata** - GPS, camera info, timestamps (Android/iOS)
+-  **PDF Support** - Select PDF documents alongside images
 -  **Extension Functions** - Easy image processing (`loadPainter()`, `loadBytes()`, `loadBase64()`)
 -  **Permission Handling** - Automatic permission management
 -  **Async Processing** - Non-blocking UI with coroutines
--  **Format Support** - JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
+-  **Format Support** - JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP, PDF
 
 ##  Platform Support
 
-| Platform | Minimum Version | Status |
-|----------|----------------|--------|
-| Android  | API 21+       | ✅ |
-| iOS      | iOS 12.0+     | ✅ |
-| Desktop  | JDK 11+       | ✅ |
+| Platform | Minimum Version | Camera | Gallery | Crop | EXIF | Status |
+|----------|----------------|--------|---------|------|------|--------|
+| Android  | API 21+       | ✅ | ✅ | ✅ | ✅ | ✅ |
+| iOS      | iOS 12.0+     | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Desktop  | JDK 11+       | ❌ | ✅ | ✅ | ❌ | ✅ |
+| Web      | Modern Browsers| ❌ | ✅ | ✅ | ❌ | ✅ |
 | Web      | Modern Browsers| ✅ |
 
 ---
@@ -199,12 +202,42 @@ ImagePickerLauncher(
 )
 ```
 
+### EXIF Metadata Extraction
+```kotlin
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            result.exif?.let { exif ->
+                println(" Location: ${exif.latitude}, ${exif.longitude}")
+                println(" Camera: ${exif.cameraModel}")
+                println(" Taken: ${exif.dateTaken}")
+            }
+        },
+        cameraCaptureConfig = CameraCaptureConfig(
+            includeExif = true  // Android/iOS only
+        )
+    )
+)
+)
+```
+
 ### Multiple Selection with Filtering
 ```kotlin
+// Images only
 GalleryPickerLauncher(
     allowMultiple = true,
     mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
     enableCrop = true
+)
+
+// Images and PDFs
+GalleryPickerLauncher(
+    allowMultiple = true,
+    mimeTypes = listOf(
+        MimeType.IMAGE_JPEG, 
+        MimeType.IMAGE_PNG,
+        MimeType.APPLICATION_PDF  // PDF support
+    )
 )
 ```
 

@@ -83,10 +83,10 @@ data class CropConfig(
  * Main configuration for camera capture
  */
 data class CameraCaptureConfig(
-    val preference: CapturePhotoPreference = CapturePhotoPreference.QUALITY,
+    val preference: CapturePhotoPreference = CapturePhotoPreference.BALANCED,
     val captureButtonSize: Dp = 72.dp,
-    val compressionLevel: CompressionLevel? = null, // null = no compression, MEDIUM = recommended
-    val includeExif: Boolean = false, // Include EXIF metadata including GPS location data
+    val compressionLevel: CompressionLevel? = CompressionLevel.MEDIUM,
+    val includeExif: Boolean = false,
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),

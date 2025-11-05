@@ -22,14 +22,16 @@ object CameraPresenter {
         onPhotoCaptured: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
         onDismiss: () -> Unit,
-        compressionLevel: CompressionLevel? = null
+        compressionLevel: CompressionLevel? = null,
+        includeExif: Boolean = false
     ) {
         try {
             val imagePickerController = createImagePickerController(
                 onPhotoCaptured,
                 onError,
                 onDismiss,
-                compressionLevel
+                compressionLevel,
+                includeExif
             )
             viewController.presentViewController(imagePickerController, animated = true, completion = null)
         } catch (e: Exception) {
@@ -41,7 +43,8 @@ object CameraPresenter {
         onPhotoCaptured: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
         onDismiss: () -> Unit,
-        compressionLevel: CompressionLevel? = null
+        compressionLevel: CompressionLevel? = null,
+        includeExif: Boolean = false
     ): UIImagePickerController {
         return UIImagePickerController().apply {
             sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
@@ -64,7 +67,8 @@ object CameraPresenter {
                 wrappedOnPhotoCaptured,
                 wrappedOnError,
                 wrappedOnDismiss,
-                compressionLevel
+                compressionLevel,
+                includeExif
             )
             delegate = cameraDelegate
         }

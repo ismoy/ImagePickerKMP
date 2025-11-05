@@ -1,2 +1,0 @@
-headers = ExifExtractorNative.h
-package = io.github.ismoy.imagepickerkmp.native.exif
