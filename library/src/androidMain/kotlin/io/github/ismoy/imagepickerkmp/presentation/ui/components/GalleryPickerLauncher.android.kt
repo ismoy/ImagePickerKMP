@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private data class GalleryPickerConfig(
-    val context: ComponentActivity,
+    val context: Context,
     val onPhotosSelected: (List<GalleryPhotoResult>) -> Unit,
     val onError: (Exception) -> Unit,
     val onDismiss: () -> Unit,
@@ -56,11 +56,6 @@ actual fun GalleryPickerLauncher(
     fileFilterDescription: String
 ) {
     val context = LocalContext.current
-    if (context !is ComponentActivity) {
-        onError(Exception(getStringResource(StringResource.INVALID_CONTEXT_ERROR)))
-        return
-    }
-
     val config = GalleryPickerConfig(
         context = context,
         onPhotosSelected = onPhotosSelected,

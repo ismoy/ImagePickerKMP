@@ -1,9 +1,8 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
+import android.view.ViewGroup.LayoutParams
+import androidx.activity.ComponentActivity
 import androidx.camera.view.PreviewView
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,9 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
@@ -29,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController
@@ -37,20 +35,14 @@ import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.Backg
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-
+import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import android.view.ViewGroup.LayoutParams
-import androidx.compose.ui.platform.LocalContext
-import androidx.activity.ComponentActivity
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 
 private const val CAMERA_INITIALIZATION_DELAY = 0L
 
@@ -64,7 +56,7 @@ fun CameraCapturePreview(
     compressionLevel: CompressionLevel? = null
 ) {
     val context = LocalContext.current
-    val activity = context as? ComponentActivity
+    val activity = context.activity as? ComponentActivity
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
 
     val cameraManager = rememberCameraManager(context, activity ?: return)
