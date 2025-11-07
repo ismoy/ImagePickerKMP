@@ -62,7 +62,8 @@ data class PermissionAndConfirmationConfig(
 data class GalleryConfig(
     val allowMultiple: Boolean = false,
     val mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
-    val selectionLimit: Int = 30
+    val selectionLimit: Int = 30,
+    val includeExif: Boolean = false // Include EXIF metadata including GPS location data
 )
 
 @Suppress("EndOfSentenceFormat")
@@ -82,9 +83,10 @@ data class CropConfig(
  * Main configuration for camera capture
  */
 data class CameraCaptureConfig(
-    val preference: CapturePhotoPreference = CapturePhotoPreference.QUALITY,
+    val preference: CapturePhotoPreference = CapturePhotoPreference.BALANCED,
     val captureButtonSize: Dp = 72.dp,
-    val compressionLevel: CompressionLevel? = null, // null = no compression, MEDIUM = recommended
+    val compressionLevel: CompressionLevel? = CompressionLevel.MEDIUM,
+    val includeExif: Boolean = false,
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
@@ -125,7 +127,8 @@ data class ImagePickerConfig(
 data class CameraPreviewConfig(
     val captureButtonSize: Dp = 72.dp,
     val uiConfig: UiConfig = UiConfig(),
-    val cameraCallbacks: CameraCallbacks = CameraCallbacks()
+    val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
+    val galleryConfig: GalleryConfig = GalleryConfig()
 )
 
 /**

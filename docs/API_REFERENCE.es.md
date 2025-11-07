@@ -421,7 +421,9 @@ data class PhotoResult(
     val width: Int,
     val height: Int,
     val fileName: String? = null,
-    val fileSize: Long? = null
+    val fileSize: Long? = null,
+    val mimeType: String? = null,
+    val exif: ExifData? = null  // Metadatos EXIF (solo Android/iOS)
 )
 ```
 
@@ -435,7 +437,9 @@ data class PhotoResult(
     val width: Int,
     val height: Int,
     val fileName: String? = null,
-    val fileSize: Long? = null
+    val fileSize: Long? = null,
+    val mimeType: String? = null,
+    val exif: ExifData? = null  // Metadatos EXIF (solo Android/iOS)
 )
 ```
 
@@ -470,12 +474,24 @@ Configuración para la captura de cámara.
 data class CameraCaptureConfig(
     val preference: CapturePhotoPreference = CapturePhotoPreference.QUALITY,
     val captureButtonSize: Dp = 72.dp,
+    val compressionLevel: CompressionLevel? = null, // null = sin compresión
+    val includeExif: Boolean = false, // Extraer metadatos EXIF (GPS, info cámara)
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
     val galleryConfig: GalleryConfig = GalleryConfig()
 )
 ```
+
+**Parámetros:**
+- `preference` - Preferencia de calidad de captura de foto
+- `captureButtonSize` - Tamaño del botón de captura
+- `compressionLevel` - Nivel de compresión automática de imagen (null = deshabilitado, MEDIUM = recomendado)
+- `includeExif` - **NUEVO**: Extraer metadatos EXIF incluyendo GPS, modelo de cámara, timestamps (solo Android/iOS)
+- `uiConfig` - Configuración de personalización de UI
+- `cameraCallbacks` - Callbacks del ciclo de vida de la cámara
+- `permissionAndConfirmationConfig` - Diálogos de permisos y confirmación
+- `galleryConfig` - Configuración de selección de galería
 
 ### PermissionAndConfirmationConfig
 
@@ -527,107 +543,86 @@ data class CameraCallbacks(
 )
 ```
 
-### GalleryConfig
+### ExifData
 
-Configuración para la galería de imágenes.
+Contiene metadatos EXIF completos extraídos de imágenes. **Disponible solo en Android e iOS.**
 
 ```kotlin
-data class GalleryConfig(
-    val allowMultiple: Boolean = false,
-    val mimeTypes: List<String> = listOf("image/*"),
-    val selectionLimit: Int = 30
+data class ExifData(
+    // Datos GPS
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val altitude: Double? = null,
+    
+    // Fecha y Hora
+    val dateTaken: String? = null,
+    val dateTime: String? = null,
+    val digitizedTime: String? = null,
+    val originalTime: String? = null,
+    
+    // Información de Cámara
+    val cameraModel: String? = null,
+    val cameraManufacturer: String? = null,
+    val software: String? = null,
+    val owner: String? = null,
+    
+    // Propiedades de Imagen
+    val orientation: String? = null,
+    val colorSpace: String? = null,
+    val whiteBalance: String? = null,
+    val flash: String? = null,
+    val focalLength: String? = null,
+    val aperture: String? = null,
+    val shutterSpeed: String? = null,
+    val iso: String? = null,
+    val imageWidth: Int? = null,
+    val imageHeight: Int? = null
 )
 ```
 
-### CameraPreviewConfig
-
-Configuración para la vista previa de la cámara y callbacks.
+**Ejemplo de Uso:**
 
 ```kotlin
-data class CameraPreviewConfig(
-    val captureButtonSize: Dp = 72.dp,
-    val uiConfig: UiConfig = UiConfig(),
-    val cameraCallbacks: CameraCallbacks = CameraCallbacks()
-)
-```
-
-#### Propiedades
-
-- `captureButtonSize: Dp` - Tamaño del botón de captura (por defecto 72.dp)
-- `uiConfig: UiConfig` - Configuración de la interfaz de usuario
-- `cameraCallbacks: CameraCallbacks` - Callbacks de la cámara
-
-#### Ejemplo
-
-```kotlin
-val cameraPreviewConfig = CameraPreviewConfig(
-    captureButtonSize = 80.dp,
-    uiConfig = UiConfig(
-        buttonColor = Color.Blue,
-        iconColor = Color.White
-    ),
-    cameraCallbacks = CameraCallbacks(
-        onCameraReady = { println("Cámara lista") },
-        onCameraSwitch = { println("Cámara cambiada") }
+// Imagen individual con EXIF
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            // Acceder a datos EXIF
+            result.exif?.let { exif ->
+                println("📍 GPS: ${exif.latitude}, ${exif.longitude}")
+                println("📷 Cámara: ${exif.cameraModel}")
+                println("📅 Fecha: ${exif.dateTaken}")
+                println("⚙️ Config: ISO ${exif.iso}, f/${exif.aperture}")
+            }
+        },
+        cameraCaptureConfig = CameraCaptureConfig(
+            includeExif = true  // Habilitar extracción EXIF
+        )
     )
 )
-```
 
-### CameraPermissionDialogConfig
-
-Configuración para diálogos de permisos de cámara.
-
-```kotlin
-data class CameraPermissionDialogConfig(
-    val titleDialogConfig: String,
-    val descriptionDialogConfig: String,
-    val btnDialogConfig: String,
-    val titleDialogDenied: String,
-    val descriptionDialogDenied: String,
-    val btnDialogDenied: String,
-    val customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)? = null,
-    val customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)? = null
+// Múltiples imágenes con EXIF - Cada imagen tiene su propio EXIF
+GalleryPickerLauncher(
+    onPhotosSelected = { results ->
+        // Cada resultado en el array tiene sus propios datos EXIF
+        results.forEachIndexed { index, result ->
+            println("Imagen $index:")
+            result.exif?.let { exif ->
+                println("  📍 Ubicación: ${exif.latitude}, ${exif.longitude}")
+                println("  📷 Cámara: ${exif.cameraModel}")
+                println("  📅 Fecha: ${exif.dateTaken}")
+            } ?: println("  ⚠️ Sin datos EXIF disponibles")
+        }
+    },
+    allowMultiple = true,
+    includeExif = true  // Habilitar EXIF para todas las imágenes seleccionadas
 )
 ```
 
-#### Propiedades
-
-- `titleDialogConfig: String` - Título para el diálogo de configuración
-- `descriptionDialogConfig: String` - Descripción para el diálogo de configuración
-- `btnDialogConfig: String` - Texto del botón para el diálogo de configuración
-- `titleDialogDenied: String` - Título para el diálogo de denegación
-- `descriptionDialogDenied: String` - Descripción para el diálogo de denegación
-- `btnDialogDenied: String` - Texto del botón para el diálogo de denegación
-- `customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)?` - Diálogo personalizado para reintentar
-- `customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)?` - Diálogo personalizado para configuración
-
-#### Ejemplo
-
-```kotlin
-val dialogConfig = CameraPermissionDialogConfig(
-    titleDialogConfig = "Permiso de cámara requerido",
-    descriptionDialogConfig = "Se requiere permiso de cámara para capturar fotos. Por favor, concédelo en configuración",
-    btnDialogConfig = "Abrir configuración",
-    titleDialogDenied = "Permiso de cámara denegado",
-    descriptionDialogDenied = "Se requiere permiso de cámara para capturar fotos. Por favor, concede los permisos",
-    btnDialogDenied = "Conceder permiso"
-)
-```
-
-### PermissionConfig
-
-Configuración para diálogos de permisos.
-
-```kotlin
-data class PermissionConfig(
-    val titleDialogConfig: String = "Camera permission required",
-    val descriptionDialogConfig: String = "Camera permission is required to capture photos. Please grant it in settings",
-    val btnDialogConfig: String = "Open settings",
-    val titleDialogDenied: String = "Camera permission denied",
-    val descriptionDialogDenied: String = "Camera permission is required to capture photos. Please grant the permissions",
-    val btnDialogDenied: String = "Grant permission"
-)
-```
+**Soporte de Plataforma:**
+- ✅ **Android**: Soporte completo vía `androidx.exifinterface`
+- ✅ **iOS**: Soporte completo vía framework nativo ImageIO
+- ❌ **Desktop/Web/Wasm**: No soportado (devuelve null)
 
 ---
 

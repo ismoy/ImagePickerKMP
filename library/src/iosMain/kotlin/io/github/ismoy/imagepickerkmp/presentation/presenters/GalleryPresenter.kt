@@ -20,13 +20,15 @@ object GalleryPresenter {
         onPhotoSelected: (GalleryPhotoResult) -> Unit,
         onError: (Exception) -> Unit,
         onDismiss: () -> Unit,
-        compressionLevel: CompressionLevel? = null
+        compressionLevel: CompressionLevel? = null,
+        includeExif: Boolean = false
     ) {
         try {
             val imagePickerController = createImagePickerController(
                 onPhotoSelected,
                 onDismiss,
-                compressionLevel
+                compressionLevel,
+                includeExif
             )
             viewController.presentViewController(imagePickerController, animated = true, completion = null)
         } catch (e: Exception) {
@@ -37,7 +39,8 @@ object GalleryPresenter {
     private fun createImagePickerController(
         onPhotoSelected: (GalleryPhotoResult) -> Unit,
         onDismiss: () -> Unit,
-        compressionLevel: CompressionLevel? = null
+        compressionLevel: CompressionLevel? = null,
+        includeExif: Boolean = false
     ): UIImagePickerController {
         return UIImagePickerController().apply {
             sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypePhotoLibrary
@@ -53,7 +56,7 @@ object GalleryPresenter {
                 cleanup()
             }
 
-            galleryDelegate = GalleryDelegate(wrappedOnPhotoSelected, wrappedOnDismiss, compressionLevel)
+            galleryDelegate = GalleryDelegate(wrappedOnPhotoSelected, wrappedOnDismiss, compressionLevel, includeExif)
             delegate = galleryDelegate
         }
     }

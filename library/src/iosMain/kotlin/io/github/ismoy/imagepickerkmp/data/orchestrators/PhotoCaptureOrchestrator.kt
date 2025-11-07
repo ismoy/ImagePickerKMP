@@ -16,7 +16,8 @@ object PhotoCaptureOrchestrator {
         onPhotoCaptured: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
         onDismiss: () -> Unit,
-        compressionLevel: CompressionLevel? = null
+        compressionLevel: CompressionLevel? = null,
+        includeExif: Boolean = false
     ) {
         try {
             val rootViewController = ViewControllerProvider.getRootViewController()
@@ -29,7 +30,8 @@ object PhotoCaptureOrchestrator {
                 onPhotoCaptured,
                 onError,
                 onDismiss,
-                compressionLevel
+                compressionLevel,
+                includeExif
             )
         } catch (e: Exception) {
             onError(PhotoCaptureException("Failed to launch camera: ${e.message}"))

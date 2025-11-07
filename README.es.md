@@ -117,10 +117,12 @@ Características para web:
 - **Integración de Cámara**: Acceso directo a la cámara con captura de fotos
 - **Selección de Galería**: Selecciona imágenes de la galería del dispositivo con soporte de compresión
 - **Recorte Avanzado de Imágenes**: Funcionalidad de recorte multiplataforma con gestión automática de contexto
+- **Metadatos EXIF**: Extrae GPS, información de cámara y timestamps (Android/iOS)
+- **Soporte de PDF**: Selección de documentos PDF junto con imágenes
 - **Compresión Automática de Imágenes**: Optimiza el tamaño de imagen manteniendo la calidad
 - **Niveles de Compresión Configurables**: Opciones de compresión BAJA, MEDIA, ALTA
 - **Procesamiento Asíncrono**: UI no bloqueante con integración de Kotlin Coroutines
-- **Soporte de Múltiples Formatos**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
+- **Soporte de Múltiples Formatos**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP, PDF
 - **Funciones de Extensión**: Funciones de extensión integradas para facilitar la visualización y manipulación de imágenes
 - **UI Personalizable**: Diálogos personalizados y vistas de confirmación
 - **Manejo de Permisos**: Gestión inteligente de permisos para ambas plataformas
@@ -216,7 +218,8 @@ if (showGallery) {
         },
         enableCrop = false, // Establecer a true si quieres la opción de Recorte 
         allowMultiple = true, // False para selección única
-        mimeTypes = listOf(MimeType.IMAGE_PNG) ,// Opcional: filtrar por tipo
+        mimeTypes = listOf(MimeType.IMAGE_PNG), // Opcional: filtrar por tipo
+        // Para incluir PDFs: listOf(MimeType.IMAGE_PNG, MimeType.APPLICATION_PDF)
     )
 }
 
@@ -325,14 +328,38 @@ LazyColumn {
 - **MEDIA**: 75% de calidad, dimensión máxima 1920px - Calidad/tamaño equilibrado
 - **ALTA**: 50% de calidad, dimensión máxima 1280px - Archivos más pequeños, bueno para almacenamiento
 
-### Formatos de Imagen Soportados
-- **JPEG** (image/jpeg) - Soporte completo de compresión
-- **PNG** (image/png) - Soporte completo de compresión
-- **HEIC** (image/heic) - Soporte completo de compresión
-- **HEIF** (image/heif) - Soporte completo de compresión
-- **WebP** (image/webp) - Soporte completo de compresión
-- **GIF** (image/gif) - Soporte completo de compresión
-- **BMP** (image/bmp) - Soporte completo de compresión
+### Ejemplo de Compresión
+```kotlin
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        cameraCaptureConfig = CameraCaptureConfig(
+            compressionLevel = CompressionLevel.MEDIUM,
+            skipConfirmation = true
+        )
+    )
+)
+```
+
+## Extracción de Metadatos EXIF
+**Extrae información GPS, detalles de cámara y timestamps de las fotos (Android/iOS).**
+
+```kotlin
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { result ->
+            result.exif?.let { exif ->
+                println("📍 Ubicación: ${exif.latitude}, ${exif.longitude}")
+                println("📷 Cámara: ${exif.cameraModel}")
+                println("📅 Fecha: ${exif.dateTaken}")
+                println("⚙️ ISO: ${exif.iso}, Apertura: f/${exif.aperture}")
+            }
+        },
+        cameraCaptureConfig = CameraCaptureConfig(
+            includeExif = true  // Solo Android/iOS
+        )
+    )
+)
+```
 
 ## Soporte de Plataformas
 <p align="center">

@@ -24,7 +24,8 @@ actual fun GalleryPickerLauncher(
     selectionLimit: Long,
     cameraCaptureConfig: CameraCaptureConfig?,
     enableCrop: Boolean,
-    fileFilterDescription: String
+    fileFilterDescription: String,
+    includeExif: Boolean
 ) {
     var selectedPhotoForCrop by remember { mutableStateOf<GalleryPhotoResult?>(null) }
     var showCropView by remember { mutableStateOf(false) }
@@ -33,22 +34,23 @@ actual fun GalleryPickerLauncher(
         val compressionLevel = cameraCaptureConfig?.compressionLevel
         
         if (allowMultiple) {
-            val selectedImages = mutableListOf<GalleryPhotoResult>()
             GalleryPickerOrchestrator.launchGallery(
                 onPhotoSelected = { result ->
-                    if (enableCrop && selectedImages.isEmpty()) {
-                        selectedPhotoForCrop = result
-                        showCropView = true
-                    } else {
-                        selectedImages.add(result)
-                        onPhotosSelected(selectedImages.toList())
-                    }
                 },
                 onError = onError,
                 onDismiss = onDismiss,
                 allowMultiple = true,
                 selectionLimit = selectionLimit,
-                compressionLevel = compressionLevel
+                compressionLevel = compressionLevel,
+                includeExif = includeExif,
+                onPhotosSelected = { results ->
+                    if (enableCrop && results.size == 1) {
+                        selectedPhotoForCrop = results.first()
+                        showCropView = true
+                    } else {
+                        onPhotosSelected(results)
+                    }
+                }
             )
         } else {
             GalleryPickerOrchestrator.launchGallery(
@@ -64,7 +66,8 @@ actual fun GalleryPickerLauncher(
                 onDismiss = onDismiss,
                 allowMultiple = false,
                 selectionLimit = 1,
-                compressionLevel = compressionLevel
+                compressionLevel = compressionLevel,
+                includeExif = includeExif
             )
         }
     }
@@ -83,7 +86,9 @@ actual fun GalleryPickerLauncher(
                 width = selectedPhotoForCrop!!.width,
                 height = selectedPhotoForCrop!!.height,
                 fileName = selectedPhotoForCrop!!.fileName,
-                fileSize = selectedPhotoForCrop!!.fileSize
+                fileSize = selectedPhotoForCrop!!.fileSize,
+                mimeType = selectedPhotoForCrop!!.mimeType,
+                exif = selectedPhotoForCrop!!.exif
             ),
             cropConfig = cropConfig,
             onAccept = { croppedResult ->
@@ -92,7 +97,9 @@ actual fun GalleryPickerLauncher(
                     width = croppedResult.width,
                     height = croppedResult.height,
                     fileName = croppedResult.fileName,
-                    fileSize = croppedResult.fileSize
+                    fileSize = croppedResult.fileSize,
+                    mimeType = croppedResult.mimeType,
+                    exif = croppedResult.exif
                 )
                 onPhotosSelected(listOf(croppedGalleryResult))
                 showCropView = false

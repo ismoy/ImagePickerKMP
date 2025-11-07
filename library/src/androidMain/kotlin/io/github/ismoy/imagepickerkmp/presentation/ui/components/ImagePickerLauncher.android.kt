@@ -8,6 +8,7 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.screens.CameraCaptureView
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
 import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
 import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
+import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
 
 @Suppress("FunctionNaming")
 @Composable
@@ -15,12 +16,13 @@ actual fun ImagePickerLauncher(
     config: ImagePickerConfig
 ){
     val context = LocalContext.current
-    if (context !is ComponentActivity) {
+    val activity = context.activity
+    if (activity !is ComponentActivity) {
         config.onError(Exception(getStringResource(StringResource.INVALID_CONTEXT_ERROR)))
         return
     }
     CameraCaptureView(
-        activity = context,
+        activity = activity,
         onPhotoResult = { result ->
             config.onPhotoCaptured(result)
         },
@@ -30,7 +32,8 @@ actual fun ImagePickerLauncher(
         },
         onDismiss = config.onDismiss,
         cameraCaptureConfig = config.cameraCaptureConfig.copy(
-            preference = config.cameraCaptureConfig.preference
+            preference = config.cameraCaptureConfig.preference,
+            includeExif = config.cameraCaptureConfig.includeExif  // ← FALTABA ESTO!
         ),
         enableCrop = config.enableCrop
     )

@@ -15,6 +15,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
+import java.io.File
 
 @RunWith(MockitoJUnitRunner::class)
 class CameraControllerTest {
@@ -32,7 +33,6 @@ class CameraControllerTest {
     fun setUp() {
         MockitoAnnotations.openMocks(this)
         context = InstrumentationRegistry.getInstrumentation().targetContext
-        cameraController = CameraController(context, lifecycleOwner)
     }
 
     @Test
@@ -141,7 +141,7 @@ class CameraControllerTest {
     @Test
     fun testTakePictureWithoutInitialization() {
         var capturedError: Exception? = null
-        var capturedFile: java.io.File? = null
+        var capturedFile: File? = null
         var capturedCameraType: CameraController.CameraType? = null
 
         cameraController.takePicture(

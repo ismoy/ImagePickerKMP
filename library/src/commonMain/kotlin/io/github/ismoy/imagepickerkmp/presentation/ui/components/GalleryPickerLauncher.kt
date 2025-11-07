@@ -17,6 +17,7 @@ expect fun GalleryPickerLauncher(
     selectionLimit: Long = SELECTION_LIMIT,
     cameraCaptureConfig: CameraCaptureConfig? = null,
     enableCrop: Boolean = false,
-    fileFilterDescription: String = "Image files"
+    fileFilterDescription: String = "Image files",
+    includeExif: Boolean = false
 )
 

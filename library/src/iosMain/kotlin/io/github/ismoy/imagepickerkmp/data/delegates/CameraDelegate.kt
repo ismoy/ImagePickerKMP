@@ -4,6 +4,7 @@ import io.github.ismoy.imagepickerkmp.data.processors.ImageProcessor
 import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.utils.ExifDataExtractor
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.UIKit.UIImage
@@ -24,7 +25,8 @@ class CameraDelegate(
     private val onPhotoCaptured: (PhotoResult) -> Unit,
     private val onError: (Exception) -> Unit,
     private val onDismiss: () -> Unit,
-    private val compressionLevel: CompressionLevel? = null
+    private val compressionLevel: CompressionLevel? = null,
+    private val includeExif: Boolean = false
 ) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
 
     override fun imagePickerController(
@@ -47,14 +49,9 @@ class CameraDelegate(
 
     private fun processCapturedImage(image: UIImage, picker: UIImagePickerController) {
         try {
-            logDebug("Processing captured image...")
-            logDebug("CompressionLevel received: $compressionLevel")
-            
             val processedData = if (compressionLevel != null) {
-                logDebug("Using compression with level: $compressionLevel")
                 ImageProcessor.processImage(image, compressionLevel)
             } else {
-                logDebug("No compression - using original quality")
                 UIImageJPEGRepresentation(image, 1.0)
             }
             
@@ -63,15 +60,22 @@ class CameraDelegate(
                 if (tempURL != null) {
                     val fileSizeInBytes = processedData.length.toLong()
                     val fileSizeInKB = bytesToKB(fileSizeInBytes)
+                    val exifData = if (includeExif) {
+                        val path = tempURL.path ?: ""
+                        ExifDataExtractor.extractExifData(path)
+                    } else {
+                        logDebug(" EXIF extraction disabled")
+                        null
+                    }
+                    
                     val photoResult = PhotoResult(
                         uri = tempURL.absoluteString ?: "",
                         width = image.size.useContents { width.toInt() },
                         height = image.size.useContents { height.toInt() },
                         fileName = tempURL.lastPathComponent,
-                        fileSize = fileSizeInKB
+                        fileSize = fileSizeInKB,
+                        exif = exifData
                     )
-                    logDebug("Final result - Image saved to: ${photoResult.uri}")
-                    logDebug("Final result - File size: ${fileSizeInKB}KB (${fileSizeInBytes} bytes)")
                     onPhotoCaptured(photoResult)
                 } else {
                     onError(PhotoCaptureException("Failed to save processed image"))

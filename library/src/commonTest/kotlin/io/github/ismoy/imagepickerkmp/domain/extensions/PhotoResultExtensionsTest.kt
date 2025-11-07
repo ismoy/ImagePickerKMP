@@ -51,8 +51,8 @@ class PhotoResultExtensionsTest {
         
         // Verify types
         val uri: String = photoResult.uri
-        val width: Int = photoResult.width
-        val height: Int = photoResult.height
+        val width: Int? = photoResult.width
+        val height: Int? = photoResult.height
         
         assertNotNull(uri)
         assertNotNull(width)
@@ -69,8 +69,8 @@ class PhotoResultExtensionsTest {
         
         // Verify types
         val uri: String = galleryPhotoResult.uri
-        val width: Int = galleryPhotoResult.width
-        val height: Int = galleryPhotoResult.height
+        val width: Int? = galleryPhotoResult.width
+        val height: Int? = galleryPhotoResult.height
         
         assertNotNull(uri)
         assertNotNull(width)

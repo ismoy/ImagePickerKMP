@@ -87,10 +87,11 @@ class CameraCaptureStateHolder(
     fun capturePhoto(
         onPhotoResult: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
-        compressionLevel: CompressionLevel? = null
+        compressionLevel: CompressionLevel? = null,
+        includeExif: Boolean = false
     ) {
         showFlashOverlay = true
-        cameraManager.takePicture(onPhotoResult, onError, compressionLevel)
+        cameraManager.takePicture(onPhotoResult, onError, compressionLevel, includeExif)
         coroutineScope.launch {
             delay(DELAY_TO_TAKE_PHOTO)
             showFlashOverlay = false

@@ -21,7 +21,9 @@ data class CompressionConfig(
     val maxHeight: Int? = null,
     val customQuality: Double? = null,
     val maintainAspectRatio: Boolean = true,
-    val supportedFormats: List<MimeType> = MimeType.ALL_SUPPORTED_TYPES.filter { it != MimeType.IMAGE_ALL }
+    val supportedFormats: List<MimeType> = MimeType.ALL_SUPPORTED_TYPES.filter { 
+        it != MimeType.IMAGE_ALL && it != MimeType.APPLICATION_PDF 
+    }
 ) {
     /**
      * Gets the effective quality value, prioritizing customQuality over compressionLevel.

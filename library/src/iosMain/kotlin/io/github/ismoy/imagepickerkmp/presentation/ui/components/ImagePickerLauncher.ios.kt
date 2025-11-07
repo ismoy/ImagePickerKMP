@@ -8,18 +8,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.data.orchestrators.GalleryPickerOrchestrator
 import io.github.ismoy.imagepickerkmp.data.orchestrators.PhotoCaptureOrchestrator
-import io.github.ismoy.imagepickerkmp.domain.utils.ViewControllerProvider
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPermissionDialogConfig
-import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
+import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
-import platform.Foundation.setValue
-import platform.UIKit.UIAlertAction
-import platform.UIKit.UIAlertController
-import platform.UIKit.UIAlertControllerStyleActionSheet
 
 
 @Suppress("FunctionNaming","TrailingWhitespace")
@@ -102,7 +97,8 @@ actual fun ImagePickerLauncher(
             onError = config.onError,
             onDismiss = config.onDismiss,
             onFinish = onCameraFinished,
-            compressionLevel = config.cameraCaptureConfig.compressionLevel
+            compressionLevel = config.cameraCaptureConfig.compressionLevel,
+            includeExif = config.cameraCaptureConfig.includeExif
         )
     }
 
@@ -157,35 +153,7 @@ actual fun ImagePickerLauncher(
     }
 }
 
-@Composable
-private fun showImagePickerDialog(
-    config: ImagePickerConfig,
-    onTakePhoto: () -> Unit,
-    onSelectFromGallery: () -> Unit,
-    onCancel: () -> Unit
-) {
-    LaunchedEffect(Unit) {
-        val rootVC = ViewControllerProvider.getRootViewController() ?: return@LaunchedEffect
-        val alert = UIAlertController.alertControllerWithTitle(
-            title = config.dialogTitle,
-            message = null,
-            preferredStyle = UIAlertControllerStyleActionSheet
-        )
-        alert.addAction(
-            UIAlertAction.actionWithTitle(config.takePhotoText, 0) { onTakePhoto() }
-        )
-        alert.addAction(
-            UIAlertAction.actionWithTitle(config.selectFromGalleryText, 0) { onSelectFromGallery() }
-        )
-        val spacerAction = UIAlertAction.actionWithTitle(" ", 0, null)
-        spacerAction.setValue(false, forKey = "enabled")
-        alert.addAction(spacerAction)
-        alert.addAction(
-            UIAlertAction.actionWithTitle(config.cancelText, 1) { onCancel() }
-        )
-        rootVC.presentViewController(alert, animated = true, completion = null)
-    }
-}
+
 
 @Composable
 private fun handleCameraPermission(
@@ -219,7 +187,8 @@ private fun launchCameraInternal(
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
     onFinish: () -> Unit,
-    compressionLevel: CompressionLevel? = null
+    compressionLevel: CompressionLevel? = null,
+    includeExif: Boolean = false
 ) {
     LaunchedEffect(Unit) {
         PhotoCaptureOrchestrator.launchCamera(
@@ -235,7 +204,8 @@ private fun launchCameraInternal(
                 onDismiss()
                 onFinish()
             },
-            compressionLevel = compressionLevel
+            compressionLevel = compressionLevel,
+            includeExif = includeExif
         )
     }
 }

@@ -42,7 +42,7 @@ class ImageProcessorTest {
     fun setUp() {
         MockitoAnnotations.openMocks(this)
         context = InstrumentationRegistry.getInstrumentation().targetContext
-        imageProcessor = ImageProcessor(fileManager, orientationCorrector)
+        imageProcessor = ImageProcessor(context,fileManager, orientationCorrector)
         
         // Create a test image file
         testImageFile = createTestImageFile()

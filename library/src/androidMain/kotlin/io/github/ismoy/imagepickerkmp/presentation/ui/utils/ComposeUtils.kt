@@ -2,9 +2,9 @@ package io.github.ismoy.imagepickerkmp.presentation.ui.utils
 
 import android.content.Context
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.lifecycle.LifecycleOwner
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController
 import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
 import io.github.ismoy.imagepickerkmp.data.managers.FileManager
@@ -27,14 +27,14 @@ fun rememberImagePickerViewModel(): ImagePickerViewModel {
 @Composable
 fun rememberCameraManager(
     context: Context,
-    activity: ComponentActivity
+    lifecycleOwner: LifecycleOwner
 ): CameraXManager? {
-    return remember(context, activity) {
+    return remember(lifecycleOwner) {
         try {
             val fileManager = FileManager(context)
             val orientationCorrector = ImageOrientationCorrector()
-            val imageProcessor = ImageProcessor(context, fileManager, orientationCorrector)
-            val cameraController = CameraController(context, activity, fileManager)
+            val imageProcessor = ImageProcessor(context,fileManager, orientationCorrector)
+            val cameraController = CameraController(context, lifecycleOwner, fileManager)
             
             CameraXManager(cameraController, imageProcessor)
         } catch (e: Exception) {
