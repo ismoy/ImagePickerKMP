@@ -37,7 +37,7 @@ class ImagePickerConfigTest {
     fun `CameraCaptureConfig should have default values`() {
         val config = CameraCaptureConfig()
         
-        assertEquals(CapturePhotoPreference.QUALITY, config.preference)
+        assertEquals(CapturePhotoPreference.BALANCED, config.preference)
     }
 
     @Test

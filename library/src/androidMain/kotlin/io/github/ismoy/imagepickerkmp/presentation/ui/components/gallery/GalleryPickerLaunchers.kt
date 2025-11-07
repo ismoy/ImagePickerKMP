@@ -12,7 +12,11 @@ import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery.GalleryFileProcessor.processSelectedFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 
 /**
  * Launcher for single file selection from gallery.
@@ -48,6 +52,7 @@ internal fun rememberSinglePickerLauncher(
 
 /**
  * Launcher for multiple file selection from gallery.
+ * Optimized with parallel processing (max 3 concurrent) for better performance.
  */
 @Composable
 internal fun rememberMultiplePickerLauncher(
@@ -63,15 +68,29 @@ internal fun rememberMultiplePickerLauncher(
     if (uris.isNotEmpty()) {
         try {
             CoroutineScope(Dispatchers.Main).launch {
+                val semaphore = Semaphore(3)
                 val results = mutableListOf<GalleryPhotoResult>()
-                for (uri in uris) {
-                    try {
-                        val result = processSelectedFile(context, uri, compressionLevel, includeExif)
-                        if (result != null) results.add(result)
-                    } catch (e: Exception) {
-                        onError(e)
+                val errors = mutableListOf<Exception>()
+                
+                val deferredResults = uris.map { uri ->
+                    async(Dispatchers.IO) {
+                        semaphore.withPermit {
+                            try {
+                                processSelectedFile(context, uri, compressionLevel, includeExif)
+                            } catch (e: Exception) {
+                                errors.add(e)
+                                null
+                            }
+                        }
                     }
                 }
+                
+                results.addAll(deferredResults.awaitAll().filterNotNull())
+                
+                if (errors.isNotEmpty()) {
+                    errors.forEach { onError(it) }
+                }
+                
                 if (results.isNotEmpty()) {
                     onPhotosSelected(results)
                 } else {

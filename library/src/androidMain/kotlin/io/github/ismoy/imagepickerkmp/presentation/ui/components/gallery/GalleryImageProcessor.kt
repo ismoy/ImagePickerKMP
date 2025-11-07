@@ -8,6 +8,7 @@ import androidx.core.graphics.scale
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController
 import io.github.ismoy.imagepickerkmp.data.processors.ImageOrientationCorrector
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
+import io.github.ismoy.imagepickerkmp.domain.models.ExifData
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
 import io.github.ismoy.imagepickerkmp.domain.utils.ExifDataExtractor
@@ -30,44 +31,81 @@ internal object GalleryImageProcessor {
     ): GalleryPhotoResult? {
         return withContext(Dispatchers.IO) {
             try {
-                val inputStream = context.contentResolver.openInputStream(uri)
-                val originalBytes = inputStream?.readBytes()
-                inputStream?.close()
-
-                if (originalBytes != null) {
-                    val fileName = GalleryFileUtils.getFileName(context, uri)
-                    val mimeType = GalleryFileUtils.getFileMimeType(context, uri)
+                val fileName = GalleryFileUtils.getFileName(context, uri)
+                val mimeType = GalleryFileUtils.getFileMimeType(context, uri)
+                
+                if (compressionLevel == null && !includeExif) {
+                    val inputStream = context.contentResolver.openInputStream(uri)
+                    val originalBytes = inputStream?.readBytes()
+                    inputStream?.close()
                     
-                    val exifData = extractExifDataIfNeeded(context, uri, mimeType, includeExif)
-                    
-                    val processedBitmap = processBitmapFromGallery(
-                        context, 
-                        uri, 
-                        originalBytes, 
-                        compressionLevel
-                    )
-                    
-                    if (processedBitmap != null) {
-                        return@withContext createResultFromBitmap(
-                            context,
-                            processedBitmap,
+                    if (originalBytes != null) {
+                        return@withContext createFallbackResult(
+                            uri,
+                            originalBytes,
                             fileName,
                             mimeType,
-                            exifData,
-                            compressionLevel
+                            null
                         )
                     }
-                    
-                    return@withContext createFallbackResult(
-                        uri,
-                        originalBytes,
-                        fileName,
-                        mimeType,
-                        exifData
-                    )
+                    return@withContext null
+                }
+                
+                val exifData = if (includeExif) {
+                    extractExifDataIfNeeded(context, uri, mimeType, true)
                 } else {
                     null
                 }
+                
+                if (compressionLevel != null) {
+                    val inputStream = context.contentResolver.openInputStream(uri)
+                    val originalBytes = inputStream?.readBytes()
+                    inputStream?.close()
+                    
+                    if (originalBytes != null) {
+                        val processedBitmap = processBitmapFromGallery(
+                            context, 
+                            uri, 
+                            originalBytes, 
+                            compressionLevel
+                        )
+                        
+                        if (processedBitmap != null) {
+                            return@withContext createResultFromBitmap(
+                                context,
+                                processedBitmap,
+                                fileName,
+                                mimeType,
+                                exifData,
+                                compressionLevel
+                            )
+                        }
+                        
+                        return@withContext createFallbackResult(
+                            uri,
+                            originalBytes,
+                            fileName,
+                            mimeType,
+                            exifData
+                        )
+                    }
+                } else {
+                    val inputStream = context.contentResolver.openInputStream(uri)
+                    val originalBytes = inputStream?.readBytes()
+                    inputStream?.close()
+                    
+                    if (originalBytes != null) {
+                        return@withContext createFallbackResult(
+                            uri,
+                            originalBytes,
+                            fileName,
+                            mimeType,
+                            exifData
+                        )
+                    }
+                }
+                
+                null
             } catch (e: Exception) {
                 logDebug(" Error processing selected image: ${e.message}")
                 null
@@ -83,7 +121,7 @@ internal object GalleryImageProcessor {
         uri: Uri,
         mimeType: String?,
         includeExif: Boolean
-    ): io.github.ismoy.imagepickerkmp.domain.models.ExifData? {
+    ): ExifData? {
         return if (includeExif && mimeType?.startsWith("image/") == true) {
             try {
                 ExifDataExtractor.extractExifDataWithFallbacks(context, uri)
@@ -100,10 +138,7 @@ internal object GalleryImageProcessor {
             null
         }
     }
-    
-    /**
-     * Process bitmap from gallery with orientation correction and compression.
-     */
+
     fun processBitmapFromGallery(
         context: Context,
         uri: Uri,
@@ -143,7 +178,6 @@ internal object GalleryImageProcessor {
             finalBitmap
         } catch (e: Exception) {
             logDebug(" Error processing gallery image with orientation correction: ${e.message}")
-            
             val bitmap = BitmapFactory.decodeByteArray(originalBytes, 0, originalBytes.size)
             if (bitmap != null && compressionLevel != null) {
                 processImageWithCompression(bitmap, compressionLevel)
@@ -152,18 +186,15 @@ internal object GalleryImageProcessor {
             }
         }
     }
-    
-    /**
-     * Process bitmap with compression based on compression level.
-     */
+
     private fun processImageWithCompression(
         bitmap: Bitmap,
         compressionLevel: CompressionLevel
     ): Bitmap {
         val maxDimension = when (compressionLevel) {
             CompressionLevel.HIGH -> 1280
-            CompressionLevel.MEDIUM -> 1920
-            CompressionLevel.LOW -> 2560
+            CompressionLevel.MEDIUM -> 1280
+            CompressionLevel.LOW -> 1920
         }
         
         val currentMaxDimension = maxOf(bitmap.width, bitmap.height)
@@ -172,7 +203,6 @@ internal object GalleryImageProcessor {
             val scale = maxDimension.toFloat() / currentMaxDimension.toFloat()
             val targetWidth = (bitmap.width * scale).toInt()
             val targetHeight = (bitmap.height * scale).toInt()
-            
             val resizedBitmap = bitmap.scale(targetWidth, targetHeight)
             if (resizedBitmap != bitmap) {
                 bitmap.recycle()
@@ -182,16 +212,13 @@ internal object GalleryImageProcessor {
             bitmap
         }
     }
-    
-    /**
-     * Create result from processed bitmap.
-     */
+
     private fun createResultFromBitmap(
         context: Context,
         bitmap: Bitmap,
         fileName: String?,
         mimeType: String?,
-        exifData: io.github.ismoy.imagepickerkmp.domain.models.ExifData?,
+        exifData: ExifData?,
         compressionLevel: CompressionLevel?
     ): GalleryPhotoResult? {
         val bytes = if (compressionLevel != null) {
@@ -227,7 +254,7 @@ internal object GalleryImageProcessor {
         originalBytes: ByteArray,
         fileName: String?,
         mimeType: String?,
-        exifData: io.github.ismoy.imagepickerkmp.domain.models.ExifData?
+        exifData: ExifData?
     ): GalleryPhotoResult {
         val options = BitmapFactory.Options().apply {
             inJustDecodeBounds = true

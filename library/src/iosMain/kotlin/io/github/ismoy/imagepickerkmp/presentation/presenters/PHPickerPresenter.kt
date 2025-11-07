@@ -19,7 +19,7 @@ object PHPickerPresenter {
         onDismiss: () -> Unit,
         selectionLimit: Long,
         compressionLevel: CompressionLevel? = null,
-        includeExif: Boolean = false,
+        includeExif: Boolean,
         onPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = null
     ) {
         require(selectionLimit <= SELECTION_LIMIT) {"Selection limit cannot exceed $SELECTION_LIMIT"}

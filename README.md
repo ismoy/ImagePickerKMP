@@ -1,7 +1,11 @@
 # ImagePickerKMP
+**Cross-platform Image Picker & Camera Library for Kotlin Multiplatform**
+
+Easily capture or select images on Android, iOS, Desktop, and Web — all with a single API.  
+Built with **Compose Multiplatform**, designed for **simplicity, performance, and flexibility**.
 
 <p align="center">
-  <a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>
+  <!--<a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>-->
  <!-- <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Code Coverage"></a>-->
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.1.21-blue.svg" alt="Kotlin"></a>
@@ -28,10 +32,13 @@
 </p>
 
 ---
+## Example
 
-**Cross-platform Image Picker & Camera Library for Kotlin Multiplatform**
+###  **Complete Example App**
+**[ ImagePickerKMP-Example →](https://github.com/ismoy/CameraKMP)**
 
-Supports Android, iOS, Desktop, and Web with a unified API. Built with Compose Multiplatform.
+Full-featured sample application showcasing:
+- All library features and configurations
 
 ##  Quick Start
 
@@ -126,7 +133,7 @@ if (showCamera) {
 ```
 
 > **💡 Always wrap the camera launcher inside a composable container (Box, Column, Row) and control its visibility with state.**
-> 
+>
 > *Thanks to [@rnstewart](https://github.com/rnstewart) and other contributors for pointing this out! 🙏*
 
 
@@ -150,32 +157,22 @@ if (showCamera) {
 | Android  | API 21+       | ✅ | ✅ | ✅ | ✅ | ✅ |
 | iOS      | iOS 12.0+     | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Desktop  | JDK 11+       | ❌ | ✅ | ✅ | ❌ | ✅ |
-| Web      | Modern Browsers| ❌ | ✅ | ✅ | ❌ | ✅ |
-| Web      | Modern Browsers| ✅ |
+| JS/Web      | Modern Browsers| ❌ | ✅ | ✅ | ❌ | ✅ |
+| Wasm/Web      | Modern Browsers| ✅ |
 
 ---
 
-##  Live Demos & Examples
+##  Live Demos
 
 ###  **Online Demos**
 **[ View Interactive Demos →](https://ismoy.github.io/ImagePickerKMP-Demos)**
 
 Experience ImagePickerKMP in action:
 -  **Mobile Demos** - Android & iOS camera/gallery functionality
--  **Desktop Demo** - File picker and image processing  
+-  **Desktop Demo** - File picker and image processing
 -  **Web Demo** - React integration with WebRTC camera
 -  **Crop Demo** - Interactive image cropping across platforms
 
-###  **Complete Example App** 
-**[ ImagePickerKMP-Example →](https://github.com/ismoy/CameraKMP)**
-
-Full-featured sample application showcasing:
-- All library features and configurations
-- Real-world implementation patterns  
-- Platform-specific optimizations
-- Best practices and tips
-
----
 
 ##  Documentation
 
@@ -218,9 +215,16 @@ ImagePickerLauncher(
         )
     )
 )
+
+```
+### EXIF Metadata Extraction
+```kotlin
+GalleryPickerLauncher(
+    allowMultiple = true,
+    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+    includeExif = true  // Android/iOS only
 )
 ```
-
 ### Multiple Selection with Filtering
 ```kotlin
 // Images only
@@ -234,7 +238,7 @@ GalleryPickerLauncher(
 GalleryPickerLauncher(
     allowMultiple = true,
     mimeTypes = listOf(
-        MimeType.IMAGE_JPEG, 
+        MimeType.IMAGE_JPEG,
         MimeType.IMAGE_PNG,
         MimeType.APPLICATION_PDF  // PDF support
     )
@@ -287,7 +291,7 @@ Features:
 ##  Support & Contributing
 
 -  [Report Issues](https://github.com/ismoy/ImagePickerKMP/issues)
--  [Discord Community](https://discord.gg/EjSQTeyh)  
+-  [Discord Community](https://discord.gg/EjSQTeyh)
 -  [Contributing Guide](docs/CONTRIBUTING.md)
 -  [Email Support](mailto:belizairesmoy72@gmail.com)
 

@@ -5,7 +5,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.ExifInterface
+import androidx.exifinterface.media.ExifInterface
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController.CameraType
 import io.github.ismoy.imagepickerkmp.domain.config.HighPerformanceConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIENTATION_FLIP_HORIZONTAL_X
@@ -34,19 +34,16 @@ class ImageOrientationCorrector {
                 ExifInterface.TAG_ORIENTATION,
                 ExifInterface.ORIENTATION_NORMAL
             )
-
-            // Quick check if no correction is needed
             val needsCorrection = orientation != ExifInterface.ORIENTATION_NORMAL || cameraType == CameraType.FRONT
             if (!needsCorrection) {
                 return imageFile
             }
 
-            // Use optimized bitmap decoding based on device capabilities
             val options = BitmapFactory.Options().apply {
                 inPreferredConfig = if (HighPerformanceConfig.isHighEndDevice()) {
-                    Bitmap.Config.ARGB_8888 // Best quality for flagship devices
+                    Bitmap.Config.ARGB_8888
                 } else {
-                    Bitmap.Config.RGB_565 // Memory efficient for other devices
+                    Bitmap.Config.RGB_565
                 }
                 inSampleSize = 1
             }
@@ -71,7 +68,7 @@ class ImageOrientationCorrector {
             } else {
                 val correctedFile = File(imageFile.parentFile, "corrected_${imageFile.name}")
                 FileOutputStream(correctedFile).use { out ->
-                    finalBitmap.compress(Bitmap.CompressFormat.JPEG, 95, out) // Slightly higher quality for better performance trade-off
+                    finalBitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
                 }
                 finalBitmap.recycle()
                 correctedFile

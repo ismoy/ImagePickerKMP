@@ -17,6 +17,8 @@ import platform.AVFoundation.AVAuthorizationStatusRestricted
 import platform.AVFoundation.AVCaptureDevice
 import platform.AVFoundation.AVMediaTypeVideo
 import platform.AVFoundation.authorizationStatusForMediaType
+import platform.UIKit.UIImagePickerController
+import platform.UIKit.UIImagePickerControllerSourceType
 
 
 @Composable
@@ -53,6 +55,16 @@ actual fun RequestCameraPermission(
     )
 
     LaunchedEffect(Unit) {
+        // First check if camera hardware is available (not available on simulator)
+        if (!UIImagePickerController.isSourceTypeAvailable(
+            UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
+        )) {
+            println("⚠️ Camera hardware not available - likely running on iOS Simulator")
+            onResult(false)
+            return@LaunchedEffect
+        }
+        
+        // Check authorization status
         val currentStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
         when (currentStatus) {
             AVAuthorizationStatusAuthorized -> {

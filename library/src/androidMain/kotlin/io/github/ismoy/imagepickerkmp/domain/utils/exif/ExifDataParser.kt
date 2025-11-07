@@ -175,10 +175,24 @@ internal object ExifDataParser {
     
     private fun extractThumbnail(exif: ExifInterface): String? {
         return try {
-            exif.thumbnailBytes?.let { thumbnailBytes ->
-                android.util.Base64.encodeToString(thumbnailBytes, android.util.Base64.DEFAULT)
+            // Check if thumbnail exists before attempting to extract
+            val hasThumbnail = exif.hasThumbnail()
+            if (!hasThumbnail) {
+                return null
             }
-        } catch (_: Exception) {
+            
+            // Attempt to get thumbnail bytes
+            val thumbnailBytes = exif.thumbnailBytes
+            thumbnailBytes?.let { bytes ->
+                android.util.Base64.encodeToString(bytes, android.util.Base64.DEFAULT)
+            }
+        } catch (e: android.system.ErrnoException) {
+            // Handle file descriptor errors gracefully
+            println("⚠️ Thumbnail extraction failed - file descriptor issue: ${e.message}")
+            null
+        } catch (e: Exception) {
+            // Handle any other exceptions
+            println("⚠️ Thumbnail extraction failed: ${e.javaClass.simpleName}: ${e.message}")
             null
         }
     }

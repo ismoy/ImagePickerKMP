@@ -6,6 +6,7 @@ import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerSourceType
+import platform.UIKit.UIModalPresentationFullScreen
 import platform.UIKit.UIViewController
 
 /**
@@ -26,6 +27,22 @@ object CameraPresenter {
         includeExif: Boolean = false
     ) {
         try {
+            // Check if camera is available (simulators don't have cameras)
+            if (!UIImagePickerController.isSourceTypeAvailable(
+                UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
+            )) {
+                val errorMessage = "📱 Camera is not available on this device. " +
+                    "The iOS Simulator does not support camera functionality. " +
+                    "Please test camera features on a physical iOS device."
+                
+                println("⚠️ $errorMessage")
+                
+                onError(PhotoCaptureException(errorMessage))
+                // Call onDismiss to ensure proper cleanup
+                onDismiss()
+                return
+            }
+            
             val imagePickerController = createImagePickerController(
                 onPhotoCaptured,
                 onError,
@@ -35,7 +52,10 @@ object CameraPresenter {
             )
             viewController.presentViewController(imagePickerController, animated = true, completion = null)
         } catch (e: Exception) {
-            onError(PhotoCaptureException("Failed to present camera: ${e.message}"))
+            val errorMessage = "Failed to present camera: ${e.message}"
+            println("❌ Camera presentation error: $errorMessage")
+            onError(PhotoCaptureException(errorMessage))
+            onDismiss()
         }
     }
 
@@ -49,6 +69,7 @@ object CameraPresenter {
         return UIImagePickerController().apply {
             sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
             allowsEditing = false
+            modalPresentationStyle = UIModalPresentationFullScreen
 
             val cleanup = { cameraDelegate = null }
             val wrappedOnPhotoCaptured: (PhotoResult) -> Unit = { result ->

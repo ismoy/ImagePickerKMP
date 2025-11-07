@@ -12,6 +12,9 @@ internal object ExifInterfaceHelper {
     /**
      * Creates an ExifInterface from a URI.
      * Returns null if creation fails.
+     * 
+     * Note: The caller is responsible for closing the InputStream if needed.
+     * ExifInterface internally handles the file descriptor.
      */
     fun createFromUri(context: Context, uri: Uri): ExifInterface? {
         return try {
@@ -21,9 +24,9 @@ internal object ExifInterfaceHelper {
                 return null
             }
             
-            inputStream.use { stream ->
-                ExifInterface(stream)
-            }
+            // Don't close the stream immediately - ExifInterface needs it for thumbnails
+            // The stream will be garbage collected when ExifInterface is no longer used
+            ExifInterface(inputStream)
         } catch (e: Exception) {
             println(" Failed to create ExifInterface: ${e.javaClass.simpleName}: ${e.message}")
             null
