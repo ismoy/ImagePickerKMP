@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp.data.delegates
 
+import io.github.ismoy.imagepickerkmp.data.delegates.ImageOptimizer
 import io.github.ismoy.imagepickerkmp.data.processors.ImageProcessor
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.ExifData
@@ -11,6 +12,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.useContents
 import platform.Foundation.NSData
+import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.dataWithContentsOfURL
 import platform.Photos.PHAsset
@@ -35,15 +37,21 @@ internal class ImageProcessingQueue(
     private var processedCount = 0
     private var currentIndex = 0
     private val totalCount = pickerResults.size
+    private var isProcessing = false
     
- 
     fun start() {
+        println("ImageProcessingQueue: Starting to process $totalCount images")
+        if (totalCount == 0) {
+            onComplete(emptyList())
+            return
+        }
+        
+        isProcessing = true
         processNextImage()
     }
     
-  
     private fun processNextImage() {
-        if (currentIndex >= totalCount) {
+        if (currentIndex >= totalCount || !isProcessing) {
             return
         }
         
@@ -51,57 +59,57 @@ internal class ImageProcessingQueue(
         currentIndex++
         
         val pickerResult = pickerResults[index]
-        
+
         pickerResult.itemProvider.loadFileRepresentationForTypeIdentifier(
             "public.image"
         ) { url, error ->
             processedCount++
-            
             if (error != null || url == null) {
-                onError(Exception("Failed to load image"))
+                println("ImageProcessingQueue: Failed to load image $index: ${error?.localizedDescription}")
                 checkAndFinish()
                 return@loadFileRepresentationForTypeIdentifier
             }
-            
-            processImageInBackground(url, pickerResult)
+            val imageData = NSData.dataWithContentsOfURL(url)
+            if (imageData == null) {
+                checkAndFinish()
+                return@loadFileRepresentationForTypeIdentifier
+            }
+            processImageDataInBackground(imageData, pickerResult, index)
         }
+        processNextImage()
     }
     
- 
-    private fun processImageInBackground(url: NSURL, pickerResult: PHPickerResult) {
+    private fun processImageDataInBackground(imageData: NSData, pickerResult: PHPickerResult, index: Int) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT.toLong(), 0u)) {
             var galleryResult: GalleryPhotoResult? = null
-            var processingError: Exception? = null
-            
             autoreleasepool {
                 try {
-                    galleryResult = processImage(url, pickerResult)
+                    galleryResult = processImageFromData(imageData, pickerResult)
                 } catch (e: Exception) {
-                    processingError = Exception("Error processing image: ${e.message}")
+                    println("ImageProcessingQueue: Error processing image $index: ${e.message}")
+                    e.printStackTrace()
                 }
             }
             
             dispatch_async(dispatch_get_main_queue()) {
-                if (galleryResult != null) {
-                    results.add(galleryResult)
-                }
-                
-                if (processingError != null) {
-                    onError(processingError)
+                galleryResult?.let { 
+                    results.add(it)
                 }
                 
                 checkAndFinish()
             }
         }
     }
-    
+    private fun checkAndFinish() {
+        if (processedCount >= totalCount) {
+            isProcessing = false
+            onComplete(results.toList())
+        }
+    }
 
-    private fun processImage(url: NSURL, pickerResult: PHPickerResult): GalleryPhotoResult? {
-        val imageData = NSData.dataWithContentsOfURL(url)
-            ?: throw Exception("Failed to read image data")
-        
+    private fun processImageFromData(imageData: NSData, pickerResult: PHPickerResult): GalleryPhotoResult? {
         val uiImage = UIImage.imageWithData(imageData)
-            ?: throw Exception("Failed to create UIImage")
+            ?: throw Exception("Failed to create UIImage from ${imageData.length} bytes of data")
         
         val processedData = ImageOptimizer.processImage(uiImage, compressionLevel)
             ?: throw Exception("Failed to process image")
@@ -117,7 +125,7 @@ internal class ImageProcessingQueue(
         val finalSizeKB = processedData.length.toLong() / 1024
         
         val exifData = if (includeExif) {
-            extractExifData(pickerResult, tempURL)
+            extractExifDataFromOriginal(pickerResult, imageData)
         } else {
             null
         }
@@ -132,8 +140,7 @@ internal class ImageProcessingQueue(
             exif = exifData
         )
     }
-    
-    private fun extractExifData(pickerResult: PHPickerResult, tempURL: NSURL): ExifData? {
+    private fun extractExifDataFromOriginal(pickerResult: PHPickerResult, originalData: NSData): ExifData? {
         return try {
             val assetIdentifier = pickerResult.assetIdentifier
             if (assetIdentifier != null) {
@@ -143,22 +150,13 @@ internal class ImageProcessingQueue(
                 )
                 val asset = fetchResult.firstObject() as? PHAsset
                 asset?.let { ExifDataExtractor.extractExifDataFromAsset(it) }
-                    ?: ExifDataExtractor.extractExifData(tempURL.path ?: "")
             } else {
-                ExifDataExtractor.extractExifData(tempURL.path ?: "")
+                println("No asset identifier available, skipping EXIF extraction")
+                null
             }
         } catch (e: Exception) {
             println("EXIF extraction failed: ${e.message}")
             null
-        }
-    }
-    
- 
-    private fun checkAndFinish() {
-        if (processedCount >= totalCount) {
-            onComplete(results)
-        } else {
-            processNextImage()
         }
     }
 }
