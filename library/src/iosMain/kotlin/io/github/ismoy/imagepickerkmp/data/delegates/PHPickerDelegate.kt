@@ -33,7 +33,6 @@ class PHPickerDelegate(
         }
 
         val pickerResults = didFinishPicking.mapNotNull { it as? PHPickerResult }
-        
         if (pickerResults.isEmpty()) {
             onError(Exception("Invalid picker results"))
             dismissPicker(picker)

@@ -119,4 +119,23 @@ object ImageProcessor {
             null
         }
     }
+    /**
+     * Save raw data to temporary directory with custom filename and return URL
+     */
+    fun saveDataToTempDirectory(data: NSData, fileName: String): NSURL? {
+        return try {
+            val tempDir = NSFileManager.defaultManager.temporaryDirectory
+            val fileURL = tempDir.URLByAppendingPathComponent(fileName)
+            
+            fileURL?.let { url ->
+                if (data.writeToURL(url, true)) {
+                    url
+                } else {
+                    null
+                }
+            }
+        } catch (_: Exception) {
+            null
+        }
+    }
 }
