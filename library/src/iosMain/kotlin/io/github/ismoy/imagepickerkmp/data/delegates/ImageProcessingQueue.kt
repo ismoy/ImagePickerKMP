@@ -11,7 +11,6 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.useContents
 import platform.Foundation.NSData
-import platform.Foundation.NSURL
 import platform.Foundation.dataWithContentsOfURL
 import platform.Photos.PHAsset
 import platform.PhotosUI.PHPickerResult
@@ -33,17 +32,24 @@ internal class ImageProcessingQueue(
     
     private val results = mutableListOf<GalleryPhotoResult>()
     private var processedCount = 0
+    private var successCount = 0
     private var currentIndex = 0
     private val totalCount = pickerResults.size
+    private var isProcessing = false
     
- 
     fun start() {
+        println("ImageProcessingQueue: Starting to process $totalCount images")
+        if (totalCount == 0) {
+            onComplete(emptyList())
+            return
+        }
+        
+        isProcessing = true
         processNextImage()
     }
     
-  
     private fun processNextImage() {
-        if (currentIndex >= totalCount) {
+        if (currentIndex >= totalCount || !isProcessing) {
             return
         }
         
@@ -51,57 +57,64 @@ internal class ImageProcessingQueue(
         currentIndex++
         
         val pickerResult = pickerResults[index]
-        
+
         pickerResult.itemProvider.loadFileRepresentationForTypeIdentifier(
             "public.image"
         ) { url, error ->
-            processedCount++
-            
             if (error != null || url == null) {
-                onError(Exception("Failed to load image"))
-                checkAndFinish()
+                println("ImageProcessingQueue: Failed to load image $index: ${error?.localizedDescription}")
+                dispatch_async(dispatch_get_main_queue()) {
+                    processedCount++
+                    checkAndFinish()
+                }
                 return@loadFileRepresentationForTypeIdentifier
             }
-            
-            processImageInBackground(url, pickerResult)
+            val imageData = NSData.dataWithContentsOfURL(url)
+            if (imageData == null) {
+                dispatch_async(dispatch_get_main_queue()) {
+                    processedCount++
+                    checkAndFinish()
+                }
+                return@loadFileRepresentationForTypeIdentifier
+            }
+            processImageDataInBackground(imageData, pickerResult, index)
         }
+        processNextImage()
     }
     
- 
-    private fun processImageInBackground(url: NSURL, pickerResult: PHPickerResult) {
+    private fun processImageDataInBackground(imageData: NSData, pickerResult: PHPickerResult, index: Int) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT.toLong(), 0u)) {
             var galleryResult: GalleryPhotoResult? = null
-            var processingError: Exception? = null
-            
             autoreleasepool {
                 try {
-                    galleryResult = processImage(url, pickerResult)
+                    galleryResult = processImageFromData(imageData, pickerResult)
                 } catch (e: Exception) {
-                    processingError = Exception("Error processing image: ${e.message}")
+                    println("ImageProcessingQueue: Error processing image $index: ${e.message}")
+                    galleryResult = createFallbackResult(imageData, pickerResult, index)
                 }
             }
             
             dispatch_async(dispatch_get_main_queue()) {
-                if (galleryResult != null) {
-                    results.add(galleryResult)
+                galleryResult?.let { 
+                    results.add(it)
+                    successCount++
                 }
-                
-                if (processingError != null) {
-                    onError(processingError)
-                }
-                
+                processedCount++
                 checkAndFinish()
             }
         }
     }
-    
+    private fun checkAndFinish() {
+        if (processedCount >= totalCount) {
+            isProcessing = false
+            println("ImageProcessingQueue: Completed processing. Selected: $totalCount, Successfully processed: $successCount, Final results: ${results.size}")
+            onComplete(results.toList())
+        }
+    }
 
-    private fun processImage(url: NSURL, pickerResult: PHPickerResult): GalleryPhotoResult? {
-        val imageData = NSData.dataWithContentsOfURL(url)
-            ?: throw Exception("Failed to read image data")
-        
+    private fun processImageFromData(imageData: NSData, pickerResult: PHPickerResult): GalleryPhotoResult? {
         val uiImage = UIImage.imageWithData(imageData)
-            ?: throw Exception("Failed to create UIImage")
+            ?: throw Exception("Failed to create UIImage from ${imageData.length} bytes of data")
         
         val processedData = ImageOptimizer.processImage(uiImage, compressionLevel)
             ?: throw Exception("Failed to process image")
@@ -117,7 +130,7 @@ internal class ImageProcessingQueue(
         val finalSizeKB = processedData.length.toLong() / 1024
         
         val exifData = if (includeExif) {
-            extractExifData(pickerResult, tempURL)
+            extractExifDataFromOriginal(pickerResult, imageData)
         } else {
             null
         }
@@ -132,8 +145,7 @@ internal class ImageProcessingQueue(
             exif = exifData
         )
     }
-    
-    private fun extractExifData(pickerResult: PHPickerResult, tempURL: NSURL): ExifData? {
+    private fun extractExifDataFromOriginal(pickerResult: PHPickerResult, originalData: NSData): ExifData? {
         return try {
             val assetIdentifier = pickerResult.assetIdentifier
             if (assetIdentifier != null) {
@@ -143,22 +155,62 @@ internal class ImageProcessingQueue(
                 )
                 val asset = fetchResult.firstObject() as? PHAsset
                 asset?.let { ExifDataExtractor.extractExifDataFromAsset(it) }
-                    ?: ExifDataExtractor.extractExifData(tempURL.path ?: "")
             } else {
-                ExifDataExtractor.extractExifData(tempURL.path ?: "")
+                println("No asset identifier available, skipping EXIF extraction")
+                null
             }
         } catch (e: Exception) {
             println("EXIF extraction failed: ${e.message}")
             null
         }
     }
-    
- 
-    private fun checkAndFinish() {
-        if (processedCount >= totalCount) {
-            onComplete(results)
-        } else {
-            processNextImage()
+    private fun createFallbackResult(imageData: NSData, pickerResult: PHPickerResult, index: Int): GalleryPhotoResult? {
+        return try {
+            println("ImageProcessingQueue: Attempting fallback processing for image $index")
+            
+            val assetIdentifier = pickerResult.assetIdentifier
+            if (assetIdentifier != null) {
+                val fetchResult = PHAsset.fetchAssetsWithLocalIdentifiers(
+                    listOf(assetIdentifier),
+                    null
+                )
+                val asset = fetchResult.firstObject() as? PHAsset
+                
+                asset?.let { phAsset ->
+                    val tempURL = ImageProcessor.saveDataToTempDirectory(imageData, "fallback_$index.jpg")
+                    
+                    if (tempURL != null) {
+                        val exifData = if (includeExif) {
+                            try {
+                                ExifDataExtractor.extractExifDataFromAsset(phAsset)
+                            } catch (e: Exception) {
+                                null
+                            }
+                        } else {
+                            null
+                        }
+                        
+                        GalleryPhotoResult(
+                            uri = tempURL.absoluteString ?: "",
+                            width = phAsset.pixelWidth.toInt(),
+                            height = phAsset.pixelHeight.toInt(),
+                            fileName = tempURL.lastPathComponent ?: "fallback_$index.jpg",
+                            fileSize = imageData.length.toLong() / 1024,
+                            mimeType = "image/jpeg",
+                            exif = exifData
+                        )
+                    } else {
+                        println("ImageProcessingQueue: Failed to save fallback image $index")
+                        null
+                    }
+                }
+            } else {
+                println("ImageProcessingQueue: No asset identifier for fallback image $index")
+                null
+            }
+        } catch (e: Exception) {
+            println("ImageProcessingQueue: Fallback also failed for image $index: ${e.message}")
+            null
         }
     }
 }
