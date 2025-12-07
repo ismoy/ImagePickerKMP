@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
-import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.domain.config.PermissionConfig
 import io.github.ismoy.imagepickerkmp.domain.config.UiConfig
 import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
@@ -79,11 +78,7 @@ fun CameraCaptureView(
             enableCrop && showCropView && photoResult != null -> {
                 ImageCropView(
                     photoResult = photoResult!!,
-                    cropConfig = CropConfig(
-                        enabled = true,
-                        circularCrop = false,
-                        squareCrop = true
-                    ),
+                    cropConfig = cameraCaptureConfig.cropConfig,
                     onAccept = { croppedResult: PhotoResult ->
                         showCropView = false
                         onPhotoResult(croppedResult)

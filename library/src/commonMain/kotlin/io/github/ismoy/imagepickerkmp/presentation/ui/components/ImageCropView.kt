@@ -37,7 +37,7 @@ fun ImageCropView(
     var aspectRatio by remember { mutableStateOf("Free") }
     var zoomLevel by remember { mutableFloatStateOf(1f) }
     var rotationAngle by remember { mutableFloatStateOf(0f) }
-    var isCircularCrop by remember { mutableStateOf(false) }
+    var isCircularCrop by remember { mutableStateOf(cropConfig.circularCrop) }
     var shouldApplyCrop by remember { mutableStateOf(false) }
     
     if (shouldApplyCrop) {
@@ -89,6 +89,7 @@ fun ImageCropView(
             aspectRatio = aspectRatio,
             zoomLevel = zoomLevel,
             rotationAngle = rotationAngle,
+            cropConfig = cropConfig,
             onToggleCropShape = { isCircular ->
                 isCircularCrop = isCircular
                 if (isCircular) {

@@ -208,6 +208,15 @@ if (showGallery) {
         onPhotosSelected = { photos ->
             selectedImages = photos
             showGallery = false
+            
+            // ✅ Acceder a datos EXIF si está habilitado
+            photos.forEach { photo ->
+                photo.exif?.let { exif ->
+                    println("Ubicación GPS: ${exif.latitude}, ${exif.longitude}")
+                    println("Cámara: ${exif.camera}")
+                    println("Fecha/Hora: ${exif.dateTime}")
+                }
+            }
         },
         onError = { error ->
             showGallery = false
@@ -219,6 +228,7 @@ if (showGallery) {
         enableCrop = false, // Establecer a true si quieres la opción de Recorte 
         allowMultiple = true, // False para selección única
         mimeTypes = listOf(MimeType.IMAGE_PNG), // Opcional: filtrar por tipo
+        includeExif = true, // ✅ IMPORTANTE: Habilita extracción de metadatos EXIF
         // Para incluir PDFs: listOf(MimeType.IMAGE_PNG, MimeType.APPLICATION_PDF)
     )
 }
@@ -361,6 +371,60 @@ ImagePickerLauncher(
 )
 ```
 
+---
+
+## 🚀 Nuevas Mejoras para Android
+
+### Selector Inteligente de Galería vs Explorador de Archivos
+
+ImagePickerKMP ahora detecta automáticamente qué tipo de selector usar en Android:
+
+| Tipo de Contenido | Comportamiento | Resultado |
+|-------------------|----------------|-----------|
+| **Solo Imágenes** (`image/*`) | Abre la **galería** nativa de Android | ✅ Mejor UX para fotos |
+| **PDFs** (`application/pdf`) | Abre el **explorador de archivos** | ✅ Acceso completo a documentos |
+| **Tipos Mixtos** | Abre el **explorador de archivos** | ✅ Máxima compatibilidad |
+
+#### Ejemplos de Uso
+
+```kotlin
+// ✅ Abre GALERÍA automáticamente
+GalleryPickerLauncher(
+    onPhotosSelected = { photos -> },
+    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)
+)
+
+// ✅ Abre EXPLORADOR DE ARCHIVOS automáticamente  
+ImagePickerLauncherOCR(
+    config = ImagePickerOCRConfig(
+        allowedMimeTypes = listOf(MimeType.APPLICATION_PDF) // PDF + OCR ahora funciona!
+    )
+)
+```
+
+### Extracción de Datos EXIF
+
+Para habilitar datos EXIF (metadatos de ubicación, cámara, etc.):
+
+```kotlin
+GalleryPickerLauncher(
+    onPhotosSelected = { photos ->
+        photos.forEach { photo ->
+            photo.exif?.let { exif ->
+                println("Ubicación GPS: ${exif.latitude}, ${exif.longitude}")
+                println("Cámara: ${exif.camera}")
+                println("Fecha: ${exif.dateTime}")
+            }
+        }
+    },
+    includeExif = true  // ✅ IMPORTANTE: Habilita extracción EXIF
+)
+```
+
+> **Nota**: Por defecto `includeExif = false` para optimizar rendimiento. Especifica `true` si necesitas metadatos.
+
+---
+
 ## Soporte de Plataformas
 <p align="center">
   <strong>Compatibilidad multiplataforma con gestión inteligente de contexto y funcionalidad de recorte mejorada</strong>
@@ -372,7 +436,7 @@ ImagePickerLauncher(
 
 ### Mejoras Recientes
 - ** Gestión Automática de Contexto**: La función `applyCrop` ahora es `@Composable` y maneja el contexto de Android automáticamente
-- ** Precisión Mejorada de Recorte iOS**: Cálculos de coordenadas corregidos para recorte preciso de imágenes en iOS
+- ** Precisión Mejorada de Recorte iOS**: Cálculos de coordenas corregidos para recorte preciso de imágenes en iOS
 - ** Sistema de Diseño Mejorado**: Resueltos conflictos de z-index y problemas de superposición de zoom para mejor experiencia de usuario
 - ** Mejor Soporte de Relación de Aspecto**: Manejo mejorado de relaciones de aspecto verticales (como 9:16) con gestión espacial mejorada
 
@@ -449,3 +513,38 @@ ImagePickerLauncher(
   <strong>Hecho con ❤️ para la comunidad Kotlin Multiplatform</strong><br>
   <em>¡Dale una estrella ⭐ a este repo si te ayudó!</em>
 </p>
+
+### 🤖 Experimental Cloud OCR
+Need to extract text from images or documents? Try the new experimental OCR functionality:
+
+```kotlin
+@OptIn(ExperimentalOCRApi::class)
+ImagePickerLauncherOCR(
+    config = ImagePickerOCRConfig(
+        provider = GeminiOCRProvider(apiKey = "your-gemini-api-key"),
+        requestConfig = OCRRequestConfig(
+            scanMode = ScanMode.TEXT_EXTRACTION,
+            extractionIndicators = ExtractionIndicators(
+                extractTables = true,
+                extractText = true,
+                extractStructure = true
+            )
+        )
+    ),
+    onOCRResult = { result ->
+        when (result) {
+            is OCRResult.Success -> {
+                println("Extracted text: ${result.text}")
+                println("Tables: ${result.tables}")
+            }
+            is OCRResult.Error -> {
+                println("OCR failed: ${result.message}")
+            }
+        }
+    }
+)
+```
+
+**Supported Providers**: Gemini, OpenAI, Claude, Azure, Ollama, and custom services.
+
+---

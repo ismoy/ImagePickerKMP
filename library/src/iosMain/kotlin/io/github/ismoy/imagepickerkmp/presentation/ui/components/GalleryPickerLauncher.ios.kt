@@ -73,13 +73,6 @@ actual fun GalleryPickerLauncher(
     }
     
     if (showCropView && selectedPhotoForCrop != null) {
-        val cropConfig = CropConfig(
-            enabled = true,
-            circularCrop = false,
-            squareCrop = true,
-            freeformCrop = true
-        )
-        
         ImageCropView(
             photoResult = PhotoResult(
                 uri = selectedPhotoForCrop!!.uri,
@@ -90,7 +83,12 @@ actual fun GalleryPickerLauncher(
                 mimeType = selectedPhotoForCrop!!.mimeType,
                 exif = selectedPhotoForCrop!!.exif
             ),
-            cropConfig = cropConfig,
+            cropConfig = cameraCaptureConfig?.cropConfig ?: CropConfig(
+                enabled = true,
+                circularCrop = false,
+                squareCrop = true,
+                freeformCrop = true
+            ),
             onAccept = { croppedResult ->
                 val croppedGalleryResult = GalleryPhotoResult(
                     uri = croppedResult.uri,

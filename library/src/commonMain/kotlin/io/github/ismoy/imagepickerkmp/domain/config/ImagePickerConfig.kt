@@ -56,32 +56,23 @@ data class PermissionAndConfirmationConfig(
 )
 
 @Suppress("EndOfSentenceFormat")
-/**
- * Configuration for gallery settings
- */
 data class GalleryConfig(
     val allowMultiple: Boolean = false,
     val mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
     val selectionLimit: Int = 30,
-    val includeExif: Boolean = false // Include EXIF metadata including GPS location data
+    val includeExif: Boolean = false
 )
 
 @Suppress("EndOfSentenceFormat")
-/**
- * Configuration for crop functionality
- */
 data class CropConfig(
     val enabled: Boolean = false,
     val aspectRatioLocked: Boolean = false,
-    val circularCrop: Boolean = false,
+    val circularCrop: Boolean = true,
     val squareCrop: Boolean = true,
     val freeformCrop: Boolean = false
 )
 
 @Suppress("EndOfSentenceFormat")
-/**
- * Main configuration for camera capture
- */
 data class CameraCaptureConfig(
     val preference: CapturePhotoPreference = CapturePhotoPreference.BALANCED,
     val captureButtonSize: Dp = 72.dp,
@@ -94,9 +85,6 @@ data class CameraCaptureConfig(
     val cropConfig: CropConfig = CropConfig()
 )
 
-/**
- * Configuration class for launching the image picker.
- */
 data class ImagePickerConfig(
     val onPhotoCaptured: (PhotoResult) -> Unit,
     val onPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = null,
@@ -121,9 +109,6 @@ data class ImagePickerConfig(
     val enableCrop: Boolean = false
 )
 
-/**
- * Configuration for the camera preview UI and callbacks.
- */
 data class CameraPreviewConfig(
     val captureButtonSize: Dp = 72.dp,
     val uiConfig: UiConfig = UiConfig(),

@@ -26,14 +26,54 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
   - **API Simplificada**: Los desarrolladores ya no necesitan proporcionar manualmente el contexto de Android
   - **Consistencia Multiplataforma**: Misma signatura de API para implementaciones de Android e iOS
 
-### Cambiado
+- **🎯 Selector Inteligente de Galería vs Explorador de Archivos (Android)**: Sistema automático de detección que determina qué tipo de selector abrir
+  - **Detección Automática de MIME Types**: La librería analiza los tipos MIME solicitados y elige el picker apropiado
+    - **Solo Imágenes** (`image/*`): Usa `Intent.ACTION_PICK` + `MediaStore` para abrir la galería nativa de Android
+    - **PDFs** (`application/pdf`): Usa `ActivityResultContracts.GetContent()` para acceder al explorador de archivos
+    - **Tipos Mixtos**: Automáticamente usa el explorador de archivos para máxima compatibilidad
+  - **Nuevos Contratos Personalizados**: 
+    - `PickImageFromGallery`: Contrato específico para galería usando MediaStore
+    - `PickMultipleImagesFromGallery`: Versión múltiple del selector de galería
+  - **Configuración Flexible**: `AndroidGalleryConfig` permite override manual si es necesario
+  - **Compatibilidad Retroactiva**: Todo el código existente continúa funcionando sin cambios
 
-- Actualizado `CameraCaptureConfig` con nuevo parámetro `compressionLevel: CompressionLevel?`
-- Mejorado `GalleryPickerLauncher` para soportar compresión a través de `cameraCaptureConfig`
-- Mejorado pipeline de procesamiento de imágenes con arquitectura unificada de compresión
-- Actualizada documentación con ejemplos y guías completas de compresión
-- **Función `applyCrop` convertida a @Composable**: Signatura de función actualizada para eliminar requisito de parámetro de contexto manual
-- **Cálculos mejorados de relación de aspecto de crop**: Mejor manejo de relaciones de aspecto verticales (como 9:16) con mejor gestión de espacio
+- **📄 Soporte Completo para PDFs en OCR**: `ImagePickerLauncherOCR` ahora funciona correctamente con documentos PDF
+  - **Detección Automática**: Cuando se especifica `MimeType.APPLICATION_PDF`, automáticamente usa el explorador de archivos
+  - **OCR de Documentos**: Los PDFs pueden ser procesados por el motor OCR (Gemini, etc.)
+  - **API Sin Cambios**: El código OCR existente ahora funciona con PDFs sin modificaciones
+
+- **🗂️ Configuración AndroidGalleryConfig**: Nueva clase de configuración para controlar el comportamiento del picker en Android
+  - `forceGalleryOnly: Boolean`: Fuerza el uso de galería vs explorador de archivos
+  - `localOnly: Boolean`: Incluye solo imágenes locales (no almacenamiento en la nube)
+  - Métodos de conveniencia: `forMimeTypes()` y `forMimeTypeStrings()` para configuración automática
+
+- **🤖 Funcionalidad Experimental de OCR en la Nube**: Sistema completo de reconocimiento óptico de caracteres con proveedores de IA
+  - **API Experimental**: Marcada con `@ExperimentalOCRApi` - sujeta a cambios y requiere configuración externa (claves API)
+  - **Múltiples Proveedores de Nube**: Soporte para Gemini, OpenAI, Claude, Azure, Ollama y servicios personalizados
+  - **Integración con GeminiOCRProvider**: Implementación por defecto para extracción de texto usando Gemini AI
+  - **Gestión Centralizada de Red**: `KtorInstance` singleton para reutilización de clientes HTTP y mejor rendimiento
+  - **Validación de Claves API**: `APIKeyValidator` verifica configuración antes de realizar solicitudes
+  - **Excepciones Personalizadas**: `OCRException`, `CloudOCRException`, `MissingAPIKeyException`, `InvalidAPIKeyException`
+  - **UI de Progreso**: `OCRProgressDialog` proporciona retroalimentación visual durante la extracción de texto
+  - **Utilidades OCR**: `OCRUtils` con funciones helper para timeouts y detección de tipos MIME
+  - **Soporte Multiplataforma**: Funciona en Android, iOS, Desktop, Web y WASM
+
+### Mejorado
+
+- **🔧 Lógica de MIME Type Inteligente**: El procesador de archivos ahora maneja mejor la determinación del tipo de picker
+  - Análisis automático de tipos MIME para determinar la estrategia óptima del picker
+  - Mejor experiencia de usuario con selectores más apropiados para cada tipo de contenido
+  - Manejo consistente entre selección única y múltiple
+
+- **📱 Experiencia de Usuario Optimizada en Android**:
+  - **Para Imágenes**: Los usuarios ven directamente la galería nativa de fotos
+  - **Para Documentos**: Los usuarios acceden al explorador de archivos para navegación completa
+  - **Comportamiento Predecible**: La interfaz que se abre corresponde al tipo de contenido esperado
+
+- **🔄 Procesamiento de Archivos Mejorado**: `GalleryFileProcessor` ahora maneja mejor diferentes tipos de archivos
+  - Soporte mejorado para PDFs en el pipeline de procesamiento
+  - Mejor detección y manejo de tipos MIME
+  - Procesamiento más robusto de metadatos
 
 ### Corregido
 
@@ -52,6 +92,14 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
   - **Agregado Recorte de Límites**: Implementado `clipToBounds()` para contener contenido con zoom dentro del área designada
   - **Mantenida Jerarquía de UI**: La funcionalidad de zoom ahora respeta los límites del layout y no interfiere con los controles del header
   - **Experiencia de Usuario Mejorada**: Los controles de crop permanecen accesibles y visibles durante las operaciones de zoom
+- **📁 Problema de Galería vs Explorador de Archivos**: Resuelto el problema donde `GalleryPickerLauncher` abría la carpeta de descargas en lugar de la galería en Android
+  - Implementados contratos personalizados que garantizan el uso de la galería para imágenes
+  - La experiencia del usuario ahora es consistente y predecible
+  - Los desarrolladores no necesitan hacer cambios en su código existente
+- **📄 Acceso a PDFs en OCR**: Resuelto el problema donde `ImagePickerLauncherOCR` no podía acceder a archivos PDF
+  - El sistema ahora detecta automáticamente cuando se solicitan PDFs
+  - Usa el picker apropiado (explorador de archivos) para acceso completo a documentos
+  - OCR funciona correctamente con documentos PDF
 
 ## [1.0.22] - 2024-12-XX
 

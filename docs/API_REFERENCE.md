@@ -12,7 +12,7 @@ Complete API documentation for the ImagePickerKMP library.
 - [Configuration](#configuration)
 - [Platform-specific APIs](#platform-specific-apis)
 
-## 📸 Photo Capture – Specific Documentation
+##  Photo Capture – Specific Documentation
 
 ## Description
 The photo capture functionality in ImagePickerKMP allows developers to integrate a modern, customizable, and cross-platform camera experience into their applications. It includes flash control, camera switching, preview, confirmation, and complete UI customization.
@@ -145,7 +145,7 @@ ImagePickerLauncher(
 
 ---
 
-## 🖼️ Gallery Image Selection – Specific Documentation
+##  Gallery Image Selection – Specific Documentation
 
 ## Description
 The gallery functionality in ImagePickerKMP allows developers to integrate a modern and customizable experience for selecting images from the device gallery. It supports single or multiple selection, file type filters, and custom confirmation.
@@ -234,7 +234,7 @@ GalleryPickerLauncher(
 
 ---
 
-## 🗜️ Image Compression – Specific Documentation
+##  Image Compression – Specific Documentation
 
 ## Description
 The image compression functionality in ImagePickerKMP automatically optimizes image size while maintaining acceptable quality. It works for both camera capture and gallery selection, with configurable compression levels and async processing.
@@ -361,28 +361,58 @@ expect fun ImagePickerLauncher(
 
 ### GalleryPickerLauncher
 
-Composable for selecting images from gallery.
+Composable for selecting images from gallery with intelligent picker selection for Android.
 
 ```kotlin
 @Composable
 expect fun GalleryPickerLauncher(
-    onPhotosSelected: (List<GalleryPhotoHandler.PhotoResult>) -> Unit,
+    config: GalleryPickerConfig = GalleryPickerConfig(),
+    onPhotosSelected: (List<PhotoResult>) -> Unit,
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit = {},
     allowMultiple: Boolean = false,
-    mimeTypes: List<String> = listOf("image/*"),
+    mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
     selectionLimit: Long = SELECTION_LIMIT
 )
 ```
 
 #### Parameters
 
+- `config` - Configuration for gallery picker behavior and Android-specific settings
 - `onPhotosSelected` - Callback with the list of selected images
 - `onError` - Callback to handle errors
 - `onDismiss` - Callback when user cancels
 - `allowMultiple` - Allows multiple selection (default: `false`)
 - `mimeTypes` - List of allowed MIME types
 - `selectionLimit` - Maximum selection limit
+
+#### Smart Picker Selection (Android)
+
+The `GalleryPickerLauncher` automatically chooses the appropriate picker based on requested MIME types:
+
+- **Images only** (`image/*`): Opens native Android gallery using `MediaStore`
+- **PDFs included** (`application/pdf`): Opens file explorer for document access
+- **Mixed types**: Uses file explorer for maximum compatibility
+
+This ensures users get the expected interface for their content type without configuration.
+
+#### Configuration Example
+
+```kotlin
+GalleryPickerLauncher(
+    config = GalleryPickerConfig(
+        includeExif = true,
+        androidGalleryConfig = AndroidGalleryConfig(
+            forceGalleryOnly = false, // Use file explorer instead
+            localOnly = true
+        )
+    ),
+    mimeTypes = listOf(MimeType.APPLICATION_PDF),
+    onPhotosSelected = { results ->
+        // Handle selected files
+    }
+)
+```
 
 ---
 
@@ -406,6 +436,62 @@ expect fun RequestCameraPermission(
 - `onPermissionPermanentlyDenied: () -> Unit` - Callback when permission is permanently denied
 - `onResult: (Boolean) -> Unit` - Callback with permission result
 - `customPermissionHandler: (() -> Unit)?` - Custom permission handler
+
+---
+
+### AndroidGalleryConfig (Android)
+
+Configuration specific to Android gallery picker behavior.
+
+```kotlin
+data class AndroidGalleryConfig(
+    val forceGalleryOnly: Boolean = true,
+    val localOnly: Boolean = true
+) {
+    companion object {
+        fun forMimeTypes(mimeTypes: List<MimeType>): AndroidGalleryConfig
+        fun forMimeTypeStrings(mimeTypes: List<String>): AndroidGalleryConfig
+    }
+}
+```
+
+#### Properties
+
+- `forceGalleryOnly` - **Forces gallery vs file explorer usage**
+  - `true`: Uses `Intent.ACTION_PICK` + `MediaStore` (opens native gallery)
+  - `false`: Uses `ActivityResultContracts.GetContent()` (may open file explorer)
+  - **Default**: `true`, but automatically adjusted based on MIME types
+
+- `localOnly` - **Include only local images**
+  - `true`: Adds `EXTRA_LOCAL_ONLY` to intent (no cloud storage)
+  - `false`: Allows images from cloud storage
+  - **Default**: `true`
+
+#### Convenience Methods
+
+```kotlin
+//  Automatic configuration based on MIME types
+val autoConfig = AndroidGalleryConfig.forMimeTypes(listOf(MimeType.APPLICATION_PDF))
+// Result: forceGalleryOnly = false (uses file explorer for PDFs)
+
+//  Manual configuration
+GalleryPickerLauncher(
+    // ... other parameters ...
+    androidGalleryConfig = AndroidGalleryConfig(
+        forceGalleryOnly = false, // Force file explorer
+        localOnly = true
+    )
+)
+```
+
+#### Automatic Detection Behavior
+
+| Detected MIME Types | `forceGalleryOnly` | Result |
+|--------------------|--------------------|--------|
+| Images only (`image/*`) | `true` | Native gallery |
+| Contains `application/pdf` | `false` | File explorer |
+| Mixed types (image + others) | `false` | File explorer |
+| Non-image types | `false` | File explorer |
 
 ---
 
@@ -611,10 +697,10 @@ ImagePickerLauncher(
         onPhotoCaptured = { result ->
             // Access EXIF data
             result.exif?.let { exif ->
-                println("📍 GPS: ${exif.latitude}, ${exif.longitude}")
-                println("📷 Camera: ${exif.cameraModel}")
-                println("📅 Date: ${exif.dateTaken}")
-                println("⚙️ Settings: ISO ${exif.iso}, f/${exif.aperture}")
+                println(" GPS: ${exif.latitude}, ${exif.longitude}")
+                println(" Camera: ${exif.cameraModel}")
+                println(" Date: ${exif.dateTaken}")
+                println(" Settings: ISO ${exif.iso}, f/${exif.aperture}")
             }
         },
         cameraCaptureConfig = CameraCaptureConfig(
@@ -1389,3 +1475,100 @@ ImagePickerKMP.scanOCR(ScanMode.Cloud(apiKey)) { result ->
     // Process result
 }
 ```
+
+---
+
+### ImagePickerLauncherOCR (Experimental)
+
+Experimental component for text extraction using cloud OCR.
+
+```kotlin
+@ExperimentalOCRApi
+@Composable
+expect fun ImagePickerLauncherOCR(
+    config: ImagePickerOCRConfig,
+    onOCRResult: (OCRResult) -> Unit,
+    onError: (OCRException) -> Unit = {},
+    onDismiss: () -> Unit = {}
+)
+```
+
+#### Parameters
+
+- `config` - Configuration for OCR provider and extraction parameters
+- `onOCRResult` - Callback with text extraction result
+- `onError` - Callback to handle OCR-specific errors
+- `onDismiss` - Callback when user cancels
+
+#### Supported Providers
+
+```kotlin
+sealed class CloudOCRProvider {
+    data class Gemini(val apiKey: String) : CloudOCRProvider()
+    data class OpenAI(val apiKey: String) : CloudOCRProvider()
+    data class Claude(val apiKey: String) : CloudOCRProvider()
+    data class Azure(val apiKey: String, val endpoint: String) : CloudOCRProvider()
+    data class Ollama(val baseUrl: String) : CloudOCRProvider()
+    data class Custom(val service: CustomService) : CloudOCRProvider()
+}
+```
+
+#### Complete Example
+
+```kotlin
+@OptIn(ExperimentalOCRApi::class)
+ImagePickerLauncherOCR(
+    config = ImagePickerOCRConfig(
+        provider = GeminiOCRProvider(apiKey = "your-gemini-key"),
+        requestConfig = OCRRequestConfig(
+            scanMode = ScanMode.TEXT_EXTRACTION,
+            extractionIndicators = ExtractionIndicators(
+                extractTables = true,
+                extractText = true,
+                extractStructure = true
+            ),
+            requestFormat = RequestFormat.STRUCTURED_JSON
+        )
+    ),
+    onOCRResult = { result ->
+        when (result) {
+            is OCRResult.Success -> {
+                println("Extracted text: ${result.text}")
+                result.tables?.forEach { table ->
+                    println("Detected table: ${table.content}")
+                }
+            }
+            is OCRResult.Error -> {
+                println("OCR error: ${result.message}")
+                println("Error code: ${result.errorCode}")
+            }
+        }
+    },
+    onError = { exception ->
+        when (exception) {
+            is MissingAPIKeyException -> {
+                // Handle missing API key
+            }
+            is InvalidAPIKeyException -> {
+                // Handle invalid API key
+            }
+            is CloudOCRException -> {
+                // Handle provider errors
+            }
+        }
+    }
+)
+```
+
+#### Features
+
+- ** Experimental API**: Marked with `@ExperimentalOCRApi` - subject to change
+- ** Multiple Providers**: Gemini, OpenAI, Claude, Azure, Ollama, custom services
+- ** PDF Support**: Extracts text from PDF documents and images
+- ** Table Detection**: Identifies and extracts structured table content
+- ** Cross-platform**: Android, iOS, Desktop, Web, WASM
+- ** API Validation**: Verifies keys before making requests
+- ** Configurable Timeouts**: Custom timeout control
+- ** Progress UI**: Visual dialog during processing
+
+---

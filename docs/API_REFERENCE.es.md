@@ -361,7 +361,9 @@ expect fun ImagePickerLauncher(
 
 ### GalleryPickerLauncher
 
-Composable para seleccionar imágenes desde la galería.
+Composable para seleccionar imágenes y documentos desde la galería o explorador de archivos.
+
+> **🚀 Nuevo**: Selector inteligente que automáticamente decide entre galería vs explorador de archivos
 
 ```kotlin
 @Composable
@@ -370,19 +372,65 @@ expect fun GalleryPickerLauncher(
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit = {},
     allowMultiple: Boolean = false,
-    mimeTypes: List<String> = listOf("image/*"),
-    selectionLimit: Long = SELECTION_LIMIT
+    mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
+    selectionLimit: Long = SELECTION_LIMIT,
+    cameraCaptureConfig: CameraCaptureConfig? = null,
+    enableCrop: Boolean = false,
+    fileFilterDescription: String = "Image files",
+    includeExif: Boolean = false
 )
 ```
 
 #### Parámetros
 
-- `onPhotosSelected` - Callback con la lista de imágenes seleccionadas
+- `onPhotosSelected` - Callback con la lista de imágenes/archivos seleccionados
 - `onError` - Callback para manejar errores
 - `onDismiss` - Callback cuando el usuario cancela
 - `allowMultiple` - Permite selección múltiple (por defecto: `false`)
-- `mimeTypes` - Lista de tipos MIME permitidos
+- `mimeTypes` - Lista de tipos MIME permitidos (afecta el tipo de picker usado)
 - `selectionLimit` - Límite máximo de selección
+- `cameraCaptureConfig` - Configuración para compresión y otras opciones
+- `enableCrop` - Habilita funcionalidad de recorte de imagen
+- `fileFilterDescription` - Descripción del filtro de archivos (Desktop)
+- `includeExif` - **Extrae metadatos EXIF** (ubicación, cámara, etc.) - **Por defecto: `false`**
+
+#### Comportamiento del Selector Inteligente (Android)
+
+| Tipos MIME | Picker Usado | Resultado |
+|------------|--------------|-----------|
+| Solo imágenes (`image/*`) | **Galería nativa** | ✅ Mejor UX para fotos |
+| PDFs (`application/pdf`) | **Explorador de archivos** | ✅ Acceso a documentos |
+| Tipos mixtos | **Explorador de archivos** | ✅ Máxima compatibilidad |
+
+#### Ejemplo con EXIF
+
+```kotlin
+GalleryPickerLauncher(
+    onPhotosSelected = { photos ->
+        photos.forEach { photo ->
+            // ✅ Acceso a datos EXIF (solo si includeExif = true)
+            photo.exif?.let { exif ->
+                println("📍 Ubicación GPS: ${exif.latitude}, ${exif.longitude}")
+                println("📷 Cámara: ${exif.camera}")
+                println("📅 Fecha/Hora: ${exif.dateTime}")
+            }
+        }
+    },
+    includeExif = true // ✅ IMPORTANTE: Habilita extracción EXIF
+)
+```
+
+#### Ejemplo OCR con PDF
+
+```kotlin
+// ✅ Ahora funciona correctamente con PDFs
+ImagePickerLauncherOCR(
+    config = ImagePickerOCRConfig(
+        allowedMimeTypes = listOf(MimeType.APPLICATION_PDF), // Automáticamente usa explorador
+        scanMode = ScanMode.Cloud(provider = CloudOCRProvider.Gemini(apiKey))
+    )
+)
+```
 
 ---
 
@@ -997,3 +1045,156 @@ fun ImagePickerLauncher(
 - `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Manejo personalizado de permisos
 - `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Vista de confirmación personalizada
 - `preference: CapturePhotoPreference?` - Preferencias de captura de foto
+
+---
+
+### AndroidGalleryConfig (Android)
+
+Configuración específica para el comportamiento del selector de galería en Android.
+
+```kotlin
+data class AndroidGalleryConfig(
+    val forceGalleryOnly: Boolean = true,
+    val localOnly: Boolean = true
+) {
+    companion object {
+        fun forMimeTypes(mimeTypes: List<MimeType>): AndroidGalleryConfig
+        fun forMimeTypeStrings(mimeTypes: List<String>): AndroidGalleryConfig
+    }
+}
+```
+
+#### Propiedades
+
+- `forceGalleryOnly` - **Fuerza el uso de galería vs explorador de archivos**
+  - `true`: Usa `Intent.ACTION_PICK` + `MediaStore` (abre galería nativa)
+  - `false`: Usa `ActivityResultContracts.GetContent()` (puede abrir explorador de archivos)
+  - **Por defecto**: `true`, pero se ajusta automáticamente según los tipos MIME
+
+- `localOnly` - **Incluye solo imágenes locales**
+  - `true`: Agrega `EXTRA_LOCAL_ONLY` al intent (no almacenamiento en la nube)
+  - `false`: Permite imágenes de almacenamiento en la nube
+  - **Por defecto**: `true`
+
+#### Métodos de Conveniencia
+
+```kotlin
+// ✅ Configuración automática basada en tipos MIME
+val autoConfig = AndroidGalleryConfig.forMimeTypes(listOf(MimeType.APPLICATION_PDF))
+// Resultado: forceGalleryOnly = false (usa explorador para PDFs)
+
+// ✅ Configuración manual
+GalleryPickerLauncher(
+    // ... otros parámetros ...
+    androidGalleryConfig = AndroidGalleryConfig(
+        forceGalleryOnly = false, // Fuerza explorador de archivos
+        localOnly = true
+    )
+)
+```
+
+#### Comportamiento de Detección Automática
+
+| Tipos MIME Detectados | `forceGalleryOnly` | Resultado |
+|----------------------|-------------------|-----------|
+| Solo `image/*` | `true` | Galería nativa |
+| PDFs (`application/pdf`) | `false` | Explorador de archivos |
+| Tipos mixtos (imagen + otros) | `false` | Explorador de archivos |
+| Tipos no-imagen | `false` | Explorador de archivos |
+
+---
+
+### ImagePickerLauncherOCR (Experimental)
+
+Componente experimental para extracción de texto usando OCR en la nube.
+
+```kotlin
+@ExperimentalOCRApi
+@Composable
+expect fun ImagePickerLauncherOCR(
+    config: ImagePickerOCRConfig,
+    onOCRResult: (OCRResult) -> Unit,
+    onError: (OCRException) -> Unit = {},
+    onDismiss: () -> Unit = {}
+)
+```
+
+#### Parámetros
+
+- `config` - Configuración para el proveedor OCR y parámetros de extracción
+- `onOCRResult` - Callback con el resultado de la extracción de texto
+- `onError` - Callback para manejar errores específicos de OCR
+- `onDismiss` - Callback cuando el usuario cancela
+
+#### Proveedores Soportados
+
+```kotlin
+sealed class CloudOCRProvider {
+    data class Gemini(val apiKey: String) : CloudOCRProvider()
+    data class OpenAI(val apiKey: String) : CloudOCRProvider()
+    data class Claude(val apiKey: String) : CloudOCRProvider()
+    data class Azure(val apiKey: String, val endpoint: String) : CloudOCRProvider()
+    data class Ollama(val baseUrl: String) : CloudOCRProvider()
+    data class Custom(val service: CustomService) : CloudOCRProvider()
+}
+```
+
+#### Ejemplo Completo
+
+```kotlin
+@OptIn(ExperimentalOCRApi::class)
+ImagePickerLauncherOCR(
+    config = ImagePickerOCRConfig(
+        provider = GeminiOCRProvider(apiKey = "tu-clave-gemini"),
+        requestConfig = OCRRequestConfig(
+            scanMode = ScanMode.TEXT_EXTRACTION,
+            extractionIndicators = ExtractionIndicators(
+                extractTables = true,
+                extractText = true,
+                extractStructure = true
+            ),
+            requestFormat = RequestFormat.STRUCTURED_JSON
+        )
+    ),
+    onOCRResult = { result ->
+        when (result) {
+            is OCRResult.Success -> {
+                println("Texto extraído: ${result.text}")
+                result.tables?.forEach { table ->
+                    println("Tabla detectada: ${table.content}")
+                }
+            }
+            is OCRResult.Error -> {
+                println("Error en OCR: ${result.message}")
+                println("Código: ${result.errorCode}")
+            }
+        }
+    },
+    onError = { exception ->
+        when (exception) {
+            is MissingAPIKeyException -> {
+                // Manejar clave API faltante
+            }
+            is InvalidAPIKeyException -> {
+                // Manejar clave API inválida
+            }
+            is CloudOCRException -> {
+                // Manejar errores del proveedor
+            }
+        }
+    }
+)
+```
+
+#### Características
+
+- **🔒 API Experimental**: Marcada con `@ExperimentalOCRApi` - sujeta a cambios
+- **☁️ Múltiples Proveedores**: Gemini, OpenAI, Claude, Azure, Ollama, servicios personalizados
+- **📄 Soporte para PDFs**: Extrae texto de documentos PDF e imágenes
+- **📊 Detección de Tablas**: Identifica y extrae contenido estructurado de tablas
+- **🌍 Multiplataforma**: Android, iOS, Desktop, Web, WASM
+- **🚀 Validación de API**: Verifica claves antes de hacer solicitudes
+- **⏱️ Timeouts Configurables**: Control de tiempo de espera personalizado
+- **🎨 UI de Progreso**: Diálogo visual durante el procesamiento
+
+---

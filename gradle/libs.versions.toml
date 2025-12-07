@@ -4,6 +4,7 @@ agp = "8.13.0"
 cameraCore = "1.5.1"
 cameraView = "1.5.1"
 core = "3.5.3"
+exifinterface = "1.4.2"
 kotlin = "2.1.21"
 android-minSdk = "24"
 android-compileSdk = "36"
@@ -11,6 +12,7 @@ compose = "1.9.1"
 androidx-activityCompose = "1.11.0"
 kotlinxCoroutinesCore = "1.10.2"
 kotlinxCoroutinesCoreVersion = "1.10.2"
+materialIconsExtendedVersion = "1.7.8"
 ui = "1.9.4"
 ktor = "3.0.2"
 
@@ -20,6 +22,8 @@ androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.r
 androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraCore" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraCore" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraView" }
+androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtendedVersion" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "ui" }
 core = { module = "com.google.zxing:core", version.ref = "core" }
