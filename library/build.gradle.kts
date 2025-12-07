@@ -403,12 +403,10 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.androidx.ui)
                 implementation(libs.androidx.ui.tooling.preview)
-                implementation("androidx.compose.material:material-icons-extended:1.7.8")
+                implementation(libs.androidx.material.icons.extended)
                 // EXIF interface for metadata extraction
-                implementation("androidx.exifinterface:exifinterface:1.3.7")
-                // ML Kit for OCR
-                implementation("com.google.mlkit:text-recognition:16.0.1")
-                // Ktor Android engine
+                implementation(libs.androidx.exifinterface)
+                 // Ktor Android engine
                 implementation(libs.ktor.client.okhttp)
             }
         }

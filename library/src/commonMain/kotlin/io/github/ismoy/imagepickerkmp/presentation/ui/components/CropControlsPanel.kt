@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 
 @Composable
 fun CropControlsPanel(
@@ -33,6 +34,7 @@ fun CropControlsPanel(
     aspectRatio: String,
     zoomLevel: Float,
     rotationAngle: Float,
+    cropConfig: CropConfig,
     onToggleCropShape: (Boolean) -> Unit,
     onAspectRatioChange: (String) -> Unit,
     onZoomChange: (Float) -> Unit,
@@ -52,69 +54,79 @@ fun CropControlsPanel(
                 .padding(bottom = defaultPadding),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Button(
-                onClick = { onToggleCropShape(false) },
-                modifier = Modifier
-                    .padding(horizontal = 2.dp)
-                    .height(32.dp)
-                    .defaultMinSize(minWidth = 40.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (!isCircularCrop) Color.White else Color.Transparent
-                ),
-                border = BorderStroke(1.dp, Color.White),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Crop,
-                    contentDescription = "Rectangular crop",
-                    tint = if (!isCircularCrop) Color.Black else Color.White,
-                    modifier = Modifier.size(16.dp)
-                )
-            }
+            val showBothByDefault = cropConfig.circularCrop && cropConfig.squareCrop
+            val showBothFallback = !cropConfig.circularCrop && !cropConfig.squareCrop
 
-            Button(
-                onClick = { onToggleCropShape(true) },
-                modifier = Modifier
-                    .padding(horizontal = 2.dp)
-                    .height(32.dp)
-                    .defaultMinSize(minWidth = 40.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isCircularCrop) Color.White else Color.Transparent
-                ),
-                border = BorderStroke(1.dp, Color.White),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Circle,
-                    contentDescription = "Circular crop",
-                    tint = if (isCircularCrop) Color.Black else Color.White,
-                    modifier = Modifier.size(16.dp)
-                )
-            }
-
-            val ratios = listOf("1:1", "4:3", "16:9", "9:16")
-            ratios.forEach { ratio ->
+            if (showBothByDefault || cropConfig.squareCrop || showBothFallback) {
                 Button(
-                    onClick = { onAspectRatioChange(ratio) },
+                    onClick = { onToggleCropShape(false) },
                     modifier = Modifier
                         .padding(horizontal = 2.dp)
                         .height(32.dp)
-                        .defaultMinSize(minWidth = 44.dp),
-                    enabled = !isCircularCrop,
+                        .defaultMinSize(minWidth = 40.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (aspectRatio == ratio && !isCircularCrop) Color.White else Color.Transparent,
-                        disabledBackgroundColor = Color.Gray.copy(alpha = 0.3f)
+                        backgroundColor = if (!isCircularCrop) Color.White else Color.Transparent
                     ),
-                    border = BorderStroke(1.dp, if (isCircularCrop) Color.Gray else Color.White),
-                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 4.dp)
+                    border = BorderStroke(1.dp, Color.White),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                 ) {
-                    Text(
-                        text = ratio,
-                        color = if (aspectRatio == ratio && !isCircularCrop) Color.Black
-                        else if (isCircularCrop) Color.Gray
-                        else Color.White,
-                        fontSize = 10.sp
+                    Icon(
+                        imageVector = Icons.Filled.Crop,
+                        contentDescription = "Rectangular crop",
+                        tint = if (!isCircularCrop) Color.Black else Color.White,
+                        modifier = Modifier.size(16.dp)
                     )
+                }
+            }
+
+
+            if (showBothByDefault || cropConfig.circularCrop || showBothFallback) {
+                Button(
+                    onClick = { onToggleCropShape(true) },
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .height(32.dp)
+                        .defaultMinSize(minWidth = 40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = if (isCircularCrop) Color.White else Color.Transparent
+                    ),
+                    border = BorderStroke(1.dp, Color.White),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Circle,
+                        contentDescription = "Circular crop",
+                        tint = if (isCircularCrop) Color.Black else Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+
+            if (showBothByDefault || cropConfig.squareCrop || showBothFallback) {
+                val ratios = listOf("1:1", "4:3", "16:9", "9:16")
+                ratios.forEach { ratio ->
+                    Button(
+                        onClick = { onAspectRatioChange(ratio) },
+                        modifier = Modifier
+                            .padding(horizontal = 2.dp)
+                            .height(32.dp)
+                            .defaultMinSize(minWidth = 44.dp),
+                        enabled = !isCircularCrop,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (aspectRatio == ratio && !isCircularCrop) Color.White else Color.Transparent,
+                            disabledBackgroundColor = Color.Gray.copy(alpha = 0.3f)
+                        ),
+                        border = BorderStroke(1.dp, if (isCircularCrop) Color.Gray else Color.White),
+                        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = ratio,
+                            color = if (aspectRatio == ratio && !isCircularCrop) Color.Black
+                            else if (isCircularCrop) Color.Gray
+                            else Color.White,
+                            fontSize = 10.sp
+                        )
+                    }
                 }
             }
         }

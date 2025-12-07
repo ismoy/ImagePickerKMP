@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.presentation.ui.screens.CameraCaptureView
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
+import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
 import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
 import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
@@ -33,8 +34,19 @@ actual fun ImagePickerLauncher(
         onDismiss = config.onDismiss,
         cameraCaptureConfig = config.cameraCaptureConfig.copy(
             preference = config.cameraCaptureConfig.preference,
-            includeExif = config.cameraCaptureConfig.includeExif  // ← FALTABA ESTO!
+            includeExif = config.cameraCaptureConfig.includeExif,
+            cropConfig = if (config.cameraCaptureConfig.cropConfig.enabled) {
+                config.cameraCaptureConfig.cropConfig
+            } else if (config.enableCrop) {
+                CropConfig(
+                    enabled = true,
+                    circularCrop = true,  
+                    squareCrop = true
+                )
+            } else {
+                config.cameraCaptureConfig.cropConfig
+            }
         ),
-        enableCrop = config.enableCrop
+        enableCrop = config.cameraCaptureConfig.cropConfig.enabled || config.enableCrop
     )
 }

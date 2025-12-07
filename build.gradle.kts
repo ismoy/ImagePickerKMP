@@ -7,4 +7,4 @@ plugins {
     id("jacoco")
 }
 
-version = "1.0.28-beta3"
+version = "1.0.28"

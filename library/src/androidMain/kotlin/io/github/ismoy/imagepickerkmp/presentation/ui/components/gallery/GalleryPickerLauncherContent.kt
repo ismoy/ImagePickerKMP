@@ -18,41 +18,85 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
     var shouldLaunch by remember { mutableStateOf(false) }
     var selectedPhotoForConfirmation by remember { mutableStateOf<GalleryPhotoResult?>(null) }
     var showCropView by remember { mutableStateOf(false) }
+    
+    val shouldShowCrop = config.cameraCaptureConfig?.cropConfig?.enabled == true || 
+                        (config.enableCrop && config.cameraCaptureConfig?.cropConfig?.enabled != false)
 
-    val singlePickerLauncher = rememberSinglePickerLauncher(
-        config.context,
-        { photoResult ->
-            if (config.cameraCaptureConfig?.permissionAndConfirmationConfig?.customConfirmationView != null) {
-                selectedPhotoForConfirmation = photoResult
-            } else if (config.enableCrop) {
-                selectedPhotoForConfirmation = photoResult
-                showCropView = true
-            } else {
-                config.onPhotosSelected(listOf(photoResult))
-            }
-        },
-        config.onError,
-        config.onDismiss,
-        config.cameraCaptureConfig?.compressionLevel,
-        config.includeExif
-    )
-    val multiplePickerLauncher = rememberMultiplePickerLauncher(
-        config.context,
-        config.onPhotosSelected,
-        config.onError,
-        config.onDismiss,
-        config.cameraCaptureConfig?.compressionLevel,
-        config.includeExif
-    )
+    val effectiveGalleryConfig = remember(config.mimeTypes) { 
+        config.getEffectiveAndroidGalleryConfig() 
+    }
+
+    val singlePickerLauncher = if (effectiveGalleryConfig.forceGalleryOnly) {
+        rememberGalleryOnlyPickerLauncher(
+            config.context,
+            { photoResult ->
+                if (config.cameraCaptureConfig?.permissionAndConfirmationConfig?.customConfirmationView != null) {
+                    selectedPhotoForConfirmation = photoResult
+                } else if (shouldShowCrop) {
+                    selectedPhotoForConfirmation = photoResult
+                    showCropView = true
+                } else {
+                    config.onPhotosSelected(listOf(photoResult))
+                }
+            },
+            config.onError,
+            config.onDismiss,
+            config.cameraCaptureConfig?.compressionLevel,
+            config.includeExif
+        )
+    } else {
+        rememberSinglePickerLauncher(
+            config.context,
+            { photoResult ->
+                if (config.cameraCaptureConfig?.permissionAndConfirmationConfig?.customConfirmationView != null) {
+                    selectedPhotoForConfirmation = photoResult
+                } else if (shouldShowCrop) {
+                    selectedPhotoForConfirmation = photoResult
+                    showCropView = true
+                } else {
+                    config.onPhotosSelected(listOf(photoResult))
+                }
+            },
+            config.onError,
+            config.onDismiss,
+            config.cameraCaptureConfig?.compressionLevel,
+            config.includeExif
+        )
+    }
+    
+    val multiplePickerLauncher = if (effectiveGalleryConfig.forceGalleryOnly) {
+        rememberGalleryOnlyMultiplePickerLauncher(
+            config.context,
+            config.onPhotosSelected,
+            config.onError,
+            config.onDismiss,
+            config.cameraCaptureConfig?.compressionLevel,
+            config.includeExif
+        )
+    } else {
+        rememberMultiplePickerLauncher(
+            config.context,
+            config.onPhotosSelected,
+            config.onError,
+            config.onDismiss,
+            config.cameraCaptureConfig?.compressionLevel,
+            config.includeExif
+        )
+    }
 
     LaunchedEffect(shouldLaunch) {
         if (shouldLaunch) {
             try {
-                val mimeType = when {
-                    config.mimeTypes.size > 1 -> "*/*"
-                    config.mimeTypes.any { it.contains("application/pdf", ignoreCase = true) } -> "*/*"
-                    else -> config.mimeTypes.firstOrNull() ?: "image/*"
+                val mimeType = if (effectiveGalleryConfig.forceGalleryOnly) {
+                    "image/*"
+                } else {
+                    when {
+                        config.mimeTypes.size > 1 -> "*/*"
+                        config.mimeTypes.any { it.contains("application/pdf", ignoreCase = true) } -> "*/*"
+                        else -> config.mimeTypes.firstOrNull() ?: "image/*"
+                    }
                 }
+                
                 if (config.allowMultiple) {
                     multiplePickerLauncher.launch(mimeType)
                 } else {
@@ -81,11 +125,15 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
                     mimeType = photoResult.mimeType,
                     exif = photoResult.exif
                 ),
-                cropConfig = CropConfig(
-                    enabled = true,
-                    circularCrop = false,
-                    squareCrop = true
-                ),
+                cropConfig = if (config.cameraCaptureConfig?.cropConfig?.enabled == true) {
+                    config.cameraCaptureConfig.cropConfig
+                } else {
+                    CropConfig(
+                        enabled = true,
+                        circularCrop = true,
+                        squareCrop = true
+                    )
+                },
                 onAccept = { croppedResult: PhotoResult ->
                     val galleryResult = GalleryPhotoResult(
                         uri = croppedResult.uri,

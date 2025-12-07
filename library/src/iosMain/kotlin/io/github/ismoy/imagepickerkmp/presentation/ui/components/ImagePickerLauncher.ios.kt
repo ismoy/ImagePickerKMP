@@ -87,7 +87,8 @@ actual fun ImagePickerLauncher(
     if (launchCamera) {
         launchCameraInternal(
             onPhotoCaptured = { result ->
-                if (config.enableCrop) {
+                val shouldShowCrop = config.cameraCaptureConfig.cropConfig.enabled || config.enableCrop
+                if (shouldShowCrop) {
                     selectedPhotoForCrop = result
                     showCropView = true
                 } else {
@@ -113,7 +114,8 @@ actual fun ImagePickerLauncher(
                     fileSize = result.fileSize
                 )
                 
-                if (config.enableCrop) {
+                val shouldShowCrop = config.cameraCaptureConfig.cropConfig.enabled || config.enableCrop
+                if (shouldShowCrop) {
                     selectedPhotoForCrop = photoResult
                     showCropView = true
                 } else {
@@ -128,17 +130,20 @@ actual fun ImagePickerLauncher(
         )
     }
     
-    if (showCropView && selectedPhotoForCrop != null) {
-        val cropConfig = CropConfig(
-            enabled = true,
-            circularCrop = false,
-            squareCrop = true,
-            freeformCrop = true
-        )
-        
+    if (showCropView && selectedPhotoForCrop != null) {        
         ImageCropView(
             photoResult = selectedPhotoForCrop!!,
-            cropConfig = cropConfig,
+            cropConfig = if (config.cameraCaptureConfig.cropConfig.enabled) {
+                config.cameraCaptureConfig.cropConfig
+            } else if (config.enableCrop) {
+                CropConfig(
+                    enabled = true,
+                    circularCrop = true, 
+                    squareCrop = true
+                )
+            } else {
+                config.cameraCaptureConfig.cropConfig
+            },
             onAccept = { croppedResult ->
                 config.onPhotoCaptured(croppedResult)
                 showCropView = false
