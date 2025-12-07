@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **🗜️ Automatic Image Compression**: Complete compression system for both camera and gallery
+- ** Automatic Image Compression**: Complete compression system for both camera and gallery
   - **Configurable Compression Levels**: LOW (95% quality, 2560px), MEDIUM (75% quality, 1920px), HIGH (50% quality, 1280px)
   - **Multi-format Support**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP compression
   - **Async Processing**: Non-blocking UI with Kotlin Coroutines integration
@@ -19,10 +19,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Cross-platform**: Works on both Android and iOS
   - **Performance Optimized**: Background processing with proper thread management
 
-- **🔄 Automatic Context Management**: The `applyCrop` function now automatically handles Android context management
+- ** Automatic Context Management**: The `applyCrop` function now automatically handles Android context management
   - **@Composable Integration**: The function is now `@Composable` and uses `LocalContext.current` internally
   - **Simplified API**: Developers no longer need to manually provide Android context
   - **Cross-platform Consistency**: Same API signature for both Android and iOS implementations
+
+- ** Smart Gallery vs File Explorer Picker (Android)**: Automatic detection system that determines which type of picker to open
+  - **Automatic MIME Type Detection**: Library analyzes requested MIME types and chooses appropriate picker
+    - **Images Only** (`image/*`): Uses `Intent.ACTION_PICK` + `MediaStore` to open Android's native gallery
+    - **PDFs** (`application/pdf`): Uses `ActivityResultContracts.GetContent()` for file explorer access
+    - **Mixed Types**: Automatically uses file explorer for maximum compatibility
+  - **New Custom Contracts**: 
+    - `PickImageFromGallery`: Gallery-specific contract using MediaStore
+    - `PickMultipleImagesFromGallery`: Multiple image gallery picker
+  - **Flexible Configuration**: `AndroidGalleryConfig` allows manual override when needed
+  - **Backward Compatibility**: All existing code continues working without changes
+
+- ** Full PDF Support for OCR**: `ImagePickerLauncherOCR` now works correctly with PDF documents
+  - **Automatic Detection**: When `MimeType.APPLICATION_PDF` is specified, automatically uses file explorer
+  - **Document OCR**: PDFs can be processed by OCR engine (Gemini, etc.)
+  - **Unchanged API**: Existing OCR code now works with PDFs without modifications
+
+- ** AndroidGalleryConfig Configuration**: New configuration class to control Android picker behavior
+  - `forceGalleryOnly: Boolean`: Forces gallery vs file explorer usage
+  - `localOnly: Boolean`: Include only local images (no cloud storage)
+  - Convenience methods: `forMimeTypes()` and `forMimeTypeStrings()` for automatic configuration
+
+- ** Experimental Cloud OCR Functionality**: Complete optical character recognition system with AI providers
+  - **Experimental API**: Marked with `@ExperimentalOCRApi` - subject to change and requires external configuration (API keys)
+  - **Multiple Cloud Providers**: Support for Gemini, OpenAI, Claude, Azure, Ollama, and custom services
+  - **GeminiOCRProvider Integration**: Default implementation for text extraction using Gemini AI
+  - **Centralized Network Management**: `KtorInstance` singleton for HTTP client reuse and better performance
+  - **API Key Validation**: `APIKeyValidator` verifies configuration before making requests
+  - **Custom Exceptions**: `OCRException`, `CloudOCRException`, `MissingAPIKeyException`, `InvalidAPIKeyException`
+  - **Progress UI**: `OCRProgressDialog` provides visual feedback during text extraction
+  - **OCR Utilities**: `OCRUtils` with helper functions for timeouts and MIME type detection
+  - **Cross-platform Support**: Works on Android, iOS, Desktop, Web, and WASM
+
+### Enhanced
+
+- ** Smart MIME Type Logic**: File processor now better handles picker type determination
+  - Automatic MIME type analysis to determine optimal picker strategy
+  - Better user experience with more appropriate pickers for each content type
+  - Consistent handling between single and multiple selection
+
+- ** Optimized Android User Experience**:
+  - **For Images**: Users see native photo gallery directly
+  - **For Documents**: Users access file explorer for full navigation
+  - **Predictable Behavior**: Interface that opens matches expected content type
+
+- ** Enhanced File Processing**: `GalleryFileProcessor` now better handles different file types
+  - Improved PDF support in processing pipeline
+  - Better MIME type detection and handling
+  - More robust metadata processing
 
 ### Changed
 
@@ -38,18 +87,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed inverted compression logic (HIGH compression now produces smaller files as expected)
 - Corrected image scaling algorithm for consistent quality across compression levels
 - Resolved CompressionConfig test failures by excluding IMAGE_ALL wildcard from supported formats
-- **🖼️ Fixed iOS Crop Coordinate Calculations**: Resolved image cropping issues on iOS where cropped images appeared incorrectly centered
+- ** Fixed iOS Crop Coordinate Calculations**: Resolved image cropping issues on iOS where cropped images appeared incorrectly centered
   - **Consistent Cross-platform Behavior**: iOS now uses the same coordinate calculation logic as Android
   - **Accurate Image Positioning**: Fixed `displayedImageSize` and `imageOffset` calculations for proper image scaling and centering
   - **Corrected Crop Rectangle Mapping**: Implemented proper `adjustedCropRect` calculation with accurate scaling factors
-- **🎯 Fixed Layout Z-Index Conflicts**: Resolved issues where crop controls appeared in wrong layer order
+- ** Fixed Layout Z-Index Conflicts**: Resolved issues where crop controls appeared in wrong layer order
   - **Removed Problematic zIndex**: Eliminated `zIndex` modifiers that caused crop area to appear below header controls
   - **Improved Component Stacking**: Natural layout flow now handles component layering correctly
   - **Better 9:16 Aspect Ratio Support**: Crop rectangle now properly fits within available canvas space for vertical aspect ratios
-- **📱 Fixed Zoom Overlay Issues**: Resolved problem where zoomed images appeared above crop header controls
+- ** Fixed Zoom Overlay Issues**: Resolved problem where zoomed images appeared above crop header controls
   - **Added Bounds Clipping**: Implemented `clipToBounds()` to contain zoomed content within designated area
   - **Maintained UI Hierarchy**: Zoom functionality now respects layout boundaries and doesn't interfere with header controls
   - **Enhanced User Experience**: Crop controls remain accessible and visible during zoom operations
+- ** Gallery vs File Explorer Issue**: Fixed issue where `GalleryPickerLauncher` opened downloads folder instead of gallery on Android
+  - Implemented custom contracts that guarantee gallery usage for images
+  - User experience is now consistent and predictable
+  - Developers don't need to make changes to existing code
+- ** PDF Access for OCR**: Fixed issue where `ImagePickerLauncherOCR` couldn't access PDF files
+  - System now automatically detects when PDFs are requested
+  - Uses appropriate picker (file explorer) for full document access
+  - OCR works correctly with PDF documents
 
 ## [1.0.22] - 2024-12-XX
 
