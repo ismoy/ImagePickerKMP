@@ -2,12 +2,7 @@ package io.github.ismoy.imagepickerkmp.domain.config
 
 import android.os.Build
 
-/**
- * High-performance configuration optimizations for flagship Android devices.
- * 
- * This object provides optimized settings for devices like Galaxy S24 Ultra
- * and other high-end Android devices to improve camera capture performance.
- */
+
 object HighPerformanceConfig {
     
 
@@ -20,15 +15,15 @@ object HighPerformanceConfig {
                  Build.MODEL?.contains("Pixel", ignoreCase = true) == true)
     }
 
-    /**
-     * Gets the optimal JPEG quality for high-end devices.
-     * Balances quality vs performance for flagship devices.
-     */
+    fun requiresCompatibilityMode(): Boolean {
+        return Build.VERSION.SDK_INT == Build.VERSION_CODES.Q 
+    }
+
     fun getOptimalJpegQuality(): Int {
-        return if (isHighEndDevice()) {
-            95
-        } else {
-            85
+        return when {
+            Build.VERSION.SDK_INT == Build.VERSION_CODES.Q -> 90 
+            isHighEndDevice() -> 95
+            else -> 85
         }
     }
 }

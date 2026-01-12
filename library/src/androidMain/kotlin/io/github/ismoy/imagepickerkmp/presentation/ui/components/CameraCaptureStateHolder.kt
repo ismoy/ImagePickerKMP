@@ -1,5 +1,7 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
+import android.os.Build
+import android.util.Log
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,12 +17,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/**
- * Holds and manages the state for camera capture operations, including flash mode, loading state,
- * and camera switching.
- *
- * This class coordinates camera actions and state updates for the UI.
- */
 class CameraCaptureStateHolder(
     private val cameraManager: CameraXManager,
     private val previewView: PreviewView,
@@ -44,7 +40,7 @@ class CameraCaptureStateHolder(
         cameraJob?.cancel()
         cameraJob = coroutineScope.launch {
             try {
-                isLoading = true
+                isLoading = true                
                 cameraManager.setFlashMode(flashMode)
                 cameraManager.startCamera(previewView, preference)
                 isLoading = false

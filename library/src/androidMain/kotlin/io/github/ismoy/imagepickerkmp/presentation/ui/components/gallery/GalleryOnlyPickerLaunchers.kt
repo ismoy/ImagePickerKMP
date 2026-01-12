@@ -21,15 +21,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 
-/**
- * Custom contract for picking images specifically from gallery (not file manager).
- * This contract uses ACTION_PICK with MediaStore to ensure gallery is opened.
- */
+
 class PickImageFromGallery : ActivityResultContract<String, Uri?>() {
     override fun createIntent(context: Context, input: String): Intent {
-        return Intent(Intent.ACTION_PICK).apply {
-            setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, input)
-            putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+        return Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = input
+            addCategory(Intent.CATEGORY_OPENABLE)
         }
     }
 
@@ -38,15 +35,12 @@ class PickImageFromGallery : ActivityResultContract<String, Uri?>() {
     }
 }
 
-/**
- * Custom contract for picking multiple images specifically from gallery.
- */
 class PickMultipleImagesFromGallery : ActivityResultContract<String, List<Uri>>() {
     override fun createIntent(context: Context, input: String): Intent {
-        return Intent(Intent.ACTION_PICK).apply {
-            setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, input)
+        return Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = input
+            addCategory(Intent.CATEGORY_OPENABLE)
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         }
     }
 
@@ -54,7 +48,6 @@ class PickMultipleImagesFromGallery : ActivityResultContract<String, List<Uri>>(
         val uris = mutableListOf<Uri>()
         
         intent?.let {
-            // Handle multiple selection
             it.clipData?.let { clipData ->
                 for (i in 0 until clipData.itemCount) {
                     clipData.getItemAt(i).uri?.let { uri ->
@@ -62,7 +55,6 @@ class PickMultipleImagesFromGallery : ActivityResultContract<String, List<Uri>>(
                     }
                 }
             }
-            // Handle single selection
             it.data?.let { uri ->
                 if (uris.isEmpty()) {
                     uris.add(uri)
@@ -74,9 +66,6 @@ class PickMultipleImagesFromGallery : ActivityResultContract<String, List<Uri>>(
     }
 }
 
-/**
- * Launcher for single image selection specifically from gallery.
- */
 @Composable
 internal fun rememberGalleryOnlyPickerLauncher(
     context: Context,
@@ -106,9 +95,6 @@ internal fun rememberGalleryOnlyPickerLauncher(
     }
 }
 
-/**
- * Launcher for multiple image selection specifically from gallery.
- */
 @Composable
 internal fun rememberGalleryOnlyMultiplePickerLauncher(
     context: Context,

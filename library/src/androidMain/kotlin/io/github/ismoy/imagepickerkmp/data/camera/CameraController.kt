@@ -1,6 +1,8 @@
 package io.github.ismoy.imagepickerkmp.data.camera
 
 import android.content.Context
+import android.os.Build
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -16,30 +18,21 @@ import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.config.HighPerformanceConfig
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/**
- * Controls camera operations such as starting, stopping, capturing photos, and switching cameras.
- *
- * This class manages the camera lifecycle and configuration for photo capture.
- * 
- * SOLID: Dependency Inversion - Dependencies injected via constructor
- */
+
 class CameraController(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
     private val fileManager: FileManager
 ) {
-    /**
-     * Enum representing the available flash modes for the camera.
-     */
+
     enum class FlashMode {
         AUTO, ON, OFF
     }
-    /**
-     * Enum representing the available camera types (front or back).
-     */
+
     enum class CameraType {
         BACK, FRONT
     }
@@ -52,19 +45,31 @@ class CameraController(
         previewView: PreviewView,
         preference: CapturePhotoPreference
     ) {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+            delay(100) 
+        }
+        
         cameraProvider = withContext(Dispatchers.IO) {
             ProcessCameraProvider.getInstance(context).get()
         }
 
         withContext(Dispatchers.Main) {
-            val preview = Preview.Builder().build().also {
-                it.surfaceProvider = previewView.surfaceProvider
+            if (HighPerformanceConfig.requiresCompatibilityMode()) {
+                previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
             }
+            
+            val preview = Preview.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                .build()
+                .also {
+                    it.surfaceProvider = previewView.surfaceProvider
+                }
 
             imageCapture = ImageCapture.Builder()
                 .setCaptureMode(getCaptureModeFn(preference))
                 .setFlashMode(getImageCaptureFlashMode(currentFlashMode))
-                .setJpegQuality(HighPerformanceConfig.getOptimalJpegQuality()) // Dynamic quality based on device
+                .setJpegQuality(HighPerformanceConfig.getOptimalJpegQuality())
+                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .build()
 
             val cameraSelector = when (currentCameraType) {
