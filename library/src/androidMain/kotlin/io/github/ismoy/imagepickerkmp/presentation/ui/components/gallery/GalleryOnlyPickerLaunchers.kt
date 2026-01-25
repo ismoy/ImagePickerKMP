@@ -31,6 +31,9 @@ class PickImageFromGallery : ActivityResultContract<String, Uri?>() {
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+        if (resultCode != android.app.Activity.RESULT_OK) {
+            return null
+        }
         return intent?.data
     }
 }
@@ -46,6 +49,10 @@ class PickMultipleImagesFromGallery : ActivityResultContract<String, List<Uri>>(
 
     override fun parseResult(resultCode: Int, intent: Intent?): List<Uri> {
         val uris = mutableListOf<Uri>()
+        
+        if (resultCode != android.app.Activity.RESULT_OK) {
+            return uris 
+        }
         
         intent?.let {
             it.clipData?.let { clipData ->

@@ -2,6 +2,7 @@ package io.github.ismoy.imagepickerkmp.data.delegates
 
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.presentation.presenters.DismissalAwarePHPickerViewController
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.PhotosUI.PHPickerResult
 import platform.PhotosUI.PHPickerViewController
@@ -20,12 +21,18 @@ class PHPickerDelegate(
     private val compressionLevel: CompressionLevel? = null,
     private val includeExif: Boolean = false
 ) : NSObject(), PHPickerViewControllerDelegateProtocol {
+    
+    private var dismissHandled = false
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun picker(
         picker: PHPickerViewController,
         didFinishPicking: List<*>
     ) {
+        dismissHandled = true
+        
+        DismissalAwarePHPickerViewController.markDismissalHandled(picker)
+        
         if (didFinishPicking.isEmpty()) {
             onDismiss()
             dismissPicker(picker)
@@ -66,6 +73,13 @@ class PHPickerDelegate(
     private fun dismissPicker(picker: PHPickerViewController) {
         dispatch_async(dispatch_get_main_queue()) {
             picker.dismissViewControllerAnimated(true, completion = null)
+        }
+    }
+
+    fun onPickerDismissed() {
+        if (!dismissHandled) {
+            dismissHandled = true
+            onDismiss()
         }
     }
 }

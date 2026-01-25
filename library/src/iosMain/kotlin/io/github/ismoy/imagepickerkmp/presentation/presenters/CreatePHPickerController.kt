@@ -57,7 +57,11 @@ private var strongPickerDelegate: PHPickerDelegate? = null
         includeExif
     )
 
-    return PHPickerViewController(configuration).apply {
-        delegate = strongPickerDelegate
+    val pickerDelegate = strongPickerDelegate ?: return PHPickerViewController(configuration).apply {
+        delegate = null
+    }
+
+    return DismissalAwarePHPickerViewController.createPickerViewController(configuration, pickerDelegate).apply {
+        delegate = pickerDelegate
     }
 }

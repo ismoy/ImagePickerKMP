@@ -18,9 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 
-/**
- * Launcher for single file selection from gallery.
- */
+
 @Composable
 internal fun rememberSinglePickerLauncher(
     context: Context,
@@ -50,10 +48,6 @@ internal fun rememberSinglePickerLauncher(
     }
 }
 
-/**
- * Launcher for multiple file selection from gallery.
- * Optimized with parallel processing (max 3 concurrent) for better performance.
- */
 @Composable
 internal fun rememberMultiplePickerLauncher(
     context: Context,
