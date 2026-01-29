@@ -1,8 +1,45 @@
 <resources>
+    <!-- Camera Permissions -->
+    <string name="camera_permission_required">카메라 권한 필요</string>
+    <string name="camera_permission_description">사진을 촬영하려면 카메라 권한이 필요합니다. 설정에서 권한을 허용해주세요</string>
+    <string name="open_settings">설정 열기</string>
+    <string name="camera_permission_denied">카메라 권한 거부됨</string>
+    <string name="camera_permission_denied_description">사진을 촬영하려면 카메라 권한이 필요합니다. 권한을 허용해주세요</string>
+    <string name="grant_permission">권한 허용</string>
+    <string name="camera_permission_permanently_denied">카메라 권한이 영구적으로 거부됨</string>
+    <string name="gallery_permission_required">저장소 권한 필요</string>
+    <string name="gallery_permission_description">갤러리에서 이미지를 선택하려면 저장소 접근 권한이 필요합니다. 권한을 허용해주세요.</string>
+    <string name="gallery_permission_denied">저장소 권한 거부됨</string>
+    <string name="gallery_permission_denied_description">이미지를 선택하려면 저장소 권한이 필요합니다. 앱 설정에서 권한을 활성화해주세요.</string>
+    <string name="gallery_grant_permission">권한 허용</string>
+    <string name="gallery_btn_settings">설정 열기</string>
+
+    <!-- Image Confirmation -->
+    <string name="">이 사진이 마음에 드시나요?</string>
+    <string name="accept_button">확인</string>
+    <string name="retry_button">다시 찍기</string>
+
+    <!-- Selection Dialogs -->
+    <string name="select_option_dialog_title">옵션 선택</string>
+    <string name="take_photo_option">사진 촬영</string>
+    <string name="select_from_gallery_option">갤러리에서 선택</string>
+    <string name="cancel_option">취소</string>
+
+    <!-- Accessibility -->
+    <string name="preview_image_description">미리보기</string>
+    <string name="hd_quality_description">HD</string>
+    <string name="sd_quality_description">SD</string>
+
+    <!-- Errors -->
+    <string name="invalid_context_error">잘못된 컨텍스트입니다. ComponentActivity여야 합니다</string>
+    <string name="photo_capture_error">사진 촬영 실패</string>
+    <string name="gallery_selection_error">갤러리 선택 실패</string>
+    <string name="permission_error">권한 오류 발생</string>
+
+    <!-- Image Crop -->
     <string name="image_crop_view_title">이미지 자르기</string>
     <string name="image_crop_view_cancel_description">닫기</string>
     <string name="image_crop_view_apply_description">적용</string>
-
     <string name="image_crop_view_rectangular_description">사각형으로 자르기</string>
     <string name="image_crop_view_circular_description">원형으로 자르기</string>
     <string name="image_crop_view_zoom_label">확대/축소</string>
