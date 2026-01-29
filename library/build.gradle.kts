@@ -419,7 +419,6 @@ kotlin {
             tasks.withType<ProcessResources> {
                 duplicatesStrategy = DuplicatesStrategy.INCLUDE
             }
-            resources.srcDir("src/commonMain/resources")
             dependencies {
                 // Ktor iOS engine
                 implementation(libs.ktor.client.darwin)
