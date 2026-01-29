@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Camera Permissions -->
     <string name="camera_permission_required">카메라 권한 필요</string>
@@ -15,7 +16,7 @@
     <string name="gallery_btn_settings">설정 열기</string>
 
     <!-- Image Confirmation -->
-    <string name="">이 사진이 마음에 드시나요?</string>
+    <string name="image_confirmation_title">이 사진이 마음에 드시나요?</string>
     <string name="accept_button">확인</string>
     <string name="retry_button">다시 찍기</string>
 

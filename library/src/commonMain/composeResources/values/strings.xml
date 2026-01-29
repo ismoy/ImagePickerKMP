@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Camera Permissions -->
     <string name="camera_permission_required">Camera permission required</string>
