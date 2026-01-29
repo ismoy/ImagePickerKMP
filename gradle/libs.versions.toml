@@ -3,6 +3,7 @@ accompanistPermissions = "0.37.3"
 agp = "8.13.0"
 cameraCore = "1.5.1"
 cameraView = "1.5.1"
+componentsResources = "1.10.0"
 core = "3.5.3"
 exifinterface = "1.4.2"
 kotlin = "2.1.21"
@@ -26,6 +27,7 @@ androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", vers
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtendedVersion" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "ui" }
+components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
 core = { module = "com.google.zxing:core", version.ref = "core" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
 compose-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "compose" }
@@ -45,3 +47,4 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version = "2.0.21" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }

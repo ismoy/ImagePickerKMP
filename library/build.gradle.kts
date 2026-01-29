@@ -8,12 +8,12 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeMultiplatform)
     id("com.vanniktech.maven.publish") version "0.33.0"
     id("maven-publish")
     id("jacoco")
     id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.dokka") version "1.9.20"
-    id("org.jetbrains.compose") version "1.10.0"
     kotlin("plugin.serialization") version "1.9.22"
 }
 
@@ -383,7 +383,7 @@ kotlin {
                 implementation("io.coil-kt.coil3:coil-compose:3.2.0")
                 implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
-                implementation("org.jetbrains.compose.components:components-resources:1.10.0")
+                implementation(libs.components.resources)
                 // OCR dependencies
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
                 // Ktor dependencies for HTTP client
