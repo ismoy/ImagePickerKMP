@@ -1,0 +1,5 @@
+<resources>
+    <string name="image_crop_view_title">Crop Image</string>
+    <string name="image_crop_view_cancel_description">Cancel</string>
+    <string name="image_crop_view_apply_description">Apply</string>
+</resources>

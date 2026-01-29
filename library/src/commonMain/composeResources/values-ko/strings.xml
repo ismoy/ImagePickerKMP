@@ -1,0 +1,5 @@
+<resources>
+    <string name="image_crop_view_title">이미지 자르기</string>
+    <string name="image_crop_view_cancel_description">닫기</string>
+    <string name="image_crop_view_apply_description">적용</string>
+</resources>

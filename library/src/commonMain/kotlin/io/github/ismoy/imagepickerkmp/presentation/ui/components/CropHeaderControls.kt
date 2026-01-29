@@ -17,6 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import imagepickerkmp.library.generated.resources.Res
+import imagepickerkmp.library.generated.resources.image_crop_view_apply_description
+import imagepickerkmp.library.generated.resources.image_crop_view_cancel_description
+import imagepickerkmp.library.generated.resources.image_crop_view_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CropHeaderControls(
@@ -35,13 +40,13 @@ fun CropHeaderControls(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Cancel",
+                contentDescription = stringResource(Res.string.image_crop_view_cancel_description),
                 tint = Color.White
             )
         }
 
         Text(
-            text = "Crop Image",
+            text = stringResource(Res.string.image_crop_view_title),
             color = Color.White,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
@@ -54,7 +59,7 @@ fun CropHeaderControls(
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
-                contentDescription = "Apply",
+                contentDescription = stringResource(Res.string.image_crop_view_apply_description),
                 tint = Color.White
             )
         }
