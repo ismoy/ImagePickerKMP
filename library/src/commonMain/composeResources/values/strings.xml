@@ -2,4 +2,9 @@
     <string name="image_crop_view_title">Crop Image</string>
     <string name="image_crop_view_cancel_description">Cancel</string>
     <string name="image_crop_view_apply_description">Apply</string>
+
+    <string name="image_crop_view_rectangular_description">Rectangular crop</string>
+    <string name="image_crop_view_circular_description">Circular crop</string>
+    <string name="image_crop_view_zoom_label">Zoom</string>
+    <string name="image_crop_view_rotation_label">Rotation</string>
 </resources>
