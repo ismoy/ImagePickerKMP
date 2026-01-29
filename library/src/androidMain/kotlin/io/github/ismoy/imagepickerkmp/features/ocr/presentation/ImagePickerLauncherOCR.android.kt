@@ -19,8 +19,6 @@ import io.github.ismoy.imagepickerkmp.domain.config.PermissionAndConfirmationCon
 import io.github.ismoy.imagepickerkmp.domain.extensions.loadBytes
 import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRProcessState
 import io.github.ismoy.imagepickerkmp.features.ocr.model.ScanMode
-import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
-import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImagePickerLauncher
 import io.github.ismoy.imagepickerkmp.features.ocr.presentation.components.OCRProgressDialog
 import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
@@ -32,7 +30,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
+import org.jetbrains.compose.resources.stringResource
+import imagepickerkmp.library.generated.resources.Res
+import imagepickerkmp.library.generated.resources.invalid_context_error
 
 @Suppress("FunctionNaming")
 @Composable
@@ -42,9 +42,10 @@ actual fun ImagePickerLauncherOCR(
 ) {
     val context = LocalContext.current
     val activity = context.activity
+    val invalidContextErrorMsg = stringResource(Res.string.invalid_context_error)
     if (activity !is ComponentActivity) {
         LaunchedEffect(Unit) {
-            config.onError(Exception(getStringResource(StringResource.INVALID_CONTEXT_ERROR)))
+            config.onError(Exception(invalidContextErrorMsg))
         }
         return
     }

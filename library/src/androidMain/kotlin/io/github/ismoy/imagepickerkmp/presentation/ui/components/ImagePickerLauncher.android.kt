@@ -1,4 +1,3 @@
-
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
 import androidx.activity.ComponentActivity
@@ -7,19 +6,20 @@ import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.presentation.ui.screens.CameraCaptureView
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
-import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
-import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
 import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
+import org.jetbrains.compose.resources.stringResource
+import imagepickerkmp.library.generated.resources.Res
+import imagepickerkmp.library.generated.resources.invalid_context_error
 
 @Suppress("FunctionNaming")
 @Composable
 actual fun ImagePickerLauncher(
     config: ImagePickerConfig
-){
+) {
     val context = LocalContext.current
     val activity = context.activity
     if (activity !is ComponentActivity) {
-        config.onError(Exception(getStringResource(StringResource.INVALID_CONTEXT_ERROR)))
+        config.onError(Exception(stringResource(Res.string.invalid_context_error)))
         return
     }
     CameraCaptureView(
@@ -40,7 +40,7 @@ actual fun ImagePickerLauncher(
             } else if (config.enableCrop) {
                 CropConfig(
                     enabled = true,
-                    circularCrop = true,  
+                    circularCrop = true,
                     squareCrop = true
                 )
             } else {

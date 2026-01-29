@@ -39,9 +39,14 @@ import coil3.compose.AsyncImage
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants
 import io.github.ismoy.imagepickerkmp.domain.config.UiConfig
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
-import io.github.ismoy.imagepickerkmp.presentation.resources.stringResource
-
+import imagepickerkmp.library.generated.resources.Res
+import imagepickerkmp.library.generated.resources.accept_button
+import imagepickerkmp.library.generated.resources.hd_quality_description
+import imagepickerkmp.library.generated.resources.image_confirmation_title
+import imagepickerkmp.library.generated.resources.preview_image_description
+import imagepickerkmp.library.generated.resources.retry_button
+import imagepickerkmp.library.generated.resources.sd_quality_description
+import org.jetbrains.compose.resources.stringResource
 @Composable
  fun LandscapeConfirmationLayout(
     result: PhotoResult,
@@ -71,7 +76,7 @@ import io.github.ismoy.imagepickerkmp.presentation.resources.stringResource
             ) {
                 AsyncImage(
                     model = result.uri,
-                    contentDescription = stringResource(StringResource.PREVIEW_IMAGE_DESCRIPTION),
+                    contentDescription = stringResource(Res.string.preview_image_description),
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(
@@ -96,8 +101,8 @@ import io.github.ismoy.imagepickerkmp.presentation.resources.stringResource
                     ) {
                         Icon(
                             imageVector = if (isHD) Icons.Default.Hd else Icons.Default.Sd,
-                            contentDescription = if (isHD) stringResource(StringResource.HD_QUALITY_DESCRIPTION)
-                            else stringResource(StringResource.SD_QUALITY_DESCRIPTION),
+                            contentDescription = if (isHD) stringResource(Res.string.hd_quality_description)
+                            else stringResource(Res.string.sd_quality_description),
                             tint = resolvedIconColor
                         )
                     }
@@ -114,7 +119,7 @@ import io.github.ismoy.imagepickerkmp.presentation.resources.stringResource
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = stringResource(StringResource.IMAGE_CONFIRMATION_TITLE),
+                    text = stringResource(Res.string.image_confirmation_title),
                     color = ImagePickerUiConstants.ConfirmationCardTitleColor,
                     fontSize = ImagePickerUiConstants.ConfirmationCardTitleFontSize,
                     fontWeight = FontWeight.Bold,
@@ -141,12 +146,12 @@ import io.github.ismoy.imagepickerkmp.presentation.resources.stringResource
                     ) {
                         Icon(
                             imageVector = Icons.Default.Check,
-                            contentDescription = stringResource(StringResource.ACCEPT_BUTTON),
+                            contentDescription = stringResource(Res.string.accept_button),
                             tint = resolvedIconColor,
                             modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
-                            stringResource(StringResource.ACCEPT_BUTTON),
+                            stringResource(Res.string.accept_button),
                             color = resolvedIconColor,
                             fontWeight = ImagePickerUiConstants.ConfirmationCardButtonTextFontWeight
                         )
@@ -164,12 +169,12 @@ import io.github.ismoy.imagepickerkmp.presentation.resources.stringResource
                     ) {
                         Icon(
                             imageVector = uiConfig.galleryIcon ?: Icons.Default.Refresh,
-                            contentDescription = stringResource(StringResource.RETRY_BUTTON),
+                            contentDescription = stringResource(Res.string.retry_button),
                             tint = resolvedIconColor,
                             modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
-                            stringResource(StringResource.RETRY_BUTTON),
+                            stringResource(Res.string.retry_button),
                             color = resolvedIconColor,
                             fontWeight = ImagePickerUiConstants.ConfirmationCardButtonTextFontWeight
                         )
