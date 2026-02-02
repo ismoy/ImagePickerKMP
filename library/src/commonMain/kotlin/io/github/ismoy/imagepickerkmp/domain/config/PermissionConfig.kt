@@ -1,8 +1,14 @@
 package io.github.ismoy.imagepickerkmp.domain.config
 
 import androidx.compose.runtime.Composable
-import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
-import io.github.ismoy.imagepickerkmp.presentation.resources.stringResource
+import org.jetbrains.compose.resources.stringResource
+import imagepickerkmp.library.generated.resources.Res
+import imagepickerkmp.library.generated.resources.camera_permission_denied
+import imagepickerkmp.library.generated.resources.camera_permission_denied_description
+import imagepickerkmp.library.generated.resources.camera_permission_description
+import imagepickerkmp.library.generated.resources.camera_permission_required
+import imagepickerkmp.library.generated.resources.grant_permission
+import imagepickerkmp.library.generated.resources.open_settings
 
 /**
  * Configuration for camera permission dialogs and messages.
@@ -26,12 +32,12 @@ data class PermissionConfig(
         @Composable
         fun createLocalizedComposable(): PermissionConfig {
             return PermissionConfig(
-                titleDialogConfig = stringResource(StringResource.CAMERA_PERMISSION_REQUIRED),
-                descriptionDialogConfig = stringResource(StringResource.CAMERA_PERMISSION_DESCRIPTION),
-                btnDialogConfig = stringResource(StringResource.OPEN_SETTINGS),
-                titleDialogDenied = stringResource(StringResource.CAMERA_PERMISSION_DENIED),
-                descriptionDialogDenied = stringResource(StringResource.CAMERA_PERMISSION_DENIED_DESCRIPTION),
-                btnDialogDenied = stringResource(StringResource.GRANT_PERMISSION)
+                titleDialogConfig = stringResource(Res.string.camera_permission_required),
+                descriptionDialogConfig = stringResource(Res.string.camera_permission_description),
+                btnDialogConfig = stringResource(Res.string.open_settings),
+                titleDialogDenied = stringResource(Res.string.camera_permission_denied),
+                descriptionDialogDenied = stringResource(Res.string.camera_permission_denied_description),
+                btnDialogDenied = stringResource(Res.string.grant_permission)
             )
         }
     }

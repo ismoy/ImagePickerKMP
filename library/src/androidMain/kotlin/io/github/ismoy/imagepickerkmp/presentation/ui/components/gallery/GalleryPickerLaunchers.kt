@@ -2,13 +2,14 @@ package io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery
 
 import android.content.Context
 import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import imagepickerkmp.library.generated.resources.Res
+import imagepickerkmp.library.generated.resources.gallery_selection_error
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
-import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
-import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery.GalleryFileProcessor.processSelectedFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
@@ -27,24 +30,28 @@ internal fun rememberSinglePickerLauncher(
     onDismiss: () -> Unit,
     compressionLevel: CompressionLevel? = null,
     includeExif: Boolean = false
-) = rememberLauncherForActivityResult(
-    contract = ActivityResultContracts.GetContent()
-) { uri: Uri? ->
-    if (uri != null) {
-        try {
-            CoroutineScope(Dispatchers.Main).launch {
-                val result = processSelectedFile(context, uri, compressionLevel, includeExif)
-                if (result != null) {
-                    onPhotoSelected(result)
-                } else {
-                    onError(Exception(getStringResource(StringResource.GALLERY_SELECTION_ERROR)))
+): ManagedActivityResultLauncher<String, Uri?> {
+    val gallerySelectionErrorMsg = stringResource(Res.string.gallery_selection_error)
+
+    return rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            try {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val result = processSelectedFile(context, uri, compressionLevel, includeExif)
+                    if (result != null) {
+                        onPhotoSelected(result)
+                    } else {
+                        onError(Exception(gallerySelectionErrorMsg))
+                    }
                 }
+            } catch (e: Exception) {
+                onError(e)
             }
-        } catch (e: Exception) {
-            onError(e)
+        } else {
+            onDismiss()
         }
-    } else {
-        onDismiss()
     }
 }
 
@@ -65,7 +72,7 @@ internal fun rememberMultiplePickerLauncher(
                 val semaphore = Semaphore(3)
                 val results = mutableListOf<GalleryPhotoResult>()
                 val errors = mutableListOf<Exception>()
-                
+
                 val deferredResults = uris.map { uri ->
                     async(Dispatchers.IO) {
                         semaphore.withPermit {
@@ -78,17 +85,17 @@ internal fun rememberMultiplePickerLauncher(
                         }
                     }
                 }
-                
+
                 results.addAll(deferredResults.awaitAll().filterNotNull())
-                
+
                 if (errors.isNotEmpty()) {
                     errors.forEach { onError(it) }
                 }
-                
+
                 if (results.isNotEmpty()) {
                     onPhotosSelected(results)
                 } else {
-                    onError(Exception(getStringResource(StringResource.GALLERY_SELECTION_ERROR)))
+                    onError(Exception(getString(Res.string.gallery_selection_error)))
                 }
             }
         } catch (e: Exception) {
