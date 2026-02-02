@@ -3,15 +3,14 @@ package io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.MediaStore
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import imagepickerkmp.library.generated.resources.Res
+import imagepickerkmp.library.generated.resources.gallery_selection_error
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
-import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
-import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery.GalleryFileProcessor.processSelectedFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +19,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import org.jetbrains.compose.resources.stringResource
 
 
 class PickImageFromGallery : ActivityResultContract<String, Uri?>() {
@@ -49,11 +49,11 @@ class PickMultipleImagesFromGallery : ActivityResultContract<String, List<Uri>>(
 
     override fun parseResult(resultCode: Int, intent: Intent?): List<Uri> {
         val uris = mutableListOf<Uri>()
-        
+
         if (resultCode != android.app.Activity.RESULT_OK) {
-            return uris 
+            return uris
         }
-        
+
         intent?.let {
             it.clipData?.let { clipData ->
                 for (i in 0 until clipData.itemCount) {
@@ -68,7 +68,7 @@ class PickMultipleImagesFromGallery : ActivityResultContract<String, List<Uri>>(
                 }
             }
         }
-        
+
         return uris
     }
 }
@@ -81,24 +81,28 @@ internal fun rememberGalleryOnlyPickerLauncher(
     onDismiss: () -> Unit,
     compressionLevel: CompressionLevel? = null,
     includeExif: Boolean = false
-) = rememberLauncherForActivityResult(
-    contract = PickImageFromGallery()
-) { uri: Uri? ->
-    if (uri != null) {
-        try {
-            CoroutineScope(Dispatchers.Main).launch {
-                val result = processSelectedFile(context, uri, compressionLevel, includeExif)
-                if (result != null) {
-                    onPhotoSelected(result)
-                } else {
-                    onError(Exception(getStringResource(StringResource.GALLERY_SELECTION_ERROR)))
+): ManagedActivityResultLauncher<String, Uri?> {
+    val gallerySelectionErrorMsg = stringResource(Res.string.gallery_selection_error)
+
+    return rememberLauncherForActivityResult(
+        contract = PickImageFromGallery()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            try {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val result = processSelectedFile(context, uri, compressionLevel, includeExif)
+                    if (result != null) {
+                        onPhotoSelected(result)
+                    } else {
+                        onError(Exception(gallerySelectionErrorMsg))
+                    }
                 }
+            } catch (e: Exception) {
+                onError(e)
             }
-        } catch (e: Exception) {
-            onError(e)
+        } else {
+            onDismiss()
         }
-    } else {
-        onDismiss()
     }
 }
 
@@ -110,44 +114,48 @@ internal fun rememberGalleryOnlyMultiplePickerLauncher(
     onDismiss: () -> Unit,
     compressionLevel: CompressionLevel? = null,
     includeExif: Boolean = false
-) = rememberLauncherForActivityResult(
-    contract = PickMultipleImagesFromGallery()
-) { uris: List<Uri> ->
-    if (uris.isNotEmpty()) {
-        try {
-            CoroutineScope(Dispatchers.Main).launch {
-                val semaphore = Semaphore(3)
-                val results = mutableListOf<GalleryPhotoResult>()
-                val errors = mutableListOf<Exception>()
-                
-                val deferredResults = uris.map { uri ->
-                    async(Dispatchers.IO) {
-                        semaphore.withPermit {
-                            try {
-                                processSelectedFile(context, uri, compressionLevel, includeExif)
-                            } catch (e: Exception) {
-                                errors.add(e)
-                                null
+): ManagedActivityResultLauncher<String, List<Uri>> {
+    val gallerySelectionErrorMsg = stringResource(Res.string.gallery_selection_error)
+
+    return rememberLauncherForActivityResult(
+        contract = PickMultipleImagesFromGallery()
+    ) { uris: List<Uri> ->
+        if (uris.isNotEmpty()) {
+            try {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val semaphore = Semaphore(3)
+                    val results = mutableListOf<GalleryPhotoResult>()
+                    val errors = mutableListOf<Exception>()
+
+                    val deferredResults = uris.map { uri ->
+                        async(Dispatchers.IO) {
+                            semaphore.withPermit {
+                                try {
+                                    processSelectedFile(context, uri, compressionLevel, includeExif)
+                                } catch (e: Exception) {
+                                    errors.add(e)
+                                    null
+                                }
                             }
                         }
                     }
+
+                    val finalResults = deferredResults.awaitAll().filterNotNull()
+                    results.addAll(finalResults)
+
+                    if (results.isNotEmpty()) {
+                        onPhotosSelected(results)
+                    } else if (errors.isNotEmpty()) {
+                        onError(errors.first())
+                    } else {
+                        onError(Exception(gallerySelectionErrorMsg))
+                    }
                 }
-                
-                val finalResults = deferredResults.awaitAll().filterNotNull()
-                results.addAll(finalResults)
-                
-                if (results.isNotEmpty()) {
-                    onPhotosSelected(results)
-                } else if (errors.isNotEmpty()) {
-                    onError(errors.first())
-                } else {
-                    onError(Exception(getStringResource(StringResource.GALLERY_SELECTION_ERROR)))
-                }
+            } catch (e: Exception) {
+                onError(e)
             }
-        } catch (e: Exception) {
-            onError(e)
+        } else {
+            onDismiss()
         }
-    } else {
-        onDismiss()
     }
 }

@@ -1,6 +1,5 @@
 package io.github.ismoy.imagepickerkmp.presentation.resources
 
-import androidx.compose.runtime.Composable
 
 /**
  * Enum that defines all string resources used in the ImagePicker library.
@@ -36,6 +35,3 @@ enum class StringResource {
     GALLERY_GRANT_PERMISSION,
     GALLERY_BTN_SETTINGS
 }
-
-@Composable
-internal expect fun stringResource(id: StringResource): String

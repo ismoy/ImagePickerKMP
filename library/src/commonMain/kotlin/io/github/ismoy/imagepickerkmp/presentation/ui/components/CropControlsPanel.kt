@@ -26,7 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import imagepickerkmp.library.generated.resources.Res
+import imagepickerkmp.library.generated.resources.image_crop_view_circular_description
+import imagepickerkmp.library.generated.resources.image_crop_view_rectangular_description
+import imagepickerkmp.library.generated.resources.image_crop_view_rotation_label
+import imagepickerkmp.library.generated.resources.image_crop_view_zoom_label
 import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CropControlsPanel(
@@ -41,7 +47,7 @@ fun CropControlsPanel(
     onRotationChange: (Float) -> Unit
 ) {
     val defaultPadding = 16.dp
-    
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -72,7 +78,7 @@ fun CropControlsPanel(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Crop,
-                        contentDescription = "Rectangular crop",
+                        contentDescription = stringResource(Res.string.image_crop_view_rectangular_description),
                         tint = if (!isCircularCrop) Color.Black else Color.White,
                         modifier = Modifier.size(16.dp)
                     )
@@ -95,7 +101,7 @@ fun CropControlsPanel(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Circle,
-                        contentDescription = "Circular crop",
+                        contentDescription = stringResource(Res.string.image_crop_view_circular_description),
                         tint = if (isCircularCrop) Color.Black else Color.White,
                         modifier = Modifier.size(16.dp)
                     )
@@ -116,7 +122,10 @@ fun CropControlsPanel(
                             backgroundColor = if (aspectRatio == ratio && !isCircularCrop) Color.White else Color.Transparent,
                             disabledBackgroundColor = Color.Gray.copy(alpha = 0.3f)
                         ),
-                        border = BorderStroke(1.dp, if (isCircularCrop) Color.Gray else Color.White),
+                        border = BorderStroke(
+                            1.dp,
+                            if (isCircularCrop) Color.Gray else Color.White
+                        ),
                         contentPadding = PaddingValues(horizontal = 6.dp, vertical = 4.dp)
                     ) {
                         Text(
@@ -132,7 +141,12 @@ fun CropControlsPanel(
         }
 
         Column {
-            Text("Zoom", color = Color.White, fontSize = 14.sp, modifier = Modifier.padding(bottom = 4.dp))
+            Text(
+                text = stringResource(Res.string.image_crop_view_zoom_label),
+                color = Color.White,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
             Slider(
                 value = zoomLevel,
                 onValueChange = onZoomChange,
@@ -147,7 +161,12 @@ fun CropControlsPanel(
         Spacer(modifier = Modifier.height(16.dp))
 
         Column {
-            Text("Rotation", color = Color.White, fontSize = 14.sp, modifier = Modifier.padding(bottom = 4.dp))
+            Text(
+                text = stringResource(Res.string.image_crop_view_rotation_label),
+                color = Color.White,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
             Slider(
                 value = rotationAngle,
                 onValueChange = onRotationChange,

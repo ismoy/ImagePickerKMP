@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeMultiplatform)
     id("com.vanniktech.maven.publish") version "0.33.0"
     id("maven-publish")
     id("jacoco")
@@ -382,6 +383,7 @@ kotlin {
                 implementation("io.coil-kt.coil3:coil-compose:3.2.0")
                 implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+                implementation(libs.components.resources)
                 // OCR dependencies
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
                 // Ktor dependencies for HTTP client
@@ -417,7 +419,6 @@ kotlin {
             tasks.withType<ProcessResources> {
                 duplicatesStrategy = DuplicatesStrategy.INCLUDE
             }
-            resources.srcDir("src/commonMain/resources")
             dependencies {
                 // Ktor iOS engine
                 implementation(libs.ktor.client.darwin)

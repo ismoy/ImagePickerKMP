@@ -21,8 +21,6 @@ import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.domain.utils.defaultCameraPermissionDialogConfig
 import io.github.ismoy.imagepickerkmp.domain.utils.playShutterSound
-import io.github.ismoy.imagepickerkmp.presentation.resources.StringResource
-import io.github.ismoy.imagepickerkmp.presentation.resources.getStringResource
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.CameraCapturePreview
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageConfirmationViewWithCustomButtons
@@ -30,8 +28,11 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.RequestCameraPermission
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberImagePickerViewModel
+import imagepickerkmp.library.generated.resources.Res
+import imagepickerkmp.library.generated.resources.camera_permission_permanently_denied
+import org.jetbrains.compose.resources.stringResource
 
-@Suppress("LongMethod","LongParameterList")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 fun CameraCaptureView(
     activity: ComponentActivity,
@@ -46,10 +47,10 @@ fun CameraCaptureView(
     var photoResult by remember { mutableStateOf<PhotoResult?>(null) }
     var showCropView by remember { mutableStateOf(false) }
     var hasPermission by remember { mutableStateOf(false) }
-    
+
     val imagePickerViewModel = rememberImagePickerViewModel()
     val cameraManager = rememberCameraManager(context, activity)
-    
+
     if (cameraManager == null) {
         onError(Exception("Camera dependencies not available. Please check camera permissions and device capabilities."))
         return
@@ -89,9 +90,14 @@ fun CameraCaptureView(
                     }
                 )
             }
+
             cameraCaptureConfig.galleryConfig.allowMultiple && onPhotosSelected != null -> {
                 GalleryPickerLauncher(
-                    onPhotosSelected = { results: List<GalleryPhotoResult> -> onPhotosSelected(results) },
+                    onPhotosSelected = { results: List<GalleryPhotoResult> ->
+                        onPhotosSelected(
+                            results
+                        )
+                    },
                     onError = { exception: Exception ->
                         imagePickerViewModel.onError(exception)
                         onError(exception)
@@ -106,6 +112,7 @@ fun CameraCaptureView(
                     includeExif = cameraCaptureConfig.galleryConfig.includeExif
                 )
             }
+
             photoResult == null -> {
                 CameraAndPreview(
                     cameraCaptureConfig = cameraCaptureConfig,
@@ -127,6 +134,7 @@ fun CameraCaptureView(
                     }
                 )
             }
+
             photoResult != null && !cameraCaptureConfig.permissionAndConfirmationConfig.skipConfirmation -> {
                 ConfirmationView(
                     photoResult = photoResult!!,
@@ -153,13 +161,16 @@ private fun PermissionHandler(
         customDeniedDialog = customDeniedDialog,
         customSettingsDialog = customSettingsDialog
     )
+    val cameraPermissionPermanentlyDeniedMsg =
+        stringResource(Res.string.camera_permission_permanently_denied)
+
     if (customPermissionHandler != null) {
         customPermissionHandler(defaultConfig)
     } else {
         RequestCameraPermission(
             dialogConfig = dialogConfig,
             onPermissionPermanentlyDenied = {
-                onError(PhotoCaptureException(getStringResource(StringResource.CAMERA_PERMISSION_PERMANENTLY_DENIED)))
+                onError(PhotoCaptureException(cameraPermissionPermanentlyDeniedMsg))
             },
             onResult = { _: Boolean -> onPermissionGranted() },
             customPermissionHandler = null
