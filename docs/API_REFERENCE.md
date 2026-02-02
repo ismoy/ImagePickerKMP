@@ -267,9 +267,9 @@ The image compression functionality in ImagePickerKMP automatically optimizes im
 ImagePickerLauncher(
     config = ImagePickerConfig(
         onPhotoCaptured = { result ->
-            // result.uri contains the compressed image
-            val fileSizeKB = (result.fileSize ?: 0) / 1024
-            println("Compressed image size: ${fileSizeKB}KB")
+            val fileSizeKB = (result.fileSize ?: 0) / 1024.0
+            println("Compressed image size: ${String.format("%.2f", fileSizeKB)}KB")
+            println("Exact size: ${result.fileSize} bytes")
         },
         onError = { exception ->
             println("Error: ${exception.message}")
@@ -289,9 +289,10 @@ ImagePickerLauncher(
 GalleryPickerLauncher(
     onPhotosSelected = { results ->
         results.forEach { photo ->
-            val fileSizeKB = (photo.fileSize ?: 0) / 1024
+            val fileSizeKB = (photo.fileSize ?: 0) / 1024.0
             println("Original: ${photo.fileName}")
-            println("Compressed size: ${fileSizeKB}KB")
+            println("Compressed size: ${String.format("%.2f", fileSizeKB)}KB")
+            println("Exact size: ${photo.fileSize} bytes")
         }
     },
     onError = { exception ->
@@ -403,7 +404,7 @@ GalleryPickerLauncher(
     config = GalleryPickerConfig(
         includeExif = true,
         androidGalleryConfig = AndroidGalleryConfig(
-            forceGalleryOnly = false, // Use file explorer instead
+            forceGalleryOnly = false,
             localOnly = true
         )
     ),
@@ -523,9 +524,9 @@ data class PhotoResult(
     val width: Int,
     val height: Int,
     val fileName: String? = null,
-    val fileSize: Long? = null,
+    val fileSize: Long? = null, 
     val mimeType: String? = null,
-    val exif: ExifData? = null  // EXIF metadata (Android/iOS only)
+    val exif: ExifData? = null 
 )
 ```
 
@@ -560,8 +561,8 @@ Configuration for camera capture.
 data class CameraCaptureConfig(
     val preference: CapturePhotoPreference = CapturePhotoPreference.QUALITY,
     val captureButtonSize: Dp = 72.dp,
-    val compressionLevel: CompressionLevel? = null, // null = no compression
-    val includeExif: Boolean = false, // Extract EXIF metadata (GPS, camera info)
+    val compressionLevel: CompressionLevel? = null, 
+    val includeExif: Boolean = false, 
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
@@ -582,20 +583,16 @@ data class CameraCaptureConfig(
 **Image Compression Examples:**
 
 ```kotlin
-// No compression (default)
 CameraCaptureConfig()
 
-// Medium compression (recommended)
 CameraCaptureConfig(
     compressionLevel = CompressionLevel.MEDIUM
 )
 
-// High compression for storage optimization
 CameraCaptureConfig(
     compressionLevel = CompressionLevel.HIGH
 )
 
-// Low compression for maximum quality
 CameraCaptureConfig(
     compressionLevel = CompressionLevel.LOW
 )
@@ -657,24 +654,20 @@ Contains comprehensive EXIF metadata extracted from images. **Available on Andro
 
 ```kotlin
 data class ExifData(
-    // GPS Data
     val latitude: Double? = null,
     val longitude: Double? = null,
     val altitude: Double? = null,
     
-    // Date & Time
     val dateTaken: String? = null,
     val dateTime: String? = null,
     val digitizedTime: String? = null,
     val originalTime: String? = null,
     
-    // Camera Information
     val cameraModel: String? = null,
     val cameraManufacturer: String? = null,
     val software: String? = null,
     val owner: String? = null,
     
-    // Image Properties
     val orientation: String? = null,
     val colorSpace: String? = null,
     val whiteBalance: String? = null,
@@ -691,11 +684,9 @@ data class ExifData(
 **Example Usage:**
 
 ```kotlin
-// Single image with EXIF
 ImagePickerLauncher(
     config = ImagePickerConfig(
         onPhotoCaptured = { result ->
-            // Access EXIF data
             result.exif?.let { exif ->
                 println(" GPS: ${exif.latitude}, ${exif.longitude}")
                 println(" Camera: ${exif.cameraModel}")
@@ -704,15 +695,13 @@ ImagePickerLauncher(
             }
         },
         cameraCaptureConfig = CameraCaptureConfig(
-            includeExif = true  // Enable EXIF extraction
+            includeExif = true 
         )
     )
 )
 
-// Multiple images with EXIF - Each image has its own EXIF data
 GalleryPickerLauncher(
     onPhotosSelected = { results ->
-        // Each result in the array has its own EXIF data
         results.forEachIndexed { index, result ->
             println("Image $index:")
             result.exif?.let { exif ->
@@ -723,7 +712,7 @@ GalleryPickerLauncher(
         }
     },
     allowMultiple = true,
-    includeExif = true  // Enable EXIF for all selected images
+    includeExif = true 
 )
 ```
 
@@ -963,11 +952,9 @@ fun ErrorHandlingExample() {
                 when (exception) {
                     is PhotoCaptureException -> {
                         println("Photo capture error: ${exception.message}")
-                        // Show user-friendly error message
                     }
                     else -> {
                         println("Unknown error: ${exception.message}")
-                        // Handle generic error
                     }
                 }
             }
@@ -980,11 +967,9 @@ fun ErrorHandlingExample() {
 
 ```kotlin
 try {
-    // Photo capture operation
     capturePhoto()
 } catch (e: PhotoCaptureException) {
     println("Error capturing photo: ${e.message}")
-    // Handle error appropriately
 }
 ```
 
@@ -1008,11 +993,9 @@ class PermissionDeniedException(message: String) : ImagePickerException(message)
 
 ```kotlin
 try {
-    // Request permissions
     requestCameraPermission()
 } catch (e: PermissionDeniedException) {
     println("Permissions denied: ${e.message}")
-    // Show dialog to go to settings
 }
 ```
 

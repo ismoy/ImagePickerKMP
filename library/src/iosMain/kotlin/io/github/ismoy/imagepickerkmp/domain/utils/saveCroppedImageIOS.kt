@@ -36,11 +36,16 @@ import platform.UIKit.UIImageJPEGRepresentation
 
         if (imageData != null) {
             imageData.writeToURL(fileURL, true)
+            
+            val fileSizeInBytes = imageData.length.toLong()
 
             val croppedPhotoResult = PhotoResult(
                 uri = fileURL.absoluteString ?: originalPhotoResult.uri,
                 width = image.size.useContents { width.toInt() },
-                height = image.size.useContents { height.toInt() }
+                height = image.size.useContents { height.toInt() },
+                fileName = fileName,
+                fileSize = fileSizeInBytes,
+                mimeType = "image/jpeg"
             )
 
             onComplete(croppedPhotoResult)

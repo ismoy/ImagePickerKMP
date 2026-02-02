@@ -8,7 +8,7 @@ package io.github.ismoy.imagepickerkmp.domain.models
  * @property width The width of the file in pixels (only for images, null for documents like PDFs).
  * @property height The height of the file in pixels (only for images, null for documents like PDFs).
  * @property fileName The name of the file, if available.
- * @property fileSize The size of the file in KB, if available.
+ * @property fileSize The size of the file in bytes, if available.
  * @property mimeType The MIME type of the file (e.g., "image/jpeg", "application/pdf").
  * @property exif EXIF metadata including GPS location data (only available when includeExif is enabled).
  */

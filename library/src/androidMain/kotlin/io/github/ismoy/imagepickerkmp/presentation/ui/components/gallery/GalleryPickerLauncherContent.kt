@@ -139,9 +139,9 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
                         uri = croppedResult.uri,
                         width = croppedResult.width,
                         height = croppedResult.height,
-                        fileName = photoResult.fileName,
-                        fileSize = photoResult.fileSize,
-                        mimeType = photoResult.mimeType,
+                        fileName = croppedResult.fileName,
+                        fileSize = croppedResult.fileSize,
+                        mimeType = croppedResult.mimeType,
                         exif = photoResult.exif
                     )
                     config.onPhotosSelected(listOf(galleryResult))
@@ -170,9 +170,9 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
                         uri = confirmedResult.uri,
                         width = confirmedResult.width,
                         height = confirmedResult.height,
-                        fileName = photoResult.fileName,
-                        fileSize = photoResult.fileSize,
-                        mimeType = photoResult.mimeType,
+                        fileName = confirmedResult.fileName,
+                        fileSize = confirmedResult.fileSize,
+                        mimeType = confirmedResult.mimeType,
                         exif = photoResult.exif
                     )
                     config.onPhotosSelected(listOf(galleryResult))

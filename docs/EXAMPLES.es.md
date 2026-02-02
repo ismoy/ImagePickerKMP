@@ -56,7 +56,8 @@ fun CamaraConNivelesCompresion() {
         }
         
         fotoCapturada?.let { foto ->
-            Text("Foto capturada - Tamaño: ${(foto.fileSize ?: 0) / 1024}KB")
+            val fileSizeKB = (foto.fileSize ?: 0) / 1024.0
+            Text("Foto capturada - Tamaño: ${String.format("%.2f", fileSizeKB)}KB (${foto.fileSize} bytes)")
             Image(
                 bitmap = foto.photoBytes.toComposeImageBitmap(),
                 contentDescription = "Foto capturada",
