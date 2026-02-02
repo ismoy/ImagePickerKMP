@@ -61,9 +61,6 @@ class GalleryDelegate(
                 val tempURL = ImageProcessor.saveImageToTempDirectory(processedData)
                 if (tempURL != null) {
                     val fileSizeInBytes = processedData.length.toLong()
-                    val fileSizeInKB = bytesToKB(fileSizeInBytes)
-                    
-                    // Extract EXIF data if requested
                     logDebug("EXIF extraction - includeExif: $includeExif, tempURL.path: ${tempURL.path}")
                     val exifData = if (includeExif) {
                         logDebug("Calling ExifDataExtractor.extractExifData for path: ${tempURL.path ?: "NULL"}")
@@ -80,11 +77,11 @@ class GalleryDelegate(
                         width = image.size.useContents { width.toInt() },
                         height = image.size.useContents { height.toInt() },
                         fileName = tempURL.lastPathComponent,
-                        fileSize = fileSizeInKB,
+                        fileSize = fileSizeInBytes,
                         mimeType = "image/jpeg",
                         exif = exifData
                     )
-                    logDebug("Final result - File size: ${fileSizeInKB}KB (${fileSizeInBytes} bytes)")
+                    logDebug("Final result - File size: ${fileSizeInBytes} bytes (${fileSizeInBytes / 1024}KB)")
                     onImagePicked(galleryResult)
                 } else {
                     logDebug("Error: Failed to save image to temp directory")
@@ -98,8 +95,6 @@ class GalleryDelegate(
             dismissPicker(picker)
         }
     }
-
-    private fun bytesToKB(bytes: Long): Long = maxOf(1L, bytes / 1024)
 
     private fun logDebug(message: String) {
         println(" iOS GalleryDelegate: $message")

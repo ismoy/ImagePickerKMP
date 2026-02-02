@@ -230,7 +230,7 @@ internal object GalleryImageProcessor {
         val tempFile = GalleryImageCompressor.createTempImageFile(context, bytes)
         
         if (tempFile != null) {
-            val fileSizeInKB = GalleryFileUtils.bytesToKB(bytes.size.toLong())
+            val fileSizeInBytes = bytes.size.toLong()
             val finalFileName = if (compressionLevel != null) "compressed_$fileName" else fileName
             
             return GalleryPhotoResult(
@@ -238,7 +238,7 @@ internal object GalleryImageProcessor {
                 width = bitmap.width,
                 height = bitmap.height,
                 fileName = finalFileName,
-                fileSize = fileSizeInKB,
+                fileSize = fileSizeInBytes,
                 mimeType = mimeType,
                 exif = exifData
             )
@@ -262,14 +262,14 @@ internal object GalleryImageProcessor {
         BitmapFactory.decodeByteArray(originalBytes, 0, originalBytes.size, options)
         val width = options.outWidth
         val height = options.outHeight
-        val fileSizeInKB = GalleryFileUtils.bytesToKB(originalBytes.size.toLong())
+        val fileSizeInBytes = originalBytes.size.toLong()
         
         return GalleryPhotoResult(
             uri = uri.toString(),
             width = width,
             height = height,
             fileName = fileName,
-            fileSize = fileSizeInKB,
+            fileSize = fileSizeInBytes,
             mimeType = mimeType,
             exif = exifData
         )

@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Fixed Cropped Image Metadata (Android)**: Resolved issue where `GalleryPhotoResult` after cropping returned incorrect metadata
+  - `fileName` now reflects the cropped image file name instead of original
+  - `fileSize` now contains the actual cropped image size in bytes instead of original
+  - `mimeType` now correctly shows "image/png" for cropped images instead of original format
+  - Affects both `GalleryPickerLauncher` and custom confirmation views with crop enabled
+  - Only `exif` data is preserved from original image (as expected)
+
+### Changed
+
+- **BREAKING: `fileSize` now returns bytes instead of KB**: `PhotoResult.fileSize` and `GalleryPhotoResult.fileSize` now return the exact file size in bytes instead of KB
+  - **Better Precision**: Eliminates rounding errors that occurred with KB conversion
+  - **S3 Compatibility**: Fixes issues with S3 pre-signed URLs that require exact Content-Length in bytes
+  - **API Compatibility**: Useful for any service that requires precise byte values
+  - **Migration Guide**: To get KB from bytes, divide by 1024: `val fileSizeKB = (result.fileSize ?: 0) / 1024.0`
+  - **Updated Documentation**: All examples and documentation updated to reflect byte-based sizes
+
 ### Added
 
 - ** Automatic Image Compression**: Complete compression system for both camera and gallery

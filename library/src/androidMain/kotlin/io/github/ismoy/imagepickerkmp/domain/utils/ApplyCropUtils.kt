@@ -87,11 +87,16 @@ fun applyCropUtils(
                 val outputStream = FileOutputStream(outputFile)
                 finalBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                 outputStream.close()
+                
+                val fileSizeInBytes = outputFile.length()
+                
                 val croppedPhotoResult = PhotoResult(
                     uri = outputFile.absolutePath,
                     width = finalBitmap.width,
                     height = finalBitmap.height,
-                    fileName = "cropped_image_${System.currentTimeMillis()}.png"
+                    fileName = "cropped_image_${System.currentTimeMillis()}.png",
+                    fileSize = fileSizeInBytes,
+                    mimeType = "image/png"
                 )
 
                 CoroutineScope(Dispatchers.Main).launch {

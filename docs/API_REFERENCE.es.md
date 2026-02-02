@@ -267,9 +267,9 @@ La funcionalidad de compresión de imágenes en ImagePickerKMP optimiza automát
 ImagePickerLauncher(
     config = ImagePickerConfig(
         onPhotoCaptured = { result ->
-            // result.uri contiene la imagen comprimida
-            val fileSizeKB = (result.fileSize ?: 0) / 1024
-            println("Tamaño de imagen comprimida: ${fileSizeKB}KB")
+            val fileSizeKB = (result.fileSize ?: 0) / 1024.0
+            println("Tamaño de imagen comprimida: ${String.format("%.2f", fileSizeKB)}KB")
+            println("Tamaño exacto: ${result.fileSize} bytes")
         },
         onError = { exception ->
             println("Error: ${exception.message}")
@@ -289,9 +289,10 @@ ImagePickerLauncher(
 GalleryPickerLauncher(
     onPhotosSelected = { results ->
         results.forEach { photo ->
-            val fileSizeKB = (photo.fileSize ?: 0) / 1024
+            val fileSizeKB = (photo.fileSize ?: 0) / 1024.0
             println("Original: ${photo.fileName}")
-            println("Tamaño comprimido: ${fileSizeKB}KB")
+            println("Tamaño comprimido: ${String.format("%.2f", fileSizeKB)}KB")
+            println("Tamaño exacto: ${photo.fileSize} bytes")
         }
     },
     onError = { exception ->
@@ -300,7 +301,7 @@ GalleryPickerLauncher(
     allowMultiple = true,
     mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
     cameraCaptureConfig = CameraCaptureConfig(
-        compressionLevel = CompressionLevel.HIGH // Optimizar para almacenamiento
+        compressionLevel = CompressionLevel.HIGH 
     )
 )
 ```
@@ -408,25 +409,23 @@ expect fun GalleryPickerLauncher(
 GalleryPickerLauncher(
     onPhotosSelected = { photos ->
         photos.forEach { photo ->
-            // ✅ Acceso a datos EXIF (solo si includeExif = true)
             photo.exif?.let { exif ->
-                println("📍 Ubicación GPS: ${exif.latitude}, ${exif.longitude}")
-                println("📷 Cámara: ${exif.camera}")
-                println("📅 Fecha/Hora: ${exif.dateTime}")
+                println(" Ubicación GPS: ${exif.latitude}, ${exif.longitude}")
+                println(" Cámara: ${exif.camera}")
+                println(" Fecha/Hora: ${exif.dateTime}")
             }
         }
     },
-    includeExif = true // ✅ IMPORTANTE: Habilita extracción EXIF
+    includeExif = true 
 )
 ```
 
 #### Ejemplo OCR con PDF
 
 ```kotlin
-// ✅ Ahora funciona correctamente con PDFs
 ImagePickerLauncherOCR(
     config = ImagePickerOCRConfig(
-        allowedMimeTypes = listOf(MimeType.APPLICATION_PDF), // Automáticamente usa explorador
+        allowedMimeTypes = listOf(MimeType.APPLICATION_PDF),
         scanMode = ScanMode.Cloud(provider = CloudOCRProvider.Gemini(apiKey))
     )
 )
@@ -471,7 +470,7 @@ data class PhotoResult(
     val fileName: String? = null,
     val fileSize: Long? = null,
     val mimeType: String? = null,
-    val exif: ExifData? = null  // Metadatos EXIF (solo Android/iOS)
+    val exif: ExifData? = null 
 )
 ```
 
@@ -487,7 +486,7 @@ data class PhotoResult(
     val fileName: String? = null,
     val fileSize: Long? = null,
     val mimeType: String? = null,
-    val exif: ExifData? = null  // Metadatos EXIF (solo Android/iOS)
+    val exif: ExifData? = null 
 )
 ```
 
@@ -522,8 +521,8 @@ Configuración para la captura de cámara.
 data class CameraCaptureConfig(
     val preference: CapturePhotoPreference = CapturePhotoPreference.QUALITY,
     val captureButtonSize: Dp = 72.dp,
-    val compressionLevel: CompressionLevel? = null, // null = sin compresión
-    val includeExif: Boolean = false, // Extraer metadatos EXIF (GPS, info cámara)
+    val compressionLevel: CompressionLevel? = null, 
+    val includeExif: Boolean = false, 
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
@@ -597,24 +596,20 @@ Contiene metadatos EXIF completos extraídos de imágenes. **Disponible solo en 
 
 ```kotlin
 data class ExifData(
-    // Datos GPS
     val latitude: Double? = null,
     val longitude: Double? = null,
     val altitude: Double? = null,
     
-    // Fecha y Hora
     val dateTaken: String? = null,
     val dateTime: String? = null,
     val digitizedTime: String? = null,
     val originalTime: String? = null,
     
-    // Información de Cámara
     val cameraModel: String? = null,
     val cameraManufacturer: String? = null,
     val software: String? = null,
     val owner: String? = null,
     
-    // Propiedades de Imagen
     val orientation: String? = null,
     val colorSpace: String? = null,
     val whiteBalance: String? = null,
@@ -631,39 +626,35 @@ data class ExifData(
 **Ejemplo de Uso:**
 
 ```kotlin
-// Imagen individual con EXIF
 ImagePickerLauncher(
     config = ImagePickerConfig(
         onPhotoCaptured = { result ->
-            // Acceder a datos EXIF
             result.exif?.let { exif ->
-                println("📍 GPS: ${exif.latitude}, ${exif.longitude}")
-                println("📷 Cámara: ${exif.cameraModel}")
-                println("📅 Fecha: ${exif.dateTaken}")
-                println("⚙️ Config: ISO ${exif.iso}, f/${exif.aperture}")
+                println(" GPS: ${exif.latitude}, ${exif.longitude}")
+                println(" Cámara: ${exif.cameraModel}")
+                println(" Fecha: ${exif.dateTaken}")
+                println(" Config: ISO ${exif.iso}, f/${exif.aperture}")
             }
         },
         cameraCaptureConfig = CameraCaptureConfig(
-            includeExif = true  // Habilitar extracción EXIF
+            includeExif = true 
         )
     )
 )
 
-// Múltiples imágenes con EXIF - Cada imagen tiene su propio EXIF
 GalleryPickerLauncher(
     onPhotosSelected = { results ->
-        // Cada resultado en el array tiene sus propios datos EXIF
         results.forEachIndexed { index, result ->
             println("Imagen $index:")
             result.exif?.let { exif ->
-                println("  📍 Ubicación: ${exif.latitude}, ${exif.longitude}")
-                println("  📷 Cámara: ${exif.cameraModel}")
-                println("  📅 Fecha: ${exif.dateTaken}")
-            } ?: println("  ⚠️ Sin datos EXIF disponibles")
+                println("   Ubicación: ${exif.latitude}, ${exif.longitude}")
+                println("   Cámara: ${exif.cameraModel}")
+                println("   Fecha: ${exif.dateTaken}")
+            } ?: println("  Sin datos EXIF disponibles")
         }
     },
     allowMultiple = true,
-    includeExif = true  // Habilitar EXIF para todas las imágenes seleccionadas
+    includeExif = true 
 )
 ```
 

@@ -64,14 +64,14 @@ internal object GalleryFileProcessor {
         inputStream?.close()
         
         if (fileBytes != null) {
-            val fileSizeInKB = GalleryFileUtils.bytesToKB(fileBytes.size.toLong())
-            logDebug("✅ PDF file selected - File size: ${fileSizeInKB}KB, MIME: $mimeType")
+            val fileSizeInBytes = fileBytes.size.toLong()
+            logDebug(" PDF file selected - File size: ${fileSizeInBytes} bytes (${fileSizeInBytes / 1024}KB), MIME: $mimeType")
             return GalleryPhotoResult(
                 uri = uri.toString(),
                 width = null,
                 height = null,
                 fileName = fileName,
-                fileSize = fileSizeInKB,
+                fileSize = fileSizeInBytes,
                 mimeType = mimeType,
                 exif = null
             )
@@ -93,13 +93,13 @@ internal object GalleryFileProcessor {
         inputStream?.close()
         
         if (fileBytes != null) {
-            val fileSizeInKB = GalleryFileUtils.bytesToKB(fileBytes.size.toLong())
+            val fileSizeInBytes = fileBytes.size.toLong()
             return GalleryPhotoResult(
                 uri = uri.toString(),
                 width = null,
                 height = null,
                 fileName = fileName,
-                fileSize = fileSizeInKB,
+                fileSize = fileSizeInBytes,
                 mimeType = mimeType,
                 exif = null 
             )

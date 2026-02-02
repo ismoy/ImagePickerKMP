@@ -81,13 +81,12 @@ class ImageProcessor(
                     }
 
                     val fileSizeInBytes = finalFile.length()
-                    val fileSizeInKB = bytesToKB(fileSizeInBytes)
                     val result = PhotoResult(
                         uri = fileManager.fileToUriString(finalFile),
                         width = processedBitmap.width,
                         height = processedBitmap.height,
                         fileName = finalFile.name,
-                        fileSize = fileSizeInKB,
+                        fileSize = fileSizeInBytes,
                         exif = exifData
                     )
                     if (processedBitmap != originalBitmap) {
@@ -110,8 +109,6 @@ class ImageProcessor(
             }
         }
     }
-
-    private fun bytesToKB(bytes: Long): Long = maxOf(1L, bytes / 1024)
 
     private fun logDebug(message: String) {
         println(" Android ImageProcessor: $message")

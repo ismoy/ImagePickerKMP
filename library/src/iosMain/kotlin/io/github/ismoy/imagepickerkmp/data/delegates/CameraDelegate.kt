@@ -59,7 +59,6 @@ class CameraDelegate(
                 val tempURL = ImageProcessor.saveImageToTempDirectory(processedData)
                 if (tempURL != null) {
                     val fileSizeInBytes = processedData.length.toLong()
-                    val fileSizeInKB = bytesToKB(fileSizeInBytes)
                     val exifData = if (includeExif) {
                         val path = tempURL.path ?: ""
                         ExifDataExtractor.extractExifData(path)
@@ -73,7 +72,7 @@ class CameraDelegate(
                         width = image.size.useContents { width.toInt() },
                         height = image.size.useContents { height.toInt() },
                         fileName = tempURL.lastPathComponent,
-                        fileSize = fileSizeInKB,
+                        fileSize = fileSizeInBytes,
                         exif = exifData
                     )
                     onPhotoCaptured(photoResult)
@@ -90,8 +89,6 @@ class CameraDelegate(
             dismissPicker(picker)
         }
     }
-
-    private fun bytesToKB(bytes: Long): Long = maxOf(1L, bytes / 1024)
 
     private fun logDebug(message: String) {
         println("iOS CameraDelegate: $message")

@@ -38,8 +38,4 @@ internal object GalleryFileUtils {
         return result
     }
     
-    /**
-     * Convert bytes to kilobytes.
-     */
-    fun bytesToKB(bytes: Long): Long = maxOf(1L, bytes / 1024)
 }

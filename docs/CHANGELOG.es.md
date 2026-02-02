@@ -9,6 +9,24 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## [Sin Publicar]
 
+### Corregido
+
+- **Corregidos Metadatos de Imagen Recortada (Android)**: Resuelto problema donde `GalleryPhotoResult` después del recorte retornaba metadatos incorrectos
+  - `fileName` ahora refleja el nombre del archivo recortado en lugar del original
+  - `fileSize` ahora contiene el tamaño real de la imagen recortada en bytes en lugar del original
+  - `mimeType` ahora muestra correctamente "image/png" para imágenes recortadas en lugar del formato original
+  - Afecta tanto a `GalleryPickerLauncher` como a vistas de confirmación personalizadas con recorte habilitado
+  - Solo los datos `exif` se preservan de la imagen original (como se espera)
+
+### Cambiado
+
+- **BREAKING: `fileSize` ahora retorna bytes en lugar de KB**: `PhotoResult.fileSize` y `GalleryPhotoResult.fileSize` ahora retornan el tamaño exacto del archivo en bytes en lugar de KB
+  - **Mejor Precisión**: Elimina errores de redondeo que ocurrían con la conversión a KB
+  - **Compatibilidad con S3**: Corrige problemas con URLs pre-firmadas de S3 que requieren Content-Length exacto en bytes
+  - **Compatibilidad con APIs**: Útil para cualquier servicio que requiera valores precisos en bytes
+  - **Guía de Migración**: Para obtener KB desde bytes, dividir por 1024: `val fileSizeKB = (result.fileSize ?: 0) / 1024.0`
+  - **Documentación Actualizada**: Todos los ejemplos y documentación actualizados para reflejar tamaños basados en bytes
+
 ### Añadido
 
 - **🗜️ Compresión Automática de Imágenes**: Sistema completo de compresión para cámara y galería

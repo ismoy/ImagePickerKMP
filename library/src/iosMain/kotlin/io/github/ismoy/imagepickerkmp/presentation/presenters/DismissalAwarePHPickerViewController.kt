@@ -1,18 +1,14 @@
 package io.github.ismoy.imagepickerkmp.presentation.presenters
 
 import io.github.ismoy.imagepickerkmp.data.delegates.PHPickerDelegate
-import io.ktor.util.date.getTimeMillis
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.PhotosUI.PHPickerConfiguration
 import platform.PhotosUI.PHPickerViewController
-import platform.darwin.dispatch_async
-import platform.darwin.dispatch_get_main_queue
-import kotlin.time.ExperimentalTime
-
 
 @OptIn(ExperimentalForeignApi::class)
 object DismissalAwarePHPickerViewController {
-    private val dismissalMonitors = mutableMapOf<Int, DismissalMonitor>()
+    
+    private val pickerMonitors = mutableMapOf<Int, DismissalMonitor>()
     
     fun createPickerViewController(
         configuration: PHPickerConfiguration,
@@ -21,16 +17,13 @@ object DismissalAwarePHPickerViewController {
         val picker = PHPickerViewController(configuration)
         
         val monitor = DismissalMonitor(picker, pickerDelegate)
-        dismissalMonitors[picker.hashCode()] = monitor
-        monitor.startMonitoring()
+        pickerMonitors[picker.hashCode()] = monitor
         
         return picker
     }
     
     fun markDismissalHandled(picker: PHPickerViewController) {
-        val hashCode = picker.hashCode()
-        dismissalMonitors[hashCode]?.stopMonitoring()
-        dismissalMonitors.remove(hashCode)
+        pickerMonitors.remove(picker.hashCode())
     }
 }
 
@@ -39,34 +32,41 @@ private class DismissalMonitor(
     private val picker: PHPickerViewController,
     private val pickerDelegate: PHPickerDelegate
 ) {
-    private var isMonitoring = false
-    private var monitoringStartTime = 0L
     
-    @OptIn(ExperimentalTime::class)
-    fun startMonitoring() {
-        if (isMonitoring) return
-        isMonitoring = true
-        monitoringStartTime = getTimeMillis()
+    private var didNotifyDismissal = false
+    private var previousWindowState: Boolean = true
+    
+    init {
         scheduleCheck()
     }
     
-    fun stopMonitoring() {
-        isMonitoring = false
+    private fun scheduleCheck() {
+        platform.darwin.dispatch_after(
+            platform.darwin.dispatch_time(
+                platform.darwin.DISPATCH_TIME_NOW,
+                500_000_000L
+            ),
+            platform.darwin.dispatch_get_main_queue()
+        ) {
+            performCheck()
+        }
     }
     
-    private fun scheduleCheck() {
-        if (!isMonitoring) return
+    private fun performCheck() {
+        val currentWindowState = picker.view?.window != null
         
-        dispatch_async(dispatch_get_main_queue()) {
-            if (isMonitoring && picker.viewIfLoaded?.window == null) {
-                stopMonitoring()
+        if (previousWindowState && !currentWindowState && !didNotifyDismissal) {
+            didNotifyDismissal = true
+            if (!pickerDelegate.dismissHandled) {
                 pickerDelegate.onPickerDismissed()
-                DismissalAwarePHPickerViewController.markDismissalHandled(picker)
-            } else if (isMonitoring) {
-                dispatch_async(dispatch_get_main_queue()) {
-                    scheduleCheck()
-                }
             }
+            return
+        }
+        
+        previousWindowState = currentWindowState
+        
+        if (!didNotifyDismissal) {
+            scheduleCheck()
         }
     }
 }
