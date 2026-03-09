@@ -60,8 +60,6 @@ actual fun ImagePickerLauncher(
     LaunchedEffect(launchKey) {
         try {
             val hasCameraSupport = js("navigator.mediaDevices && navigator.mediaDevices.getUserMedia") != null
-            val allowMultiple = config.cameraCaptureConfig.galleryConfig.allowMultiple
-            val mimeTypes = config.cameraCaptureConfig.galleryConfig.mimeTypes
             val preferCamera = isMobileContext() && hasCameraSupport
             
             if (hasCameraSupport && preferCamera) {
@@ -86,39 +84,22 @@ actual fun ImagePickerLauncher(
                 // Usar file picker como fallback
                 handleFilePicker(
                     onSuccess = { result ->
-                        if (allowMultiple && result.asDynamic().length != undefined) {
-                            // Múltiples archivos
-                            val photos = mutableListOf<GalleryPhotoResult>()
-                            val resultArray = result.asDynamic()
-                            for (i in 0 until resultArray.length.unsafeCast<Int>()) {
-                                val item = resultArray[i]
-                                photos.add(GalleryPhotoResult(
-                                    uri = item.uri as String,
-                                    fileName = item.fileName as String,
-                                    fileSize = item.fileSize as Long,
-                                    width = item.width as Int,
-                                    height = item.height as Int
-                                ))
-                            }
-                            config.onPhotosSelected?.invoke(photos)
-                        } else {
-                            // Un solo archivo
-                            val photoResult = PhotoResult(
-                                uri = result.uri as String,
-                                fileName = result.fileName as String,
-                                fileSize = result.fileSize as Long,
-                                width = result.width as Int,
-                                height = result.height as Int
-                            )
-                            config.onPhotoCaptured(photoResult)
-                        }
+                        // Un solo archivo
+                        val photoResult = PhotoResult(
+                            uri = result.uri as String,
+                            fileName = result.fileName as String,
+                            fileSize = result.fileSize as Long,
+                            width = result.width as Int,
+                            height = result.height as Int
+                        )
+                        config.onPhotoCaptured(photoResult)
                     },
                     onError = { error ->
                         config.onError(Exception(error))
                     },
                     onCancel = config.onDismiss,
-                    allowMultiple = allowMultiple,
-                    mimeTypes = mimeTypes
+                    allowMultiple = false,
+                    mimeTypes = listOf(MimeType.IMAGE_ALL)
                 )
             }
         } catch (e: Exception) {

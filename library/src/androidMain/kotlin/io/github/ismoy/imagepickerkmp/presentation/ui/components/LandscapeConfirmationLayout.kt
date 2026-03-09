@@ -48,7 +48,7 @@ import imagepickerkmp.library.generated.resources.retry_button
 import imagepickerkmp.library.generated.resources.sd_quality_description
 import org.jetbrains.compose.resources.stringResource
 @Composable
- fun LandscapeConfirmationLayout(
+internal fun LandscapeConfirmationLayout(
     result: PhotoResult,
     onConfirm: (PhotoResult) -> Unit,
     onRetry: () -> Unit,

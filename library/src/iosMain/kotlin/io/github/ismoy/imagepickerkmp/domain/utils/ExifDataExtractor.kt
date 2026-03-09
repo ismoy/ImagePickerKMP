@@ -16,7 +16,7 @@ import platform.Photos.PHAsset
  * - [extractExifDataFromAsset]: Extract from PHAsset (gallery photos)
  */
 @OptIn(ExperimentalForeignApi::class)
-object ExifDataExtractor {
+internal object ExifDataExtractor {
     
     /**
      * Extracts EXIF data from an image file path.

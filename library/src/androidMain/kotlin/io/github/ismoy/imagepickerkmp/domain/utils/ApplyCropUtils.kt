@@ -15,7 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-fun applyCropUtils(
+internal fun applyCropUtils(
     context: Context,
     photoResult: PhotoResult,
     cropRect: Rect,

@@ -4,13 +4,17 @@ import io.github.ismoy.imagepickerkmp.data.processors.ImageProcessor
 import io.github.ismoy.imagepickerkmp.domain.utils.ExifDataExtractor
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.UIKit.UIImage
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerDelegateProtocol
+import platform.UIKit.UIImagePickerControllerImageURL
 import platform.UIKit.UIImagePickerControllerOriginalImage
 import platform.UIKit.UIImageJPEGRepresentation
+import platform.UIKit.UIAdaptivePresentationControllerDelegateProtocol
+import platform.UIKit.UIPresentationController
 import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.darwin.NSObject
 
@@ -20,12 +24,15 @@ import platform.darwin.NSObject
  * This class processes selected images from the gallery and communicates results or errors to the caller.
  */
 @OptIn(ExperimentalForeignApi::class)
-class GalleryDelegate(
+internal class GalleryDelegate(
     private val onImagePicked: (GalleryPhotoResult) -> Unit,
     private val onDismiss: () -> Unit,
     private val compressionLevel: CompressionLevel? = null,
-    private val includeExif: Boolean = false
-) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol {
+    private val includeExif: Boolean = false,
+    private val allowedMimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
+    private val onError: ((Exception) -> Unit)? = null,
+    private val mimeTypeMismatchMessage: String? = null
+) : NSObject(), UIImagePickerControllerDelegateProtocol, UINavigationControllerDelegateProtocol, UIAdaptivePresentationControllerDelegateProtocol {
 
     override fun imagePickerController(
         picker: UIImagePickerController,
@@ -33,6 +40,16 @@ class GalleryDelegate(
     ) {
         val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
         if (image != null) {
+            // Filtro post-selección: verificar el MIME type real del archivo seleccionado
+            val imageUrl = didFinishPickingMediaWithInfo[UIImagePickerControllerImageURL] as? platform.Foundation.NSURL
+            if (imageUrl != null && !urlMatchesMimeTypes(imageUrl, allowedMimeTypes)) {
+                logDebug("MIME type mismatch. Allowed: ${allowedMimeTypes.joinToString { it.value }}")
+                val msg = mimeTypeMismatchMessage
+                    ?: "The selected file does not match the allowed types: ${allowedMimeTypes.joinToString { it.value }}"
+                onError?.invoke(Exception(msg))
+                dismissPicker(picker)
+                return
+            }
             processSelectedImage(image, picker)
         } else {
             dismissPicker(picker)
@@ -42,6 +59,11 @@ class GalleryDelegate(
     override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
         onDismiss()
         dismissPicker(picker)
+    }
+
+    // Llamado por iOS cuando el usuario hace swipe-to-dismiss (drag down) en el picker
+    override fun presentationControllerDidDismiss(presentationController: UIPresentationController) {
+        onDismiss()
     }
 
     private fun processSelectedImage(image: UIImage, picker: UIImagePickerController) {
@@ -102,5 +124,39 @@ class GalleryDelegate(
 
     private fun dismissPicker(picker: UIImagePickerController) {
         picker.dismissViewControllerAnimated(true, null)
+    }
+
+    /**
+     * Verifica si una URL de archivo cumple con alguno de los MimeTypes permitidos,
+     * igual que Android: deja seleccionar al usuario pero en el callback valida la extensión real.
+     */
+    private fun urlMatchesMimeTypes(url: platform.Foundation.NSURL, allowedMimeTypes: List<MimeType>): Boolean {
+        // Si contiene IMAGE_ALL o wildcard, se acepta todo
+        if (allowedMimeTypes.any { it == MimeType.IMAGE_ALL }) return true
+
+        val pathExtension = url.pathExtension?.lowercase() ?: return true
+
+        val actualMimeType = extensionToMimeType(pathExtension)
+
+        return allowedMimeTypes.any { allowed ->
+            when {
+                allowed.value.endsWith("/*") -> actualMimeType.startsWith(allowed.value.removeSuffix("*"))
+                else -> actualMimeType.equals(allowed.value, ignoreCase = true)
+            }
+        }
+    }
+
+    private fun extensionToMimeType(extension: String): String {
+        return when (extension) {
+            "jpg", "jpeg" -> "image/jpeg"
+            "png"         -> "image/png"
+            "gif"         -> "image/gif"
+            "webp"        -> "image/webp"
+            "bmp"         -> "image/bmp"
+            "heic"        -> "image/heic"
+            "heif"        -> "image/heif"
+            "pdf"         -> "application/pdf"
+            else          -> "image/$extension"
+        }
     }
 }

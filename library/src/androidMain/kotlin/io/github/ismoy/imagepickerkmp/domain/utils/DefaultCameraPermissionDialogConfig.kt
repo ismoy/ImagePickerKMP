@@ -4,7 +4,7 @@ import io.github.ismoy.imagepickerkmp.domain.config.CameraPermissionDialogConfig
 import io.github.ismoy.imagepickerkmp.domain.config.PermissionConfig
 
 @Composable
-fun defaultCameraPermissionDialogConfig(): CameraPermissionDialogConfig {
+internal fun defaultCameraPermissionDialogConfig(): CameraPermissionDialogConfig {
     val defaultConfig = PermissionConfig.createLocalizedComposable()
     return CameraPermissionDialogConfig(
         titleDialogConfig = defaultConfig.titleDialogConfig,

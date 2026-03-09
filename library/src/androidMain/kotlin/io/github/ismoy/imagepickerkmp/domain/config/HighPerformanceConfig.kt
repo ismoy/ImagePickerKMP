@@ -3,7 +3,7 @@ package io.github.ismoy.imagepickerkmp.domain.config
 import android.os.Build
 
 
-object HighPerformanceConfig {
+internal object HighPerformanceConfig {
     
 
     fun isHighEndDevice(): Boolean {

@@ -13,7 +13,7 @@ import io.github.ismoy.imagepickerkmp.domain.utils.exif.ExifInterfaceHelper
  * This is the main entry point for EXIF extraction.
  * Uses modular extractors and parsers for clean architecture.
  */
-object ExifDataExtractor {
+internal object ExifDataExtractor {
     
     /**
      * Extracts EXIF data using multiple fallback methods.

@@ -18,7 +18,8 @@ actual fun GalleryPickerLauncher(
     cameraCaptureConfig: CameraCaptureConfig?,
     enableCrop: Boolean,
     fileFilterDescription: String,
-    includeExif: Boolean
+    includeExif: Boolean,
+    mimeTypeMismatchMessage: String?
 ) {
     // Use the common JVM file picker utility
     // Note: cameraCaptureConfig and enableCrop are not supported on JVM platform

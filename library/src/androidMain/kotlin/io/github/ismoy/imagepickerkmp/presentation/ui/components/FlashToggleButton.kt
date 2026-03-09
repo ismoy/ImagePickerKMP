@@ -31,7 +31,7 @@ import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants
  * @param onToggle Callback triggered when the user taps the button.
  */
 @Composable
-fun FlashToggleButton(
+internal fun FlashToggleButton(
     flashMode: CameraController.FlashMode,
     iconColor: Color,
     flashIcon: ImageVector? = null,

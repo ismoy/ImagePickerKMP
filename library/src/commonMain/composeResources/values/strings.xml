@@ -36,6 +36,7 @@
     <string name="photo_capture_error">Photo capture failed</string>
     <string name="gallery_selection_error">Gallery selection failed</string>
     <string name="permission_error">Permission error occurred</string>
+    <string name="mime_type_mismatch_error">The selected file does not match the allowed types: %1$s</string>
 
     <!-- Image Crop -->
     <string name="image_crop_view_title">Crop Image</string>

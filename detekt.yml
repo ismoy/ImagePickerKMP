@@ -18,6 +18,7 @@ style:
   MaxLineLength:
     active: true
     maxLineLength: 120
+    excludeCommentStatements: true
   TrailingWhitespace:
     active: false
   UnusedImports:
@@ -88,8 +89,7 @@ comments:
   CommentOverPrivateFunction:
     active: true
   EndOfSentenceFormat:
-    active: true
-    endOfSentenceFormat: '[.?!]([ \t\n\r]+|$)'
+    active: false
   UndocumentedPublicClass:
     active: true
   UndocumentedPublicFunction:

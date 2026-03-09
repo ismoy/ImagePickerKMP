@@ -26,11 +26,37 @@ import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
+import platform.Foundation.NSLock
 
-private val painterCacheIOS = mutableMapOf<String, Painter>()
-private val imageBitmapCacheIOS = mutableMapOf<String, ImageBitmap>()
-private val bytesCacheIOS = mutableMapOf<String, ByteArray>()
-private val base64CacheIOS = mutableMapOf<String, String>()
+/**
+ * Thread-safe cache wrapper for iOS using NSLock.
+ * Kotlin/Native does not support @Synchronized on non-JVM platforms,
+ * so we use NSLock (iOS native lock) to protect concurrent map access.
+ */
+private class SynchronizedCache<V> {
+    private val map = mutableMapOf<String, V>()
+    private val lock = NSLock()
+
+    fun get(key: String): V? {
+        lock.lock()
+        return try { map[key] } finally { lock.unlock() }
+    }
+
+    fun put(key: String, value: V) {
+        lock.lock()
+        try { map[key] = value } finally { lock.unlock() }
+    }
+
+    fun clear() {
+        lock.lock()
+        try { map.clear() } finally { lock.unlock() }
+    }
+}
+
+private val painterCacheIOS      = SynchronizedCache<Painter>()
+private val imageBitmapCacheIOS  = SynchronizedCache<ImageBitmap>()
+private val bytesCacheIOS        = SynchronizedCache<ByteArray>()
+private val base64CacheIOS       = SynchronizedCache<String>()
 
 /**
  * iOS implementation to load photo data as ByteArray from URI with automatic compression optimization.
@@ -166,7 +192,7 @@ private fun optimizeImageBytesIOS(originalBytes: ByteArray, compressionLevel: Co
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private fun loadBytesFromURI(uri: String, compressionLevel: CompressionLevel, cacheKey: String?): ByteArray {
     cacheKey?.let { key ->
-        bytesCacheIOS[key]?.let { cached ->
+        bytesCacheIOS.get(key)?.let { cached ->
             return cached
         }
     }
@@ -183,7 +209,7 @@ private fun loadBytesFromURI(uri: String, compressionLevel: CompressionLevel, ca
         }
         val result = optimizeImageBytesIOS(originalBytes, compressionLevel)
         cacheKey?.let { key ->
-            bytesCacheIOS[key] = result
+            bytesCacheIOS.put(key, result)
         }
         result
     } catch (_: Exception) {
@@ -199,7 +225,7 @@ private fun loadBytesFromURI(uri: String, compressionLevel: CompressionLevel, ca
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private fun loadBase64FromURI(uri: String, cacheKey: String?): String {
     cacheKey?.let { key ->
-        base64CacheIOS[key]?.let { cached ->
+        base64CacheIOS.get(key)?.let { cached ->
             return cached
         }
     }
@@ -213,7 +239,7 @@ private fun loadBase64FromURI(uri: String, cacheKey: String?): String {
             val result = nsData.base64EncodedStringWithOptions(0u)
             cacheKey?.let { key ->
                 if (result.isNotEmpty()) {
-                    base64CacheIOS[key] = result
+                    base64CacheIOS.put(key, result)
                 }
             }
             result
@@ -233,7 +259,7 @@ private fun loadBase64FromURI(uri: String, cacheKey: String?): String {
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private fun loadImageBitmapFromURI(uri: String, cacheKey: String?): ImageBitmap? {
     cacheKey?.let { key ->
-        imageBitmapCacheIOS[key]?.let { cached ->
+        imageBitmapCacheIOS.get(key)?.let { cached ->
             return cached
         }
     }
@@ -244,7 +270,7 @@ private fun loadImageBitmapFromURI(uri: String, cacheKey: String?): ImageBitmap?
             val skiaImage = Image.makeFromEncoded(optimizedBytes)
             val imageBitmap = skiaImage.toComposeImageBitmap()
             cacheKey?.let { key ->
-                imageBitmapCacheIOS[key] = imageBitmap
+                imageBitmapCacheIOS.put(key, imageBitmap)
             }
             imageBitmap
         } else {
@@ -260,7 +286,7 @@ private fun loadImageBitmapFromURI(uri: String, cacheKey: String?): ImageBitmap?
  */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private fun loadPainterFromURI(uri: String, cacheKey: String): Painter? {
-    painterCacheIOS[cacheKey]?.let { cached ->
+    painterCacheIOS.get(cacheKey)?.let { cached ->
         return cached
     }
     
@@ -268,7 +294,7 @@ private fun loadPainterFromURI(uri: String, cacheKey: String): Painter? {
         val imageBitmap = loadImageBitmapFromURI(uri, null)
         if (imageBitmap != null) {
             val painter = BitmapPainter(imageBitmap)
-            painterCacheIOS[cacheKey] = painter
+            painterCacheIOS.put(cacheKey, painter)
             painter
         } else {
             null

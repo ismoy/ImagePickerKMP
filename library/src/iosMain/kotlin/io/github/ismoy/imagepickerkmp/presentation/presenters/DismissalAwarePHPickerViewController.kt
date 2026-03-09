@@ -6,7 +6,7 @@ import platform.PhotosUI.PHPickerConfiguration
 import platform.PhotosUI.PHPickerViewController
 
 @OptIn(ExperimentalForeignApi::class)
-object DismissalAwarePHPickerViewController {
+internal object DismissalAwarePHPickerViewController {
     
     private val pickerMonitors = mutableMapOf<Int, DismissalMonitor>()
     
@@ -20,10 +20,6 @@ object DismissalAwarePHPickerViewController {
         pickerMonitors[picker.hashCode()] = monitor
         
         return picker
-    }
-    
-    fun markDismissalHandled(picker: PHPickerViewController) {
-        pickerMonitors.remove(picker.hashCode())
     }
 }
 

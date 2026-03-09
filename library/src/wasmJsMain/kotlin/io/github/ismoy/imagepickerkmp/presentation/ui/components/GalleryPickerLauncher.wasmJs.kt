@@ -22,7 +22,8 @@ actual fun GalleryPickerLauncher(
     cameraCaptureConfig: CameraCaptureConfig?,
     enableCrop: Boolean,
     fileFilterDescription: String,
-    includeExif: Boolean
+    includeExif: Boolean,
+    mimeTypeMismatchMessage: String?
 ) {
     Text("GalleryPicker not supported on WASM platform")
 }

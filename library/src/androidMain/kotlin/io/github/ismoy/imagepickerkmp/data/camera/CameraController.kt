@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 
-class CameraController(
+internal class CameraController(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
     private val fileManager: FileManager

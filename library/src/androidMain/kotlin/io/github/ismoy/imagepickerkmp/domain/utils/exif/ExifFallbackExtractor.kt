@@ -6,15 +6,9 @@ import android.provider.MediaStore
 import androidx.exifinterface.media.ExifInterface
 import io.github.ismoy.imagepickerkmp.domain.models.ExifData
 
-/**
- * Fallback strategies for extracting EXIF data when direct extraction fails.
- */
+
 internal object ExifFallbackExtractor {
-    
-    /**
-     * Attempts to extract EXIF data using multiple fallback methods.
-     * Useful for gallery photos from external sources (WhatsApp, Bluetooth, etc.)
-     */
+
     fun extractWithFallbacks(context: Context, uri: Uri): ExifData? {
         ExifInterfaceHelper.createFromUri(context, uri)?.let { exif ->
             return ExifDataParser.parseExifData(exif)

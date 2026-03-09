@@ -16,7 +16,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cached
-import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,8 +33,6 @@ import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.BackgroundColor
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
-import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
-import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
@@ -73,7 +70,6 @@ fun CameraCapturePreview(
             }
         }
     }
-    var openGallery by remember { mutableStateOf(false) }
     val isDark = isSystemInDarkTheme()
     val backgroundColor = if (isDark) MaterialTheme.colors.background else BackgroundColor
     val resolvedButtonColor = previewConfig.uiConfig.buttonColor ?: Color.Gray
@@ -90,39 +86,6 @@ fun CameraCapturePreview(
                 onPermissionError = previewConfig.cameraCallbacks.onPermissionError
             )
         }
-    }
-
-    if (openGallery) {
-        GalleryPickerLauncher(
-            onPhotosSelected = { results: List<GalleryPhotoResult> ->
-                openGallery = false
-                val result = results.firstOrNull()
-                if (result != null) {
-                    onPhotoResult(
-                        PhotoResult(
-                            uri = result.uri,
-                            width = result.width,
-                            height = result.height,
-                            fileName = result.fileName,
-                            fileSize = result.fileSize,
-                            mimeType = result.mimeType,
-                            exif = result.exif
-                        )
-                    )
-                }
-            },
-            onError = { error: Exception ->
-                openGallery = false
-                onError(error)
-            },
-            onDismiss = { openGallery = false },
-            allowMultiple = false,
-            mimeTypes = previewConfig.galleryConfig.mimeTypes,
-            selectionLimit = 1L,
-            cameraCaptureConfig = null,
-            enableCrop = false,
-            includeExif = previewConfig.galleryConfig.includeExif
-        )
     }
 
     Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
@@ -162,27 +125,6 @@ fun CameraCapturePreview(
             flashIcon = previewConfig.uiConfig.flashIcon,
             onToggle = { stateHolder?.toggleFlash() }
         )
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 32.dp, bottom = 32.dp)
-                .size(resolvedButtonSize)
-                .background(resolvedButtonColor, shape = CircleShape)
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
-                    openGallery = true
-                    previewConfig.cameraCallbacks.onGalleryOpened?.invoke()
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = previewConfig.uiConfig.galleryIcon ?: Icons.Default.PhotoLibrary,
-                contentDescription = "Open gallery button",
-                tint = resolvedIconColor
-            )
-        }
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)

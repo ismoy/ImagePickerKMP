@@ -11,6 +11,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.useContents
 import platform.Foundation.NSData
+import platform.Foundation.NSURL
 import platform.Foundation.dataWithContentsOfURL
 import platform.Photos.PHAsset
 import platform.PhotosUI.PHPickerResult
@@ -26,36 +27,38 @@ internal class ImageProcessingQueue(
     private val pickerResults: List<PHPickerResult>,
     private val compressionLevel: CompressionLevel?,
     private val includeExif: Boolean,
-    private val onComplete: (List<GalleryPhotoResult>) -> Unit,
+    private val allowedMimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
+    private val onComplete: (results: List<GalleryPhotoResult>, mismatchedCount: Int) -> Unit,
     private val onError: (Exception) -> Unit
 ) {
-    
+
     private val results = mutableListOf<GalleryPhotoResult>()
     private var processedCount = 0
     private var successCount = 0
+    private var mismatchedCount = 0
     private var currentIndex = 0
     private val totalCount = pickerResults.size
     private var isProcessing = false
-    
+
     fun start() {
         println("ImageProcessingQueue: Starting to process $totalCount images")
         if (totalCount == 0) {
-            onComplete(emptyList())
+            onComplete(emptyList(), 0)
             return
         }
-        
+
         isProcessing = true
         processNextImage()
     }
-    
+
     private fun processNextImage() {
         if (currentIndex >= totalCount || !isProcessing) {
             return
         }
-        
+
         val index = currentIndex
         currentIndex++
-        
+
         val pickerResult = pickerResults[index]
 
         pickerResult.itemProvider.loadFileRepresentationForTypeIdentifier(
@@ -69,6 +72,19 @@ internal class ImageProcessingQueue(
                 }
                 return@loadFileRepresentationForTypeIdentifier
             }
+
+            // Filtro post-selección: verificar el MIME type real usando la extensión del archivo temporal
+            // (igual que Android hace con contentResolver.getType)
+            if (!urlMatchesMimeTypes(url, allowedMimeTypes)) {
+                println("ImageProcessingQueue: MIME type mismatch for image $index. Allowed: ${allowedMimeTypes.joinToString { it.value }}")
+                dispatch_async(dispatch_get_main_queue()) {
+                    mismatchedCount++
+                    processedCount++
+                    checkAndFinish()
+                }
+                return@loadFileRepresentationForTypeIdentifier
+            }
+
             val imageData = NSData.dataWithContentsOfURL(url)
             if (imageData == null) {
                 dispatch_async(dispatch_get_main_queue()) {
@@ -81,7 +97,7 @@ internal class ImageProcessingQueue(
         }
         processNextImage()
     }
-    
+
     private fun processImageDataInBackground(imageData: NSData, pickerResult: PHPickerResult, index: Int) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT.toLong(), 0u)) {
             var galleryResult: GalleryPhotoResult? = null
@@ -93,9 +109,9 @@ internal class ImageProcessingQueue(
                     galleryResult = createFallbackResult(imageData, pickerResult, index)
                 }
             }
-            
+
             dispatch_async(dispatch_get_main_queue()) {
-                galleryResult?.let { 
+                galleryResult?.let {
                     results.add(it)
                     successCount++
                 }
@@ -104,37 +120,70 @@ internal class ImageProcessingQueue(
             }
         }
     }
+
     private fun checkAndFinish() {
         if (processedCount >= totalCount) {
             isProcessing = false
-            println("ImageProcessingQueue: Completed processing. Selected: $totalCount, Successfully processed: $successCount, Final results: ${results.size}")
-            onComplete(results.toList())
+            println("ImageProcessingQueue: Completed. Selected: $totalCount, Processed: $successCount, Mismatched: $mismatchedCount")
+            onComplete(results.toList(), mismatchedCount)
+        }
+    }
+
+    /**
+     * Verifica si una URL de archivo temporal cumple con alguno de los MimeTypes permitidos.
+     * Usa la extensión del archivo, igual que Android usa contentResolver.getType(uri).
+     */
+    private fun urlMatchesMimeTypes(url: NSURL, allowedMimeTypes: List<MimeType>): Boolean {
+        if (allowedMimeTypes.any { it == MimeType.IMAGE_ALL }) return true
+
+        val pathExtension = url.pathExtension?.lowercase() ?: return true
+        val actualMimeType = extensionToMimeType(pathExtension)
+
+        return allowedMimeTypes.any { allowed ->
+            when {
+                allowed.value.endsWith("/*") -> actualMimeType.startsWith(allowed.value.removeSuffix("*"))
+                else -> actualMimeType.equals(allowed.value, ignoreCase = true)
+            }
+        }
+    }
+
+    private fun extensionToMimeType(extension: String): String {
+        return when (extension) {
+            "jpg", "jpeg" -> "image/jpeg"
+            "png"         -> "image/png"
+            "gif"         -> "image/gif"
+            "webp"        -> "image/webp"
+            "bmp"         -> "image/bmp"
+            "heic"        -> "image/heic"
+            "heif"        -> "image/heif"
+            "pdf"         -> "application/pdf"
+            else          -> "image/$extension"
         }
     }
 
     private fun processImageFromData(imageData: NSData, pickerResult: PHPickerResult): GalleryPhotoResult? {
         val uiImage = UIImage.imageWithData(imageData)
             ?: throw Exception("Failed to create UIImage from ${imageData.length} bytes of data")
-        
+
         val processedData = ImageOptimizer.processImage(uiImage, compressionLevel)
             ?: throw Exception("Failed to process image")
-        
+
         val tempURL = ImageProcessor.saveImageToTempDirectory(processedData)
             ?: throw Exception("Failed to save processed image")
-        
+
         val finalImage = UIImage.imageWithData(processedData)
             ?: throw Exception("Failed to load processed image")
-        
+
         val finalWidth = finalImage.size.useContents { width.toInt() }
         val finalHeight = finalImage.size.useContents { height.toInt() }
         val finalSizeKB = processedData.length.toLong() / 1024
-        
+
         val exifData = if (includeExif) {
             extractExifDataFromOriginal(pickerResult, imageData)
         } else {
             null
         }
-        
+
         return GalleryPhotoResult(
             uri = tempURL.absoluteString ?: "",
             width = finalWidth,
@@ -145,6 +194,7 @@ internal class ImageProcessingQueue(
             exif = exifData
         )
     }
+
     private fun extractExifDataFromOriginal(pickerResult: PHPickerResult, originalData: NSData): ExifData? {
         return try {
             val assetIdentifier = pickerResult.assetIdentifier
@@ -164,10 +214,11 @@ internal class ImageProcessingQueue(
             null
         }
     }
+
     private fun createFallbackResult(imageData: NSData, pickerResult: PHPickerResult, index: Int): GalleryPhotoResult? {
         return try {
             println("ImageProcessingQueue: Attempting fallback processing for image $index")
-            
+
             val assetIdentifier = pickerResult.assetIdentifier
             if (assetIdentifier != null) {
                 val fetchResult = PHAsset.fetchAssetsWithLocalIdentifiers(
@@ -175,10 +226,10 @@ internal class ImageProcessingQueue(
                     null
                 )
                 val asset = fetchResult.firstObject() as? PHAsset
-                
+
                 asset?.let { phAsset ->
                     val tempURL = ImageProcessor.saveDataToTempDirectory(imageData, "fallback_$index.jpg")
-                    
+
                     if (tempURL != null) {
                         val exifData = if (includeExif) {
                             try {
@@ -189,7 +240,7 @@ internal class ImageProcessingQueue(
                         } else {
                             null
                         }
-                        
+
                         GalleryPhotoResult(
                             uri = tempURL.absoluteString ?: "",
                             width = phAsset.pixelWidth.toInt(),

@@ -62,6 +62,8 @@ npm install imagepickerkmp
 ```kotlin
 var showCamera by remember { mutableStateOf(false) }
 var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
+var mimeTypeMismatchMessage by remember { mutableStateOf<String?>(null) }
+
 
 if (showCamera) {
     ImagePickerLauncher(
@@ -70,7 +72,9 @@ if (showCamera) {
                 capturedPhoto = result
                 showCamera = false
             },
-            onError = { showCamera = false },
+            onError = {
+                showCamera = false
+              },
             onDismiss = { showCamera = false }
         )
     )
@@ -101,9 +105,13 @@ if (showGallery) {
                 println("Location: ${exifData?.location}")
             }
         },
-        onError = { showGallery = false },
+        onError = { it->
+            showGallery = false
+            mimeTypeMismatchMessage = it.message
+        },
         onDismiss = { showGallery = false },
-        allowMultiple = true
+        allowMultiple = true,
+        mimeTypeMismatchMessage = "Only allows PNG images"
     )
 }
 

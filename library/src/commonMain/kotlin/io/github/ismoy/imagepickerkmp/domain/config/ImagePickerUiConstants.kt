@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.sp
 /**
  * @author ismoy
  */
-object ImagePickerUiConstants {
+internal object ImagePickerUiConstants {
     val FlashToggleBackgroundColor = Color(0xAA444444)
     const val FlashToggleCornerRadius = 50
     val FlashToggleHorizontalPadding = 30.dp

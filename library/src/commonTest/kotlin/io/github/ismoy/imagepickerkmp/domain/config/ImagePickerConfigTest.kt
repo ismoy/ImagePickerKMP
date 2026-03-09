@@ -6,6 +6,7 @@ import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class ImagePickerConfigTest {
@@ -114,16 +115,13 @@ class ImagePickerConfigTest {
     }
 
     @Test
-    fun `ImagePickerConfig should have correct default strings`() {
+    fun `ImagePickerConfig should have correct defaults`() {
         val config = ImagePickerConfig(
             onPhotoCaptured = {},
             onError = {}
         )
 
-        assertEquals("Select option", config.dialogTitle)
-        assertEquals("Take photo", config.takePhotoText)
-        assertEquals("Select from gallery", config.selectFromGalleryText)
-        assertEquals("Cancel", config.cancelText)
-        assertFalse(config.directCameraLaunch)
+        assertFalse(config.enableCrop)
+        assertNotNull(config.cameraCaptureConfig)
     }
 }

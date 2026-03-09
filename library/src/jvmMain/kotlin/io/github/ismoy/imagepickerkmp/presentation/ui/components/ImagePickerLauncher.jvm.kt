@@ -17,9 +17,7 @@ actual fun ImagePickerLauncher(
     
     JvmFilePicker(
         onPhotosSelected = { galleryResults ->
-            if (galleryResults.size > 1 && config.onPhotosSelected != null) {
-                config.onPhotosSelected.invoke(galleryResults)
-            } else if (galleryResults.size == 1) {
+            if (galleryResults.size == 1) {
                 val galleryResult = galleryResults.first()
                 val photoResult = PhotoResult(
                     uri = galleryResult.uri,
@@ -39,9 +37,9 @@ actual fun ImagePickerLauncher(
         onDismiss = {
             config.onDismiss()
         },
-        allowMultiple = config.onPhotosSelected != null,
+        allowMultiple = false,
         mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
-        selectionLimit = 30,
+        selectionLimit = 1,
         fileFilterDescription = "Images"
     )
 }

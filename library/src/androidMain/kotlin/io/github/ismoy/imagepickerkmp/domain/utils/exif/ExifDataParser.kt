@@ -5,14 +5,8 @@ import io.github.ismoy.imagepickerkmp.domain.models.ExifData
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * Parser for extracting EXIF data from ExifInterface.
- */
+
 internal object ExifDataParser {
-    
-    /**
-     * Extracts complete EXIF data from ExifInterface.
-     */
     fun parseExifData(exif: ExifInterface): ExifData {
         return ExifData(
             latitude = extractGPSLatitude(exif),
@@ -175,23 +169,18 @@ internal object ExifDataParser {
     
     private fun extractThumbnail(exif: ExifInterface): String? {
         return try {
-            // Check if thumbnail exists before attempting to extract
             val hasThumbnail = exif.hasThumbnail()
             if (!hasThumbnail) {
                 return null
             }
-            
-            // Attempt to get thumbnail bytes
             val thumbnailBytes = exif.thumbnailBytes
             thumbnailBytes?.let { bytes ->
                 android.util.Base64.encodeToString(bytes, android.util.Base64.DEFAULT)
             }
         } catch (e: android.system.ErrnoException) {
-            // Handle file descriptor errors gracefully
             println("⚠️ Thumbnail extraction failed - file descriptor issue: ${e.message}")
             null
         } catch (e: Exception) {
-            // Handle any other exceptions
             println("⚠️ Thumbnail extraction failed: ${e.javaClass.simpleName}: ${e.message}")
             null
         }

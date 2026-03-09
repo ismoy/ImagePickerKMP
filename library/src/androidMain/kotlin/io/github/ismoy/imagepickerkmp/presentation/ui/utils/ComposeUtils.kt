@@ -15,7 +15,7 @@ import io.github.ismoy.imagepickerkmp.presentation.viewModel.ImagePickerViewMode
 
 
 @Composable
-fun rememberImagePickerViewModel(): ImagePickerViewModel {
+internal fun rememberImagePickerViewModel(): ImagePickerViewModel {
     return remember { 
         ImagePickerViewModel(
             logger = DefaultLogger
@@ -25,7 +25,7 @@ fun rememberImagePickerViewModel(): ImagePickerViewModel {
 
 
 @Composable
-fun rememberCameraManager(
+internal fun rememberCameraManager(
     context: Context,
     lifecycleOwner: LifecycleOwner
 ): CameraXManager? {

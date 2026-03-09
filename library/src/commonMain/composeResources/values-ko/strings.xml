@@ -36,6 +36,7 @@
     <string name="photo_capture_error">사진 촬영 실패</string>
     <string name="gallery_selection_error">갤러리 선택 실패</string>
     <string name="permission_error">권한 오류 발생</string>
+    <string name="mime_type_mismatch_error">선택한 파일이 허용된 형식과 일치하지 않습니다: %1$s</string>
 
     <!-- Image Crop -->
     <string name="image_crop_view_title">이미지 자르기</string>
