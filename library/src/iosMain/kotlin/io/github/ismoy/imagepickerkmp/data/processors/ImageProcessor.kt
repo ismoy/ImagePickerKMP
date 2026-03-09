@@ -21,7 +21,7 @@ import platform.UIKit.UIImageJPEGRepresentation
  * Handles image processing operations for iOS, including compression and conversion.
  */
 @OptIn(ExperimentalForeignApi::class)
-object ImageProcessor {
+internal object ImageProcessor {
 
     /**
      * Process an image with compression for camera capture

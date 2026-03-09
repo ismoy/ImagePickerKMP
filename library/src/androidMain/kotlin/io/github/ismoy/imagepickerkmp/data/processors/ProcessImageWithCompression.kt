@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.core.graphics.scale
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 
- fun processImageWithCompression(
+ internal fun processImageWithCompression(
     bitmap: Bitmap,
     compressionLevel: CompressionLevel
 ): Bitmap {

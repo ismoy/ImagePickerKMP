@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Color
  * @param visible Whether the overlay should be shown.
  */
 @Composable
-fun FlashOverlay(visible: Boolean) {
+internal fun FlashOverlay(visible: Boolean) {
     AnimatedVisibility(visible = visible, enter = fadeIn(), exit = fadeOut()) {
         Box(
             modifier = Modifier

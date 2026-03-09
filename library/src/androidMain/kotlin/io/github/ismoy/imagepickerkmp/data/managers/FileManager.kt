@@ -13,7 +13,7 @@ import java.util.Locale
  *
  * Provides methods to create image files and convert files to URI strings.
  */
-class FileManager(private val context: Context) {
+internal class FileManager(private val context: Context) {
 
     fun createImageFile(): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())

@@ -3,6 +3,7 @@ package io.github.ismoy.imagepickerkmp.presentation.presenters
 import io.github.ismoy.imagepickerkmp.data.delegates.PHPickerDelegate
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import platform.Photos.PHPhotoLibrary
 import platform.PhotosUI.PHPickerConfiguration
 import platform.PhotosUI.PHPickerFilter
@@ -10,13 +11,15 @@ import platform.PhotosUI.PHPickerViewController
 
 private var strongPickerDelegate: PHPickerDelegate? = null
 
- fun createPHPickerController(
+internal fun createPHPickerController(
     onPhotoSelected: (GalleryPhotoResult) -> Unit,
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
     selectionLimit: Long,
     compressionLevel: CompressionLevel? = null,
     includeExif: Boolean = false,
+    mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
+    mimeTypeMismatchMessage: String? = null,
     onPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = null
 ): PHPickerViewController {
     val configuration = PHPickerConfiguration(
@@ -25,7 +28,7 @@ private var strongPickerDelegate: PHPickerDelegate? = null
     configuration.selectionLimit = selectionLimit
     configuration.filter = PHPickerFilter.imagesFilter
 
-    val cleanup = { 
+    val cleanup = {
         strongPickerDelegate = null
     }
     val wrappedOnPhotoSelected: (GalleryPhotoResult) -> Unit = { result ->
@@ -38,7 +41,7 @@ private var strongPickerDelegate: PHPickerDelegate? = null
             cleanup()
         }
     } else null
-    
+
     val wrappedOnError: (Exception) -> Unit = { error ->
         onError(error)
         cleanup()
@@ -47,14 +50,16 @@ private var strongPickerDelegate: PHPickerDelegate? = null
         onDismiss()
         cleanup()
     }
-    
+
     strongPickerDelegate = PHPickerDelegate(
         wrappedOnPhotoSelected,
         wrappedOnPhotosSelected,
         wrappedOnError,
         wrappedOnDismiss,
         compressionLevel,
-        includeExif
+        includeExif,
+        mimeTypes,
+        mimeTypeMismatchMessage
     )
 
     val pickerDelegate = strongPickerDelegate ?: return PHPickerViewController(configuration).apply {

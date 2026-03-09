@@ -2,7 +2,7 @@ package io.github.ismoy.imagepickerkmp.domain.utils
 
 import io.github.ismoy.imagepickerkmp.features.ocr.data.providers.CloudOCRProvider
 
-fun getProviderDisplayName(provider: CloudOCRProvider?): String {
+internal fun getProviderDisplayName(provider: CloudOCRProvider?): String {
     return when (provider) {
         is CloudOCRProvider.Gemini -> "Gemini"
         is CloudOCRProvider.Ollama -> "Ollama"

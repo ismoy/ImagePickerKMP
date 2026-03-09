@@ -1,3 +1,4 @@
+
 package io.github.ismoy.imagepickerkmp.presentation.presenters
 
 import platform.Photos.PHAuthorizationStatusAuthorized
@@ -9,7 +10,7 @@ import platform.Photos.PHPhotoLibrary
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 
- fun checkPhotoLibraryPermission(
+ internal fun checkPhotoLibraryPermission(
     onAuthorized: () -> Unit,
     onDenied: () -> Unit
 ) {
@@ -40,4 +41,5 @@ import platform.darwin.dispatch_get_main_queue
             onDenied()
         }
     }
+
 }

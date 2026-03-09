@@ -8,7 +8,7 @@ import platform.UIKit.UIViewController
  *
  * Used to obtain the root view controller for presenting camera or gallery interfaces.
  */
-object ViewControllerProvider {
+internal object ViewControllerProvider {
     fun getRootViewController(): UIViewController? =
          UIApplication.sharedApplication.keyWindow?.rootViewController
 }

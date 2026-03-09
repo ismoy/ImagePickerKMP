@@ -5,7 +5,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import io.github.ismoy.imagepickerkmp.domain.models.CropHandle
 
- fun resizeCropRect(
+ internal fun resizeCropRect(
     currentRect: Rect,
     handle: CropHandle,
     dragAmount: Offset,

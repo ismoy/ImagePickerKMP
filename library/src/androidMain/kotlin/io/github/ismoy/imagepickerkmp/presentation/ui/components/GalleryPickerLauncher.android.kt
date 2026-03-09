@@ -24,7 +24,8 @@ actual fun GalleryPickerLauncher(
     cameraCaptureConfig: CameraCaptureConfig?,
     enableCrop: Boolean,
     fileFilterDescription: String,
-    includeExif: Boolean
+    includeExif: Boolean,
+    mimeTypeMismatchMessage: String?
 ) {
     val context = LocalContext.current
     val activity = context
@@ -43,7 +44,9 @@ actual fun GalleryPickerLauncher(
         mimeTypes = mimeTypes.map { it.value },
         cameraCaptureConfig = cameraCaptureConfig,
         enableCrop = enableCrop,
-        includeExif = includeExif
+        includeExif = includeExif,
+        selectionLimit = selectionLimit.toInt(),
+        mimeTypeMismatchMessage = mimeTypeMismatchMessage
     )
     GalleryPickerLauncherContent(config)
 }

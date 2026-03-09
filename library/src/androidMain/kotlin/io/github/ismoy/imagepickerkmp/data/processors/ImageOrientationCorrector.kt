@@ -24,7 +24,7 @@ import java.io.FileOutputStream
  * SOLID: Single Responsibility - Only handles orientation correction
  * SOLID: Open/Closed - Can be extended for different correction algorithms
  */
-class ImageOrientationCorrector {
+internal class ImageOrientationCorrector {
     
     @SuppressLint("ExifInterface")
     fun correctImageOrientation(imageFile: File, cameraType: CameraType): File {

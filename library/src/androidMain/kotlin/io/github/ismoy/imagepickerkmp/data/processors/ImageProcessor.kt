@@ -19,13 +19,8 @@ import java.io.File
 import java.io.FileOutputStream
 import androidx.core.graphics.scale
 
-/**
- * Handles image processing operations such as orientation correction and photo result creation.
- * 
- * SOLID: Single Responsibility - Only handles image processing operations
- * SOLID: Dependency Inversion - Dependencies injected via constructor
- */
-class ImageProcessor(
+
+internal class ImageProcessor(
     private val context: Context,
     private val fileManager: io.github.ismoy.imagepickerkmp.data.managers.FileManager,
     private val orientationCorrector: ImageOrientationCorrector

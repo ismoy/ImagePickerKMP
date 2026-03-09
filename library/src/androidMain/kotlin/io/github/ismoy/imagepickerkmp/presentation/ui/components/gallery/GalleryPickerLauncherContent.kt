@@ -14,7 +14,7 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
 
 
 @Composable
- fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
+internal fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
     var shouldLaunch by remember { mutableStateOf(false) }
     var selectedPhotoForConfirmation by remember { mutableStateOf<GalleryPhotoResult?>(null) }
     var showCropView by remember { mutableStateOf(false) }
@@ -24,6 +24,10 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
 
     val effectiveGalleryConfig = remember(config.mimeTypes) { 
         config.getEffectiveAndroidGalleryConfig() 
+    }
+
+    val mimeTypesArray: Array<String> = remember(config.mimeTypes) {
+        if (config.mimeTypes.isEmpty()) arrayOf("image/*") else config.mimeTypes.toTypedArray()
     }
 
     val singlePickerLauncher = if (effectiveGalleryConfig.forceGalleryOnly) {
@@ -42,7 +46,9 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
             config.onError,
             config.onDismiss,
             config.cameraCaptureConfig?.compressionLevel,
-            config.includeExif
+            config.includeExif,
+            mimeTypesArray,
+            config.mimeTypeMismatchMessage
         )
     } else {
         rememberSinglePickerLauncher(
@@ -60,7 +66,9 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
             config.onError,
             config.onDismiss,
             config.cameraCaptureConfig?.compressionLevel,
-            config.includeExif
+            config.includeExif,
+            mimeTypesArray,
+            config.mimeTypeMismatchMessage
         )
     }
     
@@ -71,7 +79,10 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
             config.onError,
             config.onDismiss,
             config.cameraCaptureConfig?.compressionLevel,
-            config.includeExif
+            config.includeExif,
+            config.selectionLimit,
+            mimeTypesArray,
+            config.mimeTypeMismatchMessage
         )
     } else {
         rememberMultiplePickerLauncher(
@@ -80,27 +91,20 @@ import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageCropView
             config.onError,
             config.onDismiss,
             config.cameraCaptureConfig?.compressionLevel,
-            config.includeExif
+            config.includeExif,
+            config.selectionLimit,
+            mimeTypesArray,
+            config.mimeTypeMismatchMessage
         )
     }
 
     LaunchedEffect(shouldLaunch) {
         if (shouldLaunch) {
             try {
-                val mimeType = if (effectiveGalleryConfig.forceGalleryOnly) {
-                    "image/*"
-                } else {
-                    when {
-                        config.mimeTypes.size > 1 -> "*/*"
-                        config.mimeTypes.any { it.contains("application/pdf", ignoreCase = true) } -> "*/*"
-                        else -> config.mimeTypes.firstOrNull() ?: "image/*"
-                    }
-                }
-                
                 if (config.allowMultiple) {
-                    multiplePickerLauncher.launch(mimeType)
+                    multiplePickerLauncher.launch(mimeTypesArray)
                 } else {
-                    singlePickerLauncher.launch(mimeType)
+                    singlePickerLauncher.launch(mimeTypesArray)
                 }
                 shouldLaunch = false
             } catch (e: Exception) {

@@ -1,7 +1,5 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
-import android.os.Build
-import android.util.Log
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class CameraCaptureStateHolder(
+internal class CameraCaptureStateHolder(
     private val cameraManager: CameraXManager,
     private val previewView: PreviewView,
     private val preference: CapturePhotoPreference,

@@ -18,7 +18,8 @@ actual fun GalleryPickerLauncher(
     cameraCaptureConfig: CameraCaptureConfig?,
     enableCrop: Boolean,
     fileFilterDescription: String,
-    includeExif: Boolean
+    includeExif: Boolean,
+    mimeTypeMismatchMessage: String?
 ) {
     JsFilePicker(
         onPhotosSelected = onPhotosSelected,

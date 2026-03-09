@@ -5,6 +5,7 @@ import io.github.ismoy.imagepickerkmp.domain.utils.ViewControllerProvider
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.SELECTION_LIMIT
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import io.github.ismoy.imagepickerkmp.presentation.presenters.PHPickerPresenter
 
 /**
@@ -12,7 +13,7 @@ import io.github.ismoy.imagepickerkmp.presentation.presenters.PHPickerPresenter
  *
  * Provides a method to launch the gallery and handle photo selection or errors.
  */
-object GalleryPickerOrchestrator {
+internal object GalleryPickerOrchestrator {
     fun launchGallery(
         onPhotoSelected: (GalleryPhotoResult) -> Unit,
         onError: (Exception) -> Unit,
@@ -21,6 +22,8 @@ object GalleryPickerOrchestrator {
         selectionLimit: Long = SELECTION_LIMIT,
         compressionLevel: CompressionLevel? = null,
         includeExif: Boolean = false,
+        mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
+        mimeTypeMismatchMessage: String? = null,
         onPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = null
     ) {
         try {
@@ -38,6 +41,8 @@ object GalleryPickerOrchestrator {
                     selectionLimit,
                     compressionLevel,
                     includeExif,
+                    mimeTypes,
+                    mimeTypeMismatchMessage,
                     onPhotosSelected
                 )
             } else {
@@ -47,7 +52,9 @@ object GalleryPickerOrchestrator {
                     onError,
                     onDismiss,
                     compressionLevel,
-                    includeExif
+                    includeExif,
+                    mimeTypes,
+                    mimeTypeMismatchMessage
                 )
             }
         } catch (e: Exception) {

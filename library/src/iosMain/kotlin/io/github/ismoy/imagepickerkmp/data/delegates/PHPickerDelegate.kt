@@ -2,24 +2,29 @@ package io.github.ismoy.imagepickerkmp.data.delegates
 
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.PhotosUI.PHPickerResult
 import platform.PhotosUI.PHPickerViewController
 import platform.PhotosUI.PHPickerViewControllerDelegateProtocol
+import platform.UIKit.UIPresentationController
+import platform.UIKit.UIAdaptivePresentationControllerDelegateProtocol
 import platform.darwin.NSObject
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 
 
 @OptIn(ExperimentalForeignApi::class)
-class PHPickerDelegate(
+internal class PHPickerDelegate(
     private val onPhotoSelected: (GalleryPhotoResult) -> Unit,
     private val onPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = null,
     private val onError: (Exception) -> Unit,
     private val onDismiss: () -> Unit,
     private val compressionLevel: CompressionLevel? = null,
-    private val includeExif: Boolean = false
-) : NSObject(), PHPickerViewControllerDelegateProtocol {
+    private val includeExif: Boolean = false,
+    private val allowedMimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
+    private val mimeTypeMismatchMessage: String? = null
+) : NSObject(), PHPickerViewControllerDelegateProtocol, UIAdaptivePresentationControllerDelegateProtocol {
     
     var dismissHandled = false
         internal set
@@ -48,8 +53,16 @@ class PHPickerDelegate(
             pickerResults = pickerResults,
             compressionLevel = compressionLevel,
             includeExif = includeExif,
-            onComplete = { results ->
-                handleProcessingComplete(results)
+            allowedMimeTypes = allowedMimeTypes,
+            onComplete = { results, mismatchedCount ->
+                if (results.isEmpty() && mismatchedCount > 0) {
+                    // Todas las imágenes seleccionadas tenían MIME type incorrecto
+                    val msg = mimeTypeMismatchMessage
+                        ?: "The selected file(s) do not match the allowed types: ${allowedMimeTypes.joinToString { it.value }}"
+                    onError(Exception(msg))
+                } else {
+                    handleProcessingComplete(results)
+                }
                 dismissPicker(picker)
             },
             onError = { error ->
@@ -75,6 +88,14 @@ class PHPickerDelegate(
     }
     
     fun onPickerDismissed() {
+        if (!dismissHandled) {
+            dismissHandled = true
+            onDismiss()
+        }
+    }
+
+    // Llamado por iOS cuando el usuario hace swipe-to-dismiss (drag down) en el picker
+    override fun presentationControllerDidDismiss(presentationController: UIPresentationController) {
         if (!dismissHandled) {
             dismissHandled = true
             onDismiss()

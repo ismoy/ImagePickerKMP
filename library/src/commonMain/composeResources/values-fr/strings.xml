@@ -36,4 +36,5 @@
     <string name="photo_capture_error">Erreur lors de la capture de la photo</string>
     <string name="gallery_selection_error">Erreur lors de la sélection depuis la galerie</string>
     <string name="permission_error">Erreur de permission</string>
+    <string name="mime_type_mismatch_error">Le fichier sélectionné ne correspond pas aux types autorisés : %1$s</string>
 </resources> 

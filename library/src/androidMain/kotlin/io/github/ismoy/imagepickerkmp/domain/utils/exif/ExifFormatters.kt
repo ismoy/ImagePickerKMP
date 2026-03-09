@@ -4,14 +4,8 @@ import androidx.exifinterface.media.ExifInterface
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * Formatters for EXIF data values.
- */
 internal object ExifFormatters {
-    
-    /**
-     * Formats EXIF date string to ISO format.
-     */
+
     fun formatExifDate(dateString: String): String {
         return try {
             val inputFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.getDefault())
@@ -22,10 +16,7 @@ internal object ExifFormatters {
             dateString 
         }
     }
-    
-    /**
-     * Converts EXIF orientation integer to human readable description.
-     */
+
     fun getOrientationDescription(orientation: Int): String {
         return when (orientation) {
             ExifInterface.ORIENTATION_NORMAL -> "Normal [1]"
@@ -40,10 +31,7 @@ internal object ExifFormatters {
             else -> "Unknown [$orientation]"
         }
     }
-    
-    /**
-     * Formats flash mode value to human readable description.
-     */
+
     fun formatFlashMode(flashValue: String?): String? {
         return flashValue?.toIntOrNull()?.let { value ->
             when (value) {
@@ -73,10 +61,7 @@ internal object ExifFormatters {
             }
         }
     }
-    
-    /**
-     * Formats metering mode value to human readable description.
-     */
+
     fun formatMeteringMode(value: Int): String? {
         return when (value) {
             0 -> "Unknown"
@@ -90,10 +75,7 @@ internal object ExifFormatters {
             else -> null
         }
     }
-    
-    /**
-     * Formats scene capture type to human readable description.
-     */
+
     fun formatSceneCaptureType(value: Int): String? {
         return when (value) {
             0 -> "Standard"
@@ -103,10 +85,7 @@ internal object ExifFormatters {
             else -> null
         }
     }
-    
-    /**
-     * Formats color space value to human readable description.
-     */
+
     fun formatColorSpace(value: Int): String? {
         return when (value) {
             1 -> "sRGB"
@@ -114,10 +93,7 @@ internal object ExifFormatters {
             else -> null
         }
     }
-    
-    /**
-     * Formats white balance value to human readable description.
-     */
+
     fun formatWhiteBalance(value: Int): String? {
         return when (value) {
             0 -> "Auto"
@@ -125,10 +101,7 @@ internal object ExifFormatters {
             else -> null
         }
     }
-    
-    /**
-     * Formats resolution unit to human readable description.
-     */
+
     fun formatResolutionUnit(value: Int): String? {
         return when (value) {
             1 -> "None"
@@ -137,10 +110,7 @@ internal object ExifFormatters {
             else -> null
         }
     }
-    
-    /**
-     * Formats compression type to human readable description.
-     */
+
     fun formatCompression(value: Int): String? {
         return when (value) {
             1 -> "Uncompressed"

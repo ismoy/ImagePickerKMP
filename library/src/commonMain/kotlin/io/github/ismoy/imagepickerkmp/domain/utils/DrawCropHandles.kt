@@ -5,7 +5,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 
- fun DrawScope.drawCropHandles(cropRect: Rect) {
+ internal fun DrawScope.drawCropHandles(cropRect: Rect) {
     val handleSize = 18f
     val borderWidth = 3f
 

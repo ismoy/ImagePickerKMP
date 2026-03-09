@@ -25,7 +25,8 @@ actual fun GalleryPickerLauncher(
     cameraCaptureConfig: CameraCaptureConfig?,
     enableCrop: Boolean,
     fileFilterDescription: String,
-    includeExif: Boolean
+    includeExif: Boolean,
+    mimeTypeMismatchMessage: String?
 ) {
     var selectedPhotoForCrop by remember { mutableStateOf<GalleryPhotoResult?>(null) }
     var showCropView by remember { mutableStateOf(false) }
@@ -43,6 +44,8 @@ actual fun GalleryPickerLauncher(
                 selectionLimit = selectionLimit,
                 compressionLevel = compressionLevel,
                 includeExif = includeExif,
+                mimeTypes = mimeTypes,
+                mimeTypeMismatchMessage = mimeTypeMismatchMessage,
                 onPhotosSelected = { results ->
                     if (enableCrop && results.size == 1) {
                         selectedPhotoForCrop = results.first()
@@ -67,7 +70,9 @@ actual fun GalleryPickerLauncher(
                 allowMultiple = false,
                 selectionLimit = 1,
                 compressionLevel = compressionLevel,
-                includeExif = includeExif
+                includeExif = includeExif,
+                mimeTypes = mimeTypes,
+                mimeTypeMismatchMessage = mimeTypeMismatchMessage
             )
         }
     }

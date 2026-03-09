@@ -8,7 +8,7 @@ import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 /**
  * High-level manager for camera operations, providing an interface to start, stop, and control the camera.
  */
-class CameraXManager(
+internal class CameraXManager(
     private val cameraController: CameraController,
     private val imageProcessor: io.github.ismoy.imagepickerkmp.data.processors.ImageProcessor
 ) {

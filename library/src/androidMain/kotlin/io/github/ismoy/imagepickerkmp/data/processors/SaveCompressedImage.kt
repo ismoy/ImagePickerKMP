@@ -5,7 +5,7 @@ import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import java.io.File
 import java.io.FileOutputStream
 
- fun saveCompressedImage(
+ internal fun saveCompressedImage(
     bitmap: Bitmap,
     originalFile: File,
     compressionLevel: CompressionLevel

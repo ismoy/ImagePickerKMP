@@ -37,7 +37,6 @@ import org.jetbrains.compose.resources.stringResource
 fun CameraCaptureView(
     activity: ComponentActivity,
     onPhotoResult: (PhotoResult) -> Unit,
-    onPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = null,
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit = {},
     cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(preference = CapturePhotoPreference.QUALITY),
@@ -88,28 +87,6 @@ fun CameraCaptureView(
                         showCropView = false
                         photoResult = null
                     }
-                )
-            }
-
-            cameraCaptureConfig.galleryConfig.allowMultiple && onPhotosSelected != null -> {
-                GalleryPickerLauncher(
-                    onPhotosSelected = { results: List<GalleryPhotoResult> ->
-                        onPhotosSelected(
-                            results
-                        )
-                    },
-                    onError = { exception: Exception ->
-                        imagePickerViewModel.onError(exception)
-                        onError(exception)
-                    },
-                    onDismiss = onDismiss,
-                    allowMultiple = true,
-                    mimeTypes = cameraCaptureConfig.galleryConfig.mimeTypes,
-                    selectionLimit = cameraCaptureConfig.galleryConfig.selectionLimit.toLong(),
-                    cameraCaptureConfig = cameraCaptureConfig,
-                    enableCrop = false,
-                    fileFilterDescription = "Image files",
-                    includeExif = cameraCaptureConfig.galleryConfig.includeExif
                 )
             }
 
@@ -191,8 +168,7 @@ private fun CameraAndPreview(
         previewConfig = CameraPreviewConfig(
             captureButtonSize = cameraCaptureConfig.captureButtonSize,
             uiConfig = cameraCaptureConfig.uiConfig,
-            cameraCallbacks = cameraCaptureConfig.cameraCallbacks,
-            galleryConfig = cameraCaptureConfig.galleryConfig
+            cameraCallbacks = cameraCaptureConfig.cameraCallbacks
         ),
         compressionLevel = cameraCaptureConfig.compressionLevel,
         includeExif = cameraCaptureConfig.includeExif

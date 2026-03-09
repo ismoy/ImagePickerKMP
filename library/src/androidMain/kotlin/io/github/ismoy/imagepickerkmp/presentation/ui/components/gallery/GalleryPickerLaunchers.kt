@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import imagepickerkmp.library.generated.resources.Res
 import imagepickerkmp.library.generated.resources.gallery_selection_error
+import imagepickerkmp.library.generated.resources.mime_type_mismatch_error
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery.GalleryFileProcessor.processSelectedFile
@@ -21,6 +22,55 @@ import kotlinx.coroutines.sync.withPermit
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * Wrapper contract que acepta Array<String> de mimeTypes y delega a GetContent.
+ * Usa EXTRA_MIME_TYPES cuando hay más de un tipo, permitiendo filtrado real.
+ */
+private class GetContentWithMimeTypes : androidx.activity.result.contract.ActivityResultContract<Array<String>, Uri?>() {
+    override fun createIntent(context: Context, input: Array<String>): android.content.Intent {
+        return android.content.Intent(android.content.Intent.ACTION_GET_CONTENT).apply {
+            addCategory(android.content.Intent.CATEGORY_OPENABLE)
+            if (input.size == 1) {
+                type = input[0]
+            } else {
+                type = "*/*"
+                putExtra(android.content.Intent.EXTRA_MIME_TYPES, input)
+            }
+        }
+    }
+    override fun parseResult(resultCode: Int, intent: android.content.Intent?): Uri? {
+        if (resultCode != android.app.Activity.RESULT_OK) return null
+        return intent?.data
+    }
+}
+
+private class GetMultipleContentsWithMimeTypes : androidx.activity.result.contract.ActivityResultContract<Array<String>, List<Uri>>() {
+    override fun createIntent(context: Context, input: Array<String>): android.content.Intent {
+        return android.content.Intent(android.content.Intent.ACTION_GET_CONTENT).apply {
+            addCategory(android.content.Intent.CATEGORY_OPENABLE)
+            putExtra(android.content.Intent.EXTRA_ALLOW_MULTIPLE, true)
+            if (input.size == 1) {
+                type = input[0]
+            } else {
+                type = "*/*"
+                putExtra(android.content.Intent.EXTRA_MIME_TYPES, input)
+            }
+        }
+    }
+    override fun parseResult(resultCode: Int, intent: android.content.Intent?): List<Uri> {
+        val uris = mutableListOf<Uri>()
+        if (resultCode != android.app.Activity.RESULT_OK) return uris
+        intent?.let {
+            it.clipData?.let { clipData ->
+                for (i in 0 until clipData.itemCount) {
+                    clipData.getItemAt(i).uri?.let { uri -> uris.add(uri) }
+                }
+            }
+            it.data?.let { uri -> if (uris.isEmpty()) uris.add(uri) }
+        }
+        return uris
+    }
+}
 
 @Composable
 internal fun rememberSinglePickerLauncher(
@@ -29,14 +79,23 @@ internal fun rememberSinglePickerLauncher(
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
     compressionLevel: CompressionLevel? = null,
-    includeExif: Boolean = false
-): ManagedActivityResultLauncher<String, Uri?> {
+    includeExif: Boolean = false,
+    allowedMimeTypes: Array<String> = arrayOf("image/*"),
+    mimeTypeMismatchMessage: String? = null
+): ManagedActivityResultLauncher<Array<String>, Uri?> {
     val gallerySelectionErrorMsg = stringResource(Res.string.gallery_selection_error)
+    val mimeTypeMismatchMsg = stringResource(Res.string.mime_type_mismatch_error)
 
     return rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
+        contract = GetContentWithMimeTypes()
     ) { uri: Uri? ->
         if (uri != null) {
+            // Filtro post-selección: Android no siempre respeta el subtipo MIME en el picker nativo
+            if (!uriMatchesMimeTypes(context, uri, allowedMimeTypes)) {
+                val msg = mimeTypeMismatchMessage ?: mimeTypeMismatchMsg.format(allowedMimeTypes.joinToString(", "))
+                onError(Exception(msg))
+                return@rememberLauncherForActivityResult
+            }
             try {
                 CoroutineScope(Dispatchers.Main).launch {
                     val result = processSelectedFile(context, uri, compressionLevel, includeExif)
@@ -62,46 +121,71 @@ internal fun rememberMultiplePickerLauncher(
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
     compressionLevel: CompressionLevel? = null,
-    includeExif: Boolean = false
-) = rememberLauncherForActivityResult(
-    contract = ActivityResultContracts.GetMultipleContents()
-) { uris: List<Uri> ->
-    if (uris.isNotEmpty()) {
-        try {
-            CoroutineScope(Dispatchers.Main).launch {
-                val semaphore = Semaphore(3)
-                val results = mutableListOf<GalleryPhotoResult>()
-                val errors = mutableListOf<Exception>()
+    includeExif: Boolean = false,
+    selectionLimit: Int = 10,
+    allowedMimeTypes: Array<String> = arrayOf("image/*"),
+    mimeTypeMismatchMessage: String? = null
+): ManagedActivityResultLauncher<Array<String>, List<Uri>> {
+    val mimeTypeMismatchMsg = stringResource(Res.string.mime_type_mismatch_error)
 
-                val deferredResults = uris.map { uri ->
-                    async(Dispatchers.IO) {
-                        semaphore.withPermit {
-                            try {
-                                processSelectedFile(context, uri, compressionLevel, includeExif)
-                            } catch (e: Exception) {
-                                errors.add(e)
-                                null
+    return rememberLauncherForActivityResult(
+        contract = GetMultipleContentsWithMimeTypes()
+    ) { uris: List<Uri> ->
+        if (uris.isNotEmpty()) {
+            // Filtro post-selección: Android no siempre respeta el subtipo MIME en el picker nativo
+            val filteredUris = uris.filter { uri ->
+                uriMatchesMimeTypes(context, uri, allowedMimeTypes)
+            }
+
+            if (filteredUris.isEmpty()) {
+                val msg = mimeTypeMismatchMessage ?: mimeTypeMismatchMsg.format(allowedMimeTypes.joinToString(", "))
+                onError(Exception(msg))
+                return@rememberLauncherForActivityResult
+            }
+
+            // Aplicar el límite de selección
+            val limitedUris = if (filteredUris.size > selectionLimit) {
+                filteredUris.take(selectionLimit)
+            } else {
+                filteredUris
+            }
+            
+            try {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val semaphore = Semaphore(3)
+                    val results = mutableListOf<GalleryPhotoResult>()
+                    val errors = mutableListOf<Exception>()
+
+                    val deferredResults = limitedUris.map { uri ->
+                        async(Dispatchers.IO) {
+                            semaphore.withPermit {
+                                try {
+                                    processSelectedFile(context, uri, compressionLevel, includeExif)
+                                } catch (e: Exception) {
+                                    errors.add(e)
+                                    null
+                                }
                             }
                         }
                     }
-                }
 
-                results.addAll(deferredResults.awaitAll().filterNotNull())
+                    results.addAll(deferredResults.awaitAll().filterNotNull())
 
-                if (errors.isNotEmpty()) {
-                    errors.forEach { onError(it) }
-                }
+                    if (errors.isNotEmpty()) {
+                        errors.forEach { onError(it) }
+                    }
 
-                if (results.isNotEmpty()) {
-                    onPhotosSelected(results)
-                } else {
-                    onError(Exception(getString(Res.string.gallery_selection_error)))
+                    if (results.isNotEmpty()) {
+                        onPhotosSelected(results)
+                    } else {
+                        onError(Exception(getString(Res.string.gallery_selection_error)))
+                    }
                 }
+            } catch (e: Exception) {
+                onError(e)
             }
-        } catch (e: Exception) {
-            onError(e)
+        } else {
+            onDismiss()
         }
-    } else {
-        onDismiss()
     }
 }

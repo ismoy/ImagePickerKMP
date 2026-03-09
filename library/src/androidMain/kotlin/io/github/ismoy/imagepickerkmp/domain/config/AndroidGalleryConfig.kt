@@ -2,7 +2,7 @@ package io.github.ismoy.imagepickerkmp.domain.config
 
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 
-data class AndroidGalleryConfig(
+internal data class AndroidGalleryConfig(
     val forceGalleryOnly: Boolean = true,
     val localOnly: Boolean = false 
 ) {

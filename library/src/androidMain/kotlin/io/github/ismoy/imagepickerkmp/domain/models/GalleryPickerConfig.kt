@@ -4,7 +4,7 @@ import android.content.Context
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.config.AndroidGalleryConfig
 
- data class GalleryPickerConfig(
+ internal data class GalleryPickerConfig(
     val context: Context,
     val onPhotosSelected: (List<GalleryPhotoResult>) -> Unit,
     val onError: (Exception) -> Unit,
@@ -14,12 +14,12 @@ import io.github.ismoy.imagepickerkmp.domain.config.AndroidGalleryConfig
     val cameraCaptureConfig: CameraCaptureConfig?,
     val enableCrop: Boolean = false,
     val includeExif: Boolean = false,
-    val androidGalleryConfig: AndroidGalleryConfig? = null
+    val selectionLimit: Int = 10,
+    val androidGalleryConfig: AndroidGalleryConfig? = null,
+    val mimeTypeMismatchMessage: String? = null
  ) {
-    /**
-     * Gets the effective AndroidGalleryConfig, using automatic detection if not explicitly provided
-     */
-    fun getEffectiveAndroidGalleryConfig(): AndroidGalleryConfig {
+
+   internal fun getEffectiveAndroidGalleryConfig(): AndroidGalleryConfig {
         return androidGalleryConfig ?: AndroidGalleryConfig.forMimeTypeStrings(mimeTypes)
     }
  }

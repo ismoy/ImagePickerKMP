@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
  * SOLID: Single Responsibility - Only handles image picker state management
  * SOLID: Dependency Inversion - Dependencies injected via constructor
  */
-class ImagePickerViewModel(
+internal class ImagePickerViewModel(
     private val logger: ImagePickerLogger
 ) {
     private val _isLoading = MutableStateFlow(false)

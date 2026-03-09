@@ -21,7 +21,7 @@ import platform.darwin.NSObject
  * This class processes captured images and communicates results or errors to the caller.
  */
 @OptIn(ExperimentalForeignApi::class)
-class CameraDelegate(
+internal class CameraDelegate(
     private val onPhotoCaptured: (PhotoResult) -> Unit,
     private val onError: (Exception) -> Unit,
     private val onDismiss: () -> Unit,

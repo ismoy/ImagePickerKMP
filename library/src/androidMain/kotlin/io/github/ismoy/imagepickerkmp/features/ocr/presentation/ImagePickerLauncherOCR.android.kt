@@ -12,7 +12,6 @@ import io.github.ismoy.imagepickerkmp.features.ocr.data.analyzers.CloudOCRAnalyz
 import io.github.ismoy.imagepickerkmp.features.ocr.data.integration.CustomService
 import io.github.ismoy.imagepickerkmp.features.ocr.data.providers.CloudOCRProvider
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
-import io.github.ismoy.imagepickerkmp.domain.config.GalleryConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
 import io.github.ismoy.imagepickerkmp.features.ocr.model.ImagePickerOCRConfig
 import io.github.ismoy.imagepickerkmp.domain.config.PermissionAndConfirmationConfig
@@ -143,18 +142,8 @@ actual fun ImagePickerLauncherOCR(
             config.onError(error)
         },
         onDismiss = config.onCancel,
-        directCameraLaunch = config.directCameraLaunch,
         enableCrop = config.enableCrop,
-        dialogTitle = config.dialogTitle,
-        takePhotoText = config.takePhotoText,
-        selectFromGalleryText = config.selectFromGalleryText,
-        cancelText = config.cancelText,
         cameraCaptureConfig = CameraCaptureConfig(
-            galleryConfig = GalleryConfig(
-                allowMultiple = false,
-                mimeTypes = config.allowedMimeTypes,
-                selectionLimit = 1
-            ),
             permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
                 skipConfirmation = true
             )

@@ -9,12 +9,7 @@ import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UIModalPresentationFullScreen
 import platform.UIKit.UIViewController
 
-/**
- * Presents the camera interface on iOS and handles photo capture results.
- *
- * This object manages the presentation and delegation of the camera view controller.
- */
-object CameraPresenter {
+internal object CameraPresenter {
 
     private var cameraDelegate: CameraDelegate? = null
 
@@ -27,18 +22,16 @@ object CameraPresenter {
         includeExif: Boolean = false
     ) {
         try {
-            // Check if camera is available (simulators don't have cameras)
             if (!UIImagePickerController.isSourceTypeAvailable(
                 UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
             )) {
-                val errorMessage = "📱 Camera is not available on this device. " +
+                val errorMessage = " Camera is not available on this device. " +
                     "The iOS Simulator does not support camera functionality. " +
                     "Please test camera features on a physical iOS device."
                 
-                println("⚠️ $errorMessage")
+                println(" $errorMessage")
                 
                 onError(PhotoCaptureException(errorMessage))
-                // Call onDismiss to ensure proper cleanup
                 onDismiss()
                 return
             }

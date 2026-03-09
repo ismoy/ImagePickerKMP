@@ -127,12 +127,7 @@ actual fun GalleryPhotoResult.loadPainter(): Painter? {
     val cacheKey = "${this.uri}_painter"
     return loadPainterFromURI(uri, cacheKey)
 }
-/**
- * Common function to load bytes from URI with optional caching and compression.
- * @param uri The URI to load from
- * @param compressionLevel The compression level to apply
- * @param cacheKey Optional cache key for caching the result
- */
+
 private fun loadBytesFromURI(uri: String, compressionLevel: CompressionLevel, cacheKey: String?): ByteArray {
     cacheKey?.let { key ->
         bytesCache[key]?.let { cached ->
@@ -166,10 +161,6 @@ private fun loadBytesFromURI(uri: String, compressionLevel: CompressionLevel, ca
     }
 }
 
-/**
- * Optimized function to load bytes from URI with advanced bitmap processing and caching.
- * Uses BitmapFactory.Options for memory-efficient loading.
- */
 private fun loadOptimizedBytesFromURI(uri: String, cacheKey: String): ByteArray {
     bytesCache[cacheKey]?.let { cached ->
         return cached
@@ -216,12 +207,7 @@ private fun loadOptimizedBytesFromURI(uri: String, cacheKey: String): ByteArray 
     }
 }
 
-/**
- * Common function to load Base64 from URI with compression.
- * @param uri The URI to load from
- * @param compressionLevel The compression level to apply
- * @param cacheKey Optional cache key for caching the result
- */
+
 private fun loadBase64FromURI(uri: String, compressionLevel: CompressionLevel, cacheKey: String?): String {
     cacheKey?.let { key ->
         base64Cache[key]?.let { cached ->
@@ -246,11 +232,7 @@ private fun loadBase64FromURI(uri: String, compressionLevel: CompressionLevel, c
     }
 }
 
-/**
- * Common function to load ImageBitmap from URI with optional caching.
- * @param uri The URI to load from
- * @param cacheKey Optional cache key for caching the result
- */
+
 private fun loadImageBitmapFromURI(uri: String, cacheKey: String?): ImageBitmap? {
     cacheKey?.let { key ->
         imageBitmapCache[key]?.let { cached ->
@@ -284,9 +266,6 @@ private fun loadImageBitmapFromURI(uri: String, cacheKey: String?): ImageBitmap?
     }.getOrNull()
 }
 
-/**
- * Optimized function to load ImageBitmap from URI with advanced bitmap processing and caching.
- */
 private fun loadOptimizedImageBitmapFromURI(uri: String, cacheKey: String): ImageBitmap? {
     imageBitmapCache[cacheKey]?.let { cached ->
         return cached
@@ -336,11 +315,6 @@ private fun loadOptimizedImageBitmapFromURI(uri: String, cacheKey: String): Imag
     }.getOrNull()
 }
 
-/**
- * Common function to load Painter from URI with caching.
- * @param uri The URI to load from
- * @param cacheKey Cache key for caching the result
- */
 private fun loadPainterFromURI(uri: String, cacheKey: String): Painter? {
     painterCache[cacheKey]?.let { cached ->
         return cached
@@ -374,10 +348,6 @@ private fun loadPainterFromURI(uri: String, cacheKey: String): Painter? {
     }
 }
 
-/**
- * Optimizes image bytes with configurable compression level and PNG format for lossless quality.
- * Maintains the best possible quality while optimizing dimensions based on compression level.
- */
 private fun optimizeImageBytesWithQuality(originalBytes: ByteArray, compressionLevel: CompressionLevel): ByteArray {
     return try {
         val originalBitmap = BitmapFactory.decodeByteArray(originalBytes, 0, originalBytes.size)
@@ -396,9 +366,6 @@ private fun optimizeImageBytesWithQuality(originalBytes: ByteArray, compressionL
     }
 }
 
-/**
- * Processes bitmap with configurable compression for better quality control.
- */
 private fun processImageWithCustomCompression(bitmap: Bitmap, compressionLevel: CompressionLevel): Bitmap {
     val maxDimension = when (compressionLevel) {
         CompressionLevel.LOW -> 2560
@@ -420,10 +387,6 @@ private fun processImageWithCustomCompression(bitmap: Bitmap, compressionLevel: 
     }
 }
 
-/**
- * Helper function to get application context.
- * Uses reflection to get the current application context without requiring setup.
- */
 @SuppressLint("PrivateApi")
 private fun getApplicationContext(): Context {
     return try {
@@ -443,10 +406,6 @@ private fun getApplicationContext(): Context {
     }
 }
 
-/**
- * Calculates optimal sample size for memory-efficient bitmap loading.
- * Reduces memory usage by pre-sampling images during loading.
- */
 private fun calculateOptimalSampleSize(options: BitmapFactory.Options, targetMaxDimension: Int): Int {
     val height = options.outHeight
     val width = options.outWidth
@@ -464,10 +423,6 @@ private fun calculateOptimalSampleSize(options: BitmapFactory.Options, targetMax
     return inSampleSize
 }
 
-/**
- * Directly compresses bitmap to ByteArray using PNG format without intermediate steps.
- * More memory efficient than the standard approach and maintains lossless quality.
- */
 private fun compressBitmapToByteArrayDirect(bitmap: Bitmap): ByteArray {
     return try {
         val outputStream = ByteArrayOutputStream()

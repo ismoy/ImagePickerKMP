@@ -6,15 +6,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import io.github.ismoy.imagepickerkmp.data.orchestrators.GalleryPickerOrchestrator
 import io.github.ismoy.imagepickerkmp.data.orchestrators.PhotoCaptureOrchestrator
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPermissionDialogConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
-import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+
 
 
 @Suppress("FunctionNaming","TrailingWhitespace")
@@ -22,10 +21,8 @@ import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 actual fun ImagePickerLauncher(
     config: ImagePickerConfig
 ) {
-    var showDialog by remember { mutableStateOf(!config.directCameraLaunch) }
-    var askCameraPermission by remember { mutableStateOf(config.directCameraLaunch) }
+    var askCameraPermission by remember { mutableStateOf(true) }
     var launchCamera by remember { mutableStateOf(false) }
-    var launchGallery by remember { mutableStateOf(false) }
     
     var selectedPhotoForCrop by remember { mutableStateOf<PhotoResult?>(null) }
     var showCropView by remember { mutableStateOf(false) }
@@ -39,42 +36,6 @@ actual fun ImagePickerLauncher(
         config.onDismiss()
     }
     val onCameraFinished = { launchCamera = false }
-    val onGalleryFinished = { launchGallery = false }
-    
-    if (showDialog) {
-        if (config.customPickerDialog != null) {
-            config.customPickerDialog.invoke(
-                {
-                    showDialog = false
-                    askCameraPermission = true
-                },
-                {
-                    showDialog = false
-                    launchGallery = true
-                },
-                {
-                    showDialog = false
-                    config.onDismiss()
-                }
-            )
-        } else {
-            showImagePickerDialog(
-                config = config,
-                onTakePhoto = {
-                    showDialog = false
-                    askCameraPermission = true
-                },
-                onSelectFromGallery = {
-                    showDialog = false
-                    launchGallery = true
-                },
-                onCancel = {
-                    showDialog = false
-                    config.onDismiss()
-                }
-            )
-        }
-    }
 
     if (askCameraPermission) {
         handleCameraPermission(
@@ -100,33 +61,6 @@ actual fun ImagePickerLauncher(
             onFinish = onCameraFinished,
             compressionLevel = config.cameraCaptureConfig.compressionLevel,
             includeExif = config.cameraCaptureConfig.includeExif
-        )
-    }
-
-    if (launchGallery) {
-        launchGalleryInternal(
-            onPhotoSelected = { result ->
-                val photoResult = PhotoResult(
-                    uri = result.uri,
-                    width = result.width,
-                    height = result.height,
-                    fileName = result.fileName,
-                    fileSize = result.fileSize
-                )
-                
-                val shouldShowCrop = config.cameraCaptureConfig.cropConfig.enabled || config.enableCrop
-                if (shouldShowCrop) {
-                    selectedPhotoForCrop = photoResult
-                    showCropView = true
-                } else {
-                    config.onPhotosSelected?.invoke(listOf(result))
-                    config.onPhotoCaptured(photoResult)
-                }
-            },
-            onError = config.onError,
-            onDismiss = config.onDismiss,
-            onFinish = onGalleryFinished,
-            compressionLevel = config.cameraCaptureConfig.compressionLevel
         )
     }
     
@@ -211,30 +145,6 @@ private fun launchCameraInternal(
             },
             compressionLevel = compressionLevel,
             includeExif = includeExif
-        )
-    }
-}
-
-@Composable
-private fun launchGalleryInternal(
-    onPhotoSelected: (GalleryPhotoResult) -> Unit,
-    onError: (Exception) -> Unit,
-    onDismiss: () -> Unit,
-    onFinish: () -> Unit,
-    compressionLevel: CompressionLevel? = null
-) {
-    LaunchedEffect(Unit) {
-        GalleryPickerOrchestrator.launchGallery(
-            onPhotoSelected = {
-                onPhotoSelected(it)
-                onFinish()
-            },
-            onError = {
-                onError(it)
-                onFinish()
-            },
-            onDismiss = onDismiss,
-            compressionLevel = compressionLevel
         )
     }
 }

@@ -9,7 +9,7 @@ import android.graphics.PorterDuffXfermode
 import kotlin.math.min
 import androidx.core.graphics.createBitmap
 
-fun createCircularBitmap(bitmap: Bitmap): Bitmap {
+internal fun createCircularBitmap(bitmap: Bitmap): Bitmap {
     val size = min(bitmap.width, bitmap.height)
     val output = createBitmap(size, size)
     val canvas = Canvas(output)

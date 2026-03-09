@@ -3,7 +3,7 @@ package io.github.ismoy.imagepickerkmp.domain.utils
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 
- fun applyCropAspectRatio(
+ internal fun applyCropAspectRatio(
     currentCropRect: Rect,
     aspectRatio: String,
     canvasSize: Size

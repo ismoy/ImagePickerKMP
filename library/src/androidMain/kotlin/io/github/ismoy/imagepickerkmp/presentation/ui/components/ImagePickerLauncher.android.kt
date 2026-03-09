@@ -27,7 +27,6 @@ actual fun ImagePickerLauncher(
         onPhotoResult = { result ->
             config.onPhotoCaptured(result)
         },
-        onPhotosSelected = config.onPhotosSelected,
         onError = { exception ->
             config.onError(exception)
         },

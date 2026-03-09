@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.runtime.Composable
 import imagepickerkmp.library.generated.resources.Res
 import imagepickerkmp.library.generated.resources.gallery_selection_error
+import imagepickerkmp.library.generated.resources.mime_type_mismatch_error
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery.GalleryFileProcessor.processSelectedFile
@@ -21,12 +22,35 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * Verifica si un URI cumple con alguno de los MimeTypes permitidos.
+ * Es necesario filtrar DESPUÉS de la selección porque Android no siempre
+ * respeta el filtro por subtipo de imagen en el picker nativo (ej: image/webp).
+ */
+internal fun uriMatchesMimeTypes(context: Context, uri: Uri, allowedMimeTypes: Array<String>): Boolean {
+    // Si solo hay "image/*" o "*/*" se acepta todo
+    if (allowedMimeTypes.any { it == "*/*" || it == "image/*" }) return true
 
-class PickImageFromGallery : ActivityResultContract<String, Uri?>() {
-    override fun createIntent(context: Context, input: String): Intent {
+    val actualMimeType = context.contentResolver.getType(uri)?.lowercase() ?: return false
+
+    return allowedMimeTypes.any { allowed ->
+        when {
+            allowed.endsWith("/*") -> actualMimeType.startsWith(allowed.removeSuffix("*"))
+            else -> actualMimeType == allowed.lowercase()
+        }
+    }
+}
+
+class PickImageFromGallery : ActivityResultContract<Array<String>, Uri?>() {
+    override fun createIntent(context: Context, input: Array<String>): Intent {
         return Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = input
             addCategory(Intent.CATEGORY_OPENABLE)
+            if (input.size == 1) {
+                type = input[0]
+            } else {
+                type = "*/*"
+                putExtra(Intent.EXTRA_MIME_TYPES, input)
+            }
         }
     }
 
@@ -38,12 +62,17 @@ class PickImageFromGallery : ActivityResultContract<String, Uri?>() {
     }
 }
 
-class PickMultipleImagesFromGallery : ActivityResultContract<String, List<Uri>>() {
-    override fun createIntent(context: Context, input: String): Intent {
+class PickMultipleImagesFromGallery : ActivityResultContract<Array<String>, List<Uri>>() {
+    override fun createIntent(context: Context, input: Array<String>): Intent {
         return Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = input
             addCategory(Intent.CATEGORY_OPENABLE)
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            if (input.size == 1) {
+                type = input[0]
+            } else {
+                type = "*/*"
+                putExtra(Intent.EXTRA_MIME_TYPES, input)
+            }
         }
     }
 
@@ -80,14 +109,23 @@ internal fun rememberGalleryOnlyPickerLauncher(
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
     compressionLevel: CompressionLevel? = null,
-    includeExif: Boolean = false
-): ManagedActivityResultLauncher<String, Uri?> {
+    includeExif: Boolean = false,
+    allowedMimeTypes: Array<String> = arrayOf("image/*"),
+    mimeTypeMismatchMessage: String? = null
+): ManagedActivityResultLauncher<Array<String>, Uri?> {
     val gallerySelectionErrorMsg = stringResource(Res.string.gallery_selection_error)
+    val mimeTypeMismatchMsg = stringResource(Res.string.mime_type_mismatch_error)
 
     return rememberLauncherForActivityResult(
         contract = PickImageFromGallery()
     ) { uri: Uri? ->
         if (uri != null) {
+            // Filtro post-selección: Android no siempre respeta el subtipo MIME en el picker nativo
+            if (!uriMatchesMimeTypes(context, uri, allowedMimeTypes)) {
+                val msg = mimeTypeMismatchMessage ?: mimeTypeMismatchMsg.format(allowedMimeTypes.joinToString(", "))
+                onError(Exception(msg))
+                return@rememberLauncherForActivityResult
+            }
             try {
                 CoroutineScope(Dispatchers.Main).launch {
                     val result = processSelectedFile(context, uri, compressionLevel, includeExif)
@@ -113,21 +151,43 @@ internal fun rememberGalleryOnlyMultiplePickerLauncher(
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
     compressionLevel: CompressionLevel? = null,
-    includeExif: Boolean = false
-): ManagedActivityResultLauncher<String, List<Uri>> {
+    includeExif: Boolean = false,
+    selectionLimit: Int = 10,
+    allowedMimeTypes: Array<String> = arrayOf("image/*"),
+    mimeTypeMismatchMessage: String? = null
+): ManagedActivityResultLauncher<Array<String>, List<Uri>> {
     val gallerySelectionErrorMsg = stringResource(Res.string.gallery_selection_error)
+    val mimeTypeMismatchMsg = stringResource(Res.string.mime_type_mismatch_error)
 
     return rememberLauncherForActivityResult(
         contract = PickMultipleImagesFromGallery()
     ) { uris: List<Uri> ->
         if (uris.isNotEmpty()) {
+            // Filtro post-selección: Android no siempre respeta el subtipo MIME en el picker nativo
+            val filteredUris = uris.filter { uri ->
+                uriMatchesMimeTypes(context, uri, allowedMimeTypes)
+            }
+
+            if (filteredUris.isEmpty()) {
+                val msg = mimeTypeMismatchMessage ?: mimeTypeMismatchMsg.format(allowedMimeTypes.joinToString(", "))
+                onError(Exception(msg))
+                return@rememberLauncherForActivityResult
+            }
+
+            // Aplicar el límite de selección
+            val limitedUris = if (filteredUris.size > selectionLimit) {
+                filteredUris.take(selectionLimit)
+            } else {
+                filteredUris
+            }
+            
             try {
                 CoroutineScope(Dispatchers.Main).launch {
                     val semaphore = Semaphore(3)
                     val results = mutableListOf<GalleryPhotoResult>()
                     val errors = mutableListOf<Exception>()
 
-                    val deferredResults = uris.map { uri ->
+                    val deferredResults = limitedUris.map { uri ->
                         async(Dispatchers.IO) {
                             semaphore.withPermit {
                                 try {
