@@ -4,6 +4,8 @@
 Easily capture or select images on Android, iOS, Desktop, and Web — all with a single API.  
 Built with **Compose Multiplatform**, designed for **simplicity, performance, and flexibility**.
 
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=b9cde436-d518-45b7-9a4a-7b4e084aeffa" />
+
 <p align="center">
   <!--<a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>-->
  <!-- <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Code Coverage"></a>-->
