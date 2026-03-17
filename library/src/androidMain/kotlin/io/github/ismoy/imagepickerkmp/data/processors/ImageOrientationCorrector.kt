@@ -18,12 +18,7 @@ import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIEN
 import java.io.File
 import java.io.FileOutputStream
 
-/**
- * Handles image orientation correction operations.
- * 
- * SOLID: Single Responsibility - Only handles orientation correction
- * SOLID: Open/Closed - Can be extended for different correction algorithms
- */
+
 internal class ImageOrientationCorrector {
     
     @SuppressLint("ExifInterface")
@@ -66,9 +61,12 @@ internal class ImageOrientationCorrector {
             val outputFile = if (matrix.isIdentity) {
                 imageFile
             } else {
-                val correctedFile = File(imageFile.parentFile, "corrected_${imageFile.name}")
+                val parentDir = imageFile.parentFile ?: imageFile.canonicalFile.parentFile
+                    ?: throw IllegalStateException("Cannot resolve parent directory for: ${imageFile.absolutePath}")
+                val correctedFile = File(parentDir, "corrected_${imageFile.name}")
+                val recompressQuality = HighPerformanceConfig.getRecompressQuality()
                 FileOutputStream(correctedFile).use { out ->
-                    finalBitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
+                    finalBitmap.compress(Bitmap.CompressFormat.JPEG, recompressQuality, out)
                 }
                 finalBitmap.recycle()
                 correctedFile

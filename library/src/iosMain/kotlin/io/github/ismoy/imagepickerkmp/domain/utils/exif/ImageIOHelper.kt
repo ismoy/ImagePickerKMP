@@ -1,10 +1,15 @@
 package io.github.ismoy.imagepickerkmp.domain.utils.exif
 
 import kotlinx.cinterop.ExperimentalForeignApi
-import platform.CoreFoundation.*
+import platform.CoreFoundation.CFStringCreateWithCString
+import platform.CoreFoundation.CFURLCreateWithFileSystemPath
+import platform.CoreFoundation.kCFStringEncodingUTF8
+import platform.CoreFoundation.kCFURLPOSIXPathStyle
 import platform.Foundation.CFBridgingRelease
 import platform.Foundation.NSDictionary
-import platform.ImageIO.*
+import platform.ImageIO.CGImageSourceCopyPropertiesAtIndex
+import platform.ImageIO.CGImageSourceCreateWithURL
+import platform.ImageIO.CGImageSourceRef
 
 /**
  * Helper functions for working with ImageIO framework.

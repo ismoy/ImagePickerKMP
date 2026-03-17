@@ -4,14 +4,17 @@ import android.graphics.Bitmap
 import androidx.core.graphics.scale
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 
- internal fun processImageWithCompression(
+
+internal fun processImageWithCompression(
     bitmap: Bitmap,
     compressionLevel: CompressionLevel
 ): Bitmap {
+    if (compressionLevel == CompressionLevel.LOW) return bitmap
+
     val maxDimension = when (compressionLevel) {
-        CompressionLevel.HIGH -> 1280
-        CompressionLevel.MEDIUM -> 1920
-        CompressionLevel.LOW -> 2560
+        CompressionLevel.HIGH   -> 1920
+        CompressionLevel.MEDIUM -> 3840
+        CompressionLevel.LOW    -> Int.MAX_VALUE
     }
 
     val currentMaxDimension = maxOf(bitmap.width, bitmap.height)
@@ -21,7 +24,7 @@ import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
         val targetWidth = (bitmap.width * scale).toInt()
         val targetHeight = (bitmap.height * scale).toInt()
 
-        val resizedBitmap = bitmap.scale(targetWidth, targetHeight, false)
+        val resizedBitmap = bitmap.scale(targetWidth, targetHeight, true)
         if (resizedBitmap != bitmap) {
             bitmap.recycle()
         }

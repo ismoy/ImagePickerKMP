@@ -44,18 +44,22 @@ actual fun RequestCameraPermission(
                     onResult(true)
                 } else {
                     isProcessingSettingsAction = false
+                    hasNavigatedToSettings = false
+                    showDialog = false
+                    isPermissionDeniedPermanently = false
+                    onPermissionPermanentlyDenied()
                 }
             }
         },
         onAppResignActive = {
             if (isProcessingSettingsAction) {
                 hasNavigatedToSettings = true
+                showDialog = false
             }
         }
     )
 
     LaunchedEffect(Unit) {
-        // First check if camera hardware is available (not available on simulator)
         if (!UIImagePickerController.isSourceTypeAvailable(
             UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
         )) {
@@ -64,7 +68,6 @@ actual fun RequestCameraPermission(
             return@LaunchedEffect
         }
         
-        // Check authorization status
         val currentStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
         when (currentStatus) {
             AVAuthorizationStatusAuthorized -> {

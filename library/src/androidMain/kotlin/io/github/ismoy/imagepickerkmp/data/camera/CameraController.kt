@@ -2,12 +2,17 @@ package io.github.ismoy.imagepickerkmp.data.camera
 
 import android.content.Context
 import android.os.Build
+import android.util.Size
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.lifecycle.awaitInstance
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -46,31 +51,48 @@ internal class CameraController(
         preference: CapturePhotoPreference
     ) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-            delay(100) 
+            delay(50) 
         }
-        
-        cameraProvider = withContext(Dispatchers.IO) {
-            ProcessCameraProvider.getInstance(context).get()
+   
+        cameraProvider = withContext(Dispatchers.Main) {
+            ProcessCameraProvider.awaitInstance(context)
         }
 
         withContext(Dispatchers.Main) {
             if (HighPerformanceConfig.requiresCompatibilityMode()) {
                 previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
             }
-            
-            val preview = Preview.Builder()
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                .build()
-                .also {
-                    it.surfaceProvider = previewView.surfaceProvider
-                }
 
-            imageCapture = ImageCapture.Builder()
+            val resolutionSelector =
+                ResolutionSelector.Builder()
+                    .setAspectRatioStrategy(
+                        AspectRatioStrategy(
+                            AspectRatio.RATIO_4_3,
+                            AspectRatioStrategy.FALLBACK_RULE_AUTO
+                        )
+                    )
+                    .setResolutionStrategy(
+                        ResolutionStrategy(
+                            Size(4000, 3000),
+                            ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER
+                        )
+                    )
+                    .build()
+
+            val previewBuilder = Preview.Builder()
+            previewBuilder.setResolutionSelector(resolutionSelector)
+            val preview = previewBuilder.build().also {
+                it.surfaceProvider = previewView.surfaceProvider
+            }
+
+            val imageCaptureBuilder = ImageCapture.Builder()
                 .setCaptureMode(getCaptureModeFn(preference))
                 .setFlashMode(getImageCaptureFlashMode(currentFlashMode))
-                .setJpegQuality(HighPerformanceConfig.getOptimalJpegQuality())
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                .build()
+                .setJpegQuality(HighPerformanceConfig.getOptimalJpegQuality(context))
+
+            imageCaptureBuilder.setResolutionSelector(resolutionSelector)
+
+            imageCapture = imageCaptureBuilder.build()
 
             val cameraSelector = when (currentCameraType) {
                 CameraType.BACK -> CameraSelector.DEFAULT_BACK_CAMERA
@@ -138,5 +160,6 @@ internal class CameraController(
 
     fun stopCamera() {
         cameraProvider?.unbindAll()
+        imageCapture = null
     }
 }

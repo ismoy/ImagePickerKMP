@@ -8,16 +8,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/**
- * Utility class for managing file operations related to image capture and storage.
- *
- * Provides methods to create image files and convert files to URI strings.
- */
+
 internal class FileManager(private val context: Context) {
 
     fun createImageFile(): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            ?: context.filesDir
+        if (!storageDir.exists()) storageDir.mkdirs()
         return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
     }
 
