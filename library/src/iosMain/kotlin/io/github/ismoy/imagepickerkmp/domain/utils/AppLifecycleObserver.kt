@@ -2,7 +2,9 @@ package io.github.ismoy.imagepickerkmp.domain.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
 import platform.UIKit.UIApplicationDidBecomeActiveNotification
@@ -14,11 +16,17 @@ fun AppLifecycleObserver(
     onAppBecomeActive: (() -> Unit)? = null,
     onAppResignActive: (() -> Unit)? = null
 ) {
+    val currentOnBecomeActive by rememberUpdatedState(onAppBecomeActive)
+    val currentOnResignActive by rememberUpdatedState(onAppResignActive)
+
     val observer = remember { AppLifecycleObserverImpl() }
-    
+
     DisposableEffect(Unit) {
-        observer.startObserving(onAppBecomeActive, onAppResignActive)
-        
+        observer.startObserving(
+            onAppBecomeActive = { currentOnBecomeActive?.invoke() },
+            onAppResignActive = { currentOnResignActive?.invoke() }
+        )
+
         onDispose {
             observer.stopObserving()
         }

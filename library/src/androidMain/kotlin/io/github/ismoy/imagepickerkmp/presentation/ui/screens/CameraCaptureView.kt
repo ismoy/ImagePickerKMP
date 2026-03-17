@@ -98,7 +98,6 @@ fun CameraCaptureView(
                         if (enableCrop) {
                             showCropView = true
                         } else {
-                            playShutterSound()
                             if (cameraCaptureConfig.permissionAndConfirmationConfig.skipConfirmation) {
                                 onPhotoResult(result)
                                 photoResult = null

@@ -17,6 +17,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cached
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +35,7 @@ import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.Backg
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.utils.playShutterSound
 import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 import kotlinx.coroutines.CoroutineScope
@@ -69,6 +71,15 @@ fun CameraCapturePreview(
                 )
             }
         }
+    }
+
+    DisposableEffect(stateHolder) {
+        onDispose { stateHolder?.cancel() }
+    }
+
+    VolumeButtonCapture {
+        playShutterSound()
+        stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif)
     }
     val isDark = isSystemInDarkTheme()
     val backgroundColor = if (isDark) MaterialTheme.colors.background else BackgroundColor
@@ -135,6 +146,7 @@ fun CameraCapturePreview(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
+                    playShutterSound()
                     stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif)
                 }
         )

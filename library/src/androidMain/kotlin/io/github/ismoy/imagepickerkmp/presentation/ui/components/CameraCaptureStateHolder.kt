@@ -12,6 +12,7 @@ import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -27,6 +28,7 @@ internal class CameraCaptureStateHolder(
         private set
     var showFlashOverlay by mutableStateOf(false)
         private set
+    private var isCapturing by mutableStateOf(false)
     val flashModes: List<CameraController.FlashMode> = cameraManager.flashModes
     private var cameraJob: Job? = null
 
@@ -59,6 +61,7 @@ internal class CameraCaptureStateHolder(
         onError: (Exception) -> Unit,
         onCameraSwitch: (() -> Unit)? = null
     ) {
+        isCapturing = false
         cameraJob?.cancel()
         cameraJob = coroutineScope.launch {
             try {
@@ -84,11 +87,28 @@ internal class CameraCaptureStateHolder(
         compressionLevel: CompressionLevel? = null,
         includeExif: Boolean = false
     ) {
+        if (isCapturing) return
+        isCapturing = true
         showFlashOverlay = true
-        cameraManager.takePicture(onPhotoResult, onError, compressionLevel, includeExif)
+        cameraManager.takePicture(
+            onPhotoResult = { result ->
+                isCapturing = false
+                onPhotoResult(result)
+            },
+            onError = { e ->
+                isCapturing = false
+                onError(e)
+            },
+            compressionLevel = compressionLevel,
+            includeExif = includeExif
+        )
         coroutineScope.launch {
             delay(DELAY_TO_TAKE_PHOTO)
             showFlashOverlay = false
         }
+    }
+
+    fun cancel() {
+        coroutineScope.cancel()
     }
 }

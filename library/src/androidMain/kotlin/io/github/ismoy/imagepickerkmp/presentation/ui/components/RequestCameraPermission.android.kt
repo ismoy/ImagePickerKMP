@@ -2,17 +2,18 @@ package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPermissionDialogConfig
 import io.github.ismoy.imagepickerkmp.domain.utils.openAppSettings
 
@@ -25,42 +26,41 @@ actual fun RequestCameraPermission(
     customPermissionHandler: (() -> Unit)?
 ) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
     var showRationale by remember { mutableStateOf(false) }
     var permissionDeniedPermanently by remember { mutableStateOf(false) }
-    var permissionDeniedCount by remember { mutableIntStateOf(0) }
     var hasCalledPermanentlyDenied by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
-    ){ isGranted ->
-        if (isGranted){
+    ) { isGranted ->
+        if (isGranted) {
             onResult(true)
-        }else{
-            permissionDeniedCount++
-            when{
-                permissionDeniedCount >= 2 -> {
-                    permissionDeniedPermanently = true
-                    showRationale = false
-                }
-                else -> {
-                    showRationale = true
-                    permissionDeniedPermanently = false
-                }
+        } else {
+            val isPermanentlyDenied = activity != null &&
+                !activity.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+            if (isPermanentlyDenied) {
+                permissionDeniedPermanently = true
+                showRationale = false
+            } else {
+                showRationale = true
+                permissionDeniedPermanently = false
             }
         }
     }
 
-    LaunchedEffect(Unit){
-        val currentPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-        when (currentPermission){
-            PackageManager.PERMISSION_GRANTED -> {
-                onResult(true)
-            }
-            PackageManager.PERMISSION_DENIED -> {
-                permissionLauncher.launch(Manifest.permission.CAMERA)
-            }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        val isGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+            PackageManager.PERMISSION_GRANTED
+        if (isGranted) {
+            permissionDeniedPermanently = false
+            showRationale = false
+            onResult(true)
+        } else if (!showRationale && !permissionDeniedPermanently) {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
+
     if (showRationale) {
         if (dialogConfig.customDeniedDialog != null) {
             dialogConfig.customDeniedDialog.invoke {
@@ -80,24 +80,21 @@ actual fun RequestCameraPermission(
         }
     }
 
-    if (permissionDeniedPermanently && !hasCalledPermanentlyDenied){
-        if (dialogConfig.customSettingsDialog != null){
+    if (permissionDeniedPermanently && !hasCalledPermanentlyDenied) {
+        if (dialogConfig.customSettingsDialog != null) {
             dialogConfig.customSettingsDialog.invoke {
-
-                openAppSettings(context)
                 hasCalledPermanentlyDenied = true
+                openAppSettings(context)
                 onPermissionPermanentlyDenied()
             }
-        }
-        else {
+        } else {
             CustomPermissionDialog(
                 title = dialogConfig.titleDialogConfig,
                 description = dialogConfig.descriptionDialogConfig,
                 confirmationButtonText = dialogConfig.btnDialogConfig,
                 onConfirm = {
-
-                    openAppSettings(context)
                     hasCalledPermanentlyDenied = true
+                    openAppSettings(context)
                     onPermissionPermanentlyDenied()
                 }
             )

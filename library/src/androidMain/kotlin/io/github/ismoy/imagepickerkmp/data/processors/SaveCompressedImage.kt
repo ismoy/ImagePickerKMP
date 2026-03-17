@@ -10,7 +10,9 @@ import java.io.FileOutputStream
     originalFile: File,
     compressionLevel: CompressionLevel
 ): File {
-    val outputFile = File(originalFile.parentFile, "compressed_${originalFile.name}")
+    val parentDir = originalFile.parentFile ?: originalFile.canonicalFile.parentFile
+        ?: throw IllegalStateException("Cannot resolve parent directory for: ${originalFile.absolutePath}")
+    val outputFile = File(parentDir, "compressed_${originalFile.name}")
     val quality = (compressionLevel.toQualityValue() * 100).toInt()
 
     FileOutputStream(outputFile).use { outputStream ->

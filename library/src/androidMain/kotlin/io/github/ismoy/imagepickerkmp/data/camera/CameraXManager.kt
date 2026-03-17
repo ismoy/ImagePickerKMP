@@ -5,9 +5,7 @@ import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 
-/**
- * High-level manager for camera operations, providing an interface to start, stop, and control the camera.
- */
+
 internal class CameraXManager(
     private val cameraController: CameraController,
     private val imageProcessor: io.github.ismoy.imagepickerkmp.data.processors.ImageProcessor

@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.core.content.ContextCompat
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController.CameraType
 import io.github.ismoy.imagepickerkmp.domain.exceptions.ImageProcessingException
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
@@ -13,17 +12,18 @@ import io.github.ismoy.imagepickerkmp.domain.config.HighPerformanceConfig
 import io.github.ismoy.imagepickerkmp.domain.utils.ExifDataExtractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
 import androidx.core.graphics.scale
 
 
 internal class ImageProcessor(
     private val context: Context,
     private val fileManager: io.github.ismoy.imagepickerkmp.data.managers.FileManager,
-    private val orientationCorrector: ImageOrientationCorrector
+    private val orientationCorrector: ImageOrientationCorrector,
+    private val processingScope: CoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 ) {
 
     fun processImage(
@@ -34,7 +34,7 @@ internal class ImageProcessor(
         onPhotoCaptured: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit
     ) {
-        CoroutineScope(Dispatchers.Default).launch {
+        processingScope.launch {
             try {
                 val exifData = if (includeExif) {
                     try {
@@ -51,7 +51,7 @@ internal class ImageProcessor(
                 val correctedImageFile = orientationCorrector.correctImageOrientation(imageFile, cameraType)
 
                 val options = BitmapFactory.Options().apply {
-                    inPreferredConfig = if (HighPerformanceConfig.isHighEndDevice()) {
+                    inPreferredConfig = if (HighPerformanceConfig.isHighEndDevice(context)) {
                         Bitmap.Config.ARGB_8888
                     } else {
                         Bitmap.Config.RGB_565
@@ -61,9 +61,16 @@ internal class ImageProcessor(
                 }
 
                 val originalBitmap = BitmapFactory.decodeFile(correctedImageFile.absolutePath, options)
+                    ?: run {
+                        withContext(Dispatchers.Main) {
+                            onError(ImageProcessingException("Failed to decode captured image."))
+                        }
+                        return@launch
+                    }
 
-                if (originalBitmap != null) {
-                    val processedBitmap = if (compressionLevel != null) {
+                var processedBitmap: Bitmap? = null
+                try {
+                    processedBitmap = if (compressionLevel != null) {
                         processImageWithCompression(originalBitmap, compressionLevel)
                     } else {
                         originalBitmap
@@ -88,14 +95,23 @@ internal class ImageProcessor(
                         originalBitmap.recycle()
                     }
                     processedBitmap.recycle()
+                    processedBitmap = null
+                    if (compressionLevel != null && finalFile != correctedImageFile) {
+                        correctedImageFile.delete()
+                    }
+                    if (correctedImageFile != imageFile) {
+                        imageFile.delete()
+                    }
 
                     withContext(Dispatchers.Main) {
                         onPhotoCaptured(result)
                     }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        onError(ImageProcessingException("Failed to decode captured image."))
+                } catch (e: Exception) {
+                    if (processedBitmap != null && processedBitmap != originalBitmap) {
+                        processedBitmap.recycle()
                     }
+                    if (!originalBitmap.isRecycled) originalBitmap.recycle()
+                    throw e 
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
