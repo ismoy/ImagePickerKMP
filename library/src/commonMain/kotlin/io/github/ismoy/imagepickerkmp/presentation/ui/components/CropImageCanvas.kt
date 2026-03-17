@@ -177,8 +177,19 @@ import kotlin.math.min
                     val margin = 40f
                     val availableWidth = size.width - margin * 2
                     val availableHeight = size.height - margin * 2
-                    val rectWidth = availableWidth * 0.8f
-                    val rectHeight = availableHeight * 0.6f
+                    val rectWidth: Float
+                    val rectHeight: Float
+                    when {
+                        isCircularCrop -> {
+                            val side = min(availableWidth, availableHeight) * 0.7f
+                            rectWidth = side
+                            rectHeight = side
+                        }
+                        else -> {
+                            rectWidth = availableWidth * 0.8f
+                            rectHeight = availableHeight * 0.6f
+                        }
+                    }
                     val centerX = size.width / 2
                     val centerY = size.height / 2
                     localCropRect = Rect(
