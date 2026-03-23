@@ -1,19 +1,17 @@
 package io.github.ismoy.imagepickerkmp.features.ocr.data.analyzers
 
-import io.github.ismoy.imagepickerkmp.features.ocr.utils.CloudOCRException
-import io.github.ismoy.imagepickerkmp.features.ocr.utils.InvalidAPIKeyException
-import io.github.ismoy.imagepickerkmp.features.ocr.utils.MissingAPIKeyException
-import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRResult
-import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.domain.extensions.loadBytes
-import io.github.ismoy.imagepickerkmp.features.ocr.domain.utils.OCRUtils
+import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.features.ocr.data.providers.GeminiOCRProvider
+import io.github.ismoy.imagepickerkmp.features.ocr.domain.utils.OCRUtils
 import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRRequestConfig
+import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRResult
+import io.github.ismoy.imagepickerkmp.features.ocr.utils.CloudOCRException
+import io.github.ismoy.imagepickerkmp.features.ocr.utils.MissingAPIKeyException
 
 
 internal class CloudOCRAnalyzer(apiKey: String) : OCRAnalyzer {
 
-    // Private — callers interact through OCRAnalyzer; provider detail is an implementation concern.
     private val provider = GeminiOCRProvider(apiKey)
 
     init {

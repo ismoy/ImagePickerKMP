@@ -8,21 +8,20 @@ import android.graphics.Matrix
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.exifinterface.media.ExifInterface
-import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
 import androidx.core.net.toUri
+import androidx.exifinterface.media.ExifInterface
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.NUMBER_HUNDRED
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.NUMBER_TWO_FLOAT
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.NUMBER_ZERO
-import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.NUMBER_ZERO_FLOAT
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.PNG_TEXT
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.PREFIX_CROPPED_IMAGE
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.SUFFIX_PNG
-import java.io.File
-import java.io.FileOutputStream
+import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 
 internal suspend fun applyCropUtils(
     context: Context,

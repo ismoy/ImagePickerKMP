@@ -1,7 +1,6 @@
 package io.github.ismoy.imagepickerkmp.domain.repository
 
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
-import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 
 internal interface ImageProcessorRepository {

@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import io.github.ismoy.imagepickerkmp.data.camera.CameraController
 import io.github.ismoy.imagepickerkmp.data.models.FlashMode
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.BackgroundColor
@@ -37,8 +36,8 @@ import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.DELAY
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-import io.github.ismoy.imagepickerkmp.presentation.ui.utils.playShutterSound
 import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.playShutterSound
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

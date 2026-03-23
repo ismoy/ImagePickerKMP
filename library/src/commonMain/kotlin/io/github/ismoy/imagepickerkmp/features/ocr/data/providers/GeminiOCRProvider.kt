@@ -52,13 +52,13 @@ internal class GeminiOCRProvider(
             when (response.status.value) {
                 401, 403 -> throw InvalidAPIKeyException("Invalid Gemini API key or insufficient permissions")
                 400 -> {
-                    val errorBody = try { response.body<String>() } catch (e: Exception) { "Unable to read error response" }
+                    val errorBody = try { response.body<String>() } catch (_: Exception) { "Unable to read error response" }
                     val mimeType = config.mimeType ?: "image/jpeg"
                     throw CloudOCRException("Bad request (400). This might be due to unsupported file format, file too large, or invalid request format. MimeType: $mimeType, Error: $errorBody")
                 }
                 429 -> throw CloudOCRException("Rate limit exceeded for Gemini API")
                 !in 200..299 -> {
-                    val errorBody = try { response.body<String>() } catch (e: Exception) { "Unable to read error response" }
+                    val errorBody = try { response.body<String>() } catch (_: Exception) { "Unable to read error response" }
                     throw CloudOCRException("Gemini API request failed with status code: ${response.status.value}. Error: $errorBody")
                 }
             }
@@ -96,7 +96,7 @@ internal class GeminiOCRProvider(
                 }
             }
             response.status.value in 200..299
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }

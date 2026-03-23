@@ -198,9 +198,3 @@ class ApplyCropAspectRatioTest {
     }
 }
 
-private fun assertEquals(expected: Float, actual: Float, absoluteTolerance: Float) {
-    assertTrue(
-        kotlin.math.abs(expected - actual) <= absoluteTolerance,
-        "Expected $expected but was $actual (tolerance $absoluteTolerance)"
-    )
-}

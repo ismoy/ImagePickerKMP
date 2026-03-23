@@ -6,8 +6,7 @@ import androidx.compose.ui.graphics.toComposeImageBitmap
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import org.jetbrains.skia.Image
 import java.io.File
-import java.util.*
-import javax.imageio.ImageIO
+import java.util.Base64
 
 /**
  * Desktop implementations for PhotoResult extension functions.
@@ -19,7 +18,7 @@ actual fun PhotoResult.loadBytes(): ByteArray {
     return try {
         val file = File(java.net.URI(uri))
         file.readBytes()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         byteArrayOf()
     }
 }
@@ -32,7 +31,7 @@ actual fun PhotoResult.loadBase64(): String {
         } else {
             ""
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         ""
     }
 }
@@ -45,7 +44,7 @@ actual fun PhotoResult.loadImageBitmap(): ImageBitmap? {
         } else {
             null
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -54,7 +53,7 @@ actual fun PhotoResult.loadPainter(): Painter? {
     return try {
         val imageBitmap = loadImageBitmap()
         imageBitmap?.let { androidx.compose.ui.graphics.painter.BitmapPainter(it) }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

@@ -147,9 +147,3 @@ class CompressionConfigTest {
     }
 }
 
-private fun assertEquals(expected: Double, actual: Double, tolerance: Double, message: String = "") {
-    assertTrue(
-        kotlin.math.abs(expected - actual) <= tolerance,
-        "Expected $expected but was $actual (tolerance $tolerance) $message"
-    )
-}

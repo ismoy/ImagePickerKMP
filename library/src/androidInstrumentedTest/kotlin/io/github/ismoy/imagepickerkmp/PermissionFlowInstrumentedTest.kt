@@ -2,6 +2,7 @@ package io.github.ismoy.imagepickerkmp
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.github.ismoy.imagepickerkmp.presentation.ui.screens.CameraCaptureView
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,10 +23,7 @@ class PermissionFlowInstrumentedTest {
             )
         }
         // Here you should simulate permission denial using GrantPermissionRule or UI Automator
-        // Este paso depende del entorno y configuración de test
-        // Por ahora, solo estructura el test para que puedas completarlo según tu flujo real
         composeTestRule.runOnIdle {
-            // Verifica que el callback de error fue llamado
             assert(errorCalled)
         }
     }

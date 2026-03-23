@@ -18,7 +18,7 @@ actual fun PhotoResult.loadBytes(): ByteArray {
         } else {
             byteArrayOf()
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         byteArrayOf()
     }
 }
@@ -27,7 +27,7 @@ actual fun PhotoResult.loadBase64(): String {
     return try {
         val base64Prefix = ";base64,"
         if (uri.contains(base64Prefix)) uri.substringAfter(base64Prefix) else ""
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         ""
     }
 }
@@ -36,7 +36,7 @@ actual fun PhotoResult.loadImageBitmap(): ImageBitmap? {
     return try {
         val bytes = loadBytes()
         if (bytes.isNotEmpty()) Image.makeFromEncoded(bytes).toComposeImageBitmap() else null
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -44,7 +44,7 @@ actual fun PhotoResult.loadImageBitmap(): ImageBitmap? {
 actual fun PhotoResult.loadPainter(): Painter? {
     return try {
         loadImageBitmap()?.let { androidx.compose.ui.graphics.painter.BitmapPainter(it) }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

@@ -15,7 +15,6 @@ internal object ImagePickerUiConstants {
     const val ConfirmationCardImageAspectRatio = 1f
     val ConfirmationCardPadding = 24.dp
     val ConfirmationCardSpacerHeight = 24.dp
-    val ConfirmationCardButtonHeight = 48.dp
     val ConfirmationCardButtonSpacing = 16.dp
     val ConfirmationCardTitleFontSize = 22.sp
     val ConfirmationCardTitleColor = Color(0xFFCBD5E1)
@@ -28,7 +27,6 @@ internal object ImagePickerUiConstants {
     val ConfirmationCardButtonIconPadding = 4.dp
     val ConfirmationCardDialogBackground = Color(0xFF1A202C)
     val ConfirmationCardDialogHorizontalPadding = 16.dp
-    val ConfirmationCardButtonTextFontSize = 16.sp
     val ConfirmationCardButtonTextFontWeight = androidx.compose.ui.text.font.FontWeight.Bold
     val DefaultCardElevation = 16.dp
     const val ORIENTATION_ROTATE_90 = 90f
@@ -46,8 +44,6 @@ internal object ImagePickerUiConstants {
     const val ERROR_CAMERA_NOT_INITIALIZED = "Camera not initialized. "
     const val BOUND_SIZE_WIDTH = 4000
     const val BOUND_SIZE_HEIGHT = 3000
-    const val JPEG_TEXT = "image/jpeg"
-    const val JPG_TEXT = "image/jpg"
     const val PNG_TEXT = "image/png"
     const val APPLICATION_PDF_TEXT = "application/pdf"
     const val IMAGE_PREFIX_TEXT = "image/"
@@ -55,7 +51,6 @@ internal object ImagePickerUiConstants {
     const val GALLERY_PROCESSOR_TAG = "GalleryProcessor"
     const val IMAGEPROCESSOR_TAG = "GalleryImageProcessor"
     const val GALLERY_FILE_UTILS_TAG = "GalleryFileUtils: Error querying file name:"
-    const val EXIF_DATA_EXTRACTOR_TAG = "ExifDataExtractor"
     const val NUMBER_THREE = 3
     const val MINVALUE_COMPRESSOR = 8192
     const val PREFIX_COMPRESSED_GALLERY = "compressed_gallery_"
@@ -76,9 +71,7 @@ internal object ImagePickerUiConstants {
     const val EXTRACTION_EXIF_FAILED_TAG = "Thumbnail extraction failed"
     const val PREFIX_EXIF_CALLBACK = "exif_fallback_"
     const val NUMBER_ZERO_FLOAT = 0f
-    const val NUMBER_ONE_FLOAT = 1f
     const val NUMBER_TWO_FLOAT = 2f
-    const val NUMBER_THREE_FLOAT = 3f
     const val NUMBER_HUNDRED = 100
     const val PREFIX_CROPPED_IMAGE = "cropped_image_"
     const val SUFFIX_PNG = ".png"

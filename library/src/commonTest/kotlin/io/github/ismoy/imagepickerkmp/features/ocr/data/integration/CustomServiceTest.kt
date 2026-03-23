@@ -188,7 +188,7 @@ class CustomServiceTest {
         )
         val result = service.extractText(imageBytes, "image/jpeg")
         assertTrue(result.metadata?.containsKey("provider") == true)
-        assertTrue(result.metadata?.containsKey("url") == true)
+        assertTrue(result.metadata.containsKey("url"))
     }
 
     // ── JSON_BASE64 ───────────────────────────────────────────────────────────
@@ -329,9 +329,3 @@ class CustomServiceTest {
     }
 }
 
-private fun assertEquals(expected: Float, actual: Float, absoluteTolerance: Float) {
-    assertTrue(
-        kotlin.math.abs(expected - actual) <= absoluteTolerance,
-        "Expected $expected but was $actual (tolerance ±$absoluteTolerance)"
-    )
-}

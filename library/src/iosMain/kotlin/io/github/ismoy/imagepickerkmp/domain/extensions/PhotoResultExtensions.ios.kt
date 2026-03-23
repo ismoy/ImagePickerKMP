@@ -41,11 +41,6 @@ private class SynchronizedCache<V> {
         lock.lock()
         try { map[key] = value } finally { lock.unlock() }
     }
-
-    fun clear() {
-        lock.lock()
-        try { map.clear() } finally { lock.unlock() }
-    }
 }
 
 private val painterCacheIOS      = SynchronizedCache<Painter>()

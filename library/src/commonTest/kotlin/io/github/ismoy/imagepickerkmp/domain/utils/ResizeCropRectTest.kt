@@ -183,9 +183,3 @@ class ResizeCropRectTest {
     }
 }
 
-private fun assertEquals(expected: Float, actual: Float, tolerance: Float) {
-    assertTrue(
-        kotlin.math.abs(expected - actual) <= tolerance,
-        "Expected $expected but was $actual (tolerance $tolerance)"
-    )
-}
