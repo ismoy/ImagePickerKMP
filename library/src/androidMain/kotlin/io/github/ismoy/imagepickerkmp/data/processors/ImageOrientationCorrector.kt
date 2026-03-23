@@ -2,12 +2,18 @@
 package io.github.ismoy.imagepickerkmp.data.processors
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import androidx.exifinterface.media.ExifInterface
-import io.github.ismoy.imagepickerkmp.data.camera.CameraController.CameraType
+import io.github.ismoy.imagepickerkmp.data.models.CameraType
 import io.github.ismoy.imagepickerkmp.domain.config.HighPerformanceConfig
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.NUMBER_ONE
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.NUMBER_ONE_THOUSAND_TWENTY_FOR
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.NUMBER_TWO
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.NUMBER_TWO_THOUSAND_FORTY_EIGHT
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.NUMBER_ZERO
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIENTATION_FLIP_HORIZONTAL_X
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIENTATION_FLIP_HORIZONTAL_Y
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIENTATION_FLIP_VERTICAL_X
@@ -15,11 +21,12 @@ import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIEN
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIENTATION_ROTATE_180
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIENTATION_ROTATE_270
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ORIENTATION_ROTATE_90
+import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
 import java.io.File
 import java.io.FileOutputStream
 
 
-internal class ImageOrientationCorrector {
+internal class ImageOrientationCorrector(private val context: Context) {
     
     @SuppressLint("ExifInterface")
     fun correctImageOrientation(imageFile: File, cameraType: CameraType): File {
@@ -34,26 +41,25 @@ internal class ImageOrientationCorrector {
                 return imageFile
             }
 
+            val isHighEnd = HighPerformanceConfig.isHighEndDevice(context)
+            val probeOptions = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeFile(imageFile.absolutePath, probeOptions)
             val options = BitmapFactory.Options().apply {
-                inPreferredConfig = if (HighPerformanceConfig.isHighEndDevice()) {
-                    Bitmap.Config.ARGB_8888
-                } else {
-                    Bitmap.Config.RGB_565
-                }
-                inSampleSize = 1
+                inPreferredConfig = if (isHighEnd) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
+                inSampleSize = calculateInSampleSize(probeOptions.outWidth, probeOptions.outHeight, isHighEnd)
             }
             val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath, options) ?: return imageFile
 
             val matrix = getRotationMatrix(orientation)
 
             if (cameraType == CameraType.FRONT) {
-                matrix.postScale(-1f, 1f)
+                matrix.postScale(ORIENTATION_FLIP_HORIZONTAL_X, ORIENTATION_FLIP_HORIZONTAL_Y)
             }
 
             val finalBitmap = if (matrix.isIdentity) {
                 bitmap
             } else {
-                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false).also {
+                Bitmap.createBitmap(bitmap, NUMBER_ZERO, NUMBER_ZERO, bitmap.width, bitmap.height, matrix, false).also {
                     bitmap.recycle()
                 }
             }
@@ -74,7 +80,7 @@ internal class ImageOrientationCorrector {
 
             outputFile
         } catch (e: Exception) {
-            println("Error correcting image orientation: ${e.message}")
+            DefaultLogger.logDebug("Error correcting image orientation: ${e.javaClass.simpleName}")
             imageFile
         }
     }
@@ -99,5 +105,16 @@ internal class ImageOrientationCorrector {
                 }
             }
         }
+    }
+
+    private fun calculateInSampleSize(srcWidth: Int, srcHeight: Int, isHighEnd: Boolean): Int {
+        val maxDimension = if (isHighEnd) NUMBER_TWO_THOUSAND_FORTY_EIGHT else NUMBER_ONE_THOUSAND_TWENTY_FOR
+        var inSampleSize = NUMBER_ONE
+        if (srcWidth <= NUMBER_ZERO || srcHeight <= NUMBER_ZERO) return inSampleSize
+        val maxSrc = maxOf(srcWidth, srcHeight)
+        while (maxSrc / (inSampleSize * NUMBER_TWO) >= maxDimension) {
+            inSampleSize *= NUMBER_TWO
+        }
+        return inSampleSize
     }
 }

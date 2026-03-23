@@ -1,6 +1,6 @@
 package io.github.ismoy.imagepickerkmp.features.ocr.model
 
-data class ProviderInfo(
+internal data class ProviderInfo(
     val name: String,
     val description: String,
     val supportsMultipleLanguages: Boolean,

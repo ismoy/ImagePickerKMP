@@ -30,7 +30,7 @@ import io.github.ismoy.imagepickerkmp.domain.models.CropHandle
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.domain.utils.drawCropHandles
 import io.github.ismoy.imagepickerkmp.domain.utils.resizeCropRect
-import io.github.ismoy.imagepickerkmp.presentation.ui.components.helper.utility.CropUtils.detectHandle
+import io.github.ismoy.imagepickerkmp.domain.utils.CropUtils.detectHandle
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min

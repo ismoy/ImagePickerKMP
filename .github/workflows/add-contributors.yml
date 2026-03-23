@@ -1,0 +1,27 @@
+name: Add contributors
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  add-contributors:
+    # Only run when a contributor command is detected
+    if: |
+      !github.event.issue.pull_request &&
+      (contains(github.event.comment.body, '@all-contributors') ||
+       contains(github.event.comment.body, '@all-contributors'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add contributors
+        uses: all-contributors/action@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          commit-convention: angular

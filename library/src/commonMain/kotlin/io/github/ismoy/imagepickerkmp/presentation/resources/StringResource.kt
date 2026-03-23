@@ -1,11 +1,8 @@
 package io.github.ismoy.imagepickerkmp.presentation.resources
 
 
-/**
- * Enum that defines all string resources used in the ImagePicker library.
- * This allows for type-safe and centralized string management.
- */
-enum class StringResource {
+
+internal enum class StringResource {
     CAMERA_PERMISSION_REQUIRED,
     CAMERA_PERMISSION_DESCRIPTION,
     OPEN_SETTINGS,

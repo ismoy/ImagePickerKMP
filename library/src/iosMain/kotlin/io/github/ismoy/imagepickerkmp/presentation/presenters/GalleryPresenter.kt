@@ -4,6 +4,7 @@ import io.github.ismoy.imagepickerkmp.data.delegates.GalleryDelegate
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
+import io.github.ismoy.imagepickerkmp.presentation.ui.components.showPermissionDeniedDialog
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UIViewController
@@ -13,6 +14,36 @@ internal object GalleryPresenter {
     private var galleryDelegate: GalleryDelegate? = null
 
     fun presentGallery(
+        viewController: UIViewController,
+        onPhotoSelected: (GalleryPhotoResult) -> Unit,
+        onError: (Exception) -> Unit,
+        onDismiss: () -> Unit,
+        compressionLevel: CompressionLevel? = null,
+        includeExif: Boolean = false,
+        mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
+        mimeTypeMismatchMessage: String? = null
+    ) {
+        if (includeExif) {
+            checkPhotoLibraryPermission(
+                onAuthorized = {
+                    doPresentGallery(
+                        viewController, onPhotoSelected, onError, onDismiss,
+                        compressionLevel, includeExif, mimeTypes, mimeTypeMismatchMessage
+                    )
+                },
+                onDenied = {
+                    showPermissionDeniedDialog(viewController, onDismiss)
+                }
+            )
+        } else {
+            doPresentGallery(
+                viewController, onPhotoSelected, onError, onDismiss,
+                compressionLevel, includeExif, mimeTypes, mimeTypeMismatchMessage
+            )
+        }
+    }
+
+    private fun doPresentGallery(
         viewController: UIViewController,
         onPhotoSelected: (GalleryPhotoResult) -> Unit,
         onError: (Exception) -> Unit,

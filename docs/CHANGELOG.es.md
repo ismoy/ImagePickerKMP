@@ -9,6 +9,28 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## [Sin Publicar]
 
+### ⚠️ Cambios Incompatibles (Breaking Changes)
+
+- **BREAKING: La versión mínima de Kotlin es ahora 2.3.20**
+  - Esta librería está compilada con **Kotlin 2.3.20**. La ABI de KMP de Kotlin no es compatible hacia atrás entre versiones mayores.
+  - Los proyectos que usen **Kotlin < 2.3.x fallarán en compilación** con un error como `ABI version X.Y.Z is incompatible with current Kotlin compiler`.
+  - **Migración**: Actualiza la versión de Kotlin de tu proyecto a `2.3.20` o superior.
+  - Si necesitas quedarte en Kotlin 2.1.x, usa la versión anterior de esta librería.
+
+### Cambiado
+
+- **Kotlin** actualizado de `2.1.21` → `2.3.20`
+- **Compose Multiplatform** actualizado de `1.9.1` → `1.10.3` (requiere Kotlin 2.3.x)
+- **Plugin Compose Compiler** actualizado de `2.0.21` → `2.3.20` (debe coincidir exactamente con la versión de Kotlin)
+- **Ktor** actualizado de `3.0.2` → `3.4.1` (compilado con Kotlin 2.3.x, requiere consumidor Kotlin 2.3.x)
+- **Lifecycle Runtime Compose** actualizado de `2.9.0` → `2.10.0`
+- **Activity Compose** actualizado de `1.11.0` → `1.13.0`
+- **AndroidX Compose UI** actualizado de `1.9.4` → `1.10.5`
+- **CameraX** (`camera-core`, `camera-camera2`, `camera-lifecycle`, `camera-view`) actualizado de `1.5.1` → `1.5.3`
+- **ZXing Core** actualizado de `3.5.3` → `3.5.4`
+- **Android Gradle Plugin** actualizado de `8.13.0` → `8.13.2`
+- **`ByteArray.encodeBase64()` deprecado** (util de Ktor) reemplazado por `Base64.Default.encode()` de la stdlib de Kotlin
+
 ### Corregido
 
 - **Corregidos Metadatos de Imagen Recortada (Android)**: Resuelto problema donde `GalleryPhotoResult` después del recorte retornaba metadatos incorrectos

@@ -5,26 +5,22 @@ import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.View
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
 internal fun VolumeButtonCapture(onVolumePressed: () -> Unit) {
-    val onVolumePressedRef = remember { mutableRefOf(onVolumePressed) }
-    onVolumePressedRef.value = onVolumePressed
+    val currentCallback by rememberUpdatedState(onVolumePressed)
 
     AndroidView(
         modifier = Modifier,
         factory = { context: Context ->
-            VolumeKeyView(context) { onVolumePressedRef.value() }
+            VolumeKeyView(context) { currentCallback() }
         },
         update = {}
     )
-}
-
-private fun mutableRefOf(value: () -> Unit) = object {
-    var value: () -> Unit = value
 }
 
 private class VolumeKeyView @JvmOverloads constructor(

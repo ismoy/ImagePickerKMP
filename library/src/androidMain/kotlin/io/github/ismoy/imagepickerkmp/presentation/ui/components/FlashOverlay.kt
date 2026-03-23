@@ -10,12 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
-/**
- * Shows a white semi-transparent overlay when [visible] is true.
- * Typically used to simulate a flash effect when taking a photo.
- *
- * @param visible Whether the overlay should be shown.
- */
 @Composable
 internal fun FlashOverlay(visible: Boolean) {
     AnimatedVisibility(visible = visible, enter = fadeIn(), exit = fadeOut()) {

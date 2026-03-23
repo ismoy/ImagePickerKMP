@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
+import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
 import platform.Foundation.NSURL
 import platform.UIKit.UIAlertAction
 import platform.UIKit.UIAlertActionStyleCancel
@@ -12,7 +13,7 @@ import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 
 
-fun showPermissionDeniedDialog(
+internal fun showPermissionDeniedDialog(
     viewController: UIViewController,
     onDismiss: () -> Unit
 ) {
@@ -33,7 +34,7 @@ fun showPermissionDeniedDialog(
                         settingsUrl,
                         options = emptyMap<Any?, Any>(),
                         completionHandler = { success ->
-                            println(" Settings opened: $success")
+                            DefaultLogger.logDebug("Settings opened: $success")
                         }
                     )
                 }

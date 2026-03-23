@@ -2,7 +2,7 @@
   <a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>
  <!-- <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Cobertura de Código"></a>-->
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="Licencia"></a>
-  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.1.21-blue.svg" alt="Kotlin"></a>
+  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.3.20-blue.svg" alt="Kotlin"></a>
 </p>
 
 <p align="center">
@@ -133,6 +133,18 @@ Características para web:
 ---
 
 ## Inicio Rápido – Integración del Selector de Imágenes Kotlin Multiplatform
+
+### ⚠️ Requisitos
+
+| Requisito | Versión mínima |
+|---|---|
+| **Kotlin** | **2.3.20** *(cambio incompatible — ver [CHANGELOG](docs/CHANGELOG.es.md))* |
+| Compose Multiplatform | 1.10.3 |
+| Ktor | 3.4.1 |
+| Android `minSdk` | 24 |
+| Android `compileSdk` | 36 |
+
+> **Nota:** Esta librería está compilada con Kotlin 2.3.20. Los proyectos que usen Kotlin < 2.3.x obtendrán un error de incompatibilidad de ABI en tiempo de compilación. Si necesitas soporte para Kotlin 2.1.x, usa una versión anterior de esta librería.
 
 ### Instalación
 

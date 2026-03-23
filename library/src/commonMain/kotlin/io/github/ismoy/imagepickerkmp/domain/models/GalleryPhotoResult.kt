@@ -1,23 +1,9 @@
 package io.github.ismoy.imagepickerkmp.domain.models
 
 /**
- * Data class representing the result of a file selected from the gallery.
- * Supports both images and documents (like PDFs).
+ * Type alias for [PhotoResult] representing a file selected from the gallery.
  *
- * @property uri The URI of the selected file as a string.
- * @property width The width of the file in pixels (only for images, null for documents like PDFs).
- * @property height The height of the file in pixels (only for images, null for documents like PDFs).
- * @property fileName The name of the file, if available.
- * @property fileSize The size of the file in bytes, if available.
- * @property mimeType The MIME type of the file (e.g., "image/jpeg", "application/pdf").
- * @property exif EXIF metadata including GPS location data (only available when includeExif is enabled).
+ * Both gallery picks and camera captures share the same result model.
+ * This alias exists for API readability and backwards compatibility.
  */
-data class GalleryPhotoResult(
-    val uri: String,
-    val width: Int? = null,
-    val height: Int? = null,
-    val fileName: String? = null,
-    val fileSize: Long? = null,
-    val mimeType: String? = null,
-    val exif: ExifData? = null
-)
+typealias GalleryPhotoResult = PhotoResult

@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
 import io.github.ismoy.imagepickerkmp.domain.models.CropHandle
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-import io.github.ismoy.imagepickerkmp.domain.utils.applyCrop
+import io.github.ismoy.imagepickerkmp.domain.utils.ApplyCrop
 import io.github.ismoy.imagepickerkmp.domain.utils.applyCropAspectRatio
 
 @Composable
@@ -41,11 +41,13 @@ fun ImageCropView(
     var shouldApplyCrop by remember { mutableStateOf(false) }
     
     if (shouldApplyCrop) {
-        applyCrop(
+        ApplyCrop(
             photoResult = photoResult,
             cropRect = cropRect,
             canvasSize = Size(canvasSize.width, canvasSize.height),
             isCircularCrop = isCircularCrop,
+            zoomLevel = zoomLevel,
+            rotationAngle = rotationAngle,
             onComplete = onAccept
         )
     }

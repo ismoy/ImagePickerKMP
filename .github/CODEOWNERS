@@ -1,0 +1,46 @@
+# CODEOWNERS
+# Each line defines a pattern and the owner(s) responsible for reviewing changes.
+# The last matching rule takes precedence.
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ─── Global fallback ────────────────────────────────────────────────────────
+# Only @ismoy can approve PRs. Collaborators are listed as reviewers for visibility.
+*                               @ismoy
+
+# ─── Core library (common) ──────────────────────────────────────────────────
+/library/src/commonMain/        @ismoy
+/library/src/commonTest/        @ismoy
+
+# ─── Android ────────────────────────────────────────────────────────────────
+/library/src/androidMain/       @ismoy
+/library/src/androidTest/       @ismoy
+/library/src/androidAndroidTest/ @ismoy
+
+# ─── iOS ────────────────────────────────────────────────────────────────────
+/library/src/iosMain/           @ismoy
+/library/src/iosTest/           @ismoy
+
+# ─── Desktop (JVM) ──────────────────────────────────────────────────────────
+/library/src/jvmMain/           @ismoy
+/library/src/jvmTest/           @ismoy
+
+# ─── Web (JS / Wasm) ────────────────────────────────────────────────────────
+/library/src/jsMain/            @ismoy
+/library/src/wasmJsMain/        @ismoy
+
+# ─── Build & CI ─────────────────────────────────────────────────────────────
+*.gradle.kts                    @ismoy
+/gradle/                        @ismoy
+/.github/workflows/             @ismoy
+/gradle.properties              @ismoy
+/settings.gradle.kts            @ismoy
+
+# ─── Documentation ──────────────────────────────────────────────────────────
+/docs/                          @ismoy
+README.md                       @ismoy
+README.es.md                    @ismoy
+
+# ─── Security ───────────────────────────────────────────────────────────────
+/.github/SECURITY.md            @ismoy
+/docs/SECURITY.md               @ismoy
+/docs/SECURITY.es.md            @ismoy

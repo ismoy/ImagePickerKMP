@@ -1,18 +1,14 @@
 package io.github.ismoy.imagepickerkmp.domain.utils.exif
 
-/**
- * Centralized logging for EXIF extraction operations.
- */
+import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
+
 internal object ExifLogger {
-    
-    private const val TAG = "iOS ExifDataExtractor"
-    
+
     fun debug(message: String) {
-        println(" $TAG: $message")
+        DefaultLogger.logDebug(message)
     }
-    
+
     fun error(message: String, exception: Throwable? = null) {
-        println(" $TAG: $message")
-        exception?.printStackTrace()
+        DefaultLogger.logError(message, exception)
     }
 }

@@ -20,27 +20,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController
+import io.github.ismoy.imagepickerkmp.data.models.FlashMode
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants
 
-/**
- * A toggle button that switches between flash modes: AUTO, ON, OFF.
- *
- * @param flashMode The current flash mode.
- * @param iconColor The color to use for the flash icon.
- * @param flashIcon Optional override icon to display instead of the default.
- * @param onToggle Callback triggered when the user taps the button.
- */
 @Composable
 internal fun FlashToggleButton(
-    flashMode: CameraController.FlashMode,
+    flashMode: FlashMode,
     iconColor: Color,
     flashIcon: ImageVector? = null,
     onToggle: () -> Unit
 ) {
     val icon = flashIcon ?: when (flashMode) {
-        CameraController.FlashMode.AUTO -> Icons.Outlined.FlashAuto
-        CameraController.FlashMode.ON -> Icons.Default.FlashOn
-        CameraController.FlashMode.OFF -> Icons.Default.FlashOff
+        FlashMode.AUTO -> Icons.Outlined.FlashAuto
+        FlashMode.ON -> Icons.Default.FlashOn
+        FlashMode.OFF -> Icons.Default.FlashOff
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {

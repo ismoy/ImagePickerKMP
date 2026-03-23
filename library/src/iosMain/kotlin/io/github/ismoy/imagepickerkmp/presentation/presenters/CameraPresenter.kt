@@ -4,6 +4,7 @@ import io.github.ismoy.imagepickerkmp.data.delegates.CameraDelegate
 import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
+import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UIModalPresentationFullScreen
@@ -11,7 +12,7 @@ import platform.UIKit.UIViewController
 
 internal object CameraPresenter {
 
-    private var cameraDelegate: CameraDelegate? = null
+    private val activeDelegates = mutableMapOf<Int, CameraDelegate>()
 
     fun presentCamera(
         viewController: UIViewController,
@@ -29,8 +30,8 @@ internal object CameraPresenter {
                     "The iOS Simulator does not support camera functionality. " +
                     "Please test camera features on a physical iOS device."
                 
-                println(" $errorMessage")
-                
+                DefaultLogger.logDebug("Camera not available on this device")
+
                 onError(PhotoCaptureException(errorMessage))
                 onDismiss()
                 return
@@ -45,9 +46,8 @@ internal object CameraPresenter {
             )
             viewController.presentViewController(imagePickerController, animated = true, completion = null)
         } catch (e: Exception) {
-            val errorMessage = "Failed to present camera: ${e.message}"
-            println("❌ Camera presentation error: $errorMessage")
-            onError(PhotoCaptureException(errorMessage))
+            DefaultLogger.logDebug("Camera presentation error: ${e::class.simpleName}")
+            onError(PhotoCaptureException("Failed to present camera: ${e.message}"))
             onDismiss()
         }
     }
@@ -59,32 +59,23 @@ internal object CameraPresenter {
         compressionLevel: CompressionLevel? = null,
         includeExif: Boolean = false
     ): UIImagePickerController {
-        return UIImagePickerController().apply {
+        val picker = UIImagePickerController().apply {
             sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
             allowsEditing = false
             modalPresentationStyle = UIModalPresentationFullScreen
-
-            val cleanup = { cameraDelegate = null }
-            val wrappedOnPhotoCaptured: (PhotoResult) -> Unit = { result ->
-                onPhotoCaptured(result)
-                cleanup()
-            }
-            val wrappedOnError: (Exception) -> Unit = { error ->
-                onError(error)
-                cleanup()
-            }
-            val wrappedOnDismiss: () -> Unit = {
-                onDismiss()
-                cleanup()
-            }
-            cameraDelegate = CameraDelegate(
-                wrappedOnPhotoCaptured,
-                wrappedOnError,
-                wrappedOnDismiss,
-                compressionLevel,
-                includeExif
-            )
-            delegate = cameraDelegate
         }
+        val pickerKey = picker.hashCode()
+
+        val cleanup = { activeDelegates.remove(pickerKey) }
+        val delegate = CameraDelegate(
+            onPhotoCaptured = { result -> onPhotoCaptured(result); cleanup() },
+            onError        = { error  -> onError(error);  cleanup() },
+            onDismiss      = { onDismiss(); cleanup() },
+            compressionLevel = compressionLevel,
+            includeExif = includeExif
+        )
+        activeDelegates[pickerKey] = delegate
+        picker.delegate = delegate
+        return picker
     }
 }

@@ -3,20 +3,231 @@ package io.github.ismoy.imagepickerkmp.domain.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import io.github.ismoy.imagepickerkmp.data.processors.applyCropUtils
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
-import kotlin.test.assertTrue
 import kotlin.test.assertEquals
 import java.io.File
 import java.io.InputStream
 import android.content.ContentResolver
-import androidx.core.net.toUri
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class ApplyCropUtilsTest {
+
+    private val mockContext = mockk<Context>()
+    private val mockContentResolver = mockk<ContentResolver>()
+    private val mockInputStream = mockk<InputStream>()
+    private val mockBitmap = mockk<Bitmap>()
+
+    @Test
+    fun testApplyCropUtils_withValidInput() = runTest {
+        val photoResult = PhotoResult(uri = "test://uri", width = 100, height = 100, fileName = "test.jpg")
+        val cropRect = Rect(10f, 10f, 50f, 50f)
+        val canvasSize = Size(100f, 100f)
+
+        every { mockContext.contentResolver } returns mockContentResolver
+        every { mockContext.cacheDir } returns File("/tmp")
+        every { mockContentResolver.openInputStream(any()) } returns mockInputStream
+        every { mockBitmap.width } returns 100
+        every { mockBitmap.height } returns 100
+        every { mockInputStream.close() } just Runs
+
+        mockkStatic(BitmapFactory::class)
+        every { BitmapFactory.decodeStream(mockInputStream) } returns mockBitmap
+        mockkStatic(Bitmap::class)
+        every { Bitmap.createBitmap(any<Bitmap>(), any(), any(), any(), any()) } returns mockBitmap
+        mockkStatic("io.github.ismoy.imagepickerkmp.domain.utils.CreateTransparentBitmapKt")
+        every { createTransparentBitmap(any()) } returns mockBitmap
+        every { mockBitmap.compress(any(), any(), any()) } returns true
+
+        // Act — now a suspend function returning the result directly
+        val result = applyCropUtils(
+            context = mockContext,
+            photoResult = photoResult,
+            cropRect = cropRect,
+            canvasSize = canvasSize,
+            isCircularCrop = false
+        )
+
+        verify { mockContentResolver.openInputStream(any()) }
+        verify { BitmapFactory.decodeStream(mockInputStream) }
+    }
+
+    @Test
+    fun testApplyCropUtils_withCircularCrop() = runTest {
+        val photoResult = PhotoResult(uri = "test://uri", width = 100, height = 100, fileName = "test.jpg")
+        val cropRect = Rect(0f, 0f, 100f, 100f)
+        val canvasSize = Size(100f, 100f)
+
+        every { mockContext.contentResolver } returns mockContentResolver
+        every { mockContext.cacheDir } returns File("/tmp")
+        every { mockContentResolver.openInputStream(any()) } returns mockInputStream
+        every { mockBitmap.width } returns 100
+        every { mockBitmap.height } returns 100
+        every { mockInputStream.close() } just Runs
+
+        mockkStatic(BitmapFactory::class)
+        every { BitmapFactory.decodeStream(mockInputStream) } returns mockBitmap
+        mockkStatic(Bitmap::class)
+        every { Bitmap.createBitmap(any<Bitmap>(), any(), any(), any(), any()) } returns mockBitmap
+        mockkStatic("io.github.ismoy.imagepickerkmp.domain.utils.CreateCircularBitmapKt")
+        every { createCircularBitmap(any()) } returns mockBitmap
+        every { mockBitmap.compress(any(), any(), any()) } returns true
+
+        applyCropUtils(
+            context = mockContext,
+            photoResult = photoResult,
+            cropRect = cropRect,
+            canvasSize = canvasSize,
+            isCircularCrop = true
+        )
+
+        verify { createCircularBitmap(any()) }
+    }
+
+    @Test
+    fun testApplyCropUtils_withNullBitmap() = runTest {
+        val photoResult = PhotoResult(uri = "test://uri", width = 100, height = 100, fileName = "test.jpg")
+        val cropRect = Rect(0f, 0f, 100f, 100f)
+        val canvasSize = Size(100f, 100f)
+
+        every { mockContext.contentResolver } returns mockContentResolver
+        every { mockContentResolver.openInputStream(any()) } returns mockInputStream
+        every { mockInputStream.close() } just Runs
+
+        mockkStatic(BitmapFactory::class)
+        every { BitmapFactory.decodeStream(mockInputStream) } returns null
+
+        // When bitmap is null, the original photoResult is returned
+        val result = applyCropUtils(
+            context = mockContext,
+            photoResult = photoResult,
+            cropRect = cropRect,
+            canvasSize = canvasSize,
+            isCircularCrop = false
+        )
+
+        assertEquals(photoResult, result)
+        verify(exactly = 0) { Bitmap.createBitmap(any<Bitmap>(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun testApplyCropUtils_aspectRatioCalculations() = runTest {
+        val mockLandscapeBitmap = mockk<Bitmap>()
+        every { mockLandscapeBitmap.width } returns 200
+        every { mockLandscapeBitmap.height } returns 100
+
+        val photoResult = PhotoResult(uri = "test://uri", width = 200, height = 100, fileName = "test.jpg")
+        val cropRect = Rect(0f, 0f, 100f, 100f)
+        val canvasSize = Size(100f, 100f)
+
+        every { mockContext.contentResolver } returns mockContentResolver
+        every { mockContext.cacheDir } returns File("/tmp")
+        every { mockContentResolver.openInputStream(any()) } returns mockInputStream
+        every { mockInputStream.close() } just Runs
+
+        mockkStatic(BitmapFactory::class)
+        every { BitmapFactory.decodeStream(mockInputStream) } returns mockLandscapeBitmap
+        mockkStatic(Bitmap::class)
+        every { Bitmap.createBitmap(any<Bitmap>(), any(), any(), any(), any()) } returns mockLandscapeBitmap
+        mockkStatic("io.github.ismoy.imagepickerkmp.domain.utils.CreateTransparentBitmapKt")
+        every { createTransparentBitmap(any()) } returns mockLandscapeBitmap
+        every { mockLandscapeBitmap.compress(any(), any(), any()) } returns true
+
+        applyCropUtils(
+            context = mockContext, photoResult = photoResult,
+            cropRect = cropRect, canvasSize = canvasSize, isCircularCrop = false
+        )
+
+        verify { BitmapFactory.decodeStream(mockInputStream) }
+        verify { Bitmap.createBitmap(any<Bitmap>(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun testApplyCropUtils_portraitImage() = runTest {
+        val mockPortraitBitmap = mockk<Bitmap>()
+        every { mockPortraitBitmap.width } returns 100
+        every { mockPortraitBitmap.height } returns 200
+
+        val photoResult = PhotoResult(uri = "test://uri", width = 100, height = 200, fileName = "test.jpg")
+        val cropRect = Rect(0f, 0f, 100f, 100f)
+        val canvasSize = Size(100f, 100f)
+
+        every { mockContext.contentResolver } returns mockContentResolver
+        every { mockContext.cacheDir } returns File("/tmp")
+        every { mockContentResolver.openInputStream(any()) } returns mockInputStream
+        every { mockInputStream.close() } just Runs
+
+        mockkStatic(BitmapFactory::class)
+        every { BitmapFactory.decodeStream(mockInputStream) } returns mockPortraitBitmap
+        mockkStatic(Bitmap::class)
+        every { Bitmap.createBitmap(any<Bitmap>(), any(), any(), any(), any()) } returns mockPortraitBitmap
+        mockkStatic("io.github.ismoy.imagepickerkmp.domain.utils.CreateTransparentBitmapKt")
+        every { createTransparentBitmap(any()) } returns mockPortraitBitmap
+        every { mockPortraitBitmap.compress(any(), any(), any()) } returns true
+
+        applyCropUtils(
+            context = mockContext, photoResult = photoResult,
+            cropRect = cropRect, canvasSize = canvasSize, isCircularCrop = false
+        )
+
+        verify { BitmapFactory.decodeStream(mockInputStream) }
+    }
+
+    @Test
+    fun testApplyCropUtils_errorHandling() = runTest {
+        val photoResult = PhotoResult(uri = "test://uri", width = 100, height = 100, fileName = "test.jpg")
+        val cropRect = Rect(0f, 0f, 100f, 100f)
+        val canvasSize = Size(100f, 100f)
+
+        every { mockContext.contentResolver } returns mockContentResolver
+        every { mockContentResolver.openInputStream(any()) } throws Exception("Test exception")
+
+        // On error the original photoResult is returned
+        val result = applyCropUtils(
+            context = mockContext, photoResult = photoResult,
+            cropRect = cropRect, canvasSize = canvasSize, isCircularCrop = false
+        )
+
+        assertEquals(photoResult, result)
+        verify { mockContentResolver.openInputStream(any()) }
+    }
+
+    @Test
+    fun testApplyCropUtils_boundaryConstraints() = runTest {
+        val photoResult = PhotoResult(uri = "test://uri", width = 100, height = 100, fileName = "test.jpg")
+        val cropRect = Rect(-10f, -10f, 110f, 110f)
+        val canvasSize = Size(100f, 100f)
+
+        every { mockContext.contentResolver } returns mockContentResolver
+        every { mockContext.cacheDir } returns File("/tmp")
+        every { mockContentResolver.openInputStream(any()) } returns mockInputStream
+        every { mockBitmap.width } returns 100
+        every { mockBitmap.height } returns 100
+        every { mockInputStream.close() } just Runs
+
+        mockkStatic(BitmapFactory::class)
+        every { BitmapFactory.decodeStream(mockInputStream) } returns mockBitmap
+        mockkStatic(Bitmap::class)
+        every { Bitmap.createBitmap(any<Bitmap>(), any(), any(), any(), any()) } returns mockBitmap
+        mockkStatic("io.github.ismoy.imagepickerkmp.domain.utils.CreateTransparentBitmapKt")
+        every { createTransparentBitmap(any()) } returns mockBitmap
+        every { mockBitmap.compress(any(), any(), any()) } returns true
+
+        applyCropUtils(
+            context = mockContext, photoResult = photoResult,
+            cropRect = cropRect, canvasSize = canvasSize, isCircularCrop = false
+        )
+
+        verify { Bitmap.createBitmap(any<Bitmap>(), any(), any(), any(), any()) }
+    }
+}
+
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ApplyCropUtilsTest {

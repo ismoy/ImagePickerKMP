@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.data.camera.CameraController
 import io.github.ismoy.imagepickerkmp.data.camera.CameraXManager
+import io.github.ismoy.imagepickerkmp.data.models.FlashMode
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.DELAY_TO_TAKE_PHOTO
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
@@ -22,14 +23,14 @@ internal class CameraCaptureStateHolder(
     private val preference: CapturePhotoPreference,
     private val coroutineScope: CoroutineScope
 ) {
-    var flashMode by mutableStateOf(CameraController.FlashMode.AUTO)
+    var flashMode by mutableStateOf(FlashMode.AUTO)
         private set
     var isLoading by mutableStateOf(true)
         private set
     var showFlashOverlay by mutableStateOf(false)
         private set
     private var isCapturing by mutableStateOf(false)
-    val flashModes: List<CameraController.FlashMode> = cameraManager.flashModes
+    val flashModes: List<FlashMode> = cameraManager.flashModes
     private var cameraJob: Job? = null
 
     fun startCamera(
@@ -65,8 +66,7 @@ internal class CameraCaptureStateHolder(
         cameraJob?.cancel()
         cameraJob = coroutineScope.launch {
             try {
-                cameraManager.switchCamera()
-                cameraManager.startCamera(previewView, preference)
+                cameraManager.switchCameraWarm(previewView, preference)
                 onCameraSwitch?.invoke()
             } catch (e: Exception) {
                 onError(e)
@@ -85,12 +85,14 @@ internal class CameraCaptureStateHolder(
         onPhotoResult: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,
         compressionLevel: CompressionLevel? = null,
-        includeExif: Boolean = false
+        includeExif: Boolean = false,
+        redactGpsData: Boolean = true
     ) {
         if (isCapturing) return
         isCapturing = true
         showFlashOverlay = true
         cameraManager.takePicture(
+            callerScope = coroutineScope,
             onPhotoResult = { result ->
                 isCapturing = false
                 onPhotoResult(result)
@@ -100,7 +102,8 @@ internal class CameraCaptureStateHolder(
                 onError(e)
             },
             compressionLevel = compressionLevel,
-            includeExif = includeExif
+            includeExif = includeExif,
+            redactGpsData = redactGpsData
         )
         coroutineScope.launch {
             delay(DELAY_TO_TAKE_PHOTO)

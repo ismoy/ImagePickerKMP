@@ -6,12 +6,12 @@ import androidx.compose.ui.window.DialogProperties
 import io.github.ismoy.imagepickerkmp.features.ocr.data.providers.CloudOCRProvider
 import io.github.ismoy.imagepickerkmp.features.ocr.model.ExtractionIndicators
 import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRProcessState
-import io.github.ismoy.imagepickerkmp.domain.utils.getProviderDisplayName
+import io.github.ismoy.imagepickerkmp.features.ocr.domain.utils.getProviderDisplayName
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ocr.OCRProgressContent
 
 
 @Composable
-fun OCRProgressDialog(
+internal fun OCRProgressDialog(
     isVisible: Boolean,
     currentState: OCRProcessState,
     provider: CloudOCRProvider? = null,

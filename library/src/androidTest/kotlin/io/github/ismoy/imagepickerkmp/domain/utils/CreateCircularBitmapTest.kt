@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
+import io.github.ismoy.imagepickerkmp.data.processors.createCircularBitmap
 import io.mockk.*
 import kotlin.test.Test
 import kotlin.test.assertEquals

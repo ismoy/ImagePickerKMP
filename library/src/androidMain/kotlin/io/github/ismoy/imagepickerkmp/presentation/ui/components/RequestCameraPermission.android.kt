@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPermissionDialogConfig
-import io.github.ismoy.imagepickerkmp.domain.utils.openAppSettings
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.openAppSettings
 
 
 @Composable

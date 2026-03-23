@@ -49,7 +49,7 @@ private class DismissalMonitor(
     }
     
     private fun performCheck() {
-        val currentWindowState = picker.view?.window != null
+        val currentWindowState = picker.view.window != null
         
         if (previousWindowState && !currentWindowState && !didNotifyDismissal) {
             didNotifyDismissal = true

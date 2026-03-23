@@ -5,7 +5,6 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
-import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.CValue
@@ -28,11 +27,7 @@ import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
 import platform.Foundation.NSLock
 
-/**
- * Thread-safe cache wrapper for iOS using NSLock.
- * Kotlin/Native does not support @Synchronized on non-JVM platforms,
- * so we use NSLock (iOS native lock) to protect concurrent map access.
- */
+
 private class SynchronizedCache<V> {
     private val map = mutableMapOf<String, V>()
     private val lock = NSLock()
@@ -58,102 +53,30 @@ private val imageBitmapCacheIOS  = SynchronizedCache<ImageBitmap>()
 private val bytesCacheIOS        = SynchronizedCache<ByteArray>()
 private val base64CacheIOS       = SynchronizedCache<String>()
 
-/**
- * iOS implementation to load photo data as ByteArray from URI with automatic compression optimization.
- * Automatically applies HIGH compression to optimize memory usage and reduce file size.
- * 
- * @return ByteArray containing the optimized image data, or empty ByteArray if loading fails.
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 actual fun PhotoResult.loadBytes(): ByteArray {
-    return loadBytesFromURI(uri, CompressionLevel.HIGH, null)
-}
-
-/**
- * iOS implementation to load gallery photo data as ByteArray from URI with automatic compression optimization.
- * Automatically applies HIGH compression to optimize memory usage and reduce file size.
- * 
- * @return ByteArray containing the optimized image data, or empty ByteArray if loading fails.
- */
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-actual fun GalleryPhotoResult.loadBytes(): ByteArray {
     val cacheKey = "${this.uri}_bytes"
     return loadBytesFromURI(uri, CompressionLevel.HIGH, cacheKey)
 }
 
-/**
- * iOS implementation for loading photo data as Base64 string with memory optimization.
- * Uses automatic HIGH compression before encoding to Base64.
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 actual fun PhotoResult.loadBase64(): String {
-    return loadBase64FromURI(uri, null)
-}
-
-/**
- * iOS implementation for loading gallery photo data as Base64 string with memory optimization.
- * Uses automatic HIGH compression before encoding to Base64.
- */
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-actual fun GalleryPhotoResult.loadBase64(): String {
     val cacheKey = "${this.uri}_base64"
     return loadBase64FromURI(uri, cacheKey)
 }
 
-/**
- * iOS implementation to load photo as ImageBitmap for Compose usage with memory optimization.
- * Automatically applies HIGH compression to prevent memory issues.
- * 
- * @return ImageBitmap that can be used directly in Compose, or null if loading fails.
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 actual fun PhotoResult.loadImageBitmap(): ImageBitmap? {
-    return loadImageBitmapFromURI(uri, null)
-}
-
-/**
- * iOS implementation to load gallery photo as ImageBitmap for Compose usage with memory optimization.
- * Automatically applies HIGH compression to prevent memory issues.
- * 
- * @return ImageBitmap that can be used directly in Compose, or null if loading fails.
- */
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-actual fun GalleryPhotoResult.loadImageBitmap(): ImageBitmap? {
     val cacheKey = "${this.uri}_bitmap"
     return loadImageBitmapFromURI(uri, cacheKey)
 }
 
-/**
- * iOS implementation to load photo as Painter for Compose usage with memory optimization.
- * Automatically applies HIGH compression to prevent memory issues.
- * Implements internal caching to prevent unnecessary reloading.
- * 
- * @return Painter that can be used directly in Image composable, or null if loading fails.
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 actual fun PhotoResult.loadPainter(): Painter? {
     val cacheKey = "${this.uri}_painter"
     return loadPainterFromURI(uri, cacheKey)
 }
 
-/**
- * iOS implementation to load gallery photo as Painter for Compose usage with memory optimization.
- * Automatically applies HIGH compression to prevent memory issues.
- * Implements internal caching to prevent unnecessary reloading during scroll operations.
- * 
- * @return Painter that can be used directly in Image composable, or null if loading fails.
- */
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-actual fun GalleryPhotoResult.loadPainter(): Painter? {
-    val cacheKey = "${this.uri}_painter"
-    return loadPainterFromURI(uri, cacheKey)
-}
-
-/**
- * Optimizes image bytes using configurable compression for memory efficiency on iOS.
- * @param originalBytes The original image bytes to optimize
- * @param compressionLevel The compression level to apply
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private fun optimizeImageBytesIOS(originalBytes: ByteArray, compressionLevel: CompressionLevel = CompressionLevel.HIGH): ByteArray {
     return try {
@@ -183,14 +106,9 @@ private fun optimizeImageBytesIOS(originalBytes: ByteArray, compressionLevel: Co
     }
 }
 
-/**
- * Common function to load bytes from URI with optional caching.
- * @param uri The URI to load from
- * @param compressionLevel The compression level to apply
- * @param cacheKey Optional cache key for caching the result
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-private fun loadBytesFromURI(uri: String, compressionLevel: CompressionLevel, cacheKey: String?): ByteArray {
+private fun loadBytesFromURI(uri: String, compressionLevel: CompressionLevel, cacheKey: String?):
+        ByteArray {
     cacheKey?.let { key ->
         bytesCacheIOS.get(key)?.let { cached ->
             return cached
@@ -217,11 +135,6 @@ private fun loadBytesFromURI(uri: String, compressionLevel: CompressionLevel, ca
     }
 }
 
-/**
- * Common function to load Base64 from URI with optional caching.
- * @param uri The URI to load from
- * @param cacheKey Optional cache key for caching the result
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private fun loadBase64FromURI(uri: String, cacheKey: String?): String {
     cacheKey?.let { key ->
@@ -251,11 +164,6 @@ private fun loadBase64FromURI(uri: String, cacheKey: String?): String {
     }
 }
 
-/**
- * Common function to load ImageBitmap from URI with optional caching.
- * @param uri The URI to load from
- * @param cacheKey Optional cache key for caching the result
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private fun loadImageBitmapFromURI(uri: String, cacheKey: String?): ImageBitmap? {
     cacheKey?.let { key ->
@@ -279,11 +187,6 @@ private fun loadImageBitmapFromURI(uri: String, cacheKey: String?): ImageBitmap?
     }.getOrNull()
 }
 
-/**
- * Common function to load Painter from URI with caching.
- * @param uri The URI to load from
- * @param cacheKey Cache key for caching the result
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private fun loadPainterFromURI(uri: String, cacheKey: String): Painter? {
     painterCacheIOS.get(cacheKey)?.let { cached ->
@@ -302,9 +205,6 @@ private fun loadPainterFromURI(uri: String, cacheKey: String): Painter? {
     }.getOrNull()
 }
 
-/**
- * Resize image if it exceeds the maximum size while maintaining aspect ratio for iOS.
- */
 @OptIn(ExperimentalForeignApi::class)
 private fun resizeImageIfNeededIOS(image: UIImage, maxSize: Double): UIImage {
     return image.size.useContents { 
@@ -323,9 +223,6 @@ private fun resizeImageIfNeededIOS(image: UIImage, maxSize: Double): UIImage {
     }
 }
 
-/**
- * Resize image to specific size on iOS.
- */
 @OptIn(ExperimentalForeignApi::class)
 private fun resizeImageIOS(image: UIImage, newSize: CValue<platform.CoreGraphics.CGSize>): UIImage {
     UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)

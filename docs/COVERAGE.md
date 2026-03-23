@@ -5,85 +5,65 @@ This document describes the code coverage setup and requirements for the ImagePi
 ## Coverage Requirements
 
 ### Thresholds
-- **Line Coverage**: Minimum 80%
-- **Branch Coverage**: Minimum 70%
+- **Line Coverage**: Minimum 70%
+
+> The threshold is enforced automatically on every build via `koverVerify`. The build will fail if coverage drops below 70%.
 
 ### Current Coverage
-The project uses JaCoCo to measure code coverage. You can view the current coverage by running:
+The project uses **Kover** (JetBrains' official Kotlin coverage tool) to measure code coverage.
+Kover works natively with Kotlin Multiplatform — no instrumentation workarounds needed.
+
+## Generating Reports
 
 ```bash
-./gradlew jacocoTestReport
+# Generate HTML + XML reports
+./gradlew koverXmlReport koverHtmlReport
+
+# Verify thresholds (fails build if below 70%)
+./gradlew koverVerify
 ```
-
-The HTML report will be generated at: `library/build/reports/jacoco/test/html/index.html`
-
-## Coverage Verification
-
-To verify that coverage meets the minimum thresholds:
-
-```bash
-./gradlew jacocoTestCoverageVerification
-```
-
-This will fail the build if coverage is below the required thresholds.
 
 ## Coverage Reports
 
 ### HTML Report
-- Location: `library/build/reports/jacoco/test/html/index.html`
+- Location: `library/build/reports/kover/html/index.html`
 - Provides detailed coverage information with line-by-line analysis
 
 ### XML Report
-- Location: `library/build/reports/jacoco/test/jacocoTestReport.xml`
-- Used by CI/CD systems and external tools
+- Location: `library/build/reports/kover/report.xml`
+- Used by CI/CD and Codecov
 
 ### Coverage Badge
-The project includes a coverage badge that shows the current coverage percentage:
 [![Code Coverage](https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg)](https://codecov.io/gh/ismoy/ImagePickerKMP)
 
-## Improving Coverage
+## Exclusions
 
-### Areas to Focus On
-1. **Common Code**: All shared logic should have comprehensive test coverage
-2. **Platform-Specific Code**: Android and iOS implementations should be tested
-3. **Error Handling**: All exception paths should be covered
-4. **Edge Cases**: Boundary conditions and unusual inputs
-
-### Adding Tests
-When adding new features, ensure you also add corresponding tests to maintain or improve coverage.
-
-### Coverage Exclusions
-Some code may be excluded from coverage requirements:
-- Generated code
-- Platform-specific implementations that are difficult to test
-- UI components that require integration tests
+The following are excluded from coverage measurement:
+- Composable UI components (`presentation/ui/components/`, `presentation/ui/screens/`)
+- Compose config classes with UI dependencies (`UiConfig`, `ImagePickerConfig`, etc.)
+- Camera hardware layer (`data/camera/`, `data/managers/`)
+- Generated Kotlin classes (`ComposableSingletons`, `$Companion`, `$WhenMappings`)
 
 ## CI/CD Integration
 
-Coverage is automatically checked in the CI pipeline:
+Coverage is automatically checked in the CI pipeline on every push and pull request:
 1. Tests are run
-2. Coverage report is generated
-3. Coverage thresholds are verified
+2. Kover XML report is generated
+3. `koverVerify` enforces the 70% minimum threshold
 4. Report is uploaded to Codecov
 
 ## Local Development
 
-To check coverage during development:
-
 ```bash
-# Run tests and generate coverage report
-./gradlew test jacocoTestReport
+# Run tests, generate report, and verify threshold
+./gradlew test koverXmlReport koverVerify
 
-# Verify coverage thresholds
-./gradlew jacocoTestCoverageVerification
-
-# Open HTML report
-open library/build/reports/jacoco/test/html/index.html
+# Open HTML report (macOS)
+open library/build/reports/kover/html/index.html
 ```
 
 ## Coverage Tools
 
-- **JaCoCo**: Primary coverage tool
-- **Codecov**: External coverage reporting service
+- **Kover**: Primary coverage tool (Kotlin-native, replaces JaCoCo)
+- **Codecov**: External coverage reporting and badge service
 - **GitHub Actions**: CI/CD integration
-- **Gradle**: Build system integration 

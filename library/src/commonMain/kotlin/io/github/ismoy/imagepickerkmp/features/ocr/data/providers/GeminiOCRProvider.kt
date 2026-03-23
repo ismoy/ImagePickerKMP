@@ -12,18 +12,12 @@ import io.ktor.client.plugins.timeout
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.util.encodeBase64
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlinx.serialization.json.*
 
-/**
- * Gemini OCR provider that uses Google's Gemini API for text extraction from images and PDFs.
- * Uses the centralized KtorInstance for HTTP client management.
- * 
- * @param apiKey The Google AI Studio API key
- * @param model The Gemini model to use (default: gemini-2.5-flash)
- * @param httpClient Optional HTTP client. If not provided, uses KtorInstance.geminiClient
- */
-class GeminiOCRProvider(
+
+internal class GeminiOCRProvider(
     private val apiKey: String,
     private val model: String = "gemini-2.5-flash",
     private val httpClient: HttpClient = KtorInstance.geminiClient
@@ -35,11 +29,12 @@ class GeminiOCRProvider(
         const val GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models"
     }
     
+    @OptIn(ExperimentalEncodingApi::class)
     override suspend fun extractText(imageData: ByteArray, config: OCRRequestConfig): OCRResult {
         try {
             validateFile(imageData, config.mimeType)
             
-            val base64Image = imageData.encodeBase64()
+            val base64Image = Base64.Default.encode(imageData)
             val requestBody = createGeminiRequestBody(base64Image, config)
             
             val response: HttpResponse = httpClient.post("$GEMINI_API_URL/$model:generateContent") {

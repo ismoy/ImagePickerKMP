@@ -19,8 +19,8 @@ import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-import io.github.ismoy.imagepickerkmp.domain.utils.defaultCameraPermissionDialogConfig
-import io.github.ismoy.imagepickerkmp.domain.utils.playShutterSound
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.defaultCameraPermissionDialogConfig
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.playShutterSound
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.CameraCapturePreview
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImageConfirmationViewWithCustomButtons
@@ -170,7 +170,8 @@ private fun CameraAndPreview(
             cameraCallbacks = cameraCaptureConfig.cameraCallbacks
         ),
         compressionLevel = cameraCaptureConfig.compressionLevel,
-        includeExif = cameraCaptureConfig.includeExif
+        includeExif = cameraCaptureConfig.includeExif,
+        redactGpsData = cameraCaptureConfig.redactGpsData
     )
 }
 

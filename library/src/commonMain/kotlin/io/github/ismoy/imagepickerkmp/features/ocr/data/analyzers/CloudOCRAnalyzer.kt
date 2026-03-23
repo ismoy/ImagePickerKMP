@@ -6,18 +6,15 @@ import io.github.ismoy.imagepickerkmp.features.ocr.utils.MissingAPIKeyException
 import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRResult
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.domain.extensions.loadBytes
-import io.github.ismoy.imagepickerkmp.domain.utils.OCRUtils
+import io.github.ismoy.imagepickerkmp.features.ocr.domain.utils.OCRUtils
 import io.github.ismoy.imagepickerkmp.features.ocr.data.providers.GeminiOCRProvider
 import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRRequestConfig
 
-/**
- * Cloud OCR analyzer implementation
- * Uses Google Gemini API for advanced text recognition
- * Common implementation that works across all platforms using Ktor
- */
-class CloudOCRAnalyzer(apiKey: String) : OCRAnalyzer {
 
-    val provider = GeminiOCRProvider(apiKey)
+internal class CloudOCRAnalyzer(apiKey: String) : OCRAnalyzer {
+
+    // Private — callers interact through OCRAnalyzer; provider detail is an implementation concern.
+    private val provider = GeminiOCRProvider(apiKey)
 
     init {
         if (apiKey.isBlank()) {

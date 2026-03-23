@@ -18,9 +18,17 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import io.github.ismoy.imagepickerkmp.data.dataSource.getCaptureMode as getCaptureModeFn
 import io.github.ismoy.imagepickerkmp.data.managers.FileManager
+import io.github.ismoy.imagepickerkmp.data.models.CameraType
+import io.github.ismoy.imagepickerkmp.data.models.FlashMode
 import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.config.HighPerformanceConfig
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.BOUND_SIZE_HEIGHT
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.BOUND_SIZE_WIDTH
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.DELAY_TO_TAKE_PHOTO
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ERROR_BIND_CAMERA_MESSAGE
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ERROR_CAMERA_NOT_INITIALIZED
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.ERROR_TO_SWITCH_CAMERA_MESSAGE
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -33,25 +41,34 @@ internal class CameraController(
     private val lifecycleOwner: LifecycleOwner,
     private val fileManager: FileManager
 ) {
-
-    enum class FlashMode {
-        AUTO, ON, OFF
-    }
-
-    enum class CameraType {
-        BACK, FRONT
-    }
     private var imageCapture: ImageCapture? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var currentFlashMode: FlashMode = FlashMode.AUTO
     private var currentCameraType: CameraType = CameraType.BACK
+
+    private val sharedResolutionSelector: ResolutionSelector by lazy {
+        ResolutionSelector.Builder()
+            .setAspectRatioStrategy(
+                AspectRatioStrategy(
+                    AspectRatio.RATIO_4_3,
+                    AspectRatioStrategy.FALLBACK_RULE_AUTO
+                )
+            )
+            .setResolutionStrategy(
+                ResolutionStrategy(
+                    Size(BOUND_SIZE_WIDTH, BOUND_SIZE_HEIGHT),
+                    ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER
+                )
+            )
+            .build()
+    }
 
     suspend fun startCamera(
         previewView: PreviewView,
         preference: CapturePhotoPreference
     ) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-            delay(50) 
+            delay(DELAY_TO_TAKE_PHOTO)
         }
    
         cameraProvider = withContext(Dispatchers.Main) {
@@ -63,36 +80,16 @@ internal class CameraController(
                 previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
             }
 
-            val resolutionSelector =
-                ResolutionSelector.Builder()
-                    .setAspectRatioStrategy(
-                        AspectRatioStrategy(
-                            AspectRatio.RATIO_4_3,
-                            AspectRatioStrategy.FALLBACK_RULE_AUTO
-                        )
-                    )
-                    .setResolutionStrategy(
-                        ResolutionStrategy(
-                            Size(4000, 3000),
-                            ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER
-                        )
-                    )
-                    .build()
+            val preview = Preview.Builder()
+                .setResolutionSelector(sharedResolutionSelector)
+                .build().also { it.surfaceProvider = previewView.surfaceProvider }
 
-            val previewBuilder = Preview.Builder()
-            previewBuilder.setResolutionSelector(resolutionSelector)
-            val preview = previewBuilder.build().also {
-                it.surfaceProvider = previewView.surfaceProvider
-            }
-
-            val imageCaptureBuilder = ImageCapture.Builder()
+            imageCapture = ImageCapture.Builder()
                 .setCaptureMode(getCaptureModeFn(preference))
                 .setFlashMode(getImageCaptureFlashMode(currentFlashMode))
                 .setJpegQuality(HighPerformanceConfig.getOptimalJpegQuality(context))
-
-            imageCaptureBuilder.setResolutionSelector(resolutionSelector)
-
-            imageCapture = imageCaptureBuilder.build()
+                .setResolutionSelector(sharedResolutionSelector)
+                .build()
 
             val cameraSelector = when (currentCameraType) {
                 CameraType.BACK -> CameraSelector.DEFAULT_BACK_CAMERA
@@ -108,7 +105,7 @@ internal class CameraController(
                     imageCapture
                 )
             } catch (exc: Exception) {
-                throw PhotoCaptureException("Failed to bind camera use cases: ${exc.message}")
+                throw PhotoCaptureException("$ERROR_BIND_CAMERA_MESSAGE ${exc.message}")
             }
         }
     }
@@ -117,6 +114,44 @@ internal class CameraController(
         currentCameraType = when (currentCameraType) {
             CameraType.BACK -> CameraType.FRONT
             CameraType.FRONT -> CameraType.BACK
+        }
+    }
+
+    suspend fun switchCameraWarm(
+        previewView: PreviewView,
+        preference: CapturePhotoPreference
+    ) {
+        switchCamera()
+        val provider = cameraProvider
+        if (provider == null) {
+            startCamera(previewView, preference)
+            return
+        }
+        withContext(Dispatchers.Main) {
+            try {
+                val preview = Preview.Builder()
+                    .setResolutionSelector(sharedResolutionSelector)
+                    .build()
+                    .also { it.surfaceProvider = previewView.surfaceProvider }
+
+                val newImageCapture = ImageCapture.Builder()
+                    .setCaptureMode(getCaptureModeFn(preference))
+                    .setFlashMode(getImageCaptureFlashMode(currentFlashMode))
+                    .setJpegQuality(HighPerformanceConfig.getOptimalJpegQuality(context))
+                    .setResolutionSelector(sharedResolutionSelector)
+                    .build()
+
+                val cameraSelector = when (currentCameraType) {
+                    CameraType.BACK -> CameraSelector.DEFAULT_BACK_CAMERA
+                    CameraType.FRONT -> CameraSelector.DEFAULT_FRONT_CAMERA
+                }
+
+                provider.unbindAll()
+                provider.bindToLifecycle(lifecycleOwner, cameraSelector, preview, newImageCapture)
+                imageCapture = newImageCapture
+            } catch (exc: Exception) {
+                throw PhotoCaptureException("$ERROR_TO_SWITCH_CAMERA_MESSAGE${exc.message}")
+            }
         }
     }
 
@@ -138,7 +173,7 @@ internal class CameraController(
         onError: (Exception) -> Unit
     ) {
         val imageCapture = this.imageCapture
-            ?: return onError(PhotoCaptureException("Camera not initialized."))
+            ?: return onError(PhotoCaptureException(ERROR_CAMERA_NOT_INITIALIZED))
 
         val photoFile = fileManager.createImageFile()
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
@@ -160,6 +195,7 @@ internal class CameraController(
 
     fun stopCamera() {
         cameraProvider?.unbindAll()
+        cameraProvider = null
         imageCapture = null
     }
 }
