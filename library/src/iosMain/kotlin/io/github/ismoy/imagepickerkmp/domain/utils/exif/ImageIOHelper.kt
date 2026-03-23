@@ -11,15 +11,9 @@ import platform.ImageIO.CGImageSourceCopyPropertiesAtIndex
 import platform.ImageIO.CGImageSourceCreateWithURL
 import platform.ImageIO.CGImageSourceRef
 
-/**
- * Helper functions for working with ImageIO framework.
- */
 @OptIn(ExperimentalForeignApi::class)
 internal object ImageIOHelper {
     
-    /**
-     * Creates a CGImageSource from a file path.
-     */
     fun createImageSource(path: String): CGImageSourceRef? {
         val pathString = CFStringCreateWithCString(null, path, kCFStringEncodingUTF8)
         val cfUrl = CFURLCreateWithFileSystemPath(null, pathString, kCFURLPOSIXPathStyle, false)
@@ -32,9 +26,6 @@ internal object ImageIOHelper {
         return imageSource
     }
     
-    /**
-     * Retrieves image properties from a CGImageSource.
-     */
     fun getImageProperties(imageSource: CGImageSourceRef): NSDictionary? {
         val properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0u, null)
         if (properties == null) {

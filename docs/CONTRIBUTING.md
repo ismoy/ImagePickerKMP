@@ -17,9 +17,43 @@ We’re excited to welcome contributions to **ImagePickerKMP** — whether it's 
 
 3. **Build & Test**
    ```bash
-   ./gradlew build test androidTest iosTest
-   ./gradlew detekt   # run static analysis
+   # Compile the project
+   ./gradlew build
+
+   # Run unit tests (JVM — fast, no emulator needed)
+   ./gradlew :library:jvmTest
+
+   # Run Android unit tests
+   ./gradlew :library:testDebugUnitTest
+
+   # Run all tests
+   ./gradlew :library:allTests
+
+   # Run static analysis
+   ./gradlew detekt
    ```
+
+4. **Check Test Coverage**
+
+   Generate the coverage report and verify it meets the minimum threshold (97%):
+   ```bash
+   # Generate HTML + XML report and verify the 97% threshold
+   ./gradlew :library:koverVerify
+
+   # Generate only the HTML report (open in browser)
+   ./gradlew :library:koverHtmlReport
+
+   # Generate only the XML report (used by Codecov)
+   ./gradlew :library:koverXmlReport
+   ```
+
+   After running `koverHtmlReport`, open the report in your browser:
+   ```bash
+   open library/build/reports/kover/html/index.html
+   ```
+
+   > ⚠️ **Minimum required coverage: 97% line coverage.**  
+   > All PRs must pass `koverVerify` without errors. If you add new code, add tests to keep coverage above the threshold.
 
 4. **Follow Code Style**
    - Follow [Kotlin coding conventions](https://kotlinlang.org/docs/coding-conventions.html)
@@ -74,6 +108,6 @@ Please check for **existing issues** before opening a new one to avoid duplicate
 
 ### ✅ TL;DR
 
-**Fork → New Branch → Code + Tests → Run `./gradlew detekt` → Commit → Push → PR**
+**Fork → New Branch → Code + Tests → `./gradlew :library:koverVerify` (≥97%) → `./gradlew detekt` → Commit → Push → PR**
 
 ---

@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPermissionDialogConfig
 import io.github.ismoy.imagepickerkmp.domain.utils.AppLifecycleObserver
+import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
 import io.github.ismoy.imagepickerkmp.domain.utils.openSettings
 import io.github.ismoy.imagepickerkmp.domain.utils.requestCameraAccess
 import platform.AVFoundation.AVAuthorizationStatusAuthorized
@@ -45,9 +46,8 @@ actual fun RequestCameraPermission(
                 } else {
                     isProcessingSettingsAction = false
                     hasNavigatedToSettings = false
-                    showDialog = false
-                    isPermissionDeniedPermanently = false
-                    onPermissionPermanentlyDenied()
+                    showDialog = true
+                    isPermissionDeniedPermanently = true
                 }
             }
         },
@@ -63,7 +63,7 @@ actual fun RequestCameraPermission(
         if (!UIImagePickerController.isSourceTypeAvailable(
             UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
         )) {
-            println("⚠️ Camera hardware not available - likely running on iOS Simulator")
+            DefaultLogger.logDebug("Camera hardware not available - likely running on iOS Simulator")
             onResult(false)
             return@LaunchedEffect
         }

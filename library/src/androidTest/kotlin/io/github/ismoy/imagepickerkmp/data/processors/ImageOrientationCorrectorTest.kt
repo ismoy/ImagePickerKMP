@@ -25,7 +25,7 @@ class ImageOrientationCorrectorTest {
     @Before
     fun setUp() {
         context = InstrumentationRegistry.getInstrumentation().targetContext
-        orientationCorrector = ImageOrientationCorrector()
+        orientationCorrector = ImageOrientationCorrector(context)
         testImageFile = createTestImageFile()
     }
 

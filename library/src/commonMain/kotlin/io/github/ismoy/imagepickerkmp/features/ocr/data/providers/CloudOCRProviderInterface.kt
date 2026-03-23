@@ -4,7 +4,7 @@ import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRResult
 import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRRequestConfig
 import io.github.ismoy.imagepickerkmp.features.ocr.model.ProviderInfo
 
-interface CloudOCRProviderInterface {
+internal interface CloudOCRProviderInterface {
     val providerName: String
     suspend fun extractText(
         imageData: ByteArray, 

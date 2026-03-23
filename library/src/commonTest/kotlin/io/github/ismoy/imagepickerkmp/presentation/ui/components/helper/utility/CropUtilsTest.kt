@@ -3,6 +3,7 @@ package io.github.ismoy.imagepickerkmp.presentation.ui.components.helper.utility
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import io.github.ismoy.imagepickerkmp.domain.models.CropHandle
+import io.github.ismoy.imagepickerkmp.domain.utils.CropUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

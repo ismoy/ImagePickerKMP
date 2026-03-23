@@ -12,7 +12,7 @@ import imagepickerkmp.library.generated.resources.gallery_selection_error
 import imagepickerkmp.library.generated.resources.mime_type_mismatch_error
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
-import io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery.GalleryFileProcessor.processSelectedFile
+import io.github.ismoy.imagepickerkmp.data.gallery.GalleryFileProcessor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -22,13 +22,7 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Verifica si un URI cumple con alguno de los MimeTypes permitidos.
- * Es necesario filtrar DESPUÉS de la selección porque Android no siempre
- * respeta el filtro por subtipo de imagen en el picker nativo (ej: image/webp).
- */
 internal fun uriMatchesMimeTypes(context: Context, uri: Uri, allowedMimeTypes: Array<String>): Boolean {
-    // Si solo hay "image/*" o "*/*" se acepta todo
     if (allowedMimeTypes.any { it == "*/*" || it == "image/*" }) return true
 
     val actualMimeType = context.contentResolver.getType(uri)?.lowercase() ?: return false
@@ -41,7 +35,7 @@ internal fun uriMatchesMimeTypes(context: Context, uri: Uri, allowedMimeTypes: A
     }
 }
 
-class PickImageFromGallery : ActivityResultContract<Array<String>, Uri?>() {
+internal class PickImageFromGallery : ActivityResultContract<Array<String>, Uri?>() {
     override fun createIntent(context: Context, input: Array<String>): Intent {
         return Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
@@ -62,7 +56,7 @@ class PickImageFromGallery : ActivityResultContract<Array<String>, Uri?>() {
     }
 }
 
-class PickMultipleImagesFromGallery : ActivityResultContract<Array<String>, List<Uri>>() {
+internal class PickMultipleImagesFromGallery : ActivityResultContract<Array<String>, List<Uri>>() {
     override fun createIntent(context: Context, input: Array<String>): Intent {
         return Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
@@ -120,7 +114,6 @@ internal fun rememberGalleryOnlyPickerLauncher(
         contract = PickImageFromGallery()
     ) { uri: Uri? ->
         if (uri != null) {
-            // Filtro post-selección: Android no siempre respeta el subtipo MIME en el picker nativo
             if (!uriMatchesMimeTypes(context, uri, allowedMimeTypes)) {
                 val msg = mimeTypeMismatchMessage ?: mimeTypeMismatchMsg.format(allowedMimeTypes.joinToString(", "))
                 onError(Exception(msg))
@@ -128,7 +121,7 @@ internal fun rememberGalleryOnlyPickerLauncher(
             }
             try {
                 CoroutineScope(Dispatchers.Main).launch {
-                    val result = processSelectedFile(context, uri, compressionLevel, includeExif)
+                    val result = GalleryFileProcessor.processSelectedFile(context, uri, compressionLevel, includeExif)
                     if (result != null) {
                         onPhotoSelected(result)
                     } else {
@@ -163,7 +156,6 @@ internal fun rememberGalleryOnlyMultiplePickerLauncher(
         contract = PickMultipleImagesFromGallery()
     ) { uris: List<Uri> ->
         if (uris.isNotEmpty()) {
-            // Filtro post-selección: Android no siempre respeta el subtipo MIME en el picker nativo
             val filteredUris = uris.filter { uri ->
                 uriMatchesMimeTypes(context, uri, allowedMimeTypes)
             }
@@ -174,7 +166,6 @@ internal fun rememberGalleryOnlyMultiplePickerLauncher(
                 return@rememberLauncherForActivityResult
             }
 
-            // Aplicar el límite de selección
             val limitedUris = if (filteredUris.size > selectionLimit) {
                 filteredUris.take(selectionLimit)
             } else {
@@ -191,7 +182,7 @@ internal fun rememberGalleryOnlyMultiplePickerLauncher(
                         async(Dispatchers.IO) {
                             semaphore.withPermit {
                                 try {
-                                    processSelectedFile(context, uri, compressionLevel, includeExif)
+                                    GalleryFileProcessor.processSelectedFile(context, uri, compressionLevel, includeExif)
                                 } catch (e: Exception) {
                                     errors.add(e)
                                     null

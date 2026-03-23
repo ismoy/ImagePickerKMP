@@ -3,11 +3,6 @@ package io.github.ismoy.imagepickerkmp.domain.utils
 import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 
-/**
- * Provides access to the root view controller in an iOS application.
- *
- * Used to obtain the root view controller for presenting camera or gallery interfaces.
- */
 internal object ViewControllerProvider {
     fun getRootViewController(): UIViewController? =
          UIApplication.sharedApplication.keyWindow?.rootViewController

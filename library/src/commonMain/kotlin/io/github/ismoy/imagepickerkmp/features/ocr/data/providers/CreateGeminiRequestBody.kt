@@ -7,7 +7,7 @@ import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
 
- fun createGeminiRequestBody(base64Image: String, config: OCRRequestConfig): String {
+internal fun createGeminiRequestBody(base64Image: String, config: OCRRequestConfig): String {
     val prompt = config.prompt ?: buildGeminiOCRPrompt(config.language)
 
     val json = buildJsonObject {

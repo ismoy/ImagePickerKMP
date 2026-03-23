@@ -5,13 +5,7 @@ import io.github.ismoy.imagepickerkmp.domain.utils.ViewControllerProvider
 import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
-
-/**
- * Orchestrates the presentation and handling of the camera interface on iOS.
- *
- * Provides a method to launch the camera and handle photo capture or errors.
- */
-object PhotoCaptureOrchestrator {
+internal object PhotoCaptureOrchestrator {
     fun launchCamera(
         onPhotoCaptured: (PhotoResult) -> Unit,
         onError: (Exception) -> Unit,

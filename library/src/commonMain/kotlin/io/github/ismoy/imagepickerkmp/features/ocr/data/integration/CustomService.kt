@@ -7,20 +7,23 @@ import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRResult
 import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRSpaceResponse
 import io.github.ismoy.imagepickerkmp.features.ocr.model.RequestFormat
 import io.github.ismoy.imagepickerkmp.features.ocr.utils.CloudOCRException
+import io.ktor.client.HttpClient
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.util.encodeBase64
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlinx.serialization.json.Json
 
 /**
  * Common implementation of Custom OCR Service using KtorInstance
  * Supports different request formats for custom OCR providers across all platforms
  */
-class CustomService(private val provider: CloudOCRProvider.Custom) {
-    
-    private val client = KtorInstance.client
+internal class CustomService(
+    private val provider: CloudOCRProvider.Custom,
+    private val client: HttpClient = KtorInstance.client
+) {
     
     private val json = Json { 
         ignoreUnknownKeys = true 
@@ -124,8 +127,9 @@ class CustomService(private val provider: CloudOCRProvider.Custom) {
         }
     }
     
+    @OptIn(ExperimentalEncodingApi::class)
     private suspend fun performJsonBase64Request(imageData: ByteArray, mimeType: String?, fileName: String?): HttpResponse {
-        val base64Image = imageData.encodeBase64()
+        val base64Image = Base64.Default.encode(imageData)
         
         val requestBody = buildMap<String, Any> {
             put("image", base64Image)

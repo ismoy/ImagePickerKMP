@@ -9,13 +9,7 @@ internal fun processImageWithCompression(
     bitmap: Bitmap,
     compressionLevel: CompressionLevel
 ): Bitmap {
-    if (compressionLevel == CompressionLevel.LOW) return bitmap
-
-    val maxDimension = when (compressionLevel) {
-        CompressionLevel.HIGH   -> 1920
-        CompressionLevel.MEDIUM -> 3840
-        CompressionLevel.LOW    -> Int.MAX_VALUE
-    }
+    val maxDimension = compressionLevel.toMaxDimension()
 
     val currentMaxDimension = maxOf(bitmap.width, bitmap.height)
 

@@ -1,14 +1,7 @@
 package io.github.ismoy.imagepickerkmp.domain.utils.exif
 
-/**
- * Formatters and converters for EXIF data values.
- */
 internal object ExifFormatters {
     
-    /**
-     * Formats EXIF date string to ISO format.
-     * Converts "yyyy:MM:dd HH:mm:ss" to "yyyy-MM-ddTHH:mm:ss"
-     */
     fun formatExifDate(dateString: String): String = runCatching {
         val parts = dateString.split(":", " ")
         if (parts.size >= 4) {
@@ -18,9 +11,6 @@ internal object ExifFormatters {
         }
     }.getOrElse { dateString }
     
-    /**
-     * Converts orientation integer to human readable description.
-     */
     fun getOrientationDescription(orientation: Int): String = when (orientation) {
         1 -> "Normal [1]"
         2 -> "Flip Horizontal [2]"
@@ -33,9 +23,6 @@ internal object ExifFormatters {
         else -> "Unknown [$orientation]"
     }
     
-    /**
-     * Converts flash value to human readable description.
-     */
     fun getFlashDescription(flash: Int): String = when (flash) {
         0 -> "No Flash"
         1 -> "Flash Fired"

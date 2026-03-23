@@ -8,19 +8,9 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDictionary
 import platform.Photos.PHAsset
 
-/**
- * iOS EXIF data extractor using native ImageIO and Photos frameworks.
- * 
- * Provides two extraction methods:
- * - [extractExifData]: Extract from file path using ImageIO
- * - [extractExifDataFromAsset]: Extract from PHAsset (gallery photos)
- */
 @OptIn(ExperimentalForeignApi::class)
 internal object ExifDataExtractor {
     
-    /**
-     * Extracts EXIF data from an image file path.
-     */
     fun extractExifData(path: String): ExifData? = runCatching {
         ExifLogger.debug("Extracting EXIF from path: $path")
         
@@ -33,9 +23,6 @@ internal object ExifDataExtractor {
         null
     }
     
-    /**
-     * Extracts EXIF data from a PHAsset (gallery photo).
-     */
     fun extractExifDataFromAsset(asset: PHAsset): ExifData? = runCatching {
         ExifLogger.debug("Extracting EXIF from PHAsset")
         
@@ -77,9 +64,6 @@ internal object ExifDataExtractor {
         null
     }
     
-    /**
-     * Extracts and combines all EXIF data from ImageIO properties.
-     */
     private fun extractDataFromImageIOProperties(properties: NSDictionary): ExifData {
         val gpsData = ExifDataParsers.extractGPSData(properties)
         val tiffData = ExifDataParsers.extractTIFFData(properties)

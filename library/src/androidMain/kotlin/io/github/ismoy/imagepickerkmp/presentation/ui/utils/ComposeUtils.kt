@@ -32,7 +32,7 @@ internal fun rememberCameraManager(
     return remember(lifecycleOwner) {
         try {
             val fileManager = FileManager(context)
-            val orientationCorrector = ImageOrientationCorrector()
+            val orientationCorrector = ImageOrientationCorrector(context)
             val imageProcessor = ImageProcessor(context,fileManager, orientationCorrector)
             val cameraController = CameraController(context, lifecycleOwner, fileManager)
             

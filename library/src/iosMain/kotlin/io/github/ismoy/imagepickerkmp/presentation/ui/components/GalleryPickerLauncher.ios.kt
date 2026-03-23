@@ -90,7 +90,7 @@ actual fun GalleryPickerLauncher(
             ),
             cropConfig = cameraCaptureConfig?.cropConfig ?: CropConfig(
                 enabled = true,
-                circularCrop = false,
+                circularCrop = true,
                 squareCrop = true,
                 freeformCrop = true
             ),

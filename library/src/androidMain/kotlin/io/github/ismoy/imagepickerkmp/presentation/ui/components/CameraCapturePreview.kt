@@ -29,14 +29,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import io.github.ismoy.imagepickerkmp.data.camera.CameraController
+import io.github.ismoy.imagepickerkmp.data.models.FlashMode
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.BackgroundColor
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.DELAY_TO_TAKE_PHOTO
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-import io.github.ismoy.imagepickerkmp.domain.utils.playShutterSound
 import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
+import io.github.ismoy.imagepickerkmp.presentation.ui.utils.playShutterSound
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +54,8 @@ fun CameraCapturePreview(
     onError: (Exception) -> Unit,
     previewConfig: CameraPreviewConfig = CameraPreviewConfig(),
     compressionLevel: CompressionLevel? = null,
-    includeExif: Boolean = false
+    includeExif: Boolean = false,
+    redactGpsData: Boolean = true
 ) {
     val context = LocalContext.current
     val activity = context.activity as? ComponentActivity
@@ -79,7 +81,7 @@ fun CameraCapturePreview(
 
     VolumeButtonCapture {
         playShutterSound()
-        stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif)
+        stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif, redactGpsData)
     }
     val isDark = isSystemInDarkTheme()
     val backgroundColor = if (isDark) MaterialTheme.colors.background else BackgroundColor
@@ -115,8 +117,8 @@ fun CameraCapturePreview(
                         post {
                             animate()
                                 .alpha(1f)
-                                .setDuration(100)
-                                .setStartDelay(50)
+                                .setDuration(DELAY_TO_TAKE_PHOTO)
+                                .setStartDelay(DELAY_TO_TAKE_PHOTO)
                                 .start()
                         }
                         previewView = this
@@ -131,7 +133,7 @@ fun CameraCapturePreview(
             )
 
         FlashToggleButton(
-            flashMode = stateHolder?.flashMode ?: CameraController.FlashMode.AUTO,
+            flashMode = stateHolder?.flashMode ?: FlashMode.AUTO,
             iconColor = resolvedIconColor,
             flashIcon = previewConfig.uiConfig.flashIcon,
             onToggle = { stateHolder?.toggleFlash() }
@@ -147,7 +149,7 @@ fun CameraCapturePreview(
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
                     playShutterSound()
-                    stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif)
+                    stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif, redactGpsData)
                 }
         )
         Box(

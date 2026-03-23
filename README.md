@@ -7,10 +7,17 @@ Built with **Compose Multiplatform**, designed for **simplicity, performance, an
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=b9cde436-d518-45b7-9a4a-7b4e084aeffa" />
 
 <p align="center">
-  <!--<a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>-->
- <!-- <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Code Coverage"></a>-->
+  <img src="https://raw.githubusercontent.com/ismoy/CameraKMP/main/thumnailImagePickerKMP.png" alt="ImagePickerKMP Banner" width="100%">
+</p>
+
+<p align="center">
+  <a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>
+  <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Code Coverage"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
-  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.1.21-blue.svg" alt="Kotlin"></a>
+  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.3.20-blue.svg" alt="Kotlin"></a>
+  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+  <a href="#contributors"><img src="https://img.shields.io/github/all-contributors/ismoy/ImagePickerKMP?color=ee8449&style=flat-square" alt="All Contributors"></a>
+  <!-- ALL-CONTRIBUTORS-BADGE:END -->
 </p>
 
 <p align="center">
@@ -29,9 +36,21 @@ Built with **Compose Multiplatform**, designed for **simplicity, performance, an
   <img src="https://img.shields.io/badge/Platform-Desktop-orange" alt="Desktop">
   <img src="https://img.shields.io/badge/Platform-JS-yellow" alt="JavaScript">
   <img src="https://img.shields.io/badge/Platform-WASM-purple" alt="WebAssembly">
- <!-- <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml">
-  <img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a>-->
+  <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml">
+  <img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a>
 </p>
+
+---
+
+<p align="center">
+  <a href="https://github.com/sponsors/ismoy">
+    <img src="https://img.shields.io/badge/Sponsor-%E2%9D%A4-red?style=for-the-badge&logo=github" alt="Sponsor">
+  </a>
+</p>
+
+> **ImagePickerKMP saves you 2 weeks of native Android/iOS/Web integration work.**  
+> It's free and open source. If your app or company benefits from it, consider sponsoring to keep it maintained and updated with every new KMP/Compose release.  
+> [→ Become a sponsor](https://github.com/sponsors/ismoy)
 
 ---
 ## Example
@@ -43,6 +62,18 @@ Full-featured sample application showcasing:
 - All library features and configurations
 
 ##  Quick Start
+
+### ⚠️ Requirements
+
+| Requirement | Minimum version |
+|---|---|
+| **Kotlin** | **2.3.20** *(breaking change — see [CHANGELOG](docs/CHANGELOG.md))* |
+| Compose Multiplatform | 1.10.3 |
+| Ktor | 3.4.1 |
+| Android `minSdk` | 24 |
+| Android `compileSdk` | 36 |
+
+> **Note:** This library is compiled with Kotlin 2.3.20. Projects using Kotlin < 2.3.x will get an ABI incompatibility error at compile time. If you need Kotlin 2.1.x support, use a previous version of this library.
 
 ### Installation
 
@@ -427,6 +458,55 @@ Features:
 
 ---
 
+## Sponsors & Backers
+
+ImagePickerKMP is free and open source. Maintaining it across **Android, iOS, Desktop, Web and WASM** with every Kotlin/Compose Multiplatform release takes real time and effort.
+
+If this library saves you time or money in production, please consider supporting it:
+
+| Tier | Amount | Benefit |
+|------|--------|---------|
+| ☕ Coffee | $5/mo | Name in the backers list |
+| 🥈 Silver | $25/mo | Logo in README + priority issue response |
+<p align="center">
+  <a href="https://github.com/sponsors/ismoy">
+    <img src="https://img.shields.io/badge/Sponsor%20ImagePickerKMP-%E2%9D%A4-red?style=for-the-badge&logo=github" alt="Sponsor">
+  </a>
+</p>
+
+### Current Sponsors
+
+<!-- SPONSORS-LIST:START - Do not remove or modify this section -->
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/james-codersHT">
+        <img src="https://github.com/james-codersHT.png" width="80px" alt="james-codersHT"/><br/>
+        <sub><b>james-codersHT</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
+<!-- SPONSORS-LIST:END -->
+
+> Sponsors get their name/logo displayed here. [→ Become a sponsor](https://github.com/sponsors/ismoy)
+
+---
+
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+---
 
 **Made with ❤️ for the Kotlin Multiplatform community**  
-*⭐ Star this repo if it helped you!*
+*Star this repo if it helped you!*

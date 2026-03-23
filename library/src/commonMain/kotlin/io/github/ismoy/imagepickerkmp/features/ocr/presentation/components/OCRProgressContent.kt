@@ -12,9 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.github.ismoy.imagepickerkmp.features.ocr.model.ExtractionIndicators
 import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRProcessState
+import io.github.ismoy.imagepickerkmp.features.ocr.presentation.components.ProcessingContent
 
 @Composable
- fun OCRProgressContent(
+internal fun OCRProgressContent(
     currentState: OCRProcessState,
     providerName: String,
     extractionIndicators: ExtractionIndicators,
@@ -39,7 +40,7 @@ import io.github.ismoy.imagepickerkmp.features.ocr.model.OCRProcessState
                     UploadingContent()
                 }
                 OCRProcessState.PROCESSING -> {
-                    ProcessingContent(providerName,extractionIndicators)
+                    ProcessingContent(providerName, extractionIndicators)
                 }
                 OCRProcessState.SUCCESS -> {
                     SuccessContent(onDismiss)

@@ -7,7 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
+### ⚠️ Breaking Changes
+
+- **BREAKING: Minimum Kotlin version is now 2.3.20**
+  - This library is compiled with **Kotlin 2.3.20**. Kotlin's KMP ABI is not backward compatible across major Kotlin versions.
+  - Projects using **Kotlin < 2.3.x will fail to compile** with an error like `ABI version X.Y.Z is incompatible with current Kotlin compiler`.
+  - **Migration**: Update your project's Kotlin version to `2.3.20` or higher.
+  - If you need to stay on Kotlin 2.1.x, use the previous release of this library.
+
+### Changed
+
+- **Kotlin** upgraded from `2.1.21` → `2.3.20`
+- **Compose Multiplatform** upgraded from `1.9.1` → `1.10.3` (requires Kotlin 2.3.x)
+- **Compose Compiler plugin** upgraded from `2.0.21` → `2.3.20` (must match Kotlin version exactly)
+- **Ktor** upgraded from `3.0.2` → `3.4.1` (built with Kotlin 2.3.x, requires Kotlin 2.3.x consumer)
+- **Lifecycle Runtime Compose** upgraded from `2.9.0` → `2.10.0`
+- **Activity Compose** upgraded from `1.11.0` → `1.13.0`
+- **AndroidX Compose UI** upgraded from `1.9.4` → `1.10.5`
+- **CameraX** (`camera-core`, `camera-camera2`, `camera-lifecycle`, `camera-view`) upgraded from `1.5.1` → `1.5.3`
+- **ZXing Core** upgraded from `3.5.3` → `3.5.4`
+- **Android Gradle Plugin** upgraded from `8.13.0` → `8.13.2`
+- **Deprecated `ByteArray.encodeBase64()`** (Ktor util) replaced with `Base64.Default.encode()` from Kotlin stdlib in `GeminiOCRProvider` and `CustomService`
+
+
 
 - **Fixed Cropped Image Metadata (Android)**: Resolved issue where `GalleryPhotoResult` after cropping returned incorrect metadata
   - `fileName` now reflects the cropped image file name instead of original

@@ -7,7 +7,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
-import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 
@@ -96,13 +95,18 @@ data class PermissionAndConfirmationConfig(
  *   Defaults to `30`.
  * @property includeExif Whether to extract EXIF metadata from selected images.
  *   Defaults to `false`.
+ * @property redactGpsData When `true` (the default), GPS latitude, longitude, and altitude fields
+ *   are stripped from extracted EXIF data before delivery.  Set to `false` only when your app
+ *   has a legitimate need for the exact capture location and the user has been informed.
+ *   Effective only when [includeExif] is `true`.
  */
 @Suppress("EndOfSentenceFormat")
 data class GalleryConfig(
     val allowMultiple: Boolean = false,
     val mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
     val selectionLimit: Int = 30,
-    val includeExif: Boolean = false
+    val includeExif: Boolean = false,
+    val redactGpsData: Boolean = true
 )
 
 /**
@@ -140,6 +144,10 @@ data class CropConfig(
  *   delivery. `null` means no compression (full quality). Defaults to [CompressionLevel.MEDIUM].
  * @property includeExif Whether to extract and attach EXIF metadata to the [PhotoResult].
  *   On iOS, this requires photo library permission. Defaults to `false`.
+ * @property redactGpsData When `true` (the default), GPS latitude, longitude, and altitude
+ *   are stripped from the EXIF data before delivery. Set to `false` only when your app has a
+ *   legitimate need for the capture location and the user has been informed.
+ *   Effective only when [includeExif] is `true`.
  * @property uiConfig Visual styling overrides for camera UI elements. See [UiConfig].
  * @property cameraCallbacks Lifecycle event callbacks for camera events. See [CameraCallbacks].
  * @property permissionAndConfirmationConfig Configuration for permission dialogs and the
@@ -153,6 +161,7 @@ data class CameraCaptureConfig(
     val captureButtonSize: Dp = 72.dp,
     val compressionLevel: CompressionLevel? = CompressionLevel.MEDIUM,
     val includeExif: Boolean = false,
+    val redactGpsData: Boolean = true,
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),

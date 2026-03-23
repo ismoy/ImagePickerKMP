@@ -4,6 +4,7 @@ import io.github.ismoy.imagepickerkmp.data.processors.ImageProcessor
 import io.github.ismoy.imagepickerkmp.domain.exceptions.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
 import io.github.ismoy.imagepickerkmp.domain.utils.ExifDataExtractor
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
@@ -15,11 +16,6 @@ import platform.UIKit.UIImageJPEGRepresentation
 import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.darwin.NSObject
 
-/**
- * Delegate for handling UIImagePickerController events and photo capture results on iOS.
- *
- * This class processes captured images and communicates results or errors to the caller.
- */
 @OptIn(ExperimentalForeignApi::class)
 internal class CameraDelegate(
     private val onPhotoCaptured: (PhotoResult) -> Unit,
@@ -91,7 +87,7 @@ internal class CameraDelegate(
     }
 
     private fun logDebug(message: String) {
-        println("iOS CameraDelegate: $message")
+        DefaultLogger.logDebug("iOS CameraDelegate: $message")
     }
 
     private fun dismissPicker(picker: UIImagePickerController) {

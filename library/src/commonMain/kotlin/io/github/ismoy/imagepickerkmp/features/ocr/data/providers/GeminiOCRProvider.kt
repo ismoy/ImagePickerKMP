@@ -12,18 +12,12 @@ import io.ktor.client.plugins.timeout
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.util.encodeBase64
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlinx.serialization.json.*
 
-/**
- * Gemini OCR provider that uses Google's Gemini API for text extraction from images and PDFs.
- * Uses the centralized KtorInstance for HTTP client management.
- * 
- * @param apiKey The Google AI Studio API key
- * @param model The Gemini model to use (default: gemini-2.5-flash)
- * @param httpClient Optional HTTP client. If not provided, uses KtorInstance.geminiClient
- */
-class GeminiOCRProvider(
+
+internal class GeminiOCRProvider(
     private val apiKey: String,
     private val model: String = "gemini-2.5-flash",
     private val httpClient: HttpClient = KtorInstance.geminiClient
@@ -35,11 +29,12 @@ class GeminiOCRProvider(
         const val GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models"
     }
     
+    @OptIn(ExperimentalEncodingApi::class)
     override suspend fun extractText(imageData: ByteArray, config: OCRRequestConfig): OCRResult {
         try {
             validateFile(imageData, config.mimeType)
             
-            val base64Image = imageData.encodeBase64()
+            val base64Image = Base64.Default.encode(imageData)
             val requestBody = createGeminiRequestBody(base64Image, config)
             
             val response: HttpResponse = httpClient.post("$GEMINI_API_URL/$model:generateContent") {
@@ -57,13 +52,13 @@ class GeminiOCRProvider(
             when (response.status.value) {
                 401, 403 -> throw InvalidAPIKeyException("Invalid Gemini API key or insufficient permissions")
                 400 -> {
-                    val errorBody = try { response.body<String>() } catch (e: Exception) { "Unable to read error response" }
+                    val errorBody = try { response.body<String>() } catch (_: Exception) { "Unable to read error response" }
                     val mimeType = config.mimeType ?: "image/jpeg"
                     throw CloudOCRException("Bad request (400). This might be due to unsupported file format, file too large, or invalid request format. MimeType: $mimeType, Error: $errorBody")
                 }
                 429 -> throw CloudOCRException("Rate limit exceeded for Gemini API")
                 !in 200..299 -> {
-                    val errorBody = try { response.body<String>() } catch (e: Exception) { "Unable to read error response" }
+                    val errorBody = try { response.body<String>() } catch (_: Exception) { "Unable to read error response" }
                     throw CloudOCRException("Gemini API request failed with status code: ${response.status.value}. Error: $errorBody")
                 }
             }
@@ -101,7 +96,7 @@ class GeminiOCRProvider(
                 }
             }
             response.status.value in 200..299
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }

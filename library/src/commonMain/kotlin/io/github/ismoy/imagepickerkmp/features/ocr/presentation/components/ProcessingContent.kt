@@ -1,4 +1,4 @@
-package io.github.ismoy.imagepickerkmp.presentation.ui.components.ocr
+package io.github.ismoy.imagepickerkmp.features.ocr.presentation.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -30,6 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.ismoy.imagepickerkmp.features.ocr.model.ExtractionIndicators
+import io.github.ismoy.imagepickerkmp.presentation.ui.components.ocr.AnimatedProgressBar
+import io.github.ismoy.imagepickerkmp.presentation.ui.components.ocr.OCRFeatureIndicators
 import kotlinx.coroutines.delay
 
 @Composable
@@ -112,5 +114,5 @@ import kotlinx.coroutines.delay
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    OCRFeatureIndicators( extractionIndicators)
+    OCRFeatureIndicators(extractionIndicators)
 }

@@ -1,0 +1,114 @@
+name: Update Sponsors List
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'   # Every Monday at midnight UTC
+  workflow_dispatch:        # Allow manual trigger
+
+jobs:
+  update-sponsors:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch sponsors and update README
+        env:
+          GITHUB_TOKEN: ${{ secrets.SPONSORS_TOKEN }}
+          REPO_OWNER: ismoy
+        run: |
+          # Fetch sponsors via GitHub GraphQL API
+          SPONSORS_JSON=$(curl -s -H "Authorization: bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -X POST \
+            -d '{"query": "{ user(login: \"'$REPO_OWNER'\") { sponsors(first: 100) { nodes { ... on User { login name avatarUrl url } ... on Organization { login name avatarUrl url } } } } }"}' \
+            https://api.github.com/graphql)
+
+          echo "Sponsors response: $SPONSORS_JSON"
+
+          # Build the HTML table from sponsors
+          SPONSORS_JSON="$SPONSORS_JSON" python3 - <<'PYTHON'
+          import json, os, re, sys
+
+          sponsors_json = os.environ.get("SPONSORS_JSON", "{}")
+
+          try:
+              data = json.loads(sponsors_json)
+              nodes = data.get("data", {}).get("user", {}).get("sponsors", {}).get("nodes", [])
+          except Exception as e:
+              print(f"Error parsing JSON: {e}")
+              nodes = []
+
+          print(f"Found {len(nodes)} sponsors")
+
+          if not nodes:
+              # No sponsors yet — keep placeholder
+              table = """<table>
+            <tr>
+              <td align="center">
+                <a href="https://github.com/sponsors/ismoy">
+                  <img src="https://via.placeholder.com/80x80.png?text=You%3F" width="80px" alt="Your name here"/><br/>
+                  <sub><b>Be the first sponsor! 🙏</b></sub>
+                </a>
+              </td>
+            </tr>
+          </table>"""
+          else:
+              # Build table with real sponsors (7 per row)
+              PER_ROW = 7
+              rows = ""
+              for i in range(0, len(nodes), PER_ROW):
+                  chunk = nodes[i:i+PER_ROW]
+                  cells = ""
+                  for s in chunk:
+                      login  = s.get("login", "")
+                      name   = s.get("name") or login
+                      avatar = s.get("avatarUrl", f"https://github.com/{login}.png")
+                      url    = s.get("url", f"https://github.com/{login}")
+                      cells += f"""
+                <td align="center">
+                  <a href="{url}">
+                    <img src="{avatar}" width="80px" alt="{login}"/><br/>
+                    <sub><b>{name}</b></sub>
+                  </a>
+                </td>"""
+                  rows += f"  <tr>{cells}\n  </tr>\n"
+              table = f"<table>\n{rows}</table>"
+
+          # Replace block in README.md
+          readme_path = "README.md"
+          with open(readme_path, "r", encoding="utf-8") as f:
+              content = f.read()
+
+          new_block = (
+              "<!-- SPONSORS-LIST:START - Do not remove or modify this section -->\n"
+              + table + "\n"
+              + "<!-- SPONSORS-LIST:END -->"
+          )
+
+          pattern = r"<!-- SPONSORS-LIST:START.*?-->.*?<!-- SPONSORS-LIST:END -->"
+          updated = re.sub(pattern, new_block, content, flags=re.DOTALL)
+
+          if updated == content:
+              print("No changes detected in README.")
+              sys.exit(0)
+
+          with open(readme_path, "w", encoding="utf-8") as f:
+              f.write(updated)
+
+          print("README.md updated successfully.")
+          PYTHON
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git diff --quiet README.md || (
+            git add README.md &&
+            git commit -m "chore: update sponsors list [skip ci]" &&
+            git push
+          )

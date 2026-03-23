@@ -2,17 +2,9 @@ package io.github.ismoy.imagepickerkmp.features.ocr.utils
 
 import io.github.ismoy.imagepickerkmp.features.ocr.data.providers.CloudOCRProvider
 
-/**
- * Utility object for validating API keys and cloud provider configurations
- */
-object APIKeyValidator {
+
+internal object APIKeyValidator {
     
-    /**
-     * Validates that a cloud OCR provider has a valid API key configured
-     * 
-     * @param provider The cloud OCR provider to validate
-     * @throws MissingAPIKeyException if the API key is missing, empty, or invalid
-     */
     fun validateProvider(provider: CloudOCRProvider) {
         when (provider) {
             is CloudOCRProvider.Gemini -> {
@@ -40,13 +32,6 @@ object APIKeyValidator {
         }
     }
     
-    /**
-     * Validates that an API key is not null, empty, or just whitespace
-     * 
-     * @param apiKey The API key to validate
-     * @param providerName The name of the provider for error messages
-     * @throws MissingAPIKeyException if the API key is invalid
-     */
     private fun validateApiKey(apiKey: String, providerName: String) {
         when {
             apiKey.isBlank() -> throw MissingAPIKeyException.emptyApiKey(providerName)
@@ -64,9 +49,6 @@ object APIKeyValidator {
         }
     }
     
-    /**
-     * Gets a user-friendly message about how to obtain an API key for a specific provider
-     */
     fun getApiKeyInstructions(provider: CloudOCRProvider): String {
         return when (provider) {
             is CloudOCRProvider.Gemini -> 

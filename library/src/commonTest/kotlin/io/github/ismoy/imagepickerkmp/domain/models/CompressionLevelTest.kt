@@ -9,16 +9,16 @@ class CompressionLevelTest {
 
     @Test
     fun testToQualityValue_lowCompression() {
-        assertEquals(0.98, CompressionLevel.LOW.toQualityValue())
+        assertEquals(0.95, CompressionLevel.LOW.toQualityValue())
     }
 
     @Test
     fun testToQualityValue_mediumCompression() {
-        assertEquals(0.85, CompressionLevel.MEDIUM.toQualityValue())
+        assertEquals(0.80, CompressionLevel.MEDIUM.toQualityValue())
     }
 
     @Test
     fun testToQualityValue_highCompression() {
-        assertEquals(0.65, CompressionLevel.HIGH.toQualityValue())
+        assertEquals(0.60, CompressionLevel.HIGH.toQualityValue())
     }
 }

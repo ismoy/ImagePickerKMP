@@ -4,15 +4,9 @@ import io.github.ismoy.imagepickerkmp.domain.models.exif.*
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.*
 
-/**
- * Parsers for extracting specific EXIF data sections from NSDictionary.
- */
 @OptIn(ExperimentalForeignApi::class)
 internal object ExifDataParsers {
     
-    /**
-     * Extracts GPS location data from properties dictionary.
-     */
     fun extractGPSData(properties: NSDictionary): GPSData {
         val gpsDict = properties.objectForKey("{GPS}") as? NSDictionary 
             ?: return GPSData(null, null, null)
@@ -38,9 +32,6 @@ internal object ExifDataParsers {
         return GPSData(latitude, longitude, altValue?.doubleValue)
     }
     
-    /**
-     * Extracts TIFF metadata (camera information) from properties dictionary.
-     */
     fun extractTIFFData(properties: NSDictionary): TIFFData {
         val tiffDict = properties.objectForKey("{TIFF}") as? NSDictionary 
             ?: return TIFFData(null, null, null, null, null)
@@ -59,9 +50,6 @@ internal object ExifDataParsers {
         return TIFFData(manufacturer, model, software, owner, dateTime)
     }
     
-    /**
-     * Extracts EXIF technical metadata from properties dictionary.
-     */
     fun extractEXIFData(properties: NSDictionary): EXIFData {
         val exifDict = properties.objectForKey("{Exif}") as? NSDictionary 
             ?: return EXIFData(null, null, null, null, null, null, null, null, null)
@@ -94,12 +82,10 @@ internal object ExifDataParsers {
             else -> null
         }
         
-        return EXIFData(dateTaken, digitizedTime, colorSpace, focalLength, aperture, shutterSpeed, iso, flash, whiteBalance)
+        return EXIFData(dateTaken, digitizedTime, colorSpace, focalLength, aperture, shutterSpeed,
+            iso, flash, whiteBalance)
     }
     
-    /**
-     * Extracts basic image properties from properties dictionary.
-     */
     fun extractBasicProperties(properties: NSDictionary): BasicData {
         val orientation = (properties.objectForKey("Orientation") as? NSNumber)?.let {
             ExifFormatters.getOrientationDescription(it.intValue)

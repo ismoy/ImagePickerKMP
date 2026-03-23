@@ -7,28 +7,17 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
 import kotlinx.serialization.json.Json
 
-/**
- * Singleton object that provides configured Ktor HTTP clients for different OCR services.
- * This centralized approach ensures consistent configuration, resource efficiency, 
- * and better maintainability across all OCR providers.
- * 
- * Benefits:
- * - Resource efficiency: Reuses HTTP client instances instead of creating new ones
- * - Consistency: All providers share the same base configuration
- * - Maintainability: Centralized configuration management
- * - Performance: Better connection pooling and memory usage
- */
-object KtorInstance {
+
+internal object KtorInstance {
     
-    /**
-     * Standard HTTP client with basic configuration
-     */
+   
     val client = HttpClient {
         install(Logging) {
             logger = Logger.DEFAULT
-            level = LogLevel.INFO
+            level = if (DefaultLogger.debugMode) LogLevel.INFO else LogLevel.NONE
         }
         
         install(ContentNegotiation) {
@@ -59,13 +48,11 @@ object KtorInstance {
             headers.append(HttpHeaders.CacheControl, "no-cache")
         }
     }
-    /**
-     * Specialized client for Gemini API requests with enhanced timeout settings
-     */
+    
     val geminiClient = HttpClient {
         install(Logging) {
             logger = Logger.DEFAULT
-            level = LogLevel.INFO
+            level = if (DefaultLogger.debugMode) LogLevel.INFO else LogLevel.NONE
         }
         
         install(ContentNegotiation) {

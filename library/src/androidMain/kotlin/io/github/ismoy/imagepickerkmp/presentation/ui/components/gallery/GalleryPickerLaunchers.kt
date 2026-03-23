@@ -4,16 +4,14 @@ import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import imagepickerkmp.library.generated.resources.Res
 import imagepickerkmp.library.generated.resources.gallery_selection_error
 import imagepickerkmp.library.generated.resources.mime_type_mismatch_error
+import io.github.ismoy.imagepickerkmp.data.gallery.GalleryFileProcessor
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
-import io.github.ismoy.imagepickerkmp.presentation.ui.components.gallery.GalleryFileProcessor.processSelectedFile
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
@@ -22,10 +20,6 @@ import kotlinx.coroutines.sync.withPermit
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Wrapper contract que acepta Array<String> de mimeTypes y delega a GetContent.
- * Usa EXTRA_MIME_TYPES cuando hay más de un tipo, permitiendo filtrado real.
- */
 private class GetContentWithMimeTypes : androidx.activity.result.contract.ActivityResultContract<Array<String>, Uri?>() {
     override fun createIntent(context: Context, input: Array<String>): android.content.Intent {
         return android.content.Intent(android.content.Intent.ACTION_GET_CONTENT).apply {
@@ -85,20 +79,20 @@ internal fun rememberSinglePickerLauncher(
 ): ManagedActivityResultLauncher<Array<String>, Uri?> {
     val gallerySelectionErrorMsg = stringResource(Res.string.gallery_selection_error)
     val mimeTypeMismatchMsg = stringResource(Res.string.mime_type_mismatch_error)
+    val composableScope = rememberCoroutineScope()
 
     return rememberLauncherForActivityResult(
         contract = GetContentWithMimeTypes()
     ) { uri: Uri? ->
         if (uri != null) {
-            // Filtro post-selección: Android no siempre respeta el subtipo MIME en el picker nativo
             if (!uriMatchesMimeTypes(context, uri, allowedMimeTypes)) {
                 val msg = mimeTypeMismatchMessage ?: mimeTypeMismatchMsg.format(allowedMimeTypes.joinToString(", "))
                 onError(Exception(msg))
                 return@rememberLauncherForActivityResult
             }
             try {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val result = processSelectedFile(context, uri, compressionLevel, includeExif)
+                composableScope.launch {
+                    val result = GalleryFileProcessor.processSelectedFile(context, uri, compressionLevel, includeExif)
                     if (result != null) {
                         onPhotoSelected(result)
                     } else {
@@ -127,12 +121,12 @@ internal fun rememberMultiplePickerLauncher(
     mimeTypeMismatchMessage: String? = null
 ): ManagedActivityResultLauncher<Array<String>, List<Uri>> {
     val mimeTypeMismatchMsg = stringResource(Res.string.mime_type_mismatch_error)
+    val composableScope = rememberCoroutineScope()
 
     return rememberLauncherForActivityResult(
         contract = GetMultipleContentsWithMimeTypes()
     ) { uris: List<Uri> ->
         if (uris.isNotEmpty()) {
-            // Filtro post-selección: Android no siempre respeta el subtipo MIME en el picker nativo
             val filteredUris = uris.filter { uri ->
                 uriMatchesMimeTypes(context, uri, allowedMimeTypes)
             }
@@ -143,7 +137,6 @@ internal fun rememberMultiplePickerLauncher(
                 return@rememberLauncherForActivityResult
             }
 
-            // Aplicar el límite de selección
             val limitedUris = if (filteredUris.size > selectionLimit) {
                 filteredUris.take(selectionLimit)
             } else {
@@ -151,16 +144,16 @@ internal fun rememberMultiplePickerLauncher(
             }
             
             try {
-                CoroutineScope(Dispatchers.Main).launch {
+                composableScope.launch {
                     val semaphore = Semaphore(3)
                     val results = mutableListOf<GalleryPhotoResult>()
                     val errors = mutableListOf<Exception>()
 
                     val deferredResults = limitedUris.map { uri ->
-                        async(Dispatchers.IO) {
+                        async {
                             semaphore.withPermit {
                                 try {
-                                    processSelectedFile(context, uri, compressionLevel, includeExif)
+                                    GalleryFileProcessor.processSelectedFile(context, uri, compressionLevel, includeExif)
                                 } catch (e: Exception) {
                                     errors.add(e)
                                     null

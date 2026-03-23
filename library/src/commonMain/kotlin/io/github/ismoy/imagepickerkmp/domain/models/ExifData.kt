@@ -54,6 +54,8 @@ data class ExifData(
     val dateTime: String? = null,
     val digitizedTime: String? = null,
     val originalTime: String? = null,
+    val modifiedTime: String? = null,
+    val utcTime: String? = null,
     val cameraModel: String? = null,
     val cameraManufacturer: String? = null,
     val cameraMake: String? = null,
@@ -77,5 +79,21 @@ data class ExifData(
     val resolutionUnit: String? = null,
     val compression: String? = null,
     val cloudCache: String? = null,
+    /**
+     * Base64 encoded thumbnail data. Note: this field can be 5–20 KB per image.
+     * Avoid storing [ExifData] instances in long-lived caches when this field is non-null.
+     */
     val thumbnail: String? = null
-)
+) {
+    /**
+     * Returns a copy of this [ExifData] with GPS fields (latitude, longitude, altitude) set to
+     * `null`.  Call this whenever the caller has not explicitly opted in to GPS data
+     * (i.e. [io.github.ismoy.imagepickerkmp.domain.config.GalleryConfig.redactGpsData] or
+     * [io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig.redactGpsData] is `true`).
+     */
+    fun withRedactedGps(): ExifData = copy(
+        latitude = null,
+        longitude = null,
+        altitude = null
+    )
+}

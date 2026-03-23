@@ -7,38 +7,33 @@ import android.os.Build
 internal object HighPerformanceConfig {
 
     fun isHighEndDevice(context: Context? = null): Boolean {
-        val hasModernApi = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-        val hasPowerfulChip = Build.HARDWARE?.let { hw ->
-            hw.contains("qcom", ignoreCase = true) ||
-            hw.contains("exynos", ignoreCase = true) ||
-            hw.contains("tensor", ignoreCase = true) ||
-            hw.contains("kirin", ignoreCase = true) ||
-            hw.contains("dimensity", ignoreCase = true) ||
-            hw.contains("mt68", ignoreCase = true)
-        } ?: false
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return false
 
-        val hasEnoughRam = if (context != null) {
-            try {
+        if (context != null) {
+            return try {
                 val am = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-                if (am != null) {
-                    val info = ActivityManager.MemoryInfo()
-                    am.getMemoryInfo(info)
-                    if (info.totalMem > 0L) {
-                        (info.totalMem / (1024L * 1024L * 1024L)) >= 4L
-                    } else {
-                        hasPowerfulChip
-                    }
+                val info = ActivityManager.MemoryInfo()
+                am?.getMemoryInfo(info)
+                if (info.totalMem > 0L) {
+                    (info.totalMem / (1024L * 1024L * 1024L)) >= 4L
                 } else {
-                    hasPowerfulChip
+                    hasFlagshipSoC()
                 }
             } catch (_: Exception) {
-                hasPowerfulChip
+                hasFlagshipSoC()
             }
-        } else {
-            hasPowerfulChip
         }
+        return hasFlagshipSoC()
+    }
 
-        return hasModernApi && (hasPowerfulChip || hasEnoughRam)
+    private fun hasFlagshipSoC(): Boolean {
+        val hw = Build.HARDWARE?.lowercase() ?: return false
+        return hw.startsWith("qcom") ||
+            hw.startsWith("exynos") ||
+            hw.contains("tensor") ||
+            hw.startsWith("kirin") ||
+            hw.startsWith("mt68") ||
+            hw.startsWith("dimensity")
     }
 
     fun requiresCompatibilityMode(): Boolean {

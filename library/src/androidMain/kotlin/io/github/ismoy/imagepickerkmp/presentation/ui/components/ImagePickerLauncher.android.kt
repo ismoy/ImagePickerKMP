@@ -32,8 +32,6 @@ actual fun ImagePickerLauncher(
         },
         onDismiss = config.onDismiss,
         cameraCaptureConfig = config.cameraCaptureConfig.copy(
-            preference = config.cameraCaptureConfig.preference,
-            includeExif = config.cameraCaptureConfig.includeExif,
             cropConfig = if (config.cameraCaptureConfig.cropConfig.enabled) {
                 config.cameraCaptureConfig.cropConfig
             } else if (config.enableCrop) {

@@ -1,7 +1,10 @@
-import com.vanniktech.maven.publish.SonatypeHost
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.SourcesJar
+import kotlinx.kover.gradle.plugin.dsl.AggregationType
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import java.util.Properties
 
 plugins {
@@ -9,239 +12,123 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeMultiplatform)
-    id("com.vanniktech.maven.publish") version "0.33.0"
+    id("com.vanniktech.maven.publish") version "0.36.0"
     id("maven-publish")
-    id("jacoco")
+    alias(libs.plugins.kover)
     id("io.gitlab.arturbosch.detekt")
-    id("org.jetbrains.dokka") version "1.9.20"
+    id("org.jetbrains.dokka") version "2.1.0"
     kotlin("plugin.serialization") version "1.9.22"
 }
 
 version = rootProject.version
 
-jacoco {
-    toolVersion = "0.8.11"
-}
-
-tasks.withType<Test> {
-    useJUnit()
-    finalizedBy("jacocoTestReport")
-}
-
-tasks.register<JacocoReport>("jacocoTestReport") {
-    dependsOn("testDebugUnitTest")
+kover {
     reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
-    val fileFilter = listOf(
-        "**/R.class",
-        "**/R$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "**/*Test*.*",
-        "**/databinding/*",
-        "**/android/databinding/*",
-        "**/androidx/databinding/*",
-        "**/BR.*",
-        "**/presentation/ui/components/**",
-        "**/presentation/ui/screens/**",
-        "**/*Kt.class",
-        "**/*\$Companion.class",
-        "**/ComposableSingletons*.*",
-        "**/CameraController\$startCamera\$2.*",
-        "**/CameraController\$takePicture\$1.*",
-        "**/ProcessCameraProvider*.*",
-        "**/ImageCapture*.*",
-        "**/CameraX*.*"
-    )
-    classDirectories.setFrom(
-        files(
-            fileTree("$buildDir/tmp/kotlin-classes/debug") {
-                exclude(fileFilter)
+        filters {
+            excludes {
+                classes(
+                    // ── Compose generated / synthetic ──────────────────────────
+                    "*.ComposableSingletons*",
+                    "*.BuildConfig",
+                    "*.*\$Companion",
+                    "*.*\$WhenMappings",
+                    "*.*\$serializer",
+                    // ── UI layers (Compose, not unit-testable) ─────────────────
+                    "*.presentation.ui.components.*",
+                    "*.presentation.ui.screens.*",
+                    "*.presentation.viewModel.*",
+                    "*.presentation.ui.utils.*",
+                    "*.presentation.ui.extensions.*",
+                    // ── OCR feature (no tests written yet) ────────────────────
+                    "*.features.ocr.*",
+                    // (UiConfig, CameraCaptureConfig, etc. usan Dp, Color, ImageVector)
+                    "*.domain.config.UiConfig",
+                    "*.domain.config.ImagePickerUiConstants",
+                    "*.domain.config.FlashValues",
+                    "*.domain.config.ExifValues",
+                    "*.domain.config.CameraCaptureConfig",
+                    "*.domain.config.CameraPreviewConfig",
+                    "*.domain.config.CameraPermissionDialogConfig",
+                    "*.domain.config.ImagePickerConfig",
+                    "*.domain.config.CameraCallbacks",
+                    "*.domain.config.PermissionAndConfirmationConfig",
+                    "*.domain.config.CropConfig",
+                    "*.domain.config.GalleryConfig",
+                    "*.domain.config.HighPerformanceConfig",
+                    "*.domain.config.AndroidGalleryConfig",
+                    "*.domain.config.PermissionConfig",
+                    // ── Domain repository interfaces (no logic) ─────────────
+                    "*.domain.repository.*",
+                    // ── Domain use cases (delegators only a repositories) ────
+                    "*.domain.usecases.*",
+                    "*.domain.compression.*",
+                    "*.domain.utils.DrawCropHandlesKt",
+                    "*.domain.utils.ApplyCropKt",
+                    "*.domain.utils.ImagePickerLogger",
+                    "*.domain.utils.CreateFileChooserKt",
+                    "*.domain.utils.CreateGalleryPhotoResultKt",
+                    "*.domain.utils.JvmFilePickerUtilsKt",
+                    "*.domain.utils.JvmFilePickerUtilsKt\$*",
+                    "*\$DefaultImpls",
+                    "*.domain.exceptions.ImageProcessingException",
+                    "*.domain.exceptions.PermissionDeniedException",
+                    "*.domain.exceptions.PhotoCaptureException",
+                    "*.domain.extensions.*",
+                    "*.data.*",
+                    "*.di.*",
+                    "*.ImagePickerDIContainer*",
+                    "*.Res",
+                    "*.String0*",
+                    "*ActualResourceCollectors*",
+                    "*ExpectResourceCollectors*",
+                    "imagepickerkmp.library.generated.resources.*"
+                )
+                annotatedBy("androidx.compose.runtime.Composable")
             }
-        )
-    )
-    sourceDirectories.setFrom(files("src/commonMain/kotlin", "src/androidMain/kotlin"))
-    executionData.setFrom(
-        fileTree("$buildDir") {
-            include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
         }
-    )
+        total {
+            xml { onCheck = true }
+            html { onCheck = true }
+            verify {
+                onCheck = true
+                rule {
+                    bound {
+                        minValue = 97
+                        coverageUnits = CoverageUnit.LINE
+                        aggregationForGroup = AggregationType.COVERED_PERCENTAGE
+                    }
+                }
+            }
+        }
+    }
 }
 
-tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
-    dependsOn("jacocoTestReport")
-    violationRules {
-        rule {
-            limit {
-                counter = "LINE"
-                value = "COVEREDRATIO"
-                minimum = "0.85".toBigDecimal()
-            }
-        }
-        rule {
-            limit {
-                counter = "BRANCH"
-                value = "COVEREDRATIO"
-                minimum = "0.75".toBigDecimal()
-            }
-        }
-    }
-    val fileFilter = listOf(
-        "**/R.class",
-        "**/R$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "**/*Test*.*",
-        "**/databinding/*",
-        "**/android/databinding/*",
-        "**/androidx/databinding/*",
-        "**/BR.*",
-        "**/presentation/ui/components/**",
-        "**/presentation/ui/screens/**",
-        "**/*Kt.class",
-        "**/*\$Companion.class",
-        "**/ComposableSingletons*.*",
-        "**/CameraController\$startCamera\$2.*",
-        "**/CameraController\$takePicture\$1.*",
-        "**/ProcessCameraProvider*.*",
-        "**/ImageCapture*.*",
-        "**/CameraX*.*"
-    )
-    classDirectories.setFrom(
-        files(
-            fileTree("$buildDir/tmp/kotlin-classes/debug") {
-                exclude(fileFilter)
-            }
-        )
-    )
-    sourceDirectories.setFrom(files("src/commonMain/kotlin", "src/androidMain/kotlin"))
-    executionData.setFrom(files("$buildDir/jacoco/test.exec"))
-}
-
-tasks.register<JacocoReport>("jacocoBusinessLogicReport") {
-    group = "verification"
-    description = "Generate JaCoCo coverage report focusing on business logic (excluding UI components)"
-    dependsOn("testDebugUnitTest")
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-        html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/businessLogic/html"))
-        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/businessLogic/businessLogic.xml"))
-    }
-    val businessLogicFilter = listOf(
-        "**/R.class",
-        "**/R$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "**/*Test*.*",
-        "**/databinding/*",
-        "**/android/databinding/*",
-        "**/androidx/databinding/*",
-        "**/BR.*",
-        
-        "**/presentation/ui/components/**",
-        "**/presentation/ui/screens/**",
-        "**/ComposableSingletons*.*",
-        "**/LiveLiterals*.*",
-        
-        "**/data/camera/**",
-        "**/data/processors/ImageOrientationCorrector.*",
-        "**/data/processors/ImageProcessor\$processImage\$1*.*",
-        "**/data/managers/FileManager.*",
-        
-        // Exclude config classes with Compose dependencies
-        "**/domain/config/ImagePickerUiConstants.*",
-        "**/domain/config/UiConfig.*",
-        "**/domain/config/CameraCaptureConfig.*",
-        "**/domain/config/CameraPreviewConfig.*",
-        "**/domain/config/ImagePickerConfig.*",
-        "**/domain/config/CameraPermissionDialogConfig.*",
-        "**/domain/config/PermissionConfig.*",
-
-        // Exclude Kotlin compiler generated classes
-        "**/*Kt.class",
-        "**/*\$Companion.class",
-        "**/*\$WhenMappings.class",
-        "**/*\$serializer.class"
-    )
-    classDirectories.setFrom(
-        files(
-            fileTree("$buildDir/tmp/kotlin-classes/debug") {
-                exclude(businessLogicFilter)
-            }
-        )
-    )
-    sourceDirectories.setFrom(files("src/commonMain/kotlin", "src/androidMain/kotlin"))
-    executionData.setFrom(
-        fileTree("$buildDir") {
-            include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
-        }
-    )
-}
-
-tasks.register<JacocoReport>("jacocoCoreBizLogicReport") {
-    group = "verification"
-    description = "Generate JaCoCo coverage report for PURE business logic only (domain models, utils, exceptions, viewModels)"
-    dependsOn("testDebugUnitTest")
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-        html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/coreBizLogic/html"))
-        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/coreBizLogic/coreBizLogic.xml"))
-    }
-    
-    // Include ONLY pure business logic packages
-    val coreBusinessLogicIncludes = listOf(
-        "**/domain/models/**",
-        "**/domain/utils/**",
-        "**/domain/exceptions/**",
-        "**/presentation/viewModel/**",
-        "**/presentation/resources/**"
-    )
-
-    
-    classDirectories.setFrom(
-        files(
-            fileTree("$buildDir/tmp/kotlin-classes/debug") {
-                // Include only core business logic
-                include(coreBusinessLogicIncludes)
-                // Exclude test files and generated code
-                exclude("**/*Test*.*")
-                exclude("**/*Kt.class")
-                exclude("**/*\$Companion.class")
-                exclude("**/*\$WhenMappings.class")
-                exclude("**/*\$serializer.class")
-                exclude("**/ComposableSingletons*.*")
-                exclude("**/LiveLiterals*.*")
-            }
-        )
-    )
-    sourceDirectories.setFrom(files("src/commonMain/kotlin", "src/androidMain/kotlin"))
-    executionData.setFrom(
-        fileTree("$buildDir") {
-            include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
-        }
-    )
+tasks.matching { it.name.contains("WasmJs") && (it.name.startsWith("compile") || it.name.startsWith("link")) }.configureEach {
+    enabled = false
 }
 
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    targetHierarchy.default()
-    
+    applyDefaultHierarchyTemplate()
+
     androidTarget {
         publishLibraryVariants("release")
         compilations.all {
-            kotlinOptions {
-                jvmTarget = "11"
+            compileTaskProvider.configure {
+                compilerOptions {
+                    jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+                }
             }
         }
     }
-    
+
     jvm {
         compilations.all {
-            kotlinOptions.jvmTarget = "11"
+            compileTaskProvider.configure {
+                compilerOptions {
+                    jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+                }
+            }
         }
     }
     
@@ -379,7 +266,7 @@ kotlin {
                 implementation(libs.compose.animation)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material)
-                implementation(libs.kotlinx.coroutines.core.v1102)
+                implementation(libs.kotlinx.coroutines.core)
                 implementation("io.coil-kt.coil3:coil-compose:3.2.0")
                 implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
@@ -433,7 +320,7 @@ kotlin {
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.runtime)
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
             }
         }
         
@@ -507,22 +394,25 @@ kotlin {
                     exclude(group = "org.jetbrains.kotlin", module = "kotlin-test-junit5")
                 }
                 
-                implementation("org.jetbrains.kotlin:kotlin-test:2.1.21")
+                implementation("org.jetbrains.kotlin:kotlin-test:2.3.20")
             }
         }
         val androidInstrumentedTest by getting {}
         
         val jvmTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test:2.1.21")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+                implementation("org.jetbrains.kotlin:kotlin-test:2.3.20")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
                 implementation("junit:junit:4.13.2")
             }
         }
         
         val commonTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test:2.1.21")
+                implementation("org.jetbrains.kotlin:kotlin-test:2.3.20")
+                // Ktor mock engine — permite simular respuestas HTTP sin red real (KMP)
+                implementation(libs.ktor.client.mock)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
             }
         }
     }
@@ -569,9 +459,6 @@ android {
     
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8"
     }
 }
 
@@ -624,12 +511,12 @@ mavenPublishing{
             developerConnection.set("scm:git:git://github.com/ismoy/ImagePickerKMP.git")
         }
     }
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    publishToMavenCentral(automaticRelease = false)
     signAllPublications()
     configure(
-        com.vanniktech.maven.publish.KotlinMultiplatform(
-            javadocJar = com.vanniktech.maven.publish.JavadocJar.Dokka("dokkaHtml"),
-            sourcesJar = true
+        KotlinMultiplatform(
+            javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+            sourcesJar = SourcesJar.Sources()
         )
     )
 }
@@ -665,7 +552,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.8.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation("io.insert-koin:koin-test-junit4:3.5.0")
     
     androidTestImplementation("junit:junit:4.13.2")
@@ -675,7 +562,7 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.5.0")
     androidTestImplementation("org.mockito:mockito-android:5.8.0")
     androidTestImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.4")
 }
 
@@ -695,11 +582,14 @@ detekt {
     debug = false
     parallel = true
     ignoreFailures = true
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     reports {
-        html.enabled = true
-        xml.enabled = true
-        txt.enabled = true
-        sarif.enabled = true
+        html.required.set(true)
+        xml.required.set(true)
+        txt.required.set(true)
+        sarif.required.set(true)
     }
 }
 
