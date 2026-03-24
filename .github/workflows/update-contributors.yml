@@ -1,0 +1,49 @@
+name: Update Contributors List
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # Every Monday at 06:00 UTC
+  push:
+    branches: [main]        # Run on every merge to main
+  workflow_dispatch:        # Allow manual trigger
+
+jobs:
+  update-contributors:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch contributors from GitHub API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -s \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/ismoy/ImagePickerKMP/contributors?per_page=100&anon=false" \
+            -o /tmp/contributors.json
+          echo "Fetched $(wc -c < /tmp/contributors.json) bytes"
+
+      - name: Update README contributors section
+        env:
+          README_PATH: README.md
+        run: |
+          CONTRIBUTORS_JSON="$(cat /tmp/contributors.json)" \
+            README_PATH="README.md" \
+            python3 .github/scripts/update_contributors.py
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git diff --quiet README.md || (
+            git add README.md &&
+            git commit -m "chore: update contributors list [skip ci]" &&
+            git push
+          )
+          echo "Done."

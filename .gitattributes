@@ -1,0 +1,51 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# .gitattributes — GitHub Linguist overrides
+# Goal: repo shows 100% Kotlin (only source .kt files count as language)
+# ──────────────────────────────────────────────────────────────────────────────
+
+# ── Gradle / build config (not source code) ───────────────────────────────────
+*.gradle.kts        linguist-language=Kotlin
+gradlew             linguist-vendored=true
+gradlew.bat         linguist-vendored=true
+
+# ── Build output — generated, never count ─────────────────────────────────────
+build/**            linguist-generated=true
+library/build/**    linguist-generated=true
+
+# ── Kotlin-compiled JS output ─────────────────────────────────────────────────
+kotlin/**           linguist-generated=true
+kotlin-js-store/**  linguist-vendored=true
+build/js/**         linguist-generated=true
+
+# ── NPM / JS tooling ──────────────────────────────────────────────────────────
+create-bundle.js    linguist-vendored=true
+build-and-bundle.sh linguist-documentation=true
+*.json              linguist-vendored=true
+yarn.lock           linguist-vendored=true
+package-lock.json   linguist-vendored=true
+
+# ── Documentation site ────────────────────────────────────────────────────────
+# linguist-vendored = excluded from language stats AND collapsed/hidden in GitHub file explorer
+docs/**             linguist-vendored=true
+.pages/**           linguist-vendored=true
+
+# ── GitHub Actions scripts (Python helpers) ───────────────────────────────────
+.github/scripts/**  linguist-vendored=true
+
+# ── Markdown docs ─────────────────────────────────────────────────────────────
+*.md                linguist-documentation=true
+*.mdx               linguist-documentation=true
+
+# ── CocoaPods / iOS glue ──────────────────────────────────────────────────────
+Podfile             linguist-documentation=true
+*.podspec           linguist-documentation=true
+
+# ── Line endings ──────────────────────────────────────────────────────────────
+*.kt                text eol=lf
+*.kts               text eol=lf
+*.gradle            text eol=lf
+*.xml               text eol=lf
+*.json              text eol=lf
+*.md                text eol=lf
+*.sh                text eol=lf
+gradlew             text eol=lf

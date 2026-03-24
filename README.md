@@ -495,31 +495,26 @@ If this library saves you time or money in production, please consider supportin
 
 ## Contributors
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Thanks to all the wonderful people who have contributed to ImagePickerKMP!
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
+<!-- CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/ismoy">
-          <img src="https://avatars.githubusercontent.com/u/72107070?v=4" width="100px;" alt="ismoy"/><br />
-          <sub><b>ismoy</b></sub>
-        </a><br />
-        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=ismoy" title="Code">💻</a>
-        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=ismoy" title="Documentation">📖</a>
-        <a href="#maintenance-ismoy" title="Maintenance">🚧</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+      <tbody>
+      <tr>
+        <td align="center" valign="top" width="14.28%">
+          <a href="https://github.com/ismoy">
+            <img src="https://avatars.githubusercontent.com/u/72107070?v=4&s=100" width="80px;" alt="ismoy"/><br />
+            <sub><b>ismoy</b></sub>
+          </a><br />
+          <sub>author</sub>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+<!-- CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+> This list is automatically updated every Monday via GitHub Actions from the GitHub API.  
+> Contributions of any kind welcome! See [CONTRIBUTING.md](docs/CONTRIBUTING.md)
 
 ---
 
