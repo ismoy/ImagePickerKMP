@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+  <!-- ── Primary SEO ──────────────────────────────────────────────────── -->
+  <title>ImagePickerKMP – Kotlin Multiplatform Camera & Image Picker for Android, iOS, Desktop &amp; Web</title>
+  <meta name="description" content="ImagePickerKMP: open-source Kotlin Multiplatform library for camera capture and gallery picker on Android, iOS, Desktop (JVM/macOS/Windows/Linux) and Web (WASM/JS). One API for crop, EXIF, OCR and image compression. Best KMP camera library 2025." />
+  <meta name="keywords" content="
+    ImagePickerKMP, kotlin multiplatform camera library, KMP image picker library, android camera library kotlin,
+    android gallery picker kotlin, camera library android compose, compose multiplatform camera, compose multiplatform image picker,
+    kotlin multiplatform gallery picker, kotlin android image picker, android photo picker library, android camera capture kotlin,
+    CameraX kotlin multiplatform, kotlin native camera library, kotlin cross-platform camera,
+    image picker library android, best android camera library 2025, open source android camera kotlin,
+    kotlin multiplatform library android, android kotlin image compression, android exif metadata kotlin,
+    iOS camera library kotlin, iOS PHPickerViewController kotlin, kotlin multiplatform ios gallery,
+    desktop camera library kotlin, desktop image picker jvm, kotlin jvm camera library, compose desktop image picker,
+    macos camera kotlin, windows camera library kotlin, linux camera library kotlin, jvm image picker library,
+    wasm camera library, kotlin wasm image picker, web camera kotlin compose, kotlin js image picker, wasm js gallery picker,
+    multiplatform image picker library, cross platform camera kotlin, kotlin compose gallery, KMP gallery picker,
+    kotlin multiplatform photo picker, kmm image picker, kotlin multiplatform photo library,
+    compose multiplatform photo capture, kotlin image crop library, kotlin image compression library,
+    kotlin ocr library multiplatform, kotlin exif library, kotlin pdf picker, kotlin mime type library,
+    android ocr kotlin, android image crop kotlin, android compress image kotlin,
+    best kotlin multiplatform library, kotlin open source library, MIT license kotlin library, free kotlin camera library,
+    imagepickerkmp maven, io.github.ismoy imagepickerkmp, kotlin library npm, kotlin library wasm
+  " />
+  <meta name="author" content="Ismoy Belizaire" />
+  <link rel="canonical" href="https://ismoy.github.io/ImagePickerKMP/" />
+  <link rel="sitemap" type="application/xml" href="https://ismoy.github.io/ImagePickerKMP/sitemap.xml" />
+  <link rel="alternate" hreflang="es" href="https://ismoy.github.io/ImagePickerKMP/es/" />
+  <link rel="alternate" hreflang="en" href="https://ismoy.github.io/ImagePickerKMP/" />
+  <link rel="alternate" hreflang="x-default" href="https://ismoy.github.io/ImagePickerKMP/" />
+
+  <!-- ── Favicon ──────────────────────────────────────────────────────── -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230ea5e9'/%3E%3Cpath d='M8 22l5-6 4 5 3-4 4 5H8z' fill='white'/%3E%3Ccircle cx='12' cy='11' r='2.5' fill='white'/%3E%3C/svg%3E" />
+  <link rel="icon" type="image/png" sizes="32x32" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230ea5e9'/%3E%3C/svg%3E" />
+  <meta name="theme-color" content="#0ea5e9" />
+
+  <!-- ── Open Graph ────────────────────────────────────────────────────── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ImagePickerKMP" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="es_ES" />
+  <meta property="og:url" content="https://ismoy.github.io/ImagePickerKMP/" />
+  <meta property="og:title" content="ImagePickerKMP – Kotlin Multiplatform Camera & Image Picker" />
+  <meta property="og:description" content="One API for camera capture, gallery selection, crop, EXIF and OCR across Android, iOS, Desktop and Web. Open source · MIT · Kotlin Multiplatform." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/ismoy/CameraKMP/main/thumnailImagePickerKMP.png" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="640" />
+  <meta property="og:image:alt" content="ImagePickerKMP – Kotlin Multiplatform camera and image picker library" />
+
+  <!-- ── Twitter / X Card ─────────────────────────────────────────────── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@ismoy_dev" />
+  <meta name="twitter:creator" content="@ismoy_dev" />
+  <meta name="twitter:title" content="ImagePickerKMP – Kotlin Multiplatform Camera & Image Picker" />
+  <meta name="twitter:description" content="One API for camera capture, gallery selection, crop, EXIF and OCR across Android, iOS, Desktop and Web. Open source · MIT · Kotlin Multiplatform." />
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/ismoy/CameraKMP/main/thumnailImagePickerKMP.png" />
+  <meta name="twitter:image:alt" content="ImagePickerKMP library preview" />
+
+  <!-- ── JSON-LD: SoftwareApplication ─────────────────────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "ImagePickerKMP",
+    "alternateName": ["Image Picker KMP", "KMP Camera Library", "Kotlin Multiplatform Image Picker"],
+    "applicationCategory": "DeveloperApplication",
+    "applicationSubCategory": "Mobile Development Library",
+    "description": "Open-source Kotlin Multiplatform library for camera capture, gallery selection, image crop, EXIF metadata extraction, OCR and compression. Supports Android (CameraX), iOS (PHPickerViewController), Desktop (JVM/macOS/Windows/Linux) and Web (WASM/JS, Kotlin/JS) with a single unified API.",
+    "url": "https://ismoy.github.io/ImagePickerKMP/",
+    "downloadUrl": "https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp",
+    "installUrl": "https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp",
+    "softwareVersion": "1.0.35",
+    "datePublished": "2025-12-01",
+    "dateModified": "2026-03-24",
+    "operatingSystem": ["Android 7.0+", "iOS 14+", "macOS", "Windows", "Linux", "Web WASM", "Web JS"],
+    "programmingLanguage": ["Kotlin", "Kotlin Multiplatform", "JavaScript", "TypeScript"],
+    "keywords": "kotlin multiplatform camera library, android camera kotlin, ios camera kotlin, desktop camera jvm, wasm camera kotlin, image picker android, gallery picker kotlin, compose multiplatform camera, KMP image picker, kotlin image compression, kotlin EXIF, kotlin OCR, kotlin PDF picker, kotlin cross-platform image library, best android camera library",
+    "featureList": [
+      "Camera capture on Android (CameraX), iOS (PHPickerViewController), Desktop and Web",
+      "Gallery picker with multi-selection support",
+      "Image crop with aspect ratio control",
+      "EXIF metadata extraction (GPS, date, camera info)",
+      "Cloud OCR via Gemini, OpenAI, Claude, Azure, Ollama",
+      "Image compression (LOW/MEDIUM/HIGH) with configurable quality",
+      "PDF file selection support",
+      "WASM/JS web support with React integration",
+      "MIT license – free for personal and commercial use"
+    ],
+    "license": "https://opensource.org/licenses/MIT",
+    "inLanguage": ["en", "es"],
+    "author": {
+      "@type": "Person",
+      "name": "Ismoy Belizaire",
+      "url": "https://github.com/ismoy"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Ismoy Belizaire",
+      "url": "https://github.com/ismoy"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "codeRepository": "https://github.com/ismoy/ImagePickerKMP",
+    "sameAs": [
+      "https://github.com/ismoy/ImagePickerKMP",
+      "https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp",
+      "https://www.npmjs.com/package/imagepickerkmp"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5",
+      "ratingCount": "1",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  }
+  </script>
+
+  <!-- ── JSON-LD: TechArticle (platform landing signals) ───────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "ImagePickerKMP – Kotlin Multiplatform Camera & Image Picker for Android, iOS, Desktop and Web",
+    "description": "Complete guide to using ImagePickerKMP, the Kotlin Multiplatform library for camera capture and gallery selection on Android, iOS, JVM Desktop (macOS, Windows, Linux) and Web (WASM/JS).",
+    "url": "https://ismoy.github.io/ImagePickerKMP/",
+    "datePublished": "2025-12-01",
+    "dateModified": "2026-03-24",
+    "inLanguage": "en",
+    "author": {"@type": "Person", "name": "Ismoy Belizaire", "url": "https://github.com/ismoy"},
+    "publisher": {"@type": "Person", "name": "Ismoy Belizaire", "url": "https://github.com/ismoy"},
+    "about": [
+      {"@type": "SoftwareApplication", "name": "ImagePickerKMP on Android", "operatingSystem": "Android", "applicationCategory": "DeveloperApplication"},
+      {"@type": "SoftwareApplication", "name": "ImagePickerKMP on iOS",     "operatingSystem": "iOS",     "applicationCategory": "DeveloperApplication"},
+      {"@type": "SoftwareApplication", "name": "ImagePickerKMP on Desktop", "operatingSystem": "macOS, Windows, Linux", "applicationCategory": "DeveloperApplication"},
+      {"@type": "SoftwareApplication", "name": "ImagePickerKMP on Web",     "operatingSystem": "Web WASM/JS",           "applicationCategory": "DeveloperApplication"}
+    ],
+    "keywords": "android camera library kotlin, ios camera library kotlin, desktop camera jvm kotlin, wasm camera library kotlin, compose multiplatform camera, kotlin multiplatform image picker, android gallery picker kotlin"
+  }
+  </script>
+
+  <!-- ── JSON-LD: FAQPage ──────────────────────────────────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is ImagePickerKMP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ImagePickerKMP is an open-source Kotlin Multiplatform library that provides a unified API for camera capture, gallery selection, image crop, EXIF metadata extraction, OCR and compression across Android, iOS, Desktop and Web (WASM/JS)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the best camera library for Android in Kotlin?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ImagePickerKMP is a top open-source Kotlin library for Android camera capture and gallery selection. It uses CameraX under the hood, supports Compose Multiplatform, and works across Android, iOS, Desktop and Web with a single API. Available on Maven Central: io.github.ismoy:imagepickerkmp:1.0.35."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there a Kotlin Multiplatform image picker library for Android and iOS?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ImagePickerKMP provides a single unified API for camera capture and gallery selection on Android (CameraX) and iOS (PHPickerViewController), plus Desktop and Web, using Kotlin Multiplatform and Compose Multiplatform."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I add a camera library to a Compose Multiplatform project?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Add ImagePickerKMP to your shared module: implementation('io.github.ismoy:imagepickerkmp:1.0.35'). Requires Kotlin 2.3.20+ and Compose Multiplatform. Works on Android, iOS, Desktop (JVM) and Web (WASM/JS) from the same source file."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does ImagePickerKMP support Desktop (JVM, macOS, Windows, Linux)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ImagePickerKMP fully supports JVM Desktop targets including macOS, Windows and Linux. You can capture from the system camera, pick images from the file system, and compress or crop them, all from shared Kotlin code."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there a camera or image picker library for Kotlin/WASM and Kotlin/JS?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ImagePickerKMP supports Kotlin/WASM and Kotlin/JS targets for web applications. It also ships as an NPM package for React integration, making it the only Kotlin Multiplatform library with full WASM/JS camera and gallery support."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I pick images from the gallery on Android using Kotlin?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use ImagePickerKMP's GalleryPickerLauncher composable in your shared Kotlin code. It wraps Android's modern photo picker and PHPickerViewController on iOS. Add the dependency io.github.ismoy:imagepickerkmp:1.0.35 and call GalleryPickerLauncher with an onResult callback."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What platforms does ImagePickerKMP support?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ImagePickerKMP supports: Android (minSdk 24 / API 7.0+), iOS 14+, Desktop JVM (macOS, Windows, Linux) and Web (Kotlin/WASM, Kotlin/JS). All from a single shared Kotlin codebase."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is ImagePickerKMP free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ImagePickerKMP is fully open-source and released under the MIT license. Free for personal and commercial use with no restrictions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does ImagePickerKMP support PDF selection?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Use MimeType.APPLICATION_PDF in the mimeTypes list when configuring GalleryPickerLauncher to allow PDF file selection from the device gallery."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use ImagePickerKMP with React on the web?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. ImagePickerKMP ships an NPM package for React integration. Install it with npm install imagepickerkmp and use the useImagePicker hook to capture images or pick from the gallery in your React web application."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I extract EXIF metadata from images in Kotlin Multiplatform?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ImagePickerKMP automatically extracts EXIF metadata (GPS coordinates, date/time, camera model, aperture, shutter speed, ISO and more) from captured or selected photos. Enable it in the config and access it via PhotoResult.exif."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- ── JSON-LD: BreadcrumbList ───────────────────────────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://ismoy.github.io/ImagePickerKMP/"},
+      {"@type":"ListItem","position":2,"name":"Documentation","item":"https://ismoy.github.io/ImagePickerKMP/#installation"},
+      {"@type":"ListItem","position":3,"name":"API Reference","item":"https://ismoy.github.io/ImagePickerKMP/#api"}
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root{--bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--border:#242430;--text:#f0f0f8;--text2:#8888a8;--accent:#0ea5e9;--accent2:#38bdf8;--green:#22c55e;--blue:#6366f1;--orange:#f97316;--yellow:#eab308;--red:#ef4444;--cyan:#06b6d4;--sidebar-w:260px;--panel-w:260px;--header-h:56px}
+    html.light{--bg:#f8f9fc;--bg2:#ffffff;--bg3:#f0f2f7;--border:#dde1ea;--text:#0f1117;--text2:#5c6580;--accent:#0284c7;--accent2:#0369a1}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+    ::-webkit-scrollbar{width:6px;height:6px}
+    ::-webkit-scrollbar-track{background:var(--bg2)}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+    header{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--header-h);background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:16px}
+    .header-left{display:flex;align-items:center;gap:10px}
+    .logo-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:7px;display:flex;align-items:center;justify-content:center}
+    .logo-icon svg{width:16px;height:16px;fill:white}
+    .logo-text{font-size:15px;font-weight:700;color:var(--text);text-decoration:none}
+    .header-version{font-size:11px;padding:2px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2)}
+    .header-right{display:flex;align-items:center;gap:8px}
+    .header-nav{display:flex;gap:4px}
+    .header-nav a{font-size:13px;color:var(--text2);text-decoration:none;padding:5px 10px;border-radius:6px;transition:all .15s}
+    .header-nav a:hover{color:var(--text);background:var(--bg3)}
+    .btn-gh{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text);text-decoration:none;font-size:13px;font-weight:500;padding:6px 12px;border-radius:7px;transition:all .15s;white-space:nowrap}
+    .btn-gh:hover{border-color:var(--accent);color:var(--accent2)}
+    .btn-theme{display:flex;align-items:center;justify-content:center;width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .15s;color:var(--text2);flex-shrink:0}
+    .btn-theme:hover{border-color:var(--accent);color:var(--accent)}
+    .hamburger{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:6px}
+    .layout{display:flex;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h))}
+    .sidebar{position:fixed;top:var(--header-h);bottom:0;left:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0 40px;transition:transform .25s ease;z-index:90}
+    .right-panel{position:fixed;top:var(--header-h);bottom:0;right:0;width:var(--panel-w);background:var(--bg2);border-left:1px solid var(--border);overflow-y:auto;padding:20px 16px 40px;display:flex;flex-direction:column;gap:24px}
+    .rp-title{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--text2);text-transform:uppercase;margin-bottom:10px;display:block}
+    .contributor-grid{display:flex;flex-wrap:wrap;gap:6px}
+    .contributor{display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;transition:transform .15s}
+    .contributor:hover{transform:translateY(-2px)}
+    .contributor img{width:36px;height:36px;border-radius:50%;border:2px solid var(--border);transition:border-color .15s}
+    .contributor:hover img{border-color:var(--accent)}
+    .contributor span{font-size:10px;color:var(--text2);max-width:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+    .sponsor-list{display:flex;flex-direction:column;gap:8px}
+    .sponsor-item{display:flex;align-items:center;gap:8px;text-decoration:none;padding:7px 8px;border-radius:7px;border:1px solid var(--border);transition:all .15s;background:var(--bg3)}
+    .sponsor-item:hover{border-color:var(--accent);background:rgba(14,165,233,.06)}
+    .sponsor-item img{width:28px;height:28px;border-radius:50%;flex-shrink:0}
+    .sponsor-item-info{overflow:hidden}
+    .sponsor-item-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sponsor-item-role{font-size:11px;color:var(--text2)}
+    .sponsor-cta{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;color:var(--accent2);text-decoration:none;padding:8px;border:1px dashed rgba(14,165,233,.35);border-radius:7px;transition:all .15s;margin-top:4px}
+    .sponsor-cta:hover{background:rgba(14,165,233,.07);border-color:var(--accent)}
+    .rp-skeleton{width:36px;height:36px;border-radius:50%;background:var(--bg3);animation:shimmer 1.4s infinite}
+    .rp-stat-row{display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:6px 8px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);transition:border-color .15s}
+    .rp-stat-row:hover{border-color:var(--accent)}
+    .rp-stat-label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
+    .rp-commit-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:5px}
+    .rp-commit-msg{font-size:12px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+    .rp-commit-meta{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px}
+    .rp-commit-sha{font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--bg2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--accent2);text-decoration:none;flex-shrink:0}
+    .rp-commit-sha:hover{border-color:var(--accent)}
+    .rp-quicklink{display:flex;align-items:center;gap:8px;text-decoration:none;padding:7px 9px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);transition:all .15s;font-size:12px;color:var(--text2);font-weight:500}
+    .rp-quicklink:hover{border-color:var(--accent);color:var(--accent2);background:rgba(14,165,233,.06)}
+    .rp-quicklink svg{flex-shrink:0}
+    .rp-tech-chips{display:flex;flex-wrap:wrap;gap:5px}
+    .rp-chip{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;border:1px solid;letter-spacing:.03em}
+    .chip-kotlin{background:rgba(126,82,193,.15);border-color:rgba(126,82,193,.4);color:#b48ef7}
+    .chip-compose{background:rgba(14,165,233,.12);border-color:rgba(14,165,233,.3);color:var(--accent2)}
+    .chip-kmp{background:rgba(249,115,22,.12);border-color:rgba(249,115,22,.3);color:#fb923c}
+    .chip-android{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:#4ade80}
+    .chip-ios{background:rgba(96,165,250,.12);border-color:rgba(96,165,250,.3);color:#93c5fd}
+    .chip-web{background:rgba(234,179,8,.12);border-color:rgba(234,179,8,.3);color:#fde047}
+    .chip-mit{background:rgba(148,163,184,.1);border-color:rgba(148,163,184,.25);color:#94a3b8}
+    @keyframes shimmer{0%,100%{opacity:.4}50%{opacity:1}}
+    .sidebar-section{padding:0 12px 16px}
+    .sidebar-label{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--text2);text-transform:uppercase;padding:4px 8px 8px;display:block}
+    .sidebar-link{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);text-decoration:none;padding:6px 8px;border-radius:6px;transition:all .15s;cursor:pointer}
+    .sidebar-link:hover{background:var(--bg3);color:var(--text)}
+    .sidebar-link.active{background:rgba(14,165,233,.12);color:var(--accent2)}
+    .sidebar-link .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .content{margin-left:var(--sidebar-w);margin-right:var(--panel-w);flex:1;max-width:900px;padding:48px 48px 80px}
+    .section{margin-bottom:64px;scroll-margin-top:80px}
+    h1{font-size:2rem;font-weight:700;line-height:1.2;margin-bottom:12px;color:#fff}
+    h2{font-size:1.4rem;font-weight:700;margin-bottom:12px;color:#fff}
+    h3{font-size:1.05rem;font-weight:600;margin-bottom:10px;color:var(--text)}
+    p{color:var(--text2);margin-bottom:16px}
+    p a{color:var(--accent2);text-decoration:none}
+    p a:hover{text-decoration:underline}
+    .divider{border:none;border-top:1px solid var(--border);margin:48px 0}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.25);color:var(--accent2);font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px;margin-bottom:16px}
+    .hero-subtitle{font-size:1.05rem;color:var(--text2);margin-bottom:24px;max-width:560px}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:32px}
+    .btn-primary{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:14px;font-weight:600;padding:9px 18px;border-radius:8px;text-decoration:none;transition:all .15s;letter-spacing:-.01em}
+    .btn-primary:hover{background:var(--accent2);color:#000;transform:translateY(-1px);box-shadow:0 4px 20px rgba(14,165,233,.3)}
+    .btn-secondary{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:14px;font-weight:500;padding:9px 18px;border-radius:8px;text-decoration:none;transition:all .15s}
+    .btn-secondary:hover{border-color:var(--accent);color:var(--accent2)}
+    .platform-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+    .platform-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:6px;border:1px solid}
+    .badge-android{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80}
+    .badge-ios{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3);color:#60a5fa}
+    .badge-desktop{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:#fb923c}
+    .badge-web{background:rgba(234,179,8,.1);border-color:rgba(234,179,8,.3);color:#facc15}
+    .badge-wasm{background:rgba(14,165,233,.1);border-color:rgba(14,165,233,.3);color:var(--accent2)}
+    .code-block{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+    .code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:12px;color:var(--text2)}
+    .code-lang{display:flex;align-items:center;gap:6px}
+    .code-lang-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+    .copy-btn{background:none;border:1px solid var(--border);color:var(--text2);font-size:11px;padding:3px 8px;border-radius:5px;cursor:pointer;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent2)}
+    pre{padding:20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.75;color:#cdd6f4}
+    .kw{color:#89b4fa}.fn{color:#89dceb}.str{color:#a6e3a1}.num{color:#fab387}.cmt{color:#585b70;font-style:italic}.type{color:#f9e2af}.ann{color:#74c7ec}.bool{color:#f38ba8}
+    .tabs{display:flex;gap:2px;margin-bottom:0;border-bottom:1px solid var(--border)}
+    .tab{font-size:13px;font-weight:500;padding:8px 14px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;user-select:none;background:none;border-top:none;border-left:none;border-right:none}
+    .tab:hover{color:var(--text)}
+    .tab.active{color:var(--accent2);border-bottom-color:var(--accent)}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+    .tabs-wrapper{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+    .tabs-wrapper .tabs{background:var(--bg3);border-bottom:1px solid var(--border);padding:0 16px}
+    .tabs-wrapper pre{background:var(--bg2);border-radius:0}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:20px}
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .15s}
+    .card:hover{border-color:rgba(14,165,233,.35)}
+    .card-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:18px}
+    .card h3{font-size:14px;margin-bottom:6px}
+    .card p{font-size:13px;margin-bottom:0}
+    .callout{border-radius:8px;padding:14px 16px;display:flex;gap:12px;margin-bottom:20px;border:1px solid}
+    .callout-info{background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.25)}
+    .callout-warn{background:rgba(234,179,8,.07);border-color:rgba(234,179,8,.25)}
+    .callout-tip{background:rgba(34,197,94,.07);border-color:rgba(34,197,94,.25)}
+    .callout-icon{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;margin-top:1px}
+    .callout-body{font-size:13.5px;color:var(--text2)}
+    .callout-body strong{color:var(--text)}
+    .doc-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px}
+    .doc-table th{text-align:left;padding:10px 14px;background:var(--bg3);color:var(--text2);font-weight:600;border-bottom:1px solid var(--border)}
+    .doc-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2)}
+    .doc-table tr:last-child td{border-bottom:none}
+    .doc-table tr:hover td{background:rgba(255,255,255,.02)}
+    .doc-table code{background:var(--bg3);border:1px solid var(--border);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent2)}
+    .check svg{color:var(--green)}.cross svg{color:var(--red)}
+    .install-tabs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+    code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--bg3);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--accent2)}
+    pre code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
+    #site-footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 48px;margin-left:var(--sidebar-w);margin-right:var(--panel-w);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+    .footer-brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .footer-brand-inner{display:flex;align-items:center;gap:10px}
+    .footer-copy{color:var(--text2);font-size:13px}
+    .footer-links{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+    .footer-links a{color:var(--text2);text-decoration:none;font-size:13px;transition:color .15s}
+    .footer-links a:hover{color:var(--accent2)}
+    @media(max-width:1280px){
+      .right-panel{display:none}
+      .content{margin-right:0}
+      #site-footer{margin-right:0}
+    }
+    @media(max-width:900px){
+      .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+      .content{margin-left:0;margin-right:0;padding:32px 20px 60px}
+      .hamburger{display:flex}.header-nav{display:none}
+      .install-tabs{grid-template-columns:1fr}
+      #site-footer{margin-left:0;margin-right:0;flex-direction:column;align-items:center;text-align:center;padding:24px 20px;gap:16px}
+      .footer-brand{justify-content:center}
+      .footer-links{gap:12px;justify-content:center}
+    }
+    @media(max-width:600px){
+      h1{font-size:1.5rem}h2{font-size:1.2rem}
+      .content{padding:24px 16px 60px}
+      pre{font-size:12px;padding:14px}
+      #site-footer{padding:20px 16px}
+      .footer-brand{flex-direction:column;align-items:center;gap:8px}
+      .footer-links{gap:10px;justify-content:center}
+      .footer-links a{font-size:12px}
+    }
+    html.light header{background:rgba(248,249,252,.95)}
+    html.light pre{color:#24292e}
+    html.light .kw{color:#0550ae}.light .fn{color:#0070b8}.light .str{color:#116329}.light .num{color:#953800}.light .cmt{color:#6e7781;font-style:italic}.light .type{color:#953800}.light .ann{color:#0550ae}.light .bool{color:#cf222e}
+    .overlay{display:none;position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.5)}
+    .overlay.open{display:block}
+
+    /* ── Reading progress bar ── */
+    #read-progress{position:fixed;top:0;left:0;z-index:200;height:2px;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .1s linear;pointer-events:none}
+
+    /* ── Back to top ── */
+    #back-top{position:fixed;bottom:32px;right:32px;z-index:150;width:38px;height:38px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(14,165,233,.35);opacity:0;transform:translateY(12px);transition:opacity .25s,transform .25s;pointer-events:none}
+    #back-top.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+    #back-top:hover{background:var(--accent2);transform:translateY(-2px)}
+    @media(max-width:1280px){#back-top{right:16px;bottom:20px}}
+
+    /* ── Toast ── */
+    #toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(12px);z-index:300;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:13px;padding:9px 18px;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.3);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* ── Search modal ── */
+    #search-overlay{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding-top:80px}
+    #search-overlay.open{display:flex}
+    #search-modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:560px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+    #search-input{width:100%;padding:16px 20px;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;outline:none}
+    #search-input::placeholder{color:var(--text2)}
+    #search-results{max-height:360px;overflow-y:auto;padding:8px}
+    .search-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--text);transition:background .12s;cursor:pointer}
+    .search-item:hover,.search-item.focused{background:var(--bg3)}
+    .search-item-icon{width:32px;height:32px;border-radius:7px;background:rgba(14,165,233,.12);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+    .search-item-info{overflow:hidden}
+    .search-item-title{font-size:13px;font-weight:600;color:var(--text)}
+    .search-item-desc{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .search-hint{padding:12px 16px;font-size:12px;color:var(--text2);border-top:1px solid var(--border);display:flex;justify-content:space-between}
+    kbd{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text2)}
+
+    /* ── Search trigger button ── */
+    .btn-search{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:13px;padding:5px 12px;border-radius:7px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif}
+    .btn-search:hover{border-color:var(--accent);color:var(--accent2)}
+    .btn-search kbd{font-size:10px}
+    @media(max-width:900px){.btn-search span{display:none}.btn-search{padding:6px 8px}}
+
+    /* ── Version badge in hero ── */
+    .version-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.2);border-radius:20px;padding:5px 12px;font-size:12px;text-decoration:none;transition:all .15s;margin-bottom:20px}
+    .version-pill:hover{background:rgba(14,165,233,.14);border-color:rgba(14,165,233,.4)}
+    .version-pill-tag{background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;letter-spacing:.04em}
+    .version-pill-text{color:var(--text2);font-size:12px}
+    .version-pill-arrow{color:var(--accent2)}
+
+    /* ── Changelog entries ── */
+    .changelog-entry{border-left:2px solid var(--border);padding-left:20px;margin-bottom:32px;position:relative}
+    .changelog-entry::before{content:'';position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--border);border:2px solid var(--bg)}
+    .changelog-entry.latest{border-left-color:var(--accent)}
+    .changelog-entry.latest::before{background:var(--accent)}
+    .changelog-version{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .changelog-version-num{font-size:14px;font-weight:700;color:var(--text)}
+    .changelog-date{font-size:12px;color:var(--text2)}
+    .changelog-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.04em}
+    .tag-new{background:rgba(34,197,94,.15);color:#4ade80}
+    .tag-fix{background:rgba(239,68,68,.15);color:#f87171}
+    .tag-break{background:rgba(234,179,8,.15);color:#facc15}
+    .changelog-items{list-style:none;display:flex;flex-direction:column;gap:5px}
+    .changelog-items li{font-size:13px;color:var(--text2);padding-left:16px;position:relative}
+    .changelog-items li::before{content:'·';position:absolute;left:4px;color:var(--accent)}
+    .changelog-items li strong{color:var(--text)}
+
+    /* ── Section read-time badge ── */
+    .read-time{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);margin-bottom:14px;margin-top:-4px}
+    .read-time svg{opacity:.6}
+
+    /* ── "New" label on sidebar items ── */
+    .badge-new{font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;background:rgba(34,197,94,.15);color:#4ade80;letter-spacing:.03em;margin-left:auto}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="logo-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z"/></svg></div>
+    <a href="#" class="logo-text">ImagePickerKMP</a>
+    <span class="header-version">v1.0.35</span>
+  </div>
+  <nav class="header-nav">
+    <a href="#installation">Installation</a>
+    <a href="#camera">Camera</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#crop">Crop</a>
+    <a href="#exif">EXIF</a>
+    <a href="#ocr">OCR</a>
+  </nav>
+  <div class="header-right">
+    <button class="btn-search" onclick="openSearch()" title="Search (⌘K)">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Search</span>
+      <kbd>⌘K</kbd>
+    </button>
+    <button class="btn-theme" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle light/dark mode">
+      <svg id="icon-moon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <svg id="icon-sun" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <a href="https://github.com/ismoy/ImagePickerKMP" target="_blank" rel="noopener" class="btn-gh">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68Z"/></svg>
+      GitHub
+    </a>
+  </div>
+</header>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div id="read-progress"></div>
+
+<!-- Search Modal -->
+<div id="search-overlay" onclick="closeSearchOutside(event)">
+  <div id="search-modal" role="dialog" aria-label="Search documentation">
+    <input id="search-input" type="text" placeholder="Search docs…" oninput="filterSearch()" onkeydown="searchKeyNav(event)" autocomplete="off" />
+    <div id="search-results"></div>
+    <div class="search-hint">
+      <span>Navigate: <kbd>↑</kbd> <kbd>↓</kbd> &nbsp; Open: <kbd>↵</kbd></span>
+      <span>Close: <kbd>Esc</kbd></span>
+    </div>
+  </div>
+</div>
+
+<!-- Back to top -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top" title="Back to top">
+  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- Toast notification -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- RIGHT PANEL: Contributors & Sponsors -->
+<aside class="right-panel">
+
+  <!-- Contributors -->
+  <div>
+    <span class="rp-title">Contributors</span>
+    <div class="contributor-grid" id="contributors-grid">
+      <!-- loaded dynamically from GitHub API -->
+      <div class="rp-skeleton"></div>
+      <div class="rp-skeleton"></div>
+      <div class="rp-skeleton"></div>
+    </div>
+    <a href="https://github.com/ismoy/ImagePickerKMP/graphs/contributors" target="_blank" rel="noopener"
+       style="font-size:11px;color:var(--text2);text-decoration:none;display:inline-block;margin-top:8px;transition:color .15s"
+       onmouseover="this.style.color='var(--accent2)'" onmouseout="this.style.color='var(--text2)'">
+      View all contributors →
+    </a>
+  </div>
+
+  <!-- Sponsors -->
+  <div>
+    <span class="rp-title">Sponsors</span>
+    <div id="sponsors-grid" class="contributor-grid">
+      <div class="rp-skeleton"></div>
+      <div class="rp-skeleton"></div>
+    </div>
+    <a class="sponsor-cta" href="https://github.com/sponsors/ismoy" target="_blank" rel="noopener">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Become a sponsor
+    </a>
+  </div>
+
+  <!-- Stats -->
+  <div>
+    <span class="rp-title">Project Stats</span>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <a href="https://github.com/ismoy/ImagePickerKMP/stargazers" target="_blank" rel="noopener"
+         style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:6px 8px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);transition:border-color .15s"
+         onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Stars
+        </span>
+        <img src="https://img.shields.io/github/stars/ismoy/ImagePickerKMP?style=flat&color=0ea5e9&labelColor=18181f&label=" alt="stars" style="height:18px;border-radius:4px" loading="lazy" />
+      </a>
+      <a href="https://github.com/ismoy/ImagePickerKMP/network/members" target="_blank" rel="noopener"
+         style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:6px 8px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);transition:border-color .15s"
+         onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+          Forks
+        </span>
+        <img src="https://img.shields.io/github/forks/ismoy/ImagePickerKMP?style=flat&color=22c55e&labelColor=18181f&label=" alt="forks" style="height:18px;border-radius:4px" loading="lazy" />
+      </a>
+      <a href="https://github.com/ismoy/ImagePickerKMP/releases" target="_blank" rel="noopener"
+         style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:6px 8px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);transition:border-color .15s"
+         onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          Version
+        </span>
+        <img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp?style=flat&color=f97316&labelColor=18181f&label=" alt="version" style="height:18px;border-radius:4px" loading="lazy" />
+      </a>
+      <a href="https://app.codecov.io/gh/ismoy/ImagePickerKMP" target="_blank" rel="noopener"
+         style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:6px 8px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);transition:border-color .15s"
+         onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Coverage
+        </span>
+        <img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg?style=flat" alt="coverage" style="height:18px;border-radius:4px" loading="lazy" />
+      </a>
+      <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/ci.yml" target="_blank" rel="noopener"
+         style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:6px 8px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);transition:border-color .15s"
+         onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          CI
+        </span>
+        <img src="https://img.shields.io/github/actions/workflow/status/ismoy/ImagePickerKMP/ci.yml?branch=main&style=flat&label=&color=22c55e&labelColor=18181f" alt="CI" style="height:18px;border-radius:4px" loading="lazy" />
+      </a>
+      <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml" target="_blank" rel="noopener"
+         style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:6px 8px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);transition:border-color .15s"
+         onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          Detekt
+        </span>
+        <img src="https://img.shields.io/github/actions/workflow/status/ismoy/ImagePickerKMP/detekt.yml?branch=main&style=flat&label=&color=a855f7&labelColor=18181f" alt="Detekt" style="height:18px;border-radius:4px" loading="lazy" />
+      </a>
+    </div>
+  </div>
+
+  <!-- Latest Commit -->
+  <div>
+    <span class="rp-title">Latest Commit</span>
+    <div id="rp-commit" class="rp-commit-box">
+      <div class="rp-commit-msg" style="color:var(--text2)">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Issues & PRs -->
+  <div>
+    <span class="rp-title">Issues &amp; PRs</span>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <a href="https://github.com/ismoy/ImagePickerKMP/issues" target="_blank" rel="noopener" class="rp-stat-row">
+        <span class="rp-stat-label">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Open Issues
+        </span>
+        <img src="https://img.shields.io/github/issues/ismoy/ImagePickerKMP?style=flat&color=ef4444&labelColor=18181f&label=" alt="issues" style="height:18px;border-radius:4px" loading="lazy" />
+      </a>
+      <a href="https://github.com/ismoy/ImagePickerKMP/pulls" target="_blank" rel="noopener" class="rp-stat-row">
+        <span class="rp-stat-label">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 012 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>
+          Open PRs
+        </span>
+        <img src="https://img.shields.io/github/issues-pr/ismoy/ImagePickerKMP?style=flat&color=a855f7&labelColor=18181f&label=" alt="PRs" style="height:18px;border-radius:4px" loading="lazy" />
+      </a>
+      <a href="https://github.com/ismoy/ImagePickerKMP/issues?q=is%3Aissue+is%3Aclosed" target="_blank" rel="noopener" class="rp-stat-row">
+        <span class="rp-stat-label">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Closed Issues
+        </span>
+        <img src="https://img.shields.io/github/issues-closed/ismoy/ImagePickerKMP?style=flat&color=22c55e&labelColor=18181f&label=" alt="closed" style="height:18px;border-radius:4px" loading="lazy" />
+      </a>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div>
+    <span class="rp-title">Quick Links</span>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <a href="https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp" target="_blank" rel="noopener" class="rp-quicklink">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        Maven Central
+      </a>
+      <a href="https://www.npmjs.com/package/imagepickerkmp" target="_blank" rel="noopener" class="rp-quicklink">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10v10H7z"/><path d="M12 7v10"/></svg>
+        NPM Package
+      </a>
+      <a href="https://app.codecov.io/gh/ismoy/ImagePickerKMP" target="_blank" rel="noopener" class="rp-quicklink">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Code Coverage
+      </a>
+      <a href="https://github.com/ismoy/ImagePickerKMP/discussions" target="_blank" rel="noopener" class="rp-quicklink">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Discussions
+      </a>
+      <a href="https://github.com/ismoy/ImagePickerKMP/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" class="rp-quicklink">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Contributing
+      </a>
+    </div>
+  </div>
+
+  <!-- Tech Stack -->
+  <div>
+    <span class="rp-title">Tech Stack</span>
+    <div class="rp-tech-chips">
+      <span class="rp-chip chip-kotlin">Kotlin</span>
+      <span class="rp-chip chip-compose">Compose MP</span>
+      <span class="rp-chip chip-kmp">KMP</span>
+      <span class="rp-chip chip-android">Android</span>
+      <span class="rp-chip chip-ios">iOS</span>
+      <span class="rp-chip chip-web">WASM / JS</span>
+      <span class="rp-chip chip-mit">MIT License</span>
+    </div>
+  </div>
+
+</aside>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-section">
+    <span class="sidebar-label">Getting Started</span>
+    <a class="sidebar-link active" href="#introduction"><span class="dot" style="background:#0ea5e9"></span>Introduction</a>
+    <a class="sidebar-link" href="#requirements"><span class="dot" style="background:#6366f1"></span>Requirements</a>
+    <a class="sidebar-link" href="#installation"><span class="dot" style="background:#22c55e"></span>Installation</a>
+    <a class="sidebar-link" href="#permissions"><span class="dot" style="background:#f97316"></span>Permissions</a>
+  </div>
+  <div class="sidebar-section">
+    <span class="sidebar-label">Features</span>
+    <a class="sidebar-link" href="#camera"><span class="dot" style="background:#38bdf8"></span>Camera Capture</a>
+    <a class="sidebar-link" href="#gallery"><span class="dot" style="background:#22c55e"></span>Gallery Picker</a>
+    <a class="sidebar-link" href="#crop"><span class="dot" style="background:#f97316"></span>Image Crop</a>
+    <a class="sidebar-link" href="#compression"><span class="dot" style="background:#6366f1"></span>Compression</a>
+    <a class="sidebar-link" href="#exif"><span class="dot" style="background:#eab308"></span>EXIF Metadata</a>
+    <a class="sidebar-link" href="#extensions"><span class="dot" style="background:#06b6d4"></span>Extensions</a>
+    <a class="sidebar-link" href="#mime-types"><span class="dot" style="background:#a78bfa"></span>MIME Types</a>
+    <a class="sidebar-link" href="#customization"><span class="dot" style="background:#f59e0b"></span>UI Customization</a>
+    <a class="sidebar-link" href="#react"><span class="dot" style="background:#38bdf8"></span>React / Web</a>
+    <a class="sidebar-link" href="#ocr"><span class="dot" style="background:#ef4444"></span>OCR (Experimental)<span class="badge-new">NEW</span></a>
+    <a class="sidebar-link" href="#pdf"><span class="dot" style="background:#8b5cf6"></span>PDF Support</a>
+  </div>
+  <div class="sidebar-section">
+    <span class="sidebar-label">Reference</span>
+    <a class="sidebar-link" href="#platform-support"><span class="dot" style="background:#94a3b8"></span>Platform Matrix</a>
+    <a class="sidebar-link" href="#api"><span class="dot" style="background:#94a3b8"></span>API Reference</a>
+    <a class="sidebar-link" href="#changelog"><span class="dot" style="background:#0ea5e9"></span>Changelog<span class="badge-new">v1.0.35</span></a>
+  </div>
+  <div class="sidebar-section">
+    <span class="sidebar-label">Links</span>
+    <a class="sidebar-link" href="https://github.com/ismoy/ImagePickerKMP" target="_blank">
+      <svg width="14" height="14" fill="currentColor" viewBox="0 0 256 256" style="flex-shrink:0"><path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68Z"/></svg>
+      GitHub Repo
+    </a>
+    <a class="sidebar-link" href="https://github.com/ismoy/CameraKMP" target="_blank">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Example App
+    </a>
+    <a class="sidebar-link" href="https://discord.gg/EjSQTeyh" target="_blank">
+      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
+      Discord
+    </a>
+    <a class="sidebar-link" href="https://github.com/sponsors/ismoy" target="_blank">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Sponsor
+    </a>
+  </div>
+</aside>
+
+<div class="layout">
+<main class="content">
+
+<!-- INTRODUCTION -->
+<section class="section" id="introduction">
+  <a href="https://github.com/ismoy/ImagePickerKMP/releases/tag/v1.0.35" target="_blank" rel="noopener" class="version-pill">
+    <span class="version-pill-tag">NEW</span>
+    <span class="version-pill-text">v1.0.35 — fileSize now in bytes, improved WASM support</span>
+    <span class="version-pill-arrow">→</span>
+  </a>
+  <div class="hero-badge">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    Open Source &bull; MIT License
+  </div>
+  <h1>ImagePickerKMP</h1>
+  <p class="hero-subtitle">The most complete <strong style="color:var(--text)">camera &amp; image picker library</strong> for Kotlin Multiplatform. One unified API for Android, iOS, Desktop, Web and WASM.</p>
+  <div class="platform-grid">
+    <span class="platform-badge badge-android"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Android API 21+</span>
+    <span class="platform-badge badge-ios"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> iOS 12.0+</span>
+    <span class="platform-badge badge-desktop"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Desktop JVM</span>
+    <span class="platform-badge badge-web"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> JS / Web</span>
+    <span class="platform-badge badge-wasm"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> WASM</span>
+  </div>
+  <div class="hero-actions">
+    <a href="#installation" class="btn-primary">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29"/></svg>
+      Quick Install
+    </a>
+    <a href="https://github.com/ismoy/CameraKMP" target="_blank" class="btn-secondary">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Example App
+    </a>
+    <a href="https://ismoy.github.io/ImagePickerKMP-Demos" target="_blank" class="btn-secondary">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      Live Demo
+    </a>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="card-icon" style="background:rgba(14,165,233,.12)"><svg width="20" height="20" fill="none" stroke="#38bdf8" stroke-width="1.75" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div><h3>Camera Capture</h3><p>Native camera with flash, rotation, zoom, crop and compression on Android &amp; iOS.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(34,197,94,.15)"><svg width="20" height="20" fill="none" stroke="#4ade80" stroke-width="1.75" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><h3>Gallery Picker</h3><p>Single &amp; multiple selection, MIME filtering, selection limit, EXIF extraction.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(249,115,22,.15)"><svg width="20" height="20" fill="none" stroke="#fb923c" stroke-width="1.75" viewBox="0 0 24 24"><path d="M6 18L18 6M8 6h10v10"/><rect x="2" y="14" width="8" height="8" rx="1"/></svg></div><h3>Crop &amp; Edit</h3><p>Free, square and circular crop with zoom, rotation and aspect ratio lock.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(6,182,212,.15)"><svg width="20" height="20" fill="none" stroke="#22d3ee" stroke-width="1.75" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><h3>EXIF Metadata</h3><p>GPS, altitude, camera model, ISO, aperture, focal length &mdash; Android &amp; iOS.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(239,68,68,.15)"><svg width="20" height="20" fill="none" stroke="#f87171" stroke-width="1.75" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="#f87171"/></svg></div><h3>Cloud OCR</h3><p>Gemini, OpenAI, Claude, Azure, Ollama and custom endpoints. All platforms.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(59,130,246,.15)"><svg width="20" height="20" fill="none" stroke="#60a5fa" stroke-width="1.75" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><h3>Compression</h3><p>LOW / MEDIUM / HIGH quality levels with async processing and bitmap recycling.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(168,85,247,.15)"><svg width="20" height="20" fill="none" stroke="#c084fc" stroke-width="1.75" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h3>PDF &amp; Format Support</h3><p>JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP and PDF across all platforms.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(245,158,11,.15)"><svg width="20" height="20" fill="none" stroke="#fbbf24" stroke-width="1.75" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/><path d="M22.54 2.46a15 15 0 010 19.08M1.46 2.46a15 15 0 000 19.08"/></svg></div><h3>UI Customization</h3><p>Custom button colors, icons, permission dialogs, confirmation screens and camera callbacks.</p></div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- REQUIREMENTS -->
+<section class="section" id="requirements">
+  <h2>Requirements</h2>
+  <table class="doc-table">
+    <thead><tr><th>Requirement</th><th>Minimum Version</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Kotlin</strong></td><td><code>2.3.20</code></td><td><svg style="display:inline;vertical-align:-2px;margin-right:4px" width="13" height="13" fill="none" stroke="#facc15" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Breaking &mdash; ABI incompatible with &lt; 2.3.x</td></tr>
+      <tr><td>Compose Multiplatform</td><td><code>1.10.3</code></td><td>Requires Kotlin 2.3.x</td></tr>
+      <tr><td>Android minSdk</td><td><code>24</code></td><td></td></tr>
+      <tr><td>Android compileSdk</td><td><code>36</code></td><td></td></tr>
+      <tr><td>iOS</td><td><code>12.0+</code></td><td></td></tr>
+      <tr><td>JDK (Desktop)</td><td><code>11+</code></td><td></td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-warn">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#facc15" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+    <div class="callout-body"><strong>Kotlin version is mandatory.</strong> Projects using Kotlin &lt; 2.3.x will fail with <code>ABI version incompatible</code>. If you need Kotlin 2.1.x, use a previous release.</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- INSTALLATION -->
+<section class="section" id="installation">
+  <h2>Installation</h2>
+  <div class="install-tabs">
+    <div>
+      <h3>Kotlin Multiplatform</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>build.gradle.kts</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+        <pre><code><span class="cmt">// commonMain dependencies</span>
+<span class="fn">implementation</span>(<span class="str">"io.github.ismoy:imagepickerkmp:1.0.35"</span>)</code></pre>
+      </div>
+    </div>
+    <div>
+      <h3>React / JavaScript (NPM)</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang"><span class="code-lang-dot" style="background:#eab308"></span>terminal</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+        <pre><code>npm install imagepickerkmp</code></pre>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-tip">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#4ade80" stroke-width="2" viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+    <div class="callout-body"><strong>Always wrap launchers in a visible container.</strong> Place <code>ImagePickerLauncher</code> inside a <code>Box(Modifier.fillMaxSize())</code> &mdash; otherwise the camera preview won&apos;t render.</div>
+  </div>
+  <h3 style="margin-top:8px">Correct vs Incorrect Usage</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#4ade80;margin-bottom:6px"><svg width="13" height="13" fill="none" stroke="#4ade80" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Correct</div>
+      <div class="code-block">
+        <pre style="margin:0"><code><span class="fn">Box</span>(<span class="type">Modifier</span>.<span class="fn">fillMaxSize</span>()) {
+    <span class="kw">if</span> (showCamera) {
+        <span class="fn">ImagePickerLauncher</span>(
+            config = <span class="fn">ImagePickerConfig</span>(...)
+        )
+    }
+}</code></pre>
+      </div>
+    </div>
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#f87171;margin-bottom:6px"><svg width="13" height="13" fill="none" stroke="#f87171" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Incorrect — camera not visible</div>
+      <div class="code-block">
+        <pre style="margin:0"><code><span class="cmt">// No container — preview invisible</span>
+<span class="kw">if</span> (showCamera) {
+    <span class="fn">ImagePickerLauncher</span>(
+        config = <span class="fn">ImagePickerConfig</span>(...)
+    )
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- PERMISSIONS -->
+<section class="section" id="permissions">
+  <h2>Permissions Setup</h2>
+  <div class="tabs-wrapper">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this)">iOS &mdash; Info.plist</button>
+      <button class="tab" onclick="switchTab(this)">Android &mdash; Manifest</button>
+    </div>
+    <div class="tab-panel active">
+      <pre><code><span class="cmt">&lt;!-- Info.plist --&gt;</span>
+&lt;<span class="kw">key</span>&gt;NSCameraUsageDescription&lt;/<span class="kw">key</span>&gt;
+&lt;<span class="kw">string</span>&gt;Camera access to capture photos&lt;/<span class="kw">string</span>&gt;
+
+&lt;<span class="kw">key</span>&gt;NSPhotoLibraryUsageDescription&lt;/<span class="kw">key</span>&gt;
+&lt;<span class="kw">string</span>&gt;Photo library access to select images&lt;/<span class="kw">string</span>&gt;
+
+&lt;<span class="kw">key</span>&gt;NSPhotoLibraryAddUsageDescription&lt;/<span class="kw">key</span>&gt;
+&lt;<span class="kw">string</span>&gt;Save captured photos to your library&lt;/<span class="kw">string</span>&gt;
+
+<span class="cmt">&lt;!-- Required when includeExif = true --&gt;</span>
+&lt;<span class="kw">key</span>&gt;NSLocationWhenInUseUsageDescription&lt;/<span class="kw">key</span>&gt;
+&lt;<span class="kw">string</span>&gt;Location for photo geotagging&lt;/<span class="kw">string</span>&gt;</code></pre>
+    </div>
+    <div class="tab-panel">
+      <pre><code><span class="cmt">&lt;!-- AndroidManifest.xml --&gt;</span>
+<span class="cmt">&lt;!-- No permissions required — the library manages them automatically --&gt;</span>
+
+<span class="cmt">&lt;!-- Optional: declare CAMERA only if your app directly uses the camera --&gt;</span>
+&lt;<span class="kw">uses-permission</span>
+    android:name=<span class="str">"android.permission.CAMERA"</span>
+    android:required=<span class="str">"false"</span> /&gt;</code></pre>
+    </div>
+  </div>
+  <div class="callout callout-tip">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#4ade80" stroke-width="2" viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+    <div class="callout-body"><strong>Zero config on Android.</strong> The library auto-manages camera and media store permissions internally. No manifest entries are needed. The <code>CAMERA</code> permission is optional — add it only if your app directly accesses the camera outside of this library.</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- CAMERA -->
+<section class="section" id="camera">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Camera Capture</h2>
+  <p>Use <code>ImagePickerLauncher</code> to open the native camera. Control flash, skip confirmation, add crop and set compression.</p>
+  <h3>Basic Camera</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="kw">var</span> showCamera <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="bool">false</span>) }
+<span class="kw">var</span> photo <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>&lt;<span class="type">PhotoResult?</span>&gt;(<span class="bool">null</span>) }
+
+<span class="fn">Box</span>(modifier = <span class="type">Modifier</span>.<span class="fn">fillMaxSize</span>()) {
+    <span class="kw">if</span> (showCamera) {
+        <span class="fn">ImagePickerLauncher</span>(
+            config = <span class="fn">ImagePickerConfig</span>(
+                onPhotoCaptured = { result ->
+                    photo = result
+                    showCamera = <span class="bool">false</span>
+                },
+                onError = { showCamera = <span class="bool">false</span> },
+                onDismiss = { showCamera = <span class="bool">false</span> }
+            )
+        )
+    }
+    <span class="fn">Button</span>(onClick = { showCamera = <span class="bool">true</span> }) {
+        <span class="fn">Text</span>(<span class="str">"Open Camera"</span>)
+    }
+}</code></pre>
+  </div>
+  <h3>Camera with Compression &amp; Crop</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">ImagePickerLauncher</span>(
+    config = <span class="fn">ImagePickerConfig</span>(
+        onPhotoCaptured = { result -> <span class="cmt">/* handle result */</span> },
+        onDismiss = { showCamera = <span class="bool">false</span> },
+        cameraCaptureConfig = <span class="fn">CameraCaptureConfig</span>(
+            compressionLevel = <span class="type">CompressionLevel</span>.MEDIUM,
+            skipConfirmation = <span class="bool">false</span>,
+            includeExif = <span class="bool">true</span>,
+            cropConfig = <span class="fn">CropConfig</span>(
+                enabled = <span class="bool">true</span>,
+                circularCrop = <span class="bool">true</span>,
+                squareCrop = <span class="bool">true</span>,
+                freeformCrop = <span class="bool">true</span>
+            )
+        )
+    )
+)</code></pre>
+  </div>
+  <h3>CameraCaptureConfig Parameters</h3>
+  <table class="doc-table">
+    <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>compressionLevel</code></td><td><code>CompressionLevel?</code></td><td><code>null</code></td><td>Image compression level</td></tr>
+      <tr><td><code>skipConfirmation</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Skip preview/confirm screen</td></tr>
+      <tr><td><code>includeExif</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Extract EXIF metadata</td></tr>
+      <tr><td><code>cropConfig</code></td><td><code>CropConfig?</code></td><td><code>null</code></td><td>Crop configuration</td></tr>
+      <tr><td><code>mimeTypes</code></td><td><code>List&lt;MimeType&gt;</code></td><td><code>[IMAGE_ALL]</code></td><td>Allowed MIME types</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider" />
+
+<!-- GALLERY -->
+<section class="section" id="gallery">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Gallery Picker</h2>
+  <p>Use <code>GalleryPickerLauncher</code> for single or multiple photo selection from the device&apos;s photo library.</p>
+  <h3>Single Selection</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="kw">var</span> showGallery <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="bool">false</span>) }
+
+<span class="kw">if</span> (showGallery) {
+    <span class="fn">GalleryPickerLauncher</span>(
+        config = <span class="fn">GalleryPickerConfig</span>(includeExif = <span class="bool">true</span>),
+        onPhotosSelected = { photos ->
+            showGallery = <span class="bool">false</span>
+        },
+        onError = { showGallery = <span class="bool">false</span> },
+        onDismiss = { showGallery = <span class="bool">false</span> },
+        allowMultiple = <span class="bool">false</span>
+    )
+}</code></pre>
+  </div>
+  <h3>Multiple Selection with MIME Filter</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">GalleryPickerLauncher</span>(
+    onPhotosSelected = { photos ->
+        photos.<span class="fn">forEach</span> { photo ->
+            <span class="fn">println</span>(<span class="str">"Camera: ${photo.exif?.camera}"</span>)
+            <span class="fn">println</span>(<span class="str">"GPS: ${photo.exif?.latitude}, ${photo.exif?.longitude}"</span>)
+            <span class="fn">println</span>(<span class="str">"Size: ${photo.fileSize} bytes"</span>)
+        }
+    },
+    onError = { error -> mimeTypeMismatchMessage = error.message },
+    onDismiss = { showGallery = <span class="bool">false</span> },
+    allowMultiple = <span class="bool">true</span>,
+    mimeTypes = <span class="fn">listOf</span>(
+        <span class="type">MimeType</span>.IMAGE_JPEG,
+        <span class="type">MimeType</span>.IMAGE_PNG,
+        <span class="type">MimeType</span>.IMAGE_WEBP
+    ),
+    mimeTypeMismatchMessage = <span class="str">"Only JPEG, PNG and WebP images are allowed"</span>
+)</code></pre>
+  </div>
+  <h3>Images + PDFs</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">GalleryPickerLauncher</span>(
+    allowMultiple = <span class="bool">true</span>,
+    mimeTypes = <span class="fn">listOf</span>(
+        <span class="type">MimeType</span>.IMAGE_JPEG,
+        <span class="type">MimeType</span>.IMAGE_PNG,
+        <span class="type">MimeType</span>.APPLICATION_PDF
+    ),
+    onPhotosSelected = { files -> <span class="cmt">/* handle mixed files */</span> },
+    onError = { },
+    onDismiss = { showGallery = <span class="bool">false</span> }
+)</code></pre>
+  </div>
+  <div class="callout callout-info">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#60a5fa" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+    <div class="callout-body"><strong>Android Smart Picker:</strong> images-only opens native gallery, PDFs open the file explorer, mixed types use file explorer. Fully automatic, zero config.</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- CROP -->
+<section class="section" id="crop">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M6 18L18 6M8 6h10v10"/><rect x="2" y="14" width="8" height="8" rx="1"/></svg>Image Crop</h2>
+  <p>Built-in crop UI with free, square and circular modes plus zoom and rotation controls. Works on Android, iOS, Desktop and Web.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">ImagePickerLauncher</span>(
+    config = <span class="fn">ImagePickerConfig</span>(
+        onPhotoCaptured = { result -> photo = result },
+        onDismiss = { showCamera = <span class="bool">false</span> },
+        cameraCaptureConfig = <span class="fn">CameraCaptureConfig</span>(
+            cropConfig = <span class="fn">CropConfig</span>(
+                enabled = <span class="bool">true</span>,
+                circularCrop = <span class="bool">true</span>,  <span class="cmt">// show circle crop button</span>
+                squareCrop = <span class="bool">true</span>,    <span class="cmt">// show square crop button</span>
+                freeformCrop = <span class="bool">true</span>   <span class="cmt">// show free-form crop button</span>
+            )
+        )
+    )
+)</code></pre>
+  </div>
+  <table class="doc-table">
+    <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>enabled</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Enable crop UI after capture</td></tr>
+      <tr><td><code>circularCrop</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Show circular crop option</td></tr>
+      <tr><td><code>squareCrop</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Show square crop option</td></tr>
+      <tr><td><code>freeformCrop</code></td><td><code>Boolean</code></td><td><code>true</code></td><td>Show free-form crop option</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider" />
+
+<!-- COMPRESSION -->
+<section class="section" id="compression">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Image Compression</h2>
+  <p>Automatic background compression with configurable levels. Works for camera and gallery on Android and iOS.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="cmt">// Camera with compression</span>
+<span class="fn">ImagePickerLauncher</span>(
+    config = <span class="fn">ImagePickerConfig</span>(
+        cameraCaptureConfig = <span class="fn">CameraCaptureConfig</span>(
+            compressionLevel = <span class="type">CompressionLevel</span>.HIGH
+        )
+    )
+)
+
+<span class="cmt">// Gallery with compression</span>
+<span class="fn">GalleryPickerLauncher</span>(
+    compressionLevel = <span class="type">CompressionLevel</span>.MEDIUM,
+    onPhotosSelected = { <span class="cmt">/* compressed photos */</span> },
+    onError = { },
+    onDismiss = { }
+)</code></pre>
+  </div>
+  <table class="doc-table">
+    <thead><tr><th>Level</th><th>JPEG Quality</th><th>Max Dimension</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td><code>LOW</code></td><td>85%</td><td>3840 px (4K)</td><td>Near-lossless, large files</td></tr>
+      <tr><td><code>MEDIUM</code></td><td>70%</td><td>1920 px (FHD)</td><td>Balanced quality/size</td></tr>
+      <tr><td><code>HIGH</code></td><td>50%</td><td>1280 px (HD)</td><td>Maximum size reduction</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-info">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#60a5fa" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+    <div class="callout-body"><strong>Default compression is MEDIUM.</strong> <code>CameraCaptureConfig</code> uses <code>CompressionLevel.MEDIUM</code> by default. Set to <code>null</code> to disable compression entirely and get the original full-quality image.</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- EXIF -->
+<section class="section" id="exif">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>EXIF Metadata</h2>
+  <p>Extract rich metadata from photos on Android and iOS. Requires <code>includeExif = true</code>.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">ImagePickerLauncher</span>(
+    config = <span class="fn">ImagePickerConfig</span>(
+        onPhotoCaptured = { result ->
+            result.exif?.<span class="fn">let</span> { exif ->
+                <span class="fn">println</span>(<span class="str">"GPS: ${exif.latitude}, ${exif.longitude}"</span>)
+                <span class="fn">println</span>(<span class="str">"Camera: ${exif.cameraModel}"</span>)
+                <span class="fn">println</span>(<span class="str">"Date: ${exif.dateTaken}"</span>)
+                <span class="fn">println</span>(<span class="str">"Flash: ${exif.flash}"</span>)
+                <span class="fn">println</span>(<span class="str">"ISO: ${exif.iso}"</span>)
+                <span class="fn">println</span>(<span class="str">"Exposure: ${exif.exposureTime}"</span>)
+                <span class="fn">println</span>(<span class="str">"Size: ${exif.imageWidth} x ${exif.imageHeight} px"</span>)
+            }
+        },
+        cameraCaptureConfig = <span class="fn">CameraCaptureConfig</span>(includeExif = <span class="bool">true</span>)
+    )
+)
+
+<span class="cmt">// Gallery EXIF (iOS requires photo library permission)</span>
+<span class="fn">GalleryPickerLauncher</span>(
+    config = <span class="fn">GalleryPickerConfig</span>(includeExif = <span class="bool">true</span>),
+    onPhotosSelected = { photos ->
+        photos.<span class="fn">forEach</span> { photo ->
+            <span class="kw">val</span> gps = <span class="str">"${photo.exif?.latitude}, ${photo.exif?.longitude}"</span>
+        }
+    },
+    onError = { },
+    onDismiss = { }
+)</code></pre>
+  </div>
+  <table class="doc-table">
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3" style="background:var(--bg3);font-weight:600;font-size:12px;color:var(--text2)">GPS</td></tr>
+      <tr><td><code>latitude</code></td><td><code>Double?</code></td><td>GPS latitude — redacted by default (<code>redactGpsData = true</code>)</td></tr>
+      <tr><td><code>longitude</code></td><td><code>Double?</code></td><td>GPS longitude — redacted by default</td></tr>
+      <tr><td><code>altitude</code></td><td><code>Double?</code></td><td>GPS altitude in meters — redacted by default</td></tr>
+      <tr><td colspan="3" style="background:var(--bg3);font-weight:600;font-size:12px;color:var(--text2)">Date &amp; Time</td></tr>
+      <tr><td><code>dateTaken</code></td><td><code>String?</code></td><td>Date and time photo was taken</td></tr>
+      <tr><td><code>dateTime</code></td><td><code>String?</code></td><td>General date/time (alias of dateTaken)</td></tr>
+      <tr><td><code>digitizedTime</code></td><td><code>String?</code></td><td>Date image was digitized</td></tr>
+      <tr><td><code>modifiedTime</code></td><td><code>String?</code></td><td>Last modified date</td></tr>
+      <tr><td colspan="3" style="background:var(--bg3);font-weight:600;font-size:12px;color:var(--text2)">Camera</td></tr>
+      <tr><td><code>cameraModel</code></td><td><code>String?</code></td><td>Camera/device model</td></tr>
+      <tr><td><code>cameraManufacturer</code></td><td><code>String?</code></td><td>Camera manufacturer</td></tr>
+      <tr><td><code>software</code></td><td><code>String?</code></td><td>Processing software</td></tr>
+      <tr><td colspan="3" style="background:var(--bg3);font-weight:600;font-size:12px;color:var(--text2)">Capture Settings</td></tr>
+      <tr><td><code>flash</code></td><td><code>String?</code></td><td>Flash status</td></tr>
+      <tr><td><code>iso</code></td><td><code>String?</code></td><td>ISO sensitivity</td></tr>
+      <tr><td><code>aperture</code></td><td><code>String?</code></td><td>Aperture f-stop value</td></tr>
+      <tr><td><code>shutterSpeed</code></td><td><code>String?</code></td><td>Shutter speed (exposure time)</td></tr>
+      <tr><td><code>focalLength</code></td><td><code>String?</code></td><td>Focal length in mm</td></tr>
+      <tr><td><code>whiteBalance</code></td><td><code>String?</code></td><td>White balance setting</td></tr>
+      <tr><td><code>exposureBias</code></td><td><code>String?</code></td><td>Exposure compensation</td></tr>
+      <tr><td><code>meteringMode</code></td><td><code>String?</code></td><td>Metering mode used</td></tr>
+      <tr><td colspan="3" style="background:var(--bg3);font-weight:600;font-size:12px;color:var(--text2)">Image Properties</td></tr>
+      <tr><td><code>imageWidth</code></td><td><code>Int?</code></td><td>Original width in pixels</td></tr>
+      <tr><td><code>imageHeight</code></td><td><code>Int?</code></td><td>Original height in pixels</td></tr>
+      <tr><td><code>orientation</code></td><td><code>String?</code></td><td>Image rotation/orientation</td></tr>
+      <tr><td><code>colorSpace</code></td><td><code>String?</code></td><td>Color space (sRGB, Adobe RGB, etc.)</td></tr>
+      <tr><td><code>thumbnail</code></td><td><code>String?</code></td><td>Base64 thumbnail (~5–20 KB). Avoid caching.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-warn">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#facc15" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+    <div class="callout-body"><strong>GPS is redacted by default.</strong> <code>latitude</code>, <code>longitude</code> and <code>altitude</code> are set to <code>null</code> unless you explicitly set <code>redactGpsData = false</code> in <code>CameraCaptureConfig</code> or <code>GalleryConfig</code>. Only disable redaction when the user has been clearly informed.</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- EXTENSIONS -->
+<section class="section" id="extensions">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Extension Functions</h2>
+  <p>Process <code>PhotoResult</code> and <code>GalleryPhotoResult</code> with built-in extensions for common operations.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">ImagePickerLauncher</span>(
+    config = <span class="fn">ImagePickerConfig</span>(
+        onPhotoCaptured = { result ->
+            <span class="cmt">// For Compose UI</span>
+            <span class="kw">val</span> painter: <span class="type">Painter</span> = result.<span class="fn">loadPainter</span>()
+
+            <span class="cmt">// For file operations / upload</span>
+            <span class="kw">val</span> bytes: <span class="type">ByteArray</span> = result.<span class="fn">loadBytes</span>()
+
+            <span class="cmt">// For canvas / graphics</span>
+            <span class="kw">val</span> bitmap: <span class="type">ImageBitmap</span> = result.<span class="fn">loadImageBitmap</span>()
+
+            <span class="cmt">// For REST APIs</span>
+            <span class="kw">val</span> base64: <span class="type">String</span> = result.<span class="fn">loadBase64</span>()
+
+            <span class="cmt">// File info</span>
+            <span class="fn">println</span>(<span class="str">"Name: ${result.fileName}"</span>)
+            <span class="fn">println</span>(<span class="str">"Size: ${result.fileSize} bytes"</span>)
+            <span class="fn">println</span>(<span class="str">"MIME: ${result.mimeType}"</span>)
+
+            <span class="cmt">// Convert to KB</span>
+            <span class="kw">val</span> sizeKB = (result.fileSize ?: <span class="num">0</span>) / <span class="num">1024.0</span>
+        }
+    )
+)</code></pre>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- MIME TYPES -->
+<section class="section" id="mime-types">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="3 9 21 9"/><polyline points="9 21 9 9"/></svg>MIME Types</h2>
+  <p>Use <code>MimeType</code> enum values to filter what files can be selected in <code>GalleryPickerLauncher</code>.</p>
+  <table class="doc-table">
+    <thead><tr><th>Value</th><th>MIME String</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>MimeType.IMAGE_ALL</code></td><td><code>image/*</code></td><td>All image formats (default)</td></tr>
+      <tr><td><code>MimeType.IMAGE_JPEG</code></td><td><code>image/jpeg</code></td><td>JPEG images</td></tr>
+      <tr><td><code>MimeType.IMAGE_PNG</code></td><td><code>image/png</code></td><td>PNG images</td></tr>
+      <tr><td><code>MimeType.IMAGE_WEBP</code></td><td><code>image/webp</code></td><td>WebP images</td></tr>
+      <tr><td><code>MimeType.IMAGE_GIF</code></td><td><code>image/gif</code></td><td>GIF images</td></tr>
+      <tr><td><code>MimeType.IMAGE_BMP</code></td><td><code>image/bmp</code></td><td>BMP images</td></tr>
+      <tr><td><code>MimeType.IMAGE_HEIC</code></td><td><code>image/heic</code></td><td>HEIC — iOS native format</td></tr>
+      <tr><td><code>MimeType.IMAGE_HEIF</code></td><td><code>image/heif</code></td><td>HEIF — iOS native format</td></tr>
+      <tr><td><code>MimeType.APPLICATION_PDF</code></td><td><code>application/pdf</code></td><td>PDF documents</td></tr>
+    </tbody>
+  </table>
+  <h3>Utility Methods</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="cmt">// Convert to string list</span>
+<span class="kw">val</span> strings = <span class="type">MimeType</span>.<span class="fn">toMimeTypeStrings</span>(
+    <span class="type">MimeType</span>.IMAGE_JPEG,
+    <span class="type">MimeType</span>.IMAGE_PNG
+)
+<span class="cmt">// → ["image/jpeg", "image/png"]</span>
+
+<span class="cmt">// Parse from string</span>
+<span class="kw">val</span> mt = <span class="type">MimeType</span>.<span class="fn">fromString</span>(<span class="str">"image/webp"</span>)
+<span class="cmt">// → MimeType.IMAGE_WEBP</span>
+
+<span class="cmt">// Predefined groups</span>
+<span class="type">MimeType</span>.COMMON_IMAGE_TYPES   <span class="cmt">// JPEG, PNG, GIF, WebP</span>
+<span class="type">MimeType</span>.ALL_SUPPORTED_TYPES  <span class="cmt">// all enum entries</span></code></pre>
+  </div>
+  <div class="callout callout-info">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#60a5fa" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+    <div class="callout-body"><strong>Android smart picker:</strong> images-only → native gallery, PDFs → file explorer, mixed → file explorer. Fully automatic, no config needed.</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- CUSTOMIZATION -->
+<section class="section" id="customization">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/><path d="M22.54 2.46a15 15 0 010 19.08M1.46 2.46a15 15 0 000 19.08"/></svg>UI Customization</h2>
+  <p>Customize the camera UI look, lifecycle callbacks, permission dialogs and confirmation screen.</p>
+
+  <h3>UiConfig — Camera Visual Style</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">ImagePickerLauncher</span>(
+    config = <span class="fn">ImagePickerConfig</span>(
+        onPhotoCaptured = { <span class="cmt">/* ... */</span> },
+        cameraCaptureConfig = <span class="fn">CameraCaptureConfig</span>(
+            captureButtonSize = <span class="num">80</span>.dp,
+            uiConfig = <span class="fn">UiConfig</span>(
+                buttonColor = <span class="type">Color</span>(<span class="num">0xFF0EA5E9</span>),   <span class="cmt">// capture button color</span>
+                iconColor = <span class="type">Color</span>.White,          <span class="cmt">// flash / switch icons color</span>
+                buttonSize = <span class="num">80</span>.dp,
+                flashIcon = <span class="type">Icons</span>.Default.<span class="fn">FlashOn</span>,
+                switchCameraIcon = <span class="type">Icons</span>.Default.<span class="fn">Cameraswitch</span>
+            )
+        )
+    )
+)</code></pre>
+  </div>
+  <table class="doc-table">
+    <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>buttonColor</code></td><td><code>Color?</code></td><td>Capture button background color</td></tr>
+      <tr><td><code>iconColor</code></td><td><code>Color?</code></td><td>Icon color inside camera UI</td></tr>
+      <tr><td><code>buttonSize</code></td><td><code>Dp?</code></td><td>Capture button size</td></tr>
+      <tr><td><code>flashIcon</code></td><td><code>ImageVector?</code></td><td>Custom flash toggle icon</td></tr>
+      <tr><td><code>switchCameraIcon</code></td><td><code>ImageVector?</code></td><td>Custom camera switch icon</td></tr>
+      <tr><td><code>galleryIcon</code></td><td><code>ImageVector?</code></td><td>Custom gallery access icon</td></tr>
+    </tbody>
+  </table>
+
+  <h3>CameraCallbacks — Lifecycle Events</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">CameraCaptureConfig</span>(
+    cameraCallbacks = <span class="fn">CameraCallbacks</span>(
+        onCameraReady = {
+            <span class="cmt">// Camera preview is ready — hide loading indicator</span>
+            isLoading = <span class="bool">false</span>
+        },
+        onCameraSwitch = {
+            <span class="cmt">// User switched between front/back camera</span>
+        },
+        onPermissionError = { exception ->
+            <span class="cmt">// Permission denied or unavailable</span>
+            <span class="fn">showError</span>(exception.message)
+        },
+        onGalleryOpened = {
+            <span class="cmt">// User navigated to gallery from camera</span>
+        }
+    )
+)</code></pre>
+  </div>
+
+  <h3>CapturePhotoPreference — Quality Mode</h3>
+  <table class="doc-table">
+    <thead><tr><th>Value</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>CapturePhotoPreference.FAST</code></td><td>Prioritizes capture speed, lower quality</td></tr>
+      <tr><td><code>CapturePhotoPreference.BALANCED</code></td><td>Default — balanced speed and quality</td></tr>
+      <tr><td><code>CapturePhotoPreference.QUALITY</code></td><td>Best image quality, slower capture</td></tr>
+    </tbody>
+  </table>
+
+  <h3>PermissionAndConfirmationConfig — Permission Dialogs &amp; Confirmation Screen</h3>
+  <p style="margin-bottom:12px;color:var(--text2);font-size:14px">All permission and confirmation customization lives inside <code>PermissionAndConfirmationConfig</code>, nested in <code>CameraCaptureConfig</code>. The parameters below are <strong>all optional</strong> — omit any you don't need.</p>
+  <table class="doc-table" style="margin-bottom:20px">
+    <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>skipConfirmation</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Skip confirmation screen — deliver photo directly via <code>onPhotoCaptured</code></td></tr>
+      <tr><td><code>customConfirmationView</code></td><td><code>@Composable (PhotoResult, (PhotoResult)->Unit, ()->Unit) -> Unit</code></td><td><code>null</code></td><td>Replace the built-in post-capture preview &amp; confirm screen</td></tr>
+      <tr><td><code>customDeniedDialog</code></td><td><code>@Composable ((onRetry: ()->Unit) -> Unit)</code></td><td><code>null</code></td><td>Dialog shown when camera permission is denied (can retry)</td></tr>
+      <tr><td><code>customSettingsDialog</code></td><td><code>@Composable ((onOpenSettings: ()->Unit) -> Unit)</code></td><td><code>null</code></td><td>Dialog shown when permission is permanently denied (open settings)</td></tr>
+      <tr><td><code>cancelButtonTextIOS</code></td><td><code>String?</code></td><td><code>"Cancel"</code></td><td>iOS only — label of the cancel button in the permission alert</td></tr>
+      <tr><td><code>onCancelPermissionConfigIOS</code></td><td><code>(() -> Unit)?</code></td><td><code>null</code></td><td>iOS only — callback when user taps cancel in permission alert</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warn" style="margin-bottom:24px">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#facc15" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+    <div class="callout-body"><strong>Deprecated / removed:</strong> <code>customPickerDialog</code> and <code>directCameraLaunch</code> do <strong>not</strong> exist in <code>ImagePickerConfig</code> — they are OCR-only parameters (<code>ImagePickerOCRConfig</code>). Do not use them with the standard picker.</div>
+  </div>
+
+  <h4 style="margin-bottom:10px">1 — Skip confirmation (deliver photo immediately)</h4>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">ImagePickerLauncher</span>(
+    config = <span class="fn">ImagePickerConfig</span>(
+        onPhotoCaptured = { result -> <span class="cmt">// called immediately after capture</span> },
+        onError = { },
+        cameraCaptureConfig = <span class="fn">CameraCaptureConfig</span>(
+            permissionAndConfirmationConfig = <span class="fn">PermissionAndConfirmationConfig</span>(
+                skipConfirmation = <span class="bool">true</span>   <span class="cmt">// no review screen shown</span>
+            )
+        )
+    )
+)</code></pre>
+  </div>
+
+  <h4 style="margin-bottom:10px">2 — Custom confirmation screen (Android)</h4>
+  <p style="margin-bottom:10px;color:var(--text2);font-size:14px">Receives <code>photoResult: PhotoResult</code>, <code>onConfirm: (PhotoResult) -&gt; Unit</code> and <code>onRetry: () -&gt; Unit</code>. Use <code>result.uri</code> to display the preview.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">CameraCaptureConfig</span>(
+    permissionAndConfirmationConfig = <span class="fn">PermissionAndConfirmationConfig</span>(
+        customConfirmationView = { photoResult, onConfirm, onRetry ->
+            <span class="fn">MyConfirmationView</span>(
+                result = photoResult,
+                onConfirm = onConfirm,
+                onRetry = onRetry
+            )
+        }
+    )
+)
+
+<span class="cmt">// Example implementation:</span>
+<span class="an">@Composable</span>
+<span class="kw">fun</span> <span class="fn">MyConfirmationView</span>(
+    result: <span class="type">PhotoResult</span>,
+    onConfirm: (<span class="type">PhotoResult</span>) -> Unit,
+    onRetry: () -> Unit
+) {
+    <span class="fn">Column</span>(modifier = <span class="type">Modifier</span>.<span class="fn">fillMaxSize</span>().<span class="fn">padding</span>(<span class="num">16</span>.dp)) {
+        <span class="cmt">// Show preview using result.uri</span>
+        <span class="fn">AsyncImage</span>(
+            model = result.uri,          <span class="cmt">// ✅ correct — use .uri not .image</span>
+            contentDescription = <span class="str">"Preview"</span>,
+            modifier = <span class="type">Modifier</span>.<span class="fn">fillMaxWidth</span>().<span class="fn">weight</span>(<span class="num">1f</span>)
+                .<span class="fn">clip</span>(<span class="fn">RoundedCornerShape</span>(<span class="num">16</span>.dp)),
+            contentScale = <span class="type">ContentScale</span>.Crop
+        )
+        <span class="cmt">// Show file info using correct fields</span>
+        <span class="fn">Text</span>(<span class="str">"Size: <span class="kw">${</span>(result.fileSize ?: <span class="num">0</span>) / <span class="num">1024</span><span class="kw">}</span> KB"</span>)  <span class="cmt">// ✅ fileSize in bytes</span>
+        <span class="fn">Text</span>(<span class="str">"Format: <span class="kw">${</span>result.mimeType ?: <span class="str">"unknown"</span><span class="kw">}</span>"</span>)         <span class="cmt">// ✅ mimeType (not .format)</span>
+        <span class="fn">Row</span>(modifier = <span class="type">Modifier</span>.<span class="fn">fillMaxWidth</span>(), horizontalArrangement = <span class="type">Arrangement</span>.spacedBy(<span class="num">12</span>.dp)) {
+            <span class="fn">OutlinedButton</span>(onClick = onRetry, modifier = <span class="type">Modifier</span>.<span class="fn">weight</span>(<span class="num">1f</span>)) {
+                <span class="fn">Text</span>(<span class="str">"Retry"</span>)
+            }
+            <span class="fn">Button</span>(onClick = { <span class="fn">onConfirm</span>(result) }, modifier = <span class="type">Modifier</span>.<span class="fn">weight</span>(<span class="num">1f</span>)) {
+                <span class="fn">Text</span>(<span class="str">"Use Photo"</span>)
+            }
+        }
+    }
+}</code></pre>
+  </div>
+
+  <h4 style="margin-bottom:10px">3 — Custom permission denied dialog</h4>
+  <p style="margin-bottom:10px;color:var(--text2);font-size:14px">Shown when the user denies camera permission. Provides an <code>onRetry</code> lambda to re-launch the system permission prompt.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">PermissionAndConfirmationConfig</span>(
+    customDeniedDialog = { onRetry ->
+        <span class="fn">Dialog</span>(onDismissRequest = {}) {
+            <span class="fn">Card</span>(shape = <span class="fn">RoundedCornerShape</span>(<span class="num">16</span>.dp)) {
+                <span class="fn">Column</span>(modifier = <span class="type">Modifier</span>.<span class="fn">padding</span>(<span class="num">24</span>.dp), horizontalAlignment = <span class="type">Alignment</span>.CenterHorizontally) {
+                    <span class="fn">Text</span>(<span class="str">"Camera permission needed"</span>, fontWeight = <span class="type">FontWeight</span>.Bold)
+                    <span class="fn">Spacer</span>(<span class="type">Modifier</span>.<span class="fn">height</span>(<span class="num">12</span>.dp))
+                    <span class="fn">Text</span>(<span class="str">"We need camera access to take photos."</span>, color = <span class="type">Color</span>.Gray)
+                    <span class="fn">Spacer</span>(<span class="type">Modifier</span>.<span class="fn">height</span>(<span class="num">20</span>.dp))
+                    <span class="fn">Button</span>(onClick = onRetry, modifier = <span class="type">Modifier</span>.<span class="fn">fillMaxWidth</span>()) {
+                        <span class="fn">Text</span>(<span class="str">"Grant Permission"</span>)
+                    }
+                }
+            }
+        }
+    }
+)</code></pre>
+  </div>
+
+  <h4 style="margin-bottom:10px">4 — Custom settings dialog (permanently denied)</h4>
+  <p style="margin-bottom:10px;color:var(--text2);font-size:14px">Shown when the user has permanently denied the permission. Provides <code>onOpenSettings</code> to navigate to the system app settings.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">PermissionAndConfirmationConfig</span>(
+    customSettingsDialog = { onOpenSettings ->
+        <span class="fn">Dialog</span>(onDismissRequest = {}) {
+            <span class="fn">Card</span>(shape = <span class="fn">RoundedCornerShape</span>(<span class="num">16</span>.dp)) {
+                <span class="fn">Column</span>(modifier = <span class="type">Modifier</span>.<span class="fn">padding</span>(<span class="num">24</span>.dp), horizontalAlignment = <span class="type">Alignment</span>.CenterHorizontally) {
+                    <span class="fn">Text</span>(<span class="str">"Permission Permanently Denied"</span>, fontWeight = <span class="type">FontWeight</span>.Bold)
+                    <span class="fn">Spacer</span>(<span class="type">Modifier</span>.<span class="fn">height</span>(<span class="num">12</span>.dp))
+                    <span class="fn">Text</span>(<span class="str">"Go to Settings > Permissions > Camera to enable access."</span>, color = <span class="type">Color</span>.Gray)
+                    <span class="fn">Spacer</span>(<span class="type">Modifier</span>.<span class="fn">height</span>(<span class="num">20</span>.dp))
+                    <span class="fn">Button</span>(onClick = onOpenSettings, modifier = <span class="type">Modifier</span>.<span class="fn">fillMaxWidth</span>()) {
+                        <span class="fn">Text</span>(<span class="str">"Open Settings"</span>)
+                    }
+                }
+            }
+        }
+    }
+)</code></pre>
+  </div>
+
+  <h4 style="margin-bottom:10px">5 — Full combined example</h4>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">ImagePickerLauncher</span>(
+    config = <span class="fn">ImagePickerConfig</span>(
+        onPhotoCaptured = { result ->
+            <span class="cmt">// result.uri, result.fileSize (bytes), result.mimeType, result.width, result.height</span>
+        },
+        onError = { exception -> <span class="fn">showError</span>(exception.message) },
+        onDismiss = { <span class="fn">navigateBack</span>() },
+        cameraCaptureConfig = <span class="fn">CameraCaptureConfig</span>(
+            compressionLevel = <span class="type">CompressionLevel</span>.HIGH,
+            preference = <span class="type">CapturePhotoPreference</span>.QUALITY,
+            uiConfig = <span class="fn">UiConfig</span>(
+                buttonColor = <span class="type">Color</span>(<span class="num">0xFF0EA5E9</span>),
+                iconColor = <span class="type">Color</span>.White
+            ),
+            cameraCallbacks = <span class="fn">CameraCallbacks</span>(
+                onCameraReady = { isLoading = <span class="bool">false</span> },
+                onPermissionError = { <span class="fn">showPermissionBanner</span>() }
+            ),
+            permissionAndConfirmationConfig = <span class="fn">PermissionAndConfirmationConfig</span>(
+                skipConfirmation = <span class="bool">false</span>,
+                customConfirmationView = { photoResult, onConfirm, onRetry ->
+                    <span class="fn">MyConfirmationView</span>(photoResult, onConfirm, onRetry)
+                },
+                customDeniedDialog = { onRetry ->
+                    <span class="fn">MyDeniedDialog</span>(onRetry = onRetry)
+                },
+                customSettingsDialog = { onOpenSettings ->
+                    <span class="fn">MySettingsDialog</span>(onOpenSettings = onOpenSettings)
+                }
+            )
+        ),
+        enableCrop = <span class="bool">false</span>
+    )
+)</code></pre>
+  </div>
+
+  <div class="callout callout-info" style="margin-top:8px">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+    <div class="callout-body"><strong>PhotoResult fields:</strong> use <code>result.uri</code> (not <code>.image</code>), <code>result.fileSize</code> in <strong>bytes</strong> (not KB), <code>result.mimeType</code> (not <code>.format</code>), <code>result.width</code>, <code>result.height</code>.</div>
+  </div>
+
+  <h3>Gallery Options — GalleryConfig</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">GalleryPickerLauncher</span>(
+    config = <span class="fn">GalleryConfig</span>(
+        allowMultiple = <span class="bool">true</span>,
+        selectionLimit = <span class="num">10</span>,         <span class="cmt">// iOS only — max 10 items</span>
+        includeExif = <span class="bool">true</span>,
+        redactGpsData = <span class="bool">false</span>,       <span class="cmt">// expose GPS (inform user!)</span>
+        mimeTypes = <span class="fn">listOf</span>(<span class="type">MimeType</span>.IMAGE_JPEG, <span class="type">MimeType</span>.IMAGE_PNG)
+    ),
+    onPhotosSelected = { photos -> <span class="cmt">/* ... */</span> },
+    onError = { },
+    onDismiss = { }
+)</code></pre>
+  </div>
+  <table class="doc-table">
+    <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>allowMultiple</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Enable multi-file selection</td></tr>
+      <tr><td><code>mimeTypes</code></td><td><code>List&lt;MimeType&gt;</code></td><td><code>[IMAGE_ALL]</code></td><td>Allowed file types</td></tr>
+      <tr><td><code>selectionLimit</code></td><td><code>Int</code></td><td><code>30</code></td><td>Max items when allowMultiple (iOS)</td></tr>
+      <tr><td><code>includeExif</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Extract EXIF metadata</td></tr>
+      <tr><td><code>redactGpsData</code></td><td><code>Boolean</code></td><td><code>true</code></td><td>Strip GPS from EXIF (privacy default)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider" />
+
+<!-- REACT / WEB -->
+<section class="section" id="react">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 4.5c5.25 0 9.5 3.36 9.5 7.5S17.25 19.5 12 19.5 2.5 16.14 2.5 12 6.75 4.5 12 4.5z"/><path d="M4.5 12c0-5.25 3.36-9.5 7.5-9.5s7.5 4.25 7.5 9.5-3.36 9.5-7.5 9.5S4.5 17.25 4.5 12z"/></svg>React / Web Integration</h2>
+  <p>ImagePickerKMP is available as an NPM package for JavaScript/TypeScript projects including React, Vue, Angular and Vanilla JS.</p>
+
+  <h3>Installation</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot" style="background:#eab308"></span>npm</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code>npm install imagepickerkmp</code></pre>
+  </div>
+
+  <h3>React Component</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot" style="background:#38bdf8"></span>TypeScript / React</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="kw">import</span> { useImagePicker } <span class="kw">from</span> <span class="str">'imagepickerkmp'</span>;
+
+<span class="kw">function</span> <span class="fn">PhotoUploader</span>() {
+  <span class="kw">const</span> { openCamera, openGallery, result } = <span class="fn">useImagePicker</span>({
+    onPhotoCaptured: (photo) =&gt; {
+      <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Photo:'</span>, photo.fileName, photo.fileSize);
+    },
+    onError: (err) =&gt; <span class="fn">console</span>.<span class="fn">error</span>(err)
+  });
+
+  <span class="kw">return</span> (
+    &lt;<span class="kw">div</span>&gt;
+      &lt;<span class="kw">button</span> onClick={openCamera}&gt;Open Camera&lt;/<span class="kw">button</span>&gt;
+      &lt;<span class="kw">button</span> onClick={openGallery}&gt;Open Gallery&lt;/<span class="kw">button</span>&gt;
+      {result &amp;&amp; &lt;<span class="kw">img</span> src={result.uri} alt="captured" /&gt;}
+    &lt;/<span class="kw">div</span>&gt;
+  );
+}</code></pre>
+  </div>
+
+  <div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+    <div class="card"><div class="card-icon" style="background:rgba(14,165,233,.12)"><svg width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="1.75" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div><h3>WebRTC Camera</h3><p>Browser camera via WebRTC. Works on mobile &amp; desktop.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(34,197,94,.15)"><svg width="18" height="18" fill="none" stroke="#4ade80" stroke-width="1.75" viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29"/></svg></div><h3>Drag &amp; Drop</h3><p>File picker with drag and drop support.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(168,85,247,.15)"><svg width="18" height="18" fill="none" stroke="#c084fc" stroke-width="1.75" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div><h3>TypeScript</h3><p>Full type definitions included out of the box.</p></div>
+    <div class="card"><div class="card-icon" style="background:rgba(249,115,22,.15)"><svg width="18" height="18" fill="none" stroke="#fb923c" stroke-width="1.75" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><h3>Cross-Framework</h3><p>React, Vue, Angular, Vanilla JS.</p></div>
+  </div>
+
+  <div class="callout callout-tip">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#4ade80" stroke-width="2" viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+    <div class="callout-body"><strong>Full React guide available.</strong> See the <a href="https://github.com/ismoy/ImagePickerKMP/blob/main/REACT_INTEGRATION_GUIDE.md" target="_blank" rel="noopener">React Integration Guide</a> for complete examples with Next.js, Vite and plain React.</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- OCR -->
+<section class="section" id="ocr">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>Cloud OCR <span style="font-size:12px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle">Experimental</span></h2>
+  <p>Extract text from images and PDFs using cloud AI providers. Supports Gemini, OpenAI, Claude, Azure, Ollama and any custom HTTP endpoint.</p>
+  <h3>Gemini OCR</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot" style="background:#ef4444"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="kw">var</span> isOCRActive <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>(<span class="bool">false</span>) }
+<span class="kw">var</span> ocrResult <span class="kw">by</span> <span class="fn">remember</span> { <span class="fn">mutableStateOf</span>&lt;<span class="type">OCRResult?</span>&gt;(<span class="bool">null</span>) }
+
+<span class="ann">@OptIn(ExperimentalOCRApi::class)</span>
+<span class="kw">if</span> (isOCRActive) {
+    <span class="fn">ImagePickerLauncherOCR</span>(
+        config = <span class="fn">ImagePickerOCRConfig</span>(
+            scanMode = <span class="type">ScanMode</span>.<span class="fn">Cloud</span>(
+                provider = <span class="type">CloudOCRProvider</span>.<span class="fn">Gemini</span>(<span class="str">"YOUR_GEMINI_API_KEY"</span>)
+            ),
+            onOCRCompleted = { result ->
+                ocrResult = result
+                isOCRActive = <span class="bool">false</span>
+            },
+            onError = { isOCRActive = <span class="bool">false</span> },
+            onCancel = { isOCRActive = <span class="bool">false</span> },
+            allowedMimeTypes = <span class="fn">listOf</span>(<span class="type">MimeType</span>.APPLICATION_PDF, <span class="type">MimeType</span>.IMAGE_ALL),
+            directCameraLaunch = <span class="bool">false</span>
+        )
+    )
+}</code></pre>
+  </div>
+  <h3>Custom HTTP Endpoint</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot" style="background:#ef4444"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="type">CloudOCRProvider</span>.<span class="fn">Custom</span>(
+    name = <span class="str">"My OCR Service"</span>,
+    baseUrl = <span class="str">"https://api.mycompany.com/ocr/analyze"</span>,
+    apiKey = <span class="str">"abc123"</span>,
+    headers = <span class="fn">mapOf</span>(
+        <span class="str">"X-API-Version"</span> to <span class="str">"2.1"</span>,
+        <span class="str">"X-Client-ID"</span> to <span class="str">"mobile-app"</span>,
+        <span class="str">"Authorization"</span> to <span class="str">"Bearer $token"</span>
+    ),
+    requestFormat = <span class="type">RequestFormat</span>.MULTIPART_FORM,
+    model = <span class="str">"enterprise-model-v3"</span>
+)</code></pre>
+  </div>
+  <table class="doc-table">
+    <thead><tr><th>Provider</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Google Gemini</td><td><code>CloudOCRProvider.Gemini("API_KEY")</code></td></tr>
+      <tr><td>OpenAI</td><td><code>CloudOCRProvider.OpenAI("API_KEY")</code></td></tr>
+      <tr><td>Anthropic Claude</td><td><code>CloudOCRProvider.Claude("API_KEY")</code></td></tr>
+      <tr><td>Azure AI</td><td><code>CloudOCRProvider.Azure("ENDPOINT", "KEY")</code></td></tr>
+      <tr><td>Ollama (local)</td><td><code>CloudOCRProvider.Ollama("http://localhost:11434")</code></td></tr>
+      <tr><td>Custom</td><td><code>CloudOCRProvider.Custom(...)</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider" />
+
+<!-- PDF -->
+<section class="section" id="pdf">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>PDF Support</h2>
+  <p>Select PDF documents alongside images. On Android, PDFs automatically open the system file explorer.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang"><span class="code-lang-dot"></span>Kotlin</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+    <pre><code><span class="fn">GalleryPickerLauncher</span>(
+    allowMultiple = <span class="bool">true</span>,
+    mimeTypes = <span class="fn">listOf</span>(
+        <span class="type">MimeType</span>.IMAGE_ALL,
+        <span class="type">MimeType</span>.APPLICATION_PDF
+    ),
+    onPhotosSelected = { files ->
+        files.<span class="fn">forEach</span> { file ->
+            <span class="kw">when</span> (file.mimeType) {
+                <span class="str">"application/pdf"</span> -> <span class="fn">handlePDF</span>(file)
+                <span class="kw">else</span> -> <span class="fn">handleImage</span>(file)
+            }
+        }
+    },
+    onError = { },
+    onDismiss = { showGallery = <span class="bool">false</span> }
+)</code></pre>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- PLATFORM MATRIX -->
+<section class="section" id="platform-support">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Platform Support Matrix</h2>
+  <table class="doc-table">
+    <thead><tr><th>Feature</th><th>Android</th><th>iOS</th><th>Desktop</th><th>JS/Web</th><th>WASM</th></tr></thead>
+    <tbody>
+      <tr><td>Camera Capture</td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="cross"><svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td><td class="cross"><svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><td>Gallery Picker</td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><td>Crop UI</td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><td>EXIF Metadata</td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="cross"><svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td><td class="cross"><svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td><td class="cross"><svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td></tr>
+      <tr><td>Compression</td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="cross"><svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td><td class="cross"><svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td><td class="cross"><svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td></tr>
+      <tr><td>OCR</td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><td>PDF Support</td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+      <tr><td>Multiple Selection</td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td><td class="check"><svg width="16" height="16" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider" />
+
+<!-- API REFERENCE -->
+<section class="section" id="api">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>API Reference</h2>
+  <h3>ImagePickerConfig</h3>
+  <table class="doc-table">
+    <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>onPhotoCaptured</code></td><td><code>(PhotoResult) -&gt; Unit</code></td><td>Called when photo is captured or selected</td></tr>
+      <tr><td><code>onError</code></td><td><code>(Exception) -&gt; Unit</code></td><td>Called on any error</td></tr>
+      <tr><td><code>onDismiss</code></td><td><code>() -&gt; Unit</code></td><td>Called when dismissed without selecting</td></tr>
+      <tr><td><code>cameraCaptureConfig</code></td><td><code>CameraCaptureConfig</code></td><td>Camera, compression, UI and crop config</td></tr>
+      <tr><td><code>enableCrop</code></td><td><code>Boolean</code></td><td>Show crop UI after capture (default: <code>false</code>)</td></tr>
+    </tbody>
+  </table>
+  <h3>CameraCaptureConfig</h3>
+  <table class="doc-table">
+    <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>preference</code></td><td><code>CapturePhotoPreference</code></td><td><code>BALANCED</code></td><td>Quality/speed tradeoff</td></tr>
+      <tr><td><code>captureButtonSize</code></td><td><code>Dp</code></td><td><code>72.dp</code></td><td>Shutter button size</td></tr>
+      <tr><td><code>compressionLevel</code></td><td><code>CompressionLevel?</code></td><td><code>MEDIUM</code></td><td>Compression — <code>null</code> = no compression</td></tr>
+      <tr><td><code>includeExif</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Extract EXIF metadata</td></tr>
+      <tr><td><code>redactGpsData</code></td><td><code>Boolean</code></td><td><code>true</code></td><td>Strip GPS from EXIF (privacy)</td></tr>
+      <tr><td><code>uiConfig</code></td><td><code>UiConfig</code></td><td><code>UiConfig()</code></td><td>Camera UI visual customization</td></tr>
+      <tr><td><code>cameraCallbacks</code></td><td><code>CameraCallbacks</code></td><td><code>CameraCallbacks()</code></td><td>Camera lifecycle callbacks</td></tr>
+      <tr><td><code>permissionAndConfirmationConfig</code></td><td><code>PermissionAndConfirmationConfig</code></td><td><code>…()</code></td><td>Permission dialogs &amp; confirmation screen</td></tr>
+      <tr><td><code>cropConfig</code></td><td><code>CropConfig</code></td><td><code>CropConfig()</code></td><td>Crop UI configuration</td></tr>
+    </tbody>
+  </table>
+  <h3>GalleryConfig</h3>
+  <table class="doc-table">
+    <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>allowMultiple</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Enable multi-file selection</td></tr>
+      <tr><td><code>mimeTypes</code></td><td><code>List&lt;MimeType&gt;</code></td><td><code>[IMAGE_ALL]</code></td><td>Allowed MIME types</td></tr>
+      <tr><td><code>selectionLimit</code></td><td><code>Int</code></td><td><code>30</code></td><td>Max items — iOS only</td></tr>
+      <tr><td><code>includeExif</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Extract EXIF metadata</td></tr>
+      <tr><td><code>redactGpsData</code></td><td><code>Boolean</code></td><td><code>true</code></td><td>Strip GPS from EXIF</td></tr>
+    </tbody>
+  </table>
+  <h3>CropConfig</h3>
+  <table class="doc-table">
+    <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>enabled</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Enable crop UI after capture</td></tr>
+      <tr><td><code>aspectRatioLocked</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Lock aspect ratio during crop</td></tr>
+      <tr><td><code>circularCrop</code></td><td><code>Boolean</code></td><td><code>true</code></td><td>Show circular crop option</td></tr>
+      <tr><td><code>squareCrop</code></td><td><code>Boolean</code></td><td><code>true</code></td><td>Show square crop option</td></tr>
+      <tr><td><code>freeformCrop</code></td><td><code>Boolean</code></td><td><code>false</code></td><td>Show free-form crop option</td></tr>
+    </tbody>
+  </table>
+  <h3>PhotoResult / GalleryPhotoResult</h3>
+  <p style="margin-bottom:12px;color:var(--text2);font-size:14px"><code>GalleryPhotoResult</code> is a <code>typealias</code> for <code>PhotoResult</code> — they are the same model.</p>
+  <table class="doc-table">
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>uri</code></td><td><code>String?</code></td><td>Platform-native URI of the selected file</td></tr>
+      <tr><td><code>fileName</code></td><td><code>String?</code></td><td>File name (reflects cropped name after crop)</td></tr>
+      <tr><td><code>fileSize</code></td><td><code>Long?</code></td><td>Size in <strong>bytes</strong> since v1.0.35 — divide by 1024 for KB</td></tr>
+      <tr><td><code>mimeType</code></td><td><code>String?</code></td><td>MIME type string (e.g. <code>"image/jpeg"</code>, <code>"application/pdf"</code>)</td></tr>
+      <tr><td><code>width</code></td><td><code>Int?</code></td><td>Image width in pixels</td></tr>
+      <tr><td><code>height</code></td><td><code>Int?</code></td><td>Image height in pixels</td></tr>
+      <tr><td><code>exif</code></td><td><code>ExifData?</code></td><td>EXIF metadata — populated when <code>includeExif = true</code></td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-warn" style="margin-top:16px">
+    <span class="callout-icon"><svg width="18" height="18" fill="none" stroke="#facc15" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+    <div class="callout-body"><strong>Breaking change v1.0.35:</strong> <code>fileSize</code> returns <strong>bytes</strong> (previously KB). Migrate: <code>val sizeKB = (result.fileSize ?: 0) / 1024.0</code></div>
+  </div>
+
+  <h3 style="margin-top:32px">ExifData Fields</h3>
+  <p style="margin-bottom:12px;color:var(--text2);font-size:14px">All fields are nullable. Availability depends on the device, image origin and whether <code>redactGpsData</code> is <code>false</code>.</p>
+  <table class="doc-table">
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3" style="background:var(--bg3);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.05em;text-transform:uppercase">GPS &amp; Location</td></tr>
+      <tr><td><code>latitude</code></td><td><code>Double?</code></td><td>GPS latitude (stripped if <code>redactGpsData = true</code>)</td></tr>
+      <tr><td><code>longitude</code></td><td><code>Double?</code></td><td>GPS longitude</td></tr>
+      <tr><td><code>altitude</code></td><td><code>Double?</code></td><td>GPS altitude in metres</td></tr>
+      <tr><td colspan="3" style="background:var(--bg3);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.05em;text-transform:uppercase">Date &amp; Time</td></tr>
+      <tr><td><code>dateTime</code></td><td><code>String?</code></td><td>Capture date/time (<code>yyyy:MM:dd HH:mm:ss</code>)</td></tr>
+      <tr><td><code>dateTimeOriginal</code></td><td><code>String?</code></td><td>Original capture date</td></tr>
+      <tr><td><code>dateTimeDigitized</code></td><td><code>String?</code></td><td>Digitized date</td></tr>
+      <tr><td colspan="3" style="background:var(--bg3);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.05em;text-transform:uppercase">Camera &amp; Lens</td></tr>
+      <tr><td><code>make</code></td><td><code>String?</code></td><td>Camera manufacturer</td></tr>
+      <tr><td><code>model</code></td><td><code>String?</code></td><td>Camera model name</td></tr>
+      <tr><td><code>lensModel</code></td><td><code>String?</code></td><td>Lens model</td></tr>
+      <tr><td><code>focalLength</code></td><td><code>String?</code></td><td>Focal length in mm</td></tr>
+      <tr><td><code>aperture</code></td><td><code>String?</code></td><td>Aperture (f-number)</td></tr>
+      <tr><td colspan="3" style="background:var(--bg3);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.05em;text-transform:uppercase">Capture Settings</td></tr>
+      <tr><td><code>iso</code></td><td><code>String?</code></td><td>ISO sensitivity</td></tr>
+      <tr><td><code>shutterSpeed</code></td><td><code>String?</code></td><td>Shutter speed (APEX)</td></tr>
+      <tr><td><code>exposureTime</code></td><td><code>String?</code></td><td>Exposure time in seconds</td></tr>
+      <tr><td><code>exposureBias</code></td><td><code>String?</code></td><td>Exposure compensation (EV)</td></tr>
+      <tr><td><code>meteringMode</code></td><td><code>String?</code></td><td>Metering mode (multi, spot, etc.)</td></tr>
+      <tr><td><code>flash</code></td><td><code>String?</code></td><td>Flash fired / not fired</td></tr>
+      <tr><td><code>whiteBalance</code></td><td><code>String?</code></td><td>White balance mode</td></tr>
+      <tr><td colspan="3" style="background:var(--bg3);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.05em;text-transform:uppercase">Image Properties</td></tr>
+      <tr><td><code>imageWidth</code></td><td><code>String?</code></td><td>Image pixel width (EXIF tag)</td></tr>
+      <tr><td><code>imageHeight</code></td><td><code>String?</code></td><td>Image pixel height (EXIF tag)</td></tr>
+      <tr><td><code>orientation</code></td><td><code>String?</code></td><td>EXIF orientation (1–8)</td></tr>
+      <tr><td><code>colorSpace</code></td><td><code>String?</code></td><td>Color space (sRGB, Adobe RGB, etc.)</td></tr>
+      <tr><td><code>software</code></td><td><code>String?</code></td><td>Software used to produce the image</td></tr>
+      <tr><td><code>thumbnailOffset</code></td><td><code>Int?</code></td><td>Byte offset of embedded thumbnail</td></tr>
+      <tr><td><code>thumbnailLength</code></td><td><code>Int?</code></td><td>Byte length of embedded thumbnail</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider" />
+
+<!-- CHANGELOG -->
+<section class="section" id="changelog">
+  <h2><svg style="display:inline;vertical-align:-4px;margin-right:8px" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Changelog</h2>
+  <p>Recent releases and what changed in each version. Full history on <a href="https://github.com/ismoy/ImagePickerKMP/releases" target="_blank" rel="noopener">GitHub Releases</a>.</p>
+
+  <div class="changelog-entry latest">
+    <div class="changelog-version">
+      <span class="changelog-version-num">v1.0.35</span>
+      <span class="changelog-tag tag-break">Breaking</span>
+      <span class="changelog-tag tag-new">New</span>
+      <span class="changelog-date">March 2026</span>
+    </div>
+    <ul class="changelog-items">
+      <li><strong>Breaking:</strong> <code>fileSize</code> now returns <strong>bytes</strong> (was KB). Divide by 1024 to get KB.</li>
+      <li><strong>New:</strong> Improved WASM target support with better browser compatibility.</li>
+      <li><strong>New:</strong> <code>MimeType.APPLICATION_PDF</code> — select PDFs from gallery.</li>
+      <li>Fixed crop rotation on iOS in landscape orientation.</li>
+      <li>Detekt static analysis integrated into CI pipeline.</li>
+    </ul>
+  </div>
+
+  <div class="changelog-entry">
+    <div class="changelog-version">
+      <span class="changelog-version-num">v1.0.34</span>
+      <span class="changelog-tag tag-new">New</span>
+      <span class="changelog-date">February 2026</span>
+    </div>
+    <ul class="changelog-items">
+      <li><strong>New:</strong> Cloud OCR — Gemini, OpenAI, Claude, Azure, Ollama, Custom endpoint.</li>
+      <li><strong>New:</strong> <code>@ExperimentalOCRApi</code> annotation for opt-in usage.</li>
+      <li><strong>New:</strong> <code>directCameraLaunch</code> flag in OCR config.</li>
+      <li>Improved error handling with typed <code>ImagePickerException</code>.</li>
+    </ul>
+  </div>
+
+  <div class="changelog-entry">
+    <div class="changelog-version">
+      <span class="changelog-version-num">v1.0.32</span>
+      <span class="changelog-tag tag-new">New</span>
+      <span class="changelog-tag tag-fix">Fix</span>
+      <span class="changelog-date">January 2026</span>
+    </div>
+    <ul class="changelog-items">
+      <li><strong>New:</strong> Circular, square and freeform crop modes with zoom/rotation.</li>
+      <li><strong>New:</strong> EXIF metadata extraction — GPS, ISO, exposure, camera model.</li>
+      <li><strong>Fix:</strong> Memory leak on Android when cancelling gallery picker.</li>
+      <li>Kotlin 2.3.x required &mdash; ABI incompatible with older versions.</li>
+    </ul>
+  </div>
+
+  <div class="changelog-entry">
+    <div class="changelog-version">
+      <span class="changelog-version-num">v1.0.28</span>
+      <span class="changelog-tag tag-new">New</span>
+      <span class="changelog-date">December 2025</span>
+    </div>
+    <ul class="changelog-items">
+      <li><strong>New:</strong> Multiple gallery selection with <code>allowMultiple = true</code>.</li>
+      <li><strong>New:</strong> MIME type filtering with <code>mimeTypeMismatchMessage</code>.</li>
+      <li>Android smart picker: images → gallery, PDFs → file explorer, mixed → file explorer.</li>
+    </ul>
+  </div>
+
+  <a href="https://github.com/ismoy/ImagePickerKMP/releases" target="_blank" rel="noopener" class="btn-secondary" style="display:inline-flex;margin-top:8px">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    View full changelog on GitHub
+  </a>
+</section>
+
+</main>
+</div>
+
+<footer id="site-footer">
+  <div class="footer-brand">
+    <div class="footer-brand-inner">
+      <div class="logo-icon"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z"/></svg></div>
+      <span style="font-weight:600;color:var(--text)">ImagePickerKMP</span>
+    </div>
+    <span class="footer-copy">&copy; 2026 <a href="https://github.com/ismoy" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none">Ismoy Belizaire</a> &middot; MIT License</span>
+    <img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp?style=flat&label=Maven+Central&color=0ea5e9&labelColor=18181f" alt="Maven Central" style="height:18px;border-radius:4px" loading="lazy" />
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/ismoy/ImagePickerKMP" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://github.com/ismoy/ImagePickerKMP/releases" target="_blank" rel="noopener">Releases</a>
+    <a href="https://github.com/ismoy/CameraKMP" target="_blank" rel="noopener">Example App</a>
+    <a href="https://discord.gg/EjSQTeyh" target="_blank" rel="noopener">Discord</a>
+    <a href="https://github.com/ismoy/ImagePickerKMP/issues" target="_blank" rel="noopener">Issues</a>
+    <a href="https://github.com/ismoy/ImagePickerKMP/discussions" target="_blank" rel="noopener">Discussions</a>
+    <a href="https://github.com/sponsors/ismoy" target="_blank" rel="noopener">Sponsor <svg style="display:inline;vertical-align:-2px" width="13" height="13" fill="#f87171" stroke="#f87171" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></a>
+  </div>
+</footer>
+
+<script>
+// ── Theme ──────────────────────────────────────────────────────────────────
+function applyTheme(isLight){
+  document.documentElement.classList.toggle('light',isLight);
+  document.getElementById('icon-moon').style.display = isLight ? 'none' : 'block';
+  document.getElementById('icon-sun').style.display  = isLight ? 'block' : 'none';
+}
+function toggleTheme(){
+  const isLight = !document.documentElement.classList.contains('light');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  applyTheme(isLight);
+}
+applyTheme(localStorage.getItem('theme') === 'light');
+
+// ── Sidebar ────────────────────────────────────────────────────────────────
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('open')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('open')}
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+function switchTab(btn){const w=btn.closest('.tabs-wrapper');w.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));w.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');const idx=Array.from(btn.parentElement.children).indexOf(btn);w.querySelectorAll('.tab-panel')[idx].classList.add('active')}
+
+// ── Copy + Toast ───────────────────────────────────────────────────────────
+let _toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),2000);
+}
+function copy(btn){
+  const pre=btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(()=>showToast('✓ Copied to clipboard'));
+}
+
+// ── Reading progress bar ───────────────────────────────────────────────────
+const _prog = document.getElementById('read-progress');
+window.addEventListener('scroll',()=>{
+  const s=document.documentElement;
+  const pct=(s.scrollTop/(s.scrollHeight-s.clientHeight))*100;
+  _prog.style.width=Math.min(pct,100)+'%';
+  document.getElementById('back-top').classList.toggle('visible', s.scrollTop > 400);
+},{passive:true});
+
+// ── Sidebar scroll-spy ─────────────────────────────────────────────────────
+const sections=document.querySelectorAll('section[id]');
+const links=document.querySelectorAll('.sidebar-link[href^="#"]');
+links.forEach(l=>l.addEventListener('click',()=>{if(window.innerWidth<=900)closeSidebar()}));
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      links.forEach(l=>l.classList.remove('active'));
+      const a=document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
+      if(a)a.classList.add('active');
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+sections.forEach(s=>observer.observe(s));
+
+// ── Search ─────────────────────────────────────────────────────────────────
+const SEARCH_INDEX = [
+  {id:'introduction',     icon:'intro',  title:'Introduction',       desc:'Overview, platforms, quick start'},
+  {id:'requirements',     icon:'req',    title:'Requirements',        desc:'Kotlin 2.3.x, Compose, minSdk 24'},
+  {id:'installation',     icon:'inst',   title:'Installation',        desc:'Gradle KMP / NPM setup'},
+  {id:'permissions',      icon:'perm',   title:'Permissions',         desc:'iOS Info.plist, Android Manifest'},
+  {id:'camera',           icon:'cam',    title:'Camera Capture',      desc:'ImagePickerLauncher, flash, crop'},
+  {id:'gallery',          icon:'gal',    title:'Gallery Picker',      desc:'Single/multiple selection, MIME filter'},
+  {id:'crop',             icon:'crop',   title:'Image Crop',           desc:'Circular, square, freeform crop'},
+  {id:'compression',      icon:'zip',    title:'Compression',         desc:'LOW / MEDIUM / HIGH levels'},
+  {id:'exif',             icon:'exif',   title:'EXIF Metadata',        desc:'GPS, ISO, camera model, exposure'},
+  {id:'extensions',       icon:'ext',    title:'Extension Functions',  desc:'loadPainter, loadBytes, loadBase64'},
+  {id:'ocr',              icon:'ocr',    title:'Cloud OCR',            desc:'Gemini, OpenAI, Claude, Azure, Ollama'},
+  {id:'pdf',              icon:'pdf',    title:'PDF Support',          desc:'GalleryPickerLauncher with PDFs'},
+  {id:'platform-support', icon:'plat',   title:'Platform Matrix',    desc:'Android, iOS, Desktop, Web, WASM'},
+  {id:'api',              icon:'api',    title:'API Reference',        desc:'ImagePickerConfig, PhotoResult'},
+  {id:'changelog',        icon:'log',    title:'Changelog',            desc:'v1.0.35, v1.0.34, v1.0.32…'},
+  {id:'mime-types',       icon:'mime',   title:'MIME Types',           desc:'IMAGE_ALL, JPEG, PNG, HEIC, PDF, WebP'},
+  {id:'customization',    icon:'cust',   title:'UI Customization',     desc:'UiConfig, CameraCallbacks, PermissionConfig'},
+  {id:'react',            icon:'web',    title:'React / Web',          desc:'NPM package, WebRTC, TypeScript, Drag & Drop'},
+];
+
+const SEARCH_SVGS = {
+  intro: '<svg fill="none" stroke="#0ea5e9" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  req:   '<svg fill="none" stroke="#a78bfa" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
+  inst:  '<svg fill="none" stroke="#34d399" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>',
+  perm:  '<svg fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>',
+  cam:   '<svg fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+  gal:   '<svg fill="none" stroke="#818cf8" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+  crop:  '<svg fill="none" stroke="#fb7185" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M6 2v14a2 2 0 002 2h14"/><path d="M18 22V8a2 2 0 00-2-2H2"/></svg>',
+  zip:   '<svg fill="none" stroke="#fbbf24" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29"/></svg>',
+  exif:  '<svg fill="none" stroke="#a3e635" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  ext:   '<svg fill="none" stroke="#0ea5e9" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+  ocr:   '<svg fill="none" stroke="#c084fc" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>',
+  pdf:   '<svg fill="none" stroke="#f87171" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  plat:  '<svg fill="none" stroke="#34d399" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+  api:   '<svg fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg>',
+  log:   '<svg fill="none" stroke="#0ea5e9" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+  mime:  '<svg fill="none" stroke="#a78bfa" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="3 9 21 9"/><polyline points="9 21 9 9"/></svg>',
+  cust:  '<svg fill="none" stroke="#fbbf24" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>',
+  web:   '<svg fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>',
+};
+
+let _searchFocus = -1;
+
+function openSearch(){
+  document.getElementById('search-overlay').classList.add('open');
+  const inp = document.getElementById('search-input');
+  inp.value = '';
+  renderSearchResults('');
+  setTimeout(()=>inp.focus(), 60);
+}
+function closeSearch(){
+  document.getElementById('search-overlay').classList.remove('open');
+  _searchFocus = -1;
+}
+function closeSearchOutside(e){if(e.target===document.getElementById('search-overlay'))closeSearch()}
+function filterSearch(){renderSearchResults(document.getElementById('search-input').value)}
+
+function renderSearchResults(q){
+  const list = document.getElementById('search-results');
+  const query = q.trim().toLowerCase();
+  const hits = query
+    ? SEARCH_INDEX.filter(i=>i.title.toLowerCase().includes(query)||i.desc.toLowerCase().includes(query))
+    : SEARCH_INDEX;
+  _searchFocus = -1;
+  list.innerHTML = hits.map((i,idx)=>`
+    <a class="search-item" href="#${i.id}" data-idx="${idx}" onclick="closeSearch()">
+      <div class="search-item-icon">${SEARCH_SVGS[i.icon]||''}</div>
+      <div class="search-item-info">
+        <div class="search-item-title">${i.title}</div>
+        <div class="search-item-desc">${i.desc}</div>
+      </div>
+    </a>`).join('') || '<div style="padding:20px;text-align:center;color:var(--text2);font-size:13px">No results found</div>';
+}
+
+function searchKeyNav(e){
+  const items = document.querySelectorAll('#search-results .search-item');
+  if(e.key==='Escape'){closeSearch();return}
+  if(e.key==='ArrowDown'){e.preventDefault();_searchFocus=Math.min(_searchFocus+1,items.length-1)}
+  else if(e.key==='ArrowUp'){e.preventDefault();_searchFocus=Math.max(_searchFocus-1,0)}
+  else if(e.key==='Enter'&&_searchFocus>=0){items[_searchFocus].click();return}
+  items.forEach((el,i)=>el.classList.toggle('focused',i===_searchFocus));
+  if(_searchFocus>=0)items[_searchFocus].scrollIntoView({block:'nearest'});
+}
+
+// Cmd+K / Ctrl+K shortcut
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch()}
+});
+
+// ── Dynamic Contributors from GitHub API ──────────────────────────────────
+async function loadContributors() {
+  const grid = document.getElementById('contributors-grid');
+  try {
+    const res = await fetch('https://api.github.com/repos/ismoy/ImagePickerKMP/contributors?per_page=100', {
+      headers: { 'Accept': 'application/vnd.github+json' }
+    });
+    if (!res.ok) throw new Error('GitHub API error');
+    const data = await res.json();
+    const humans = data.filter(u => u.type !== 'Bot');
+    grid.innerHTML = humans.map(u => `
+      <a class="contributor" href="${u.html_url}" target="_blank" rel="noopener"
+         title="${u.login} — ${u.contributions} contribution${u.contributions !== 1 ? 's' : ''}">
+        <img src="${u.avatar_url}&s=72" alt="${u.login}" loading="lazy" />
+        <span>${u.login}</span>
+      </a>`).join('');
+  } catch(e) {
+    grid.innerHTML = `
+      <a class="contributor" href="https://github.com/ismoy" target="_blank" rel="noopener" title="ismoy — Author">
+        <img src="https://avatars.githubusercontent.com/u/72107070?v=4&s=72" alt="ismoy" loading="lazy" />
+        <span>ismoy</span>
+      </a>`;
+  }
+}
+
+// ── Sponsors (Firebase Realtime Database) ────────────────────────────────
+const SPONSORS_API = 'https://belzspeedscan-default-rtdb.firebaseio.com/ImagePickerKMPSponsor.json';
+
+async function loadSponsors() {
+  const grid = document.getElementById('sponsors-grid');
+  if (!grid) return;
+  grid.innerHTML = `<div class="rp-skeleton"></div><div class="rp-skeleton"></div>`;
+  try {
+    const res = await fetch(SPONSORS_API, { headers: { 'Content-Type': 'application/json' } });
+    if (!res.ok) throw new Error('Firebase fetch error');
+    const data = await res.json();
+    if (!data) {
+      grid.innerHTML = `<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0;grid-column:1/-1">Be the first sponsor and get your logo here!</p>`;
+      return;
+    }
+    const sponsors = Object.values(data);
+    grid.innerHTML = sponsors.map(s => `
+      <a class="contributor" href="https://github.com/${encodeURIComponent(s.login)}"
+         target="_blank" rel="noopener" title="${s.login} · ${s.tier}">
+        <img src="https://avatars.githubusercontent.com/${encodeURIComponent(s.login)}?s=72"
+             alt="${s.login}" loading="lazy"
+             onerror="this.src='https://avatars.githubusercontent.com/u/0?v=4&s=72'" />
+        <span>${s.login}</span>
+      </a>`).join('');
+  } catch (e) {
+    console.warn('Could not load sponsors:', e);
+    grid.innerHTML = `<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0;grid-column:1/-1">Be the first sponsor and get your logo here!</p>`;
+  }
+}
+
+loadSponsors();
+loadContributors();
+
+// ── Latest Commit from GitHub API ────────────────────────────────────────
+async function loadLatestCommit() {
+  const box = document.getElementById('rp-commit');
+  if (!box) return;
+  try {
+    const res = await fetch('https://api.github.com/repos/ismoy/ImagePickerKMP/commits?per_page=1', {
+      headers: { 'Accept': 'application/vnd.github+json' }
+    });
+    if (!res.ok) throw new Error('API error');
+    const [commit] = await res.json();
+    const msg   = commit.commit.message.split('\n')[0];
+    const sha   = commit.sha.slice(0, 7);
+    const url   = commit.html_url;
+    const date  = new Date(commit.commit.author.date);
+    const now   = new Date();
+    const diffH = Math.round((now - date) / 36e5);
+    const ago   = diffH < 1 ? 'just now'
+                : diffH < 24 ? `${diffH}h ago`
+                : `${Math.round(diffH/24)}d ago`;
+    const author = commit.author?.login ?? commit.commit.author.name;
+    box.innerHTML = `
+      <div class="rp-commit-msg" title="${msg.replace(/"/g,'&quot;')}">${msg}</div>
+      <div class="rp-commit-meta">
+        <a class="rp-commit-sha" href="${url}" target="_blank" rel="noopener">${sha}</a>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${author} · ${ago}</span>
+      </div>`;
+  } catch {
+    box.innerHTML = `<div class="rp-commit-msg" style="color:var(--text2)">Could not load commit.</div>`;
+  }
+}
+loadLatestCommit();
+</script>
+</body>
+</html>

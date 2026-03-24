@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://ismoy.github.io/ImagePickerKMP/sitemap.xml
+
+# Crawl-delay (optional, be polite to bots)
+Crawl-delay: 5

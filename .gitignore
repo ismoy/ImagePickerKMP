@@ -23,3 +23,9 @@ node_modules/
 ocr-feature/
 react-native/
 
+# Documentation website source (served via GitHub Pages from .pages/)
+# These files are tracked in .pages/ — not in docs/
+docs/index.html
+docs/robots.txt
+docs/sitemap.xml
+
