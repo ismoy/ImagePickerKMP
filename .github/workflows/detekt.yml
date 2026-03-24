@@ -12,56 +12,43 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
+
       - name: Run Detekt
         id: detekt_run
         run: ./gradlew detekt --no-daemon --stacktrace
+
       - name: Count Detekt issues
         id: detekt_issues
+        shell: bash
         run: |
           DETEKT_REPORT=library/build/reports/detekt/detekt.xml
           ISSUES=0
           if [ -f "$DETEKT_REPORT" ]; then
             COUNT=$(grep -c '<error ' "$DETEKT_REPORT" 2>/dev/null || true)
-            if [[ "$COUNT" =~ ^[0-9]+$ ]]; then
-              ISSUES=$COUNT
-            fi
+            [[ "$COUNT" =~ ^[0-9]+$ ]] && ISSUES=$COUNT
           fi
-          echo "DEBUG: ISSUES=$ISSUES"
-          echo "DEBUG: GITHUB_OUTPUT=$GITHUB_OUTPUT"
           echo "issues=${ISSUES}" >> "$GITHUB_OUTPUT"
-        shell: bash
-      - name: Notify Discord on Detekt Success
+
+      - name: Notify Discord on Success
         if: success()
-        uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        with:
-          args: |
-            ✅ **Detekt Success** - ImagePickerKMP
-            Repository: ${{ github.repository }}
-            Branch: ${{ github.ref_name }}
-            Commit: ${{ github.sha }}
-            Author: ${{ github.actor }}
-            Workflow: ${{ github.workflow }}
-            Detekt Issues: ${{ steps.detekt_issues.outputs.issues }}
-            🔗 View Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      - name: Notify Discord on Detekt Failure
+        run: |
+          curl -s -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "{\"content\":\"✅ **Detekt Passed** — ImagePickerKMP\n**Branch:** \`${{ github.ref_name }}\`\n**Author:** ${{ github.actor }}\n**Issues found:** ${{ steps.detekt_issues.outputs.issues }}\n🔗 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
+
+      - name: Notify Discord on Failure
         if: failure()
-        uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        with:
-          args: |
-            ❌ **Detekt Failed** - ImagePickerKMP
-            Repository: ${{ github.repository }}
-            Branch: ${{ github.ref_name }}
-            Commit: ${{ github.sha }}
-            Author: ${{ github.actor }}
-            Workflow: ${{ github.workflow }}
-            Detekt Issues: ${{ steps.detekt_issues.outputs.issues }}
-            🔗 View Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} 
+        run: |
+          curl -s -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "{\"content\":\"❌ **Detekt Failed** — ImagePickerKMP\n**Branch:** \`${{ github.ref_name }}\`\n**Author:** ${{ github.actor }}\n**Issues found:** ${{ steps.detekt_issues.outputs.issues }}\n🔗 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"

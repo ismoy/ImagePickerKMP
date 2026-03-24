@@ -32,43 +32,15 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Show environment and gradle info
-        run: |
-          echo "=== Environment Info ==="
-          java -version
-          echo "Gradle version:"
-          ./gradlew --version
-          echo "=== Gradle Wrapper Properties ==="
-          cat gradle/wrapper/gradle-wrapper.properties
-          echo "=== Project Structure ==="
-          ls -la
-          echo "=== Library Directory ==="
-          ls -la library/
+      - name: Build
+        run: ./gradlew build --no-daemon --stacktrace
 
-      - name: Build with debug info
-        run: ./gradlew build --no-daemon --stacktrace --info
-
-      - name: Run tests with debug
-        run: ./gradlew test --no-daemon --stacktrace --info
+      - name: Run tests
+        run: ./gradlew test --no-daemon --stacktrace
         continue-on-error: true
 
-      - name: Verify tests executed
-        run: |
-          echo "=== Verifying tests executed ==="
-          ./gradlew test --dry-run
-          echo "=== Test tasks available ==="
-          ./gradlew tasks --group="verification"
-
-      - name: Check test results
-        run: |
-          echo "=== Checking test results ==="
-          ls -la library/build/test-results/ || echo "No test results directory"
-          ls -la library/build/reports/tests/ || echo "No test reports directory"
-          echo "=== Test summary ==="
-          ./gradlew test --dry-run || echo "Could not run test dry-run"
-
-      - name: Run ktlint with debug
-        run: ./gradlew ktlintCheck --no-daemon --stacktrace --info
+      - name: Run ktlint
+        run: ./gradlew ktlintCheck --no-daemon
         continue-on-error: true
 
       - name: Upload build logs on failure
@@ -76,69 +48,53 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-logs
-          path: |
-            library/build/
-            .gradle/
+          path: library/build/
           retention-days: 7
 
       - name: Generate Kover coverage report
         run: ./gradlew koverXmlReport --no-daemon --stacktrace
 
-      - name: Verify coverage thresholds (minimum 97%)
+      - name: Verify coverage thresholds
         run: ./gradlew koverVerify --no-daemon --stacktrace
         continue-on-error: true
 
-      - name: Check Kover report generation
-        run: |
-          echo "=== Checking Kover report ==="
-          ls -la library/build/reports/kover/ || echo "No kover directory"
-          if [ -f "./library/build/reports/kover/report.xml" ]; then
-            echo "Kover XML report exists"
-          else
-            echo "Kover XML report not found"
-          fi
-
-      - name: Parse coverage data
+      - name: Parse Kover coverage data
         id: coverage
         run: |
           REPORT_PATH="./library/build/reports/kover/report.xml"
-          
+
           if [ -f "$REPORT_PATH" ]; then
-            echo "Using Kover XML report"
-            
             MISSED=$(grep -o 'type="LINE" missed="[^"]*"' "$REPORT_PATH" | tail -1 | sed 's/.*missed="\([^"]*\)".*/\1/' || echo "0")
             COVERED=$(grep -o 'type="LINE"[^/]* covered="[^"]*"' "$REPORT_PATH" | tail -1 | sed 's/.*covered="\([^"]*\)".*/\1/' || echo "0")
-            
-            if [ "$((MISSED + COVERED))" -gt 0 ]; then
-              LINE_PERCENTAGE=$(echo "scale=1; $COVERED * 100 / ($MISSED + $COVERED)" | bc -l 2>/dev/null || echo "0")
+
+            TOTAL=$((MISSED + COVERED))
+            if [ "$TOTAL" -gt 0 ]; then
+              LINE_PERCENTAGE=$(echo "scale=1; $COVERED * 100 / $TOTAL" | bc -l 2>/dev/null || echo "0")
             else
               LINE_PERCENTAGE="0"
             fi
-            
-            echo "Line coverage: $LINE_PERCENTAGE%"
-            echo "Covered lines: $COVERED"
-            echo "Missed lines: $MISSED"
-            
+
             echo "line_coverage=$LINE_PERCENTAGE" >> $GITHUB_OUTPUT
-            echo "covered_lines=$COVERED" >> $GITHUB_OUTPUT
-            echo "total_lines=$((MISSED + COVERED))" >> $GITHUB_OUTPUT
-            echo "has_coverage=true" >> $GITHUB_OUTPUT
+            echo "covered_lines=$COVERED"         >> $GITHUB_OUTPUT
+            echo "total_lines=$TOTAL"             >> $GITHUB_OUTPUT
+            echo "has_coverage=true"              >> $GITHUB_OUTPUT
+            echo "Kover line coverage: $LINE_PERCENTAGE% ($COVERED/$TOTAL)"
           else
-            echo "Kover XML report not found"
-            echo "line_coverage=0" >> $GITHUB_OUTPUT
-            echo "covered_lines=0" >> $GITHUB_OUTPUT
-            echo "total_lines=0" >> $GITHUB_OUTPUT
+            echo "Kover report not found at $REPORT_PATH"
+            echo "line_coverage=0"    >> $GITHUB_OUTPUT
+            echo "covered_lines=0"    >> $GITHUB_OUTPUT
+            echo "total_lines=0"      >> $GITHUB_OUTPUT
             echo "has_coverage=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Upload coverage artifacts
+      - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: library/build/reports/kover/
           retention-days: 30
 
-      - name: Upload coverage reports to Codecov
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -157,193 +113,40 @@ jobs:
             const fs = require('fs');
             try {
               const xmlPath = './library/build/reports/kover/report.xml';
-              if (fs.existsSync(xmlPath)) {
-                const xmlContent = fs.readFileSync(xmlPath, 'utf8');
-                const lineMatches = xmlContent.match(/type="LINE" missed="(\d+)" covered="(\d+)"/g);
-                if (lineMatches && lineMatches.length > 0) {
-                  const last = lineMatches[lineMatches.length - 1];
-                  const parts = last.match(/missed="(\d+)" covered="(\d+)"/);
-                  const missed = parseInt(parts[1]);
-                  const covered = parseInt(parts[2]);
-                  const total = missed + covered;
-                  const pct = total > 0 ? ((covered / total) * 100).toFixed(1) : '0.0';
-                  const body = '## Coverage Report\n\n'
-                    + '**Line Coverage:** ' + pct + '% (' + covered + ' of ' + total + ' lines covered)\n\n'
-                    + 'View detailed report: [Codecov](https://codecov.io/gh/ismoy/ImagePickerKMP)\n\n'
-                    + '---\n*Generated automatically by CI*';
-                  github.rest.issues.createComment({
-                    issue_number: context.issue.number,
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    body: body
-                  });
-                }
-              }
-            } catch (error) {
-              console.log('Could not generate coverage comment:', error.message);
-            }
-
-      - name: Notify coverage changes
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            try {
-              const xmlPath = './library/build/reports/kover/report.xml';
-              if (fs.existsSync(xmlPath)) {
-                const xmlContent = fs.readFileSync(xmlPath, 'utf8');
-                const lineMatches = xmlContent.match(/type="LINE" missed="(\d+)" covered="(\d+)"/g);
-                if (lineMatches && lineMatches.length > 0) {
-                  const last = lineMatches[lineMatches.length - 1];
-                  const parts = last.match(/missed="(\d+)" covered="(\d+)"/);
-                  const missed = parseInt(parts[1]);
-                  const covered = parseInt(parts[2]);
-                  const total = missed + covered;
-                  const coverage = total > 0 ? (covered / total) * 100 : 0;
-                  if (coverage < 70) {
-                    console.log('Coverage is below 70% (' + coverage.toFixed(1) + '%). Add more tests.');
-                  } else {
-                    console.log('Coverage is ' + coverage.toFixed(1) + '%. Threshold met.');
-                  }
-                }
-              }
-            } catch (error) {
-              console.log('Could not analyze coverage:', error.message);
-            }
-
-      - name: Generate Discord message
-        id: discord_message
-        run: |
-          if [ "${{ steps.coverage.outputs.has_coverage }}" == "true" ]; then
-            COVERAGE_TEXT="📊 **Coverage Report:**
-          • Line Coverage: ${{ steps.coverage.outputs.line_coverage }}% (${{ steps.coverage.outputs.covered_lines }} of ${{ steps.coverage.outputs.total_lines }} lines)
-          • Branch Coverage: ${{ steps.coverage.outputs.branch_coverage }}%"
-          else
-            COVERAGE_TEXT="📊 **Coverage:** Not available"
-          fi
-          
-          MESSAGE="🎉 **Build Success** - ImagePickerKMP
-
-          **Repository:** ${{ github.repository }}
-          **Branch:** ${{ github.ref_name }}
-          **Commit:** ${{ github.sha }}
-          **Author:** ${{ github.actor }}
-
-          $COVERAGE_TEXT
-
-          **Workflow:** ${{ github.workflow }}
-
-          🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
-          🔗 **View Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
-          echo "message<<EOF" >> $GITHUB_OUTPUT
-          echo "$MESSAGE" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+              if (!fs.existsSync(xmlPath)) return;
+              const xml = fs.readFileSync(xmlPath, 'utf8');
+              const matches = xml.match(/type="LINE" missed="(\d+)" covered="(\d+)"/g);
+              if (!matches) return;
+              const last = matches[matches.length - 1].match(/missed="(\d+)" covered="(\d+)"/);
+              const missed = parseInt(last[1]), covered = parseInt(last[2]);
+              const total = missed + covered;
+              const pct = total > 0 ? ((covered / total) * 100).toFixed(1) : '0.0';
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 📊 Coverage Report\n\n**Line Coverage:** ${pct}% (${covered} of ${total} lines)\n\n[View on Codecov](https://codecov.io/gh/ismoy/ImagePickerKMP)\n\n---\n*Generated automatically by CI*`
+              });
+            } catch (e) { console.log('Could not post coverage comment:', e.message); }
 
       - name: Notify Discord on Success
         if: success()
-        uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        with:
-          args: ${{ steps.discord_message.outputs.message }}
-
-      - name: Generate Discord failure message
-        id: discord_failure_message
         run: |
-          # Captura las últimas 30 líneas del log de build (ajusta según tu necesidad)
-          LOG_FILE=build.log
-          if [ -f "$LOG_FILE" ]; then
-            ERROR_LOG=$(tail -n 30 "$LOG_FILE")
-          else
-            ERROR_LOG="No build.log found. See Actions log for details."
+          COVERAGE_TEXT="not available"
+          if [ "${{ steps.coverage.outputs.has_coverage }}" == "true" ]; then
+            COVERAGE_TEXT="${{ steps.coverage.outputs.line_coverage }}% (${{ steps.coverage.outputs.covered_lines }}/${{ steps.coverage.outputs.total_lines }} lines)"
           fi
-
-          MESSAGE="❌ **Build Failed** - ImagePickerKMP
-
-          **Repository:** ${{ github.repository }}
-          **Branch:** ${{ github.ref_name }}
-          **Commit:** ${{ github.sha }}
-          **Author:** ${{ github.actor }}
-
-          **Workflow:** ${{ github.workflow }}
-
-          **Error log (last lines):**
-          \`\`\`
-          $ERROR_LOG
-          \`\`\`
-
-          🔗 **PR:** ${{ github.event.pull_request.html_url || 'N/A' }}
-          🔗 **View Details:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
-          echo "message<<EOF" >> $GITHUB_OUTPUT
-          echo "$MESSAGE" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          curl -s -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "{\"content\":\"✅ **CI Build Success** — ImagePickerKMP\n**Branch:** \`${{ github.ref_name }}\`\n**Author:** ${{ github.actor }}\n**Coverage:** ${COVERAGE_TEXT}\n🔗 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
 
       - name: Notify Discord on Failure
         if: failure()
-        uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        with:
-          args: ${{ steps.discord_failure_message.outputs.message }}
-
-  detekt:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: 17
-      - name: Run Detekt
-        id: detekt_run
-        run: ./gradlew detekt --no-daemon --stacktrace
-      - name: Count Detekt issues
-        id: detekt_issues
         run: |
-          DETEKT_REPORT=library/build/reports/detekt/detekt.xml
-          ISSUES=0
-          if [ -f "$DETEKT_REPORT" ]; then
-            COUNT=$(grep -c '<error ' "$DETEKT_REPORT" 2>/dev/null || true)
-            if [[ "$COUNT" =~ ^[0-9]+$ ]]; then
-              ISSUES=$COUNT
-            fi
-          fi
-          echo "DEBUG: ISSUES=$ISSUES"
-          echo "DEBUG: GITHUB_OUTPUT=$GITHUB_OUTPUT"
-          echo "issues=${ISSUES}" >> "$GITHUB_OUTPUT"
-        shell: bash
-      - name: Notify Discord on Detekt Success
-        if: success()
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        with:
-          args: |
-            ✅ **Detekt Success** - ImagePickerKMP
-            Repository: ${{ github.repository }}
-            Branch: ${{ github.ref_name }}
-            Commit: ${{ github.sha }}
-            Author: ${{ github.actor }}
-            Workflow: ${{ github.workflow }}
-            Detekt Issues: ${{ steps.detekt_issues.outputs.issues }}
-            🔗 View Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      - name: Notify Discord on Detekt Failure
-        if: failure()
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        with:
-          args: |
-            ❌ **Detekt Failed** - ImagePickerKMP
-            Repository: ${{ github.repository }}
-            Branch: ${{ github.ref_name }}
-            Commit: ${{ github.sha }}
-            Author: ${{ github.actor }}
-            Workflow: ${{ github.workflow }}
-            Detekt Issues: ${{ steps.detekt_issues.outputs.issues }}
-            🔗 View Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} 
+          curl -s -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "{\"content\":\"❌ **CI Build Failed** — ImagePickerKMP\n**Branch:** \`${{ github.ref_name }}\`\n**Author:** ${{ github.actor }}\n🔗 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"

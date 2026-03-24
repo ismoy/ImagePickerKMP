@@ -61,7 +61,7 @@ jobs:
         run: ./gradlew build test --no-daemon
 
       - name: Generate coverage report
-        run: ./gradlew jacocoTestReport --no-daemon
+        run: echo "Skipping jacoco — using Kover" 
 
       - name: Publish to Maven Central
         run: ./gradlew publishToMavenCentral --no-daemon
@@ -111,8 +111,12 @@ jobs:
 
       - name: Notify Discord on Deploy Success
         if: success()
-        uses: Ilshidur/action-discord@master
         env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -s -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d '{"content":""}'
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
           args: |
@@ -130,8 +134,12 @@ jobs:
 
       - name: Notify Discord on Deploy Failure
         if: failure()
-        uses: Ilshidur/action-discord@master
         env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -s -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d '{"content":""}'
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
           args: |

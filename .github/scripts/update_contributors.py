@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Fetches contributors from GitHub API and updates the README.md
-between <!-- CONTRIBUTORS-LIST:START --> and <!-- CONTRIBUTORS-LIST:END --> markers.
+between <!-- ALL-CONTRIBUTORS-LIST:START --> and <!-- ALL-CONTRIBUTORS-LIST:END --> markers.
+Runs automatically on every push to main/develop via update-contributors.yml
 """
 import json, os, re, sys
 
@@ -20,35 +21,43 @@ if not humans:
     print("No contributors found — skipping update.")
     sys.exit(0)
 
-# Build table — 7 per row, matching GitHub's all-contributors style
+REPO = "ismoy/ImagePickerKMP"
+
+# Build table — 7 per row
 PER_ROW = 7
 rows = ""
 for i in range(0, len(humans), PER_ROW):
-    chunk = humans[i:i+PER_ROW]
+    chunk = humans[i:i + PER_ROW]
     cells = ""
     for u in chunk:
-        login    = u.get("login", "")
-        avatar   = u.get("avatar_url", f"https://github.com/{login}.png")
-        profile  = u.get("html_url",   f"https://github.com/{login}")
+        login   = u.get("login", "")
+        avatar  = u.get("avatar_url", f"https://avatars.githubusercontent.com/{login}")
+        profile = u.get("html_url",   f"https://github.com/{login}")
         contribs = u.get("contributions", 0)
-        suffix   = "s" if contribs != 1 else ""
+        # Show contribution emoji based on commit count
+        if contribs >= 50:
+            role = "💻 📖 🚧 🎨 🤔"
+        elif contribs >= 10:
+            role = "💻 🐛"
+        else:
+            role = "💻"
         cells += (
-            f'\n        <td align="center" valign="top" width="14.28%">'
-            f'\n          <a href="{profile}">'
-            f'\n            <img src="{avatar}&s=100" width="80px;" alt="{login}"/><br />'
-            f'\n            <sub><b>{login}</b></sub>'
-            f'\n          </a><br />'
-            f'\n          <sub>{contribs} commit{suffix}</sub>'
-            f'\n        </td>'
+            f'\n      <td align="center" valign="top" width="14.28%">'
+            f'\n        <a href="{profile}">'
+            f'\n          <img src="{avatar}" width="100px;" alt="{login}"/><br />'
+            f'\n          <sub><b>{login}</b></sub>'
+            f'\n        </a><br />'
+            f'\n        <a href="https://github.com/{REPO}/commits?author={login}" title="Contributions">{role}</a>'
+            f'\n      </td>'
         )
-    rows += f"      <tr>{cells}\n      </tr>\n"
+    rows += f"    <tr>{cells}\n    </tr>\n"
 
 table = (
     "<table>\n"
-    "      <tbody>\n"
+    "  <tbody>\n"
     + rows +
-    "      </tbody>\n"
-    "    </table>"
+    "  </tbody>\n"
+    "</table>"
 )
 
 # Replace block between markers in README.md
@@ -57,12 +66,16 @@ with open(readme_path, "r", encoding="utf-8") as f:
     content = f.read()
 
 new_block = (
-    "<!-- CONTRIBUTORS-LIST:START - Do not remove or modify this section -->\n"
+    "<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->\n"
+    "<!-- prettier-ignore-start -->\n"
+    "<!-- markdownlint-disable -->\n"
     + table + "\n"
-    + "<!-- CONTRIBUTORS-LIST:END -->"
+    "<!-- markdownlint-restore -->\n"
+    "<!-- prettier-ignore-end -->\n"
+    "<!-- ALL-CONTRIBUTORS-LIST:END -->"
 )
 
-pattern = r"<!-- CONTRIBUTORS-LIST:START.*?-->.*?<!-- CONTRIBUTORS-LIST:END -->"
+pattern = r"<!-- ALL-CONTRIBUTORS-LIST:START.*?-->.*?<!-- ALL-CONTRIBUTORS-LIST:END -->"
 updated = re.sub(pattern, new_block, content, flags=re.DOTALL)
 
 if updated == content:
@@ -73,3 +86,4 @@ with open(readme_path, "w", encoding="utf-8") as f:
     f.write(updated)
 
 print("README.md contributors section updated successfully.")
+
