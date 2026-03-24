@@ -4,8 +4,8 @@ on:
   schedule:
     - cron: '0 6 * * 1'   # Every Monday at 06:00 UTC
   push:
-    branches: [main]        # Run on every merge to main
-  workflow_dispatch:        # Allow manual trigger
+    branches: [main, develop]   # Run on merge to main or develop
+  workflow_dispatch:             # Allow manual trigger
 
 jobs:
   update-contributors:

@@ -11,5 +11,27 @@
   "contributorsSortAlphabetically": false,
   "linkToUsage": true,
   "skipCi": true,
-  "contributors": []
+  "contributors": [
+    {
+      "login": "ismoy",
+      "name": "Ismoy Belizaire",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72107070?v=4",
+      "profile": "https://github.com/ismoy",
+      "contributions": ["code", "doc", "maintenance", "design", "ideas"]
+    },
+    {
+      "login": "medAndro",
+      "name": "medAndro",
+      "avatar_url": "https://avatars.githubusercontent.com/medAndro",
+      "profile": "https://github.com/medAndro",
+      "contributions": ["code", "bug"]
+    },
+    {
+      "login": "daniil-pastuhov",
+      "name": "daniil-pastuhov",
+      "avatar_url": "https://avatars.githubusercontent.com/daniil-pastuhov",
+      "profile": "https://github.com/daniil-pastuhov",
+      "contributions": ["code"]
+    }
+  ]
 }

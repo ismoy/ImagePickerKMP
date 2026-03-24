@@ -44,8 +44,12 @@ jobs:
           git push origin main
 
       - name: Notify Discord on Version Bump
-        uses: Ilshidur/action-discord@master
         env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -s -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d '{"content":""}'
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
           args: |

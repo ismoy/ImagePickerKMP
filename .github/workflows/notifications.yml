@@ -14,74 +14,58 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download workflow artifacts
+      - name: Download coverage artifact
         uses: actions/download-artifact@v4
         with:
           name: coverage-report
           path: ./coverage
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
         continue-on-error: true
 
-      - name: Parse coverage data
+      - name: Parse Kover coverage data
         id: coverage
         run: |
-          echo "=== Checking for coverage artifacts ==="
-          ls -la ./coverage/ || echo "No coverage directory found"
-          
-          if [ -f "./coverage/jacocoTestReport.xml" ]; then
-            echo "✅ Coverage artifact found"
-            # Extract line coverage percentage
-            LINE_COVERAGE=$(grep -o 'LINE="[^"]*"' ./coverage/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*')
-            BRANCH_COVERAGE=$(grep -o 'BRANCH="[^"]*"' ./coverage/jacocoTestReport.xml | head -1 | grep -o '[0-9.]*')
-            
-            echo "line_coverage=$LINE_COVERAGE" >> $GITHUB_OUTPUT
-            echo "branch_coverage=$BRANCH_COVERAGE" >> $GITHUB_OUTPUT
-            echo "has_coverage=true" >> $GITHUB_OUTPUT
-            echo "Coverage data extracted successfully"
+          REPORT_PATH="./coverage/report.xml"
+
+          if [ -f "$REPORT_PATH" ]; then
+            MISSED=$(grep -o 'type="LINE" missed="[^"]*"' "$REPORT_PATH" | tail -1 | sed 's/.*missed="\([^"]*\)".*/\1/' || echo "0")
+            COVERED=$(grep -o 'type="LINE"[^/]* covered="[^"]*"' "$REPORT_PATH" | tail -1 | sed 's/.*covered="\([^"]*\)".*/\1/' || echo "0")
+            TOTAL=$((MISSED + COVERED))
+            if [ "$TOTAL" -gt 0 ]; then
+              LINE_PERCENTAGE=$(echo "scale=1; $COVERED * 100 / $TOTAL" | bc -l 2>/dev/null || echo "0")
+            else
+              LINE_PERCENTAGE="0"
+            fi
+            echo "line_coverage=$LINE_PERCENTAGE" >> $GITHUB_OUTPUT
+            echo "has_coverage=true"              >> $GITHUB_OUTPUT
           else
-            echo "❌ Coverage artifact not found or not available"
-            echo "line_coverage=0" >> $GITHUB_OUTPUT
-            echo "branch_coverage=0" >> $GITHUB_OUTPUT
+            echo "line_coverage=0"    >> $GITHUB_OUTPUT
             echo "has_coverage=false" >> $GITHUB_OUTPUT
-            echo "Coverage data not available"
           fi
 
-      - name: Notify Discord with detailed info
-        uses: Ilshidur/action-discord@master
+      - name: Notify Discord
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        with:
-          args: |
-            ${{ github.event.workflow_run.conclusion == 'success' && '🎉' || '❌' }} **ImagePickerKMP Build ${{ github.event.workflow_run.conclusion == 'success' && 'Success' || 'Failed' }}**
-            
-            **Repository:** ${{ github.repository }}
-            **Branch:** ${{ github.event.workflow_run.head_branch }}
-            **Commit:** ${{ github.event.workflow_run.head_sha }}
-            **Triggered by:** ${{ github.event.workflow_run.actor.login }}
-            
-            ${{ steps.coverage.outputs.has_coverage == 'true' && format('📊 **Coverage Report:**\n• Line Coverage: {0}%\n• Branch Coverage: {1}%', steps.coverage.outputs.line_coverage, steps.coverage.outputs.branch_coverage) || '📊 **Coverage:** Not available' }}
-            
-            **Duration:** ${{ github.event.workflow_run.duration }}s
-            **Workflow:** ${{ github.event.workflow_run.name }}
-            
-            🔗 **View Details:** ${{ github.event.workflow_run.html_url }}
+        run: |
+          CONCLUSION="${{ github.event.workflow_run.conclusion }}"
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          ACTOR="${{ github.event.workflow_run.actor.login }}"
+          URL="${{ github.event.workflow_run.html_url }}"
 
-      - name: Notify Discord on coverage threshold
-        if: steps.coverage.outputs.has_coverage == 'true' && github.event.workflow_run.conclusion == 'success'
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        with:
-          args: |
-            📊 **Coverage Alert** - ImagePickerKMP
-            
-            **Line Coverage:** ${{ steps.coverage.outputs.line_coverage }}%
-            **Branch Coverage:** ${{ steps.coverage.outputs.branch_coverage }}%
-            
-            ${{ steps.coverage.outputs.line_coverage < 20 && '⚠️ **Low Coverage Alert!** Consider adding more tests.' || '' }}
-            ${{ steps.coverage.outputs.line_coverage >= 20 && steps.coverage.outputs.line_coverage < 50 && '📈 **Coverage Improving!** Keep adding tests!' || '' }}
-            ${{ steps.coverage.outputs.line_coverage >= 50 && '🎉 **Excellent Coverage!** Great job!' || '' }}
-            
-            **Branch:** ${{ github.event.workflow_run.head_branch }}
-            **Commit:** ${{ github.event.workflow_run.head_sha }}
-            
-            🔗 **View Details:** ${{ github.event.workflow_run.html_url }} 
+          if [ "$CONCLUSION" == "success" ]; then
+            ICON="✅"
+            STATUS="Success"
+          else
+            ICON="❌"
+            STATUS="Failed"
+          fi
+
+          COVERAGE_TEXT="not available"
+          if [ "${{ steps.coverage.outputs.has_coverage }}" == "true" ]; then
+            COVERAGE_TEXT="${{ steps.coverage.outputs.line_coverage }}%"
+          fi
+
+          curl -s -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "{\"content\":\"${ICON} **CI ${STATUS}** — ImagePickerKMP\n**Branch:** \`${BRANCH}\`\n**Author:** ${ACTOR}\n**Coverage:** ${COVERAGE_TEXT}\n🔗 ${URL}\"}"
