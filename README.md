@@ -670,6 +670,33 @@ Thanks to these wonderful people ([emoji key](https://allcontributors.org/docs/e
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/ismoy">
+          <img src="https://avatars.githubusercontent.com/u/72107070?v=4" width="100px;" alt="ismoy"/><br />
+          <sub><b>ismoy</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=ismoy" title="Contributions">💻 📖 🚧 🎨 🤔</a>
+      </td>
+      <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/medAndro">
+          <img src="https://avatars.githubusercontent.com/u/88672474?v=4" width="100px;" alt="medAndro"/><br />
+          <sub><b>medAndro</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=medAndro" title="Contributions">💻 🐛</a>
+      </td>
+      <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/daniil-pastuhov">
+          <img src="https://avatars.githubusercontent.com/u/8494442?v=4" width="100px;" alt="daniil-pastuhov"/><br />
+          <sub><b>daniil-pastuhov</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
