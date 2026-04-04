@@ -62,10 +62,14 @@ data class CameraCallbacks(
  * @property customConfirmationView Optional composable that replaces the built-in photo
  *   confirmation screen. Receives the captured [PhotoResult], a confirmation callback, and
  *   a retry callback. Defaults to `null`.
- * @property customDeniedDialog Optional composable shown when camera permission is permanently
- *   denied. Receives an `onRetry` lambda to re-trigger the permission request. Defaults to `null`.
+ * @property customDeniedDialog Optional composable shown when camera permission is denied.
+ *   Receives `onRetry` to re-trigger the permission request and `onDismiss` to close the
+ *   entire picker without action. Always call one of them when the user dismisses the dialog.
+ *   Defaults to `null`.
  * @property customSettingsDialog Optional composable shown when the user must open system
- *   settings to grant permission. Receives an `onOpenSettings` lambda. Defaults to `null`.
+ *   settings to grant permission. Receives `onOpenSettings` to open system settings and
+ *   `onDismiss` to close the picker without action. Always call one of them on dismiss.
+ *   Defaults to `null`.
  * @property skipConfirmation When `true`, skips the confirmation screen entirely and delivers
  *   the captured photo directly via `onPhotoCaptured`. Defaults to `false`.
  * @property cancelButtonTextIOS Text label for the cancel button in the iOS permission
@@ -77,8 +81,8 @@ data class CameraCallbacks(
 data class PermissionAndConfirmationConfig(
     val customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
     val customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    val customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))? = null,
-    val customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null,
+    val customDeniedDialog: (@Composable (onRetry: () -> Unit, onDismiss: () -> Unit) -> Unit)? = null,
+    val customSettingsDialog: (@Composable (onOpenSettings: () -> Unit, onDismiss: () -> Unit) -> Unit)? = null,
     val skipConfirmation: Boolean = false,
     val cancelButtonTextIOS: String? = "Cancel",
     val onCancelPermissionConfigIOS: (() -> Unit)? = null
@@ -99,6 +103,8 @@ data class PermissionAndConfirmationConfig(
  *   are stripped from extracted EXIF data before delivery.  Set to `false` only when your app
  *   has a legitimate need for the exact capture location and the user has been informed.
  *   Effective only when [includeExif] is `true`.
+ * @property mimeTypeMismatchMessage Custom message shown when a selected file does not match
+ *   the allowed [mimeTypes]. Defaults to `null` (uses built-in message).
  */
 @Suppress("EndOfSentenceFormat")
 data class GalleryConfig(
@@ -106,7 +112,8 @@ data class GalleryConfig(
     val mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
     val selectionLimit: Int = 30,
     val includeExif: Boolean = false,
-    val redactGpsData: Boolean = true
+    val redactGpsData: Boolean = true,
+    val mimeTypeMismatchMessage: String? = null
 )
 
 /**
@@ -169,46 +176,96 @@ data class CameraCaptureConfig(
 )
 
 /**
- * Top-level configuration object for [io.github.ismoy.imagepickerkmp.presentation.ui.components.ImagePickerLauncher].
+ * ⚠️ **DEPRECATED — Belongs to the legacy API (v1).**
  *
- * Encapsulates all settings for the combined camera + gallery picker, including callbacks,
- * dialog text, camera configuration, crop, and optional full UI customization.
+ * `ImagePickerConfig` was the central configuration object for [ImagePickerLauncher],
+ * the old-API composable. Both (`ImagePickerConfig` + `ImagePickerLauncher`) will be
+ * removed in a future release.
  *
- * ## Example
+ * ## Migrating to the new API
+ *
+ * In the new API you **do not construct an `ImagePickerConfig` manually**. Instead:
+ *
+ * 1. Call `rememberImagePickerKMP()` inside your composable — it returns an
+ *    [ImagePickerKMPState][io.github.ismoy.imagepickerkmp.features.imagepicker.state.ImagePickerKMPState].
+ * 2. Call `picker.launchCamera()` or `picker.launchGallery()` on user interaction.
+ * 3. Observe `picker.result` reactively with a `when` expression.
+ *
+ * ### Minimal working implementation
+ *
  * ```kotlin
- * ImagePickerLauncher(
- *     config = ImagePickerConfig(
- *         onPhotoCaptured = { photo -> },
- *         onError = { error -> },
- *         cameraCaptureConfig = CameraCaptureConfig(
- *             compressionLevel = CompressionLevel.HIGH,
- *             includeExif = true
- *         ),
- *         enableCrop = true
+ * @Composable
+ * fun MyScreen() {
+ *     val picker = rememberImagePickerKMP()
+ *     val result = picker.result
+ *
+ *     Row(
+ *         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+ *         horizontalArrangement = Arrangement.spacedBy(8.dp)
+ *     ) {
+ *         Button(onClick = { picker.launchCamera() }, modifier = Modifier.weight(1f)) {
+ *             Text("Camera")
+ *         }
+ *         Button(onClick = { picker.launchGallery() }, modifier = Modifier.weight(1f)) {
+ *             Text("Gallery")
+ *         }
+ *     }
+ *
+ *     when (result) {
+ *         is ImagePickerResult.Loading -> {
+ *             Column(
+ *                 horizontalAlignment = Alignment.CenterHorizontally,
+ *                 modifier = Modifier.padding(16.dp)
+ *             ) {
+ *                 CircularProgressIndicator()
+ *                 Text("Loading...", color = Color.Gray, modifier = Modifier.padding(top = 12.dp))
+ *             }
+ *         }
+ *         is ImagePickerResult.Success -> {
+ *             val photos = result.photos
+ *             if (photos.size == 1) {
+ *                 CameraResultCard(photo = photos.first())
+ *             } else {
+ *                 MultiPhotoGrid(photos = photos)
+ *             }
+ *         }
+ *         is ImagePickerResult.Error     -> Text("Error: \${result.exception.message}", color = Color.Red)
+ *         is ImagePickerResult.Dismissed -> Text("Selection cancelled", color = Color.Gray)
+ *         is ImagePickerResult.Idle      -> Text("Press a button to get started", color = Color.Gray)
+ *     }
+ * }
+ * ```
+ *
+ * > ✅ **That's all you need for a basic implementation.**
+ *
+ * Configuration that previously went into [ImagePickerConfig] now goes into
+ * [ImagePickerKMPConfig][io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig]:
+ *
+ * ```kotlin
+ * val picker = rememberImagePickerKMP(
+ *     config = ImagePickerKMPConfig(
+ *         cropConfig          = CropConfig(enabled = true),
+ *         cameraCaptureConfig = CameraCaptureConfig(compressionLevel = CompressionLevel.HIGH)
  *     )
  * )
  * ```
  *
- * @property onPhotoCaptured Called with the [PhotoResult] after a successful capture or
- *   gallery selection (and optional confirmation / crop). This is the primary result callback.
- * @property onError Called when any error occurs during the picking or processing flow.
- * @property onDismiss Called when the user dismisses the picker without selecting any file.
- *   Defaults to an empty lambda.
- * @property cameraCaptureConfig Camera behavior and UI configuration. See [CameraCaptureConfig].
- *   Defaults to a [CameraCaptureConfig] with balanced settings.
- * @property enableCrop Whether to show an interactive crop UI after capture or gallery
- *   selection. Defaults to `false`.
- *
- * @see io.github.ismoy.imagepickerkmp.presentation.ui.components.ImagePickerLauncher
- * @see CameraCaptureConfig
- * @see io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
+ * @see io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP
+ * @see io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig
+ * @see io.github.ismoy.imagepickerkmp.features.imagepicker.state.ImagePickerKMPState
+ * @see io.github.ismoy.imagepickerkmp.features.imagepicker.model.ImagePickerResult
  */
 data class ImagePickerConfig(
     val onPhotoCaptured: (PhotoResult) -> Unit,
     val onError: (Exception) -> Unit,
     val onDismiss: () -> Unit = {},
     val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(),
-    val enableCrop: Boolean = false
+    val enableCrop: Boolean = false,
+    /**
+     * Llamado justo antes de mostrar el crop view, después de capturar/seleccionar la foto.
+     * Úsalo para cambiar el estado de tu UI (p.ej. ocultar un spinner de "Loading").
+     */
+    val onCropPending: () -> Unit = {}
 )
 
 data class CameraPreviewConfig(
@@ -238,8 +295,8 @@ data class CameraPermissionDialogConfig(
     val titleDialogDenied: String,
     val descriptionDialogDenied: String,
     val btnDialogDenied: String,
-    val customDeniedDialog: @Composable ((onRetry: () -> Unit) -> Unit)? = null,
-    val customSettingsDialog: @Composable ((onOpenSettings: () -> Unit) -> Unit)? = null,
+    val customDeniedDialog: @Composable ((onRetry: () -> Unit, onDismiss: () -> Unit) -> Unit)? = null,
+    val customSettingsDialog: @Composable ((onOpenSettings: () -> Unit, onDismiss: () -> Unit) -> Unit)? = null,
     val cancelButtonText: String? = "Cancel",
     val onCancelPermissionConfigIOS: (() -> Unit)? = null
 )

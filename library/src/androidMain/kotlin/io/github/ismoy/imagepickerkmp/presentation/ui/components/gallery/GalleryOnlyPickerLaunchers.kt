@@ -7,13 +7,13 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import imagepickerkmp.library.generated.resources.Res
 import imagepickerkmp.library.generated.resources.gallery_selection_error
 import imagepickerkmp.library.generated.resources.mime_type_mismatch_error
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.data.gallery.GalleryFileProcessor
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -109,6 +109,7 @@ internal fun rememberGalleryOnlyPickerLauncher(
 ): ManagedActivityResultLauncher<Array<String>, Uri?> {
     val gallerySelectionErrorMsg = stringResource(Res.string.gallery_selection_error)
     val mimeTypeMismatchMsg = stringResource(Res.string.mime_type_mismatch_error)
+    val composableScope = rememberCoroutineScope()
 
     return rememberLauncherForActivityResult(
         contract = PickImageFromGallery()
@@ -120,7 +121,7 @@ internal fun rememberGalleryOnlyPickerLauncher(
                 return@rememberLauncherForActivityResult
             }
             try {
-                CoroutineScope(Dispatchers.Main).launch {
+                composableScope.launch {
                     val result = GalleryFileProcessor.processSelectedFile(context, uri, compressionLevel, includeExif)
                     if (result != null) {
                         onPhotoSelected(result)
@@ -151,6 +152,7 @@ internal fun rememberGalleryOnlyMultiplePickerLauncher(
 ): ManagedActivityResultLauncher<Array<String>, List<Uri>> {
     val gallerySelectionErrorMsg = stringResource(Res.string.gallery_selection_error)
     val mimeTypeMismatchMsg = stringResource(Res.string.mime_type_mismatch_error)
+    val composableScope = rememberCoroutineScope()
 
     return rememberLauncherForActivityResult(
         contract = PickMultipleImagesFromGallery()
@@ -173,7 +175,7 @@ internal fun rememberGalleryOnlyMultiplePickerLauncher(
             }
             
             try {
-                CoroutineScope(Dispatchers.Main).launch {
+                composableScope.launch {
                     val semaphore = Semaphore(3)
                     val results = mutableListOf<GalleryPhotoResult>()
                     val errors = mutableListOf<Exception>()

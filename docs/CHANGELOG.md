@@ -5,7 +5,33 @@ All notable changes to ImagePickerKMP will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.35-alpha1] — 2026-03-28
+
+### Added
+
+- **`rememberImagePickerKMP` — unified Compose state-holder API**
+  - New top-level composable function `rememberImagePickerKMP(config)` that returns an `ImagePickerKMPState`
+  - Replaces the manual `showCamera`/`showGallery` boolean pattern with a single remembered state object. **No `Render()` call needed — the picker self-manages when `launchCamera()` or `launchGallery()` is invoked**
+  - `ImagePickerKMPState.launchCamera(cameraCaptureConfig?, enableCrop?, onDismiss?, onError?)` — opens the camera picker. All parameters are optional per-launch overrides of the global config
+  - `ImagePickerKMPState.launchGallery(allowMultiple?, mimeTypes?, selectionLimit?, enableCrop?, includeExif?, redactGpsData?, mimeTypeMismatchMessage?, cameraCaptureConfig?, onDismiss?, onError?)` — opens the gallery picker with per-launch overrides
+  - `ImagePickerKMPState.result: ImagePickerResult` — observable reactive state; `Idle | Loading | Success | Dismissed | Error`
+  - `ImagePickerKMPState.reset()` — resets result back to `Idle` and closes any active picker
+  - `ImagePickerKMPConfig` data class — single configuration object for all defaults (camera, gallery, crop, UI, permissions)
+  - `ImagePickerResult` sealed hierarchy for exhaustive result handling. `Success` exposes `photos: List<PhotoResult>` and `first: PhotoResult?`
+  - All existing `ImagePickerLauncher` / `GalleryPickerLauncher` APIs remain fully supported
+
+### Deprecated
+
+- **`ImagePickerLauncher`** — marked `@Deprecated(level = WARNING)`. The function still compiles and runs normally, but the compiler emits a migration warning pointing to `rememberImagePickerKMP`. Will be removed in a future major release.
+  - **Migration**: Replace `ImagePickerLauncher(config = ImagePickerConfig(...))` with `val picker = rememberImagePickerKMP(...)` + `picker.launchCamera()`
+- **`GalleryPickerLauncher`** — marked `@Deprecated(level = WARNING)` for the same reason.
+  - **Migration**: Replace `GalleryPickerLauncher(...)` with `val picker = rememberImagePickerKMP(...)` + `picker.launchGallery()`
+
+> **Note — architectural decision:** `rememberImagePickerKMP` itself calls `ImagePickerLauncher` / `GalleryPickerLauncher` internally (they are the platform-specific rendering layer). The call site inside the library is annotated with `@Suppress("DEPRECATION")` so end-users of the new API see no warnings. Users of the legacy API directly still see the migration warning.
+
+### Fixed
+
+- **Android — `ImagePickerLauncher` now rendered inside a full-screen `Dialog`**: fixes camera preview not visible when the composable is placed outside a `Box(Modifier.fillMaxSize())` container. The new `Dialog` wrapper handles dismissal via back press and does not dismiss on outside click.
 
 ### ⚠️ Breaking Changes
 

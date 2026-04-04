@@ -138,14 +138,18 @@ internal suspend fun applyCropUtils(
             )
             orientedBitmap.recycle()
 
+            // Aplicar máscara circular si se requiere, o usar directamente el bitmap recortado.
+            // Se elimina createTransparentBitmap porque hacía una copia innecesaria que
+            // podía degradar la calidad al reinterpretar el bitmap con fondo negro/transparente.
             val finalBitmap = if (isCircularCrop) {
-                createCircularBitmap(croppedBitmap)
+                val circular = createCircularBitmap(croppedBitmap)
+                croppedBitmap.recycle()
+                circular
             } else {
-                createTransparentBitmap(croppedBitmap)
+                croppedBitmap
             }
-            val croppedWidth = croppedBitmap.width
-            val croppedHeight = croppedBitmap.height
-            if (finalBitmap != croppedBitmap) croppedBitmap.recycle()
+            val croppedWidth = finalBitmap.width
+            val croppedHeight = finalBitmap.height
 
             context.cacheDir.listFiles { f -> f.name.startsWith(PREFIX_CROPPED_IMAGE) }
                 ?.forEach { it.delete() }

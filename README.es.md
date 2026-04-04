@@ -175,7 +175,75 @@ implementation("io.github.ismoy:imagepickerkmp:{$lastVersion}")
 <key>NSCameraUsageDescription</key>
 <string>Necesitamos acceso a la cámara para capturar una foto.</string>
 ```
+<h1>🔄 API Nueva vs API Heredada (Legacy) — Guía de Migración</h1>
+
+> **Resumen:** Usa `rememberImagePickerKMP` para todo código nuevo. Las APIs `ImagePickerLauncher` / `GalleryPickerLauncher` están **deprecadas** y serán eliminadas en una versión futura.
+
+### Comparación lado a lado
+
+| | API Heredada (v1) ⚠️ Deprecada | API Nueva (v2) ✅ Recomendada |
+|---|---|---|
+| Cámara | `ImagePickerLauncher(config = ...)` | `picker.launchCamera()` |
+| Galería | `GalleryPickerLauncher(...)` | `picker.launchGallery()` |
+| Resultado | Callbacks (`onPhotoCaptured`, `onDismiss`, `onError`) | Reactivo: `when (picker.result)` |
+| Estado | Booleans manuales `showCamera`/`showGallery` | Automático via `ImagePickerKMPState` |
+| Overrides por lanzamiento | No soportado | Todos los params opcionales en cada `launch*()` |
+| Reset | Llamar callback `onDismiss` | `picker.reset()` |
+| Configuración | `ImagePickerConfig` + `GalleryPickerConfig` | `ImagePickerKMPConfig` (unificado) |
+
+### Tabla de migración
+
+| Patrón legacy | Equivalente en API nueva |
+|---|---|
+| `var showCamera by remember { ... }` | *(eliminar — no se necesita)* |
+| `showCamera = true` | `picker.launchCamera()` |
+| `showGallery = true` | `picker.launchGallery()` |
+| `onPhotoCaptured = { result -> ... }` | `is ImagePickerResult.Success -> result.photos` |
+| `onDismiss = { showCamera = false }` | `is ImagePickerResult.Dismissed -> ...` |
+| `onError = { e -> ... }` | `is ImagePickerResult.Error -> result.exception` |
+| `ImagePickerConfig(cameraCaptureConfig = ...)` | `ImagePickerKMPConfig(cameraCaptureConfig = ...)` |
+| `GalleryPickerConfig(includeExif = true)` | `ImagePickerKMPConfig(galleryConfig = GalleryConfig(includeExif = true))` |
+| `GalleryPickerLauncher(allowMultiple = true, selectionLimit = 5)` | `picker.launchGallery(allowMultiple = true, selectionLimit = 5)` |
+
 <h1>Uso Básico</h1>
+
+### ✅ API Nueva (recomendada desde v1.0.35-alpha1)
+
+```kotlin
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        galleryConfig = GalleryConfig(allowMultiple = true, selectionLimit = 10)
+    )
+)
+
+// Botones que lanzan el picker directamente — sin booleans
+Button(onClick = { picker.launchCamera() }) { Text("Cámara") }
+Button(onClick = { picker.launchGallery() }) { Text("Galería") }
+
+// Override por lanzamiento — sobreescribe el config global solo para este tap
+Button(onClick = {
+    picker.launchGallery(
+        allowMultiple = true,
+        selectionLimit = 5,
+        mimeTypes = listOf(MimeType.IMAGE_JPEG)
+    )
+}) { Text("Galería (solo JPEG, máx 5)") }
+
+// Resultado reactivo
+when (val result = picker.result) {
+    is ImagePickerResult.Loading   -> CircularProgressIndicator()
+    is ImagePickerResult.Success   -> result.photos.forEach { photo ->
+        photo.loadPainter()?.let { Image(it, contentDescription = null) }
+    }
+    is ImagePickerResult.Error     -> Text("Error: ${result.exception.message}", color = Color.Red)
+    is ImagePickerResult.Dismissed -> Text("Sin selección", color = Color.Gray)
+    is ImagePickerResult.Idle      -> Text("Listo", color = Color.Gray)
+}
+```
+
+### ⚠️ API Heredada (sigue funcionando, migración recomendada)
+
+El compilador mostrará una **advertencia de deprecación** para guiar la migración. El código sigue compilando y ejecutándose sin cambios.
 
 #### Paso 2: Lanzar la Cámara
 ```kotlin
@@ -184,31 +252,27 @@ implementation("io.github.ismoy:imagepickerkmp:{$lastVersion}")
 ```
 ```kotlin
 if (showCamera) {
-    ImagePickerLauncher(
+    ImagePickerLauncher(  // ⚠️ Deprecado — migrar a rememberImagePickerKMP
         config = ImagePickerConfig(
             enableCrop = false, // Establecer a true si quieres la opción de Recorte
             onPhotoCaptured = { result ->
                 capturedPhoto = result
-                // ¡Ahora puedes acceder a result.fileSize para capturas de cámara también!
-                println("Tamaño de foto de cámara: ${result.fileSize}KB")
+                println("Tamaño de foto de cámara: ${result.fileSize} bytes")
                 showCamera = false
             },
             onError = {
                 showCamera = false
             },
             onDismiss = {
-                showImagePicker = false // Restablecer estado cuando el usuario no selecciona nada
+                showCamera = false
             },
-            directCameraLaunch = false, // Establecer a true si quieres lanzar la cámara directamente Solo iOS
-            // Es posible comprimir imágenes, por defecto está con compresión baja en la librería
+            directCameraLaunch = false, // Solo iOS: lanzar cámara directamente
             cameraCaptureConfig = CameraCaptureConfig(
                 compressionLevel = CompressionLevel.HIGH,
-                // Omitir confirmationView en Android
-                 permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                   skipConfirmation = true // por defecto es false 
-                   )
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    skipConfirmation = true
+                )
             )
-
         )
     )
 }

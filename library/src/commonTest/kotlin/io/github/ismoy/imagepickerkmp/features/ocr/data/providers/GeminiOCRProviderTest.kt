@@ -42,7 +42,7 @@ class GeminiOCRProviderTest {
 
     // ── Helpers ────────────────────────────────────────────────────────────────
 
-    private val validApiKey = "AIzaSyABCDEFGHIJKLMNOP-test-key-1234567"
+    private val validApiKey = "-test-key-1234567"
     private val smallImage = ByteArray(100) { it.toByte() } // 100 bytes, valid size
 
     private val geminiSuccessResponse = """

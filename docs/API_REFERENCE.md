@@ -6,11 +6,261 @@ Complete API documentation for the ImagePickerKMP library.
 
 ## Table of Contents
 
+- [API v2 vs Legacy API — Migration Guide](#api-v2-vs-legacy-api--migration-guide)
+- [rememberImagePickerKMP (Recommended)](#rememberimagePickerkmp)
 - [Main Components](#main-components)
 - [Data Classes](#data-classes)
 - [Enums](#enums)
 - [Configuration](#configuration)
 - [Platform-specific APIs](#platform-specific-apis)
+
+---
+
+## API v2 vs Legacy API — Migration Guide
+
+> **TL;DR:** Use `rememberImagePickerKMP` for all new code. `ImagePickerLauncher` and `GalleryPickerLauncher` are **deprecated** (`@Deprecated(level = WARNING)`) and will be removed in a future major release. Existing code keeps working without changes.
+
+### At-a-glance comparison
+
+| Feature | Legacy API (v1) ⚠️ Deprecated | New API (v2) ✅ Recommended |
+|---|---|---|
+| Camera | `ImagePickerLauncher(config = ImagePickerConfig(...))` | `picker.launchCamera()` |
+| Gallery | `GalleryPickerLauncher(onPhotosSelected = { }, ...)` | `picker.launchGallery()` |
+| Result | Callbacks: `onPhotoCaptured`, `onDismiss`, `onError` | Reactive: `when (picker.result) { is Success -> }` |
+| State management | Manual `showCamera`/`showGallery` booleans | Automatic via `ImagePickerKMPState` |
+| Per-launch overrides | Not supported | Every `launch*()` parameter is optional override |
+| Reset | Call `onDismiss` callback | `picker.reset()` |
+| Config class | `ImagePickerConfig` + `GalleryPickerConfig` | `ImagePickerKMPConfig` (unified) |
+| `Render()` call needed | ❌ Legacy required wrapper composables | ❌ No `Render()` in new API either |
+
+### Migration table
+
+| Legacy pattern | New API equivalent |
+|---|---|
+| `var showCamera by remember { mutableStateOf(false) }` | *(remove — not needed)* |
+| `showCamera = true` | `picker.launchCamera()` |
+| `showGallery = true` | `picker.launchGallery()` |
+| `onPhotoCaptured = { result -> ... }` | `is ImagePickerResult.Success -> result.photos` |
+| `onDismiss = { showCamera = false }` | `is ImagePickerResult.Dismissed -> ...` |
+| `onError = { e -> ... }` | `is ImagePickerResult.Error -> result.exception` |
+| `ImagePickerConfig(cameraCaptureConfig = ...)` | `ImagePickerKMPConfig(cameraCaptureConfig = ...)` |
+| `GalleryPickerConfig(includeExif = true)` | `ImagePickerKMPConfig(galleryConfig = GalleryConfig(includeExif = true))` |
+| `GalleryPickerLauncher(allowMultiple = true)` | `picker.launchGallery(allowMultiple = true)` |
+| `GalleryPickerLauncher(selectionLimit = 5)` | `picker.launchGallery(selectionLimit = 5)` |
+| `GalleryPickerLauncher(mimeTypes = listOf(...))` | `picker.launchGallery(mimeTypes = listOf(...))` |
+
+### Code comparison
+
+**Legacy — camera capture (still works, deprecated):**
+```kotlin
+var showCamera by remember { mutableStateOf(false) }
+
+if (showCamera) {
+    ImagePickerLauncher(  // ⚠️ Deprecated
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result -> /* use result */ showCamera = false },
+            onDismiss = { showCamera = false },
+            onError = { showCamera = false }
+        )
+    )
+}
+Button(onClick = { showCamera = true }) { Text("Camera") }
+```
+
+**New API — camera capture (recommended):**
+```kotlin
+val picker = rememberImagePickerKMP()
+
+Button(onClick = { picker.launchCamera() }) { Text("Camera") }
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success   -> result.first?.let { /* use photo */ }
+    is ImagePickerResult.Dismissed -> { /* user cancelled */ }
+    is ImagePickerResult.Error     -> Text("Error: ${result.exception.message}")
+    is ImagePickerResult.Loading   -> CircularProgressIndicator()
+    is ImagePickerResult.Idle      -> { /* initial state */ }
+}
+```
+
+**Legacy — gallery selection (still works, deprecated):**
+```kotlin
+var showGallery by remember { mutableStateOf(false) }
+
+if (showGallery) {
+    GalleryPickerLauncher(  // ⚠️ Deprecated
+        onPhotosSelected = { photos -> selectedImages = photos; showGallery = false },
+        onDismiss = { showGallery = false },
+        onError = { showGallery = false },
+        allowMultiple = true,
+        mimeTypes = listOf(MimeType.IMAGE_JPEG)
+    )
+}
+Button(onClick = { showGallery = true }) { Text("Gallery") }
+```
+
+**New API — gallery selection (recommended):**
+```kotlin
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        galleryConfig = GalleryConfig(allowMultiple = true, selectionLimit = 10)
+    )
+)
+
+Button(onClick = { picker.launchGallery() }) { Text("Gallery") }
+// or with per-launch override:
+Button(onClick = { picker.launchGallery(allowMultiple = true, selectionLimit = 5) }) { Text("Gallery (5 max)") }
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> result.photos.forEach { /* use each photo */ }
+    else -> { /* handle other states */ }
+}
+```
+
+> **Note — internal architecture:** `rememberImagePickerKMP` calls `ImagePickerLauncher` / `GalleryPickerLauncher` internally as platform-specific rendering layers. The internal call site uses `@Suppress("DEPRECATION")` so consumers of the new API see no compiler warnings. Only developers who call the legacy functions directly see the migration warning.
+
+---
+
+## rememberImagePickerKMP (Recommended) {#rememberimagePickerkmp}
+
+> **Available since:** `1.0.35-alpha1` · All platforms
+
+`rememberImagePickerKMP` es el punto de entrada **recomendado** para Compose. Retorna un `ImagePickerKMPState` — un state holder estable que reemplaza los booleans manuales `showCamera`/`showGallery`. **No requiere ningún `Render()` ni composable adicional** — el picker se auto-gestiona al invocar `launchCamera()` o `launchGallery()`.
+
+### Signature
+
+```kotlin
+@Composable
+fun rememberImagePickerKMP(
+    config: ImagePickerKMPConfig = ImagePickerKMPConfig()
+): ImagePickerKMPState
+```
+
+### ImagePickerKMPConfig
+
+```kotlin
+data class ImagePickerKMPConfig(
+    val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(),
+    val galleryConfig: GalleryConfig = GalleryConfig(),
+    val enableCrop: Boolean = false,
+    val cropConfig: CropConfig = CropConfig(),
+    val uiConfig: UiConfig = UiConfig(),
+    val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig()
+)
+```
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `cameraCaptureConfig` | `CameraCaptureConfig` | defaults | Camera behaviour, compression, EXIF, UI styling |
+| `galleryConfig` | `GalleryConfig` | defaults | Multi-select, MIME types, selection limit, EXIF |
+| `enableCrop` | `Boolean` | `false` | Show crop UI after every capture / selection |
+| `cropConfig` | `CropConfig` | defaults | Crop shape, aspect ratio, freeform |
+| `uiConfig` | `UiConfig` | defaults | Custom button colors and icons |
+| `permissionAndConfirmationConfig` | `PermissionAndConfirmationConfig` | defaults | Custom permission dialogs and confirmation screen |
+
+### ImagePickerKMPState
+
+| Method / Property | Description |
+|---|---|
+| `result: ImagePickerResult` | Estado reactivo. Empieza en `Idle`. Observar con `when`. Se actualiza automáticamente cuando el picker abre, el usuario selecciona o cancela. |
+| `launchCamera(cameraCaptureConfig?, enableCrop?, onDismiss?, onError?)` | Abre la cámara. Todos los parámetros son opcionales y sobreescriben el config global solo para este lanzamiento. |
+| `launchGallery(allowMultiple?, mimeTypes?, selectionLimit?, enableCrop?, includeExif?, redactGpsData?, mimeTypeMismatchMessage?, cameraCaptureConfig?, onDismiss?, onError?)` | Abre la galería. Todos los parámetros son opcionales y sobreescriben el `GalleryConfig` global solo para este lanzamiento. |
+| `reset()` | Resetea `result` a `Idle` y cierra cualquier picker activo. |
+
+> ⚠️ **No existe `Render()` ni `launchPicker()`** en esta API. El picker se gestiona internamente.
+
+### ImagePickerResult
+
+```kotlin
+sealed class ImagePickerResult {
+    data object Idle        : ImagePickerResult()   // Estado inicial / tras reset()
+    data object Loading     : ImagePickerResult()   // Picker abierto, esperando acción
+    data class  Success(val photos: List<PhotoResult>) : ImagePickerResult()
+    data object Dismissed   : ImagePickerResult()   // Usuario cerró sin seleccionar
+    data class  Error(val exception: Exception) : ImagePickerResult()
+}
+```
+
+`Success` also exposes `val first: PhotoResult?` — primera foto (útil en captura de cámara).
+
+### Ejemplo real completo
+
+```kotlin
+@Composable
+fun MyScreen(innerPadding: PaddingValues) {
+
+    // No se necesita Render() ni booleans manuales
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            enableCrop = false,
+            galleryConfig = GalleryConfig(
+                allowMultiple = true,
+                selectionLimit = 10,
+                includeExif = true,
+                redactGpsData = true,
+                mimeTypes = listOf(MimeType.IMAGE_JPEG)
+            )
+        )
+    )
+
+    val result = picker.result
+
+    Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
+            when (result) {
+                is ImagePickerResult.Loading -> CircularProgressIndicator()
+                is ImagePickerResult.Success -> {
+                    val photos = result.photos
+                    if (photos.size == 1) {
+                        photos.first().loadPainter()?.let { Image(it, contentDescription = null) }
+                    } else {
+                        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                            items(photos) { photo ->
+                                photo.loadPainter()?.let { Image(it, contentDescription = null) }
+                            }
+                        }
+                    }
+                }
+                is ImagePickerResult.Error     -> Text("Error: ${result.exception.message}")
+                is ImagePickerResult.Dismissed,
+                is ImagePickerResult.Idle      -> Text("No image selected")
+            }
+        }
+
+        Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Button(onClick = { picker.launchCamera() }, modifier = Modifier.weight(1f)) {
+                Text("Cámara")
+            }
+            Button(onClick = { picker.launchGallery() }, modifier = Modifier.weight(1f)) {
+                Text("Galería")
+            }
+        }
+    }
+}
+```
+
+### Override por lanzamiento
+
+```kotlin
+// Override solo para este botón — no afecta el config global
+Button(onClick = {
+    picker.launchGallery(
+        allowMultiple = true,
+        mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+        selectionLimit = 5,
+        includeExif = true
+    )
+}) { Text("Pick up to 5 images") }
+
+// Cámara con compresión HIGH y crop, solo para este tap
+Button(onClick = {
+    picker.launchCamera(
+        cameraCaptureConfig = CameraCaptureConfig(compressionLevel = CompressionLevel.HIGH),
+        enableCrop = true
+    )
+}) { Text("Camera HD") }
+```
+
+---
 
 ##  Photo Capture – Specific Documentation
 
@@ -345,9 +595,12 @@ GalleryPickerLauncher(
 
 ### ImagePickerLauncher
 
+> ⚠️ **Deprecated** — `ImagePickerLauncher` is marked `@Deprecated(level = WARNING)`. It still compiles and runs normally, but the compiler will show a migration warning. **Migrate to [`rememberImagePickerKMP`](#rememberimagePickerkmp) for new code.**
+
 Main composable for launching the image picker.
 
 ```kotlin
+@Deprecated("Use rememberImagePickerKMP() instead.")
 @Composable
 expect fun ImagePickerLauncher(
     config: ImagePickerConfig
@@ -361,6 +614,8 @@ expect fun ImagePickerLauncher(
 ---
 
 ### GalleryPickerLauncher
+
+> ⚠️ **Deprecated** — `GalleryPickerLauncher` is marked `@Deprecated(level = WARNING)`. It still compiles and runs normally, but the compiler will show a migration warning. **Migrate to [`rememberImagePickerKMP`](#rememberimagePickerkmp) for new code.**
 
 Composable for selecting images from gallery with intelligent picker selection for Android.
 

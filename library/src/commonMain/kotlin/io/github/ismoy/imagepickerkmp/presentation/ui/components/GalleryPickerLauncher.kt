@@ -7,108 +7,175 @@ import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 
 /**
- * A composable that provides a gallery image picker with support for single and multiple
- * selection, MIME type filtering, crop, EXIF metadata extraction, and optional camera integration.
+ * ⚠️ **DEPRECATED — Migrate to the new `rememberImagePickerKMP` API.**
  *
- * This composable renders no UI by itself — it acts as an invisible launcher that triggers
- * the native platform gallery picker. Place it inside your composable tree and it will
- * automatically launch the picker on the first composition.
+ * This composable belongs to the **legacy API (v1)**. It still works but will **not receive
+ * new features** and will be removed in a future release. Migrating to the new
+ * reactive-state-based API is strongly recommended.
  *
- * **Supported platforms:** Android, iOS, Desktop (JVM), Web (JS / Wasm)
+ * ---
  *
- * ## Basic usage
+ * ## Why migrate?
+ *
+ * The old API exposed the gallery as a composable with multiple loose parameters
+ * (`onPhotosSelected`, `onError`, `onDismiss`, `allowMultiple`, etc.). This caused:
+ *
+ * - **Hard to reuse**: every screen had to repeat all parameters.
+ * - **No observable state**: there was no state object to read the result reactively.
+ * - **Composable coupled to the UI tree**: you had to place it even though it rendered nothing.
+ * - **Unpredictable behavior on iOS**: callback lifecycle caused crashes when cancelling
+ *   the crop inside the native iOS Dialog composition scope.
+ *
+ * ---
+ *
+ * ## New API — `rememberImagePickerKMP` (recommended)
+ *
+ * ### Minimal working implementation
+ *
+ * This is **everything you need** for a fully functional picker with camera and gallery.
+ * No additional configuration is required:
+ *
  * ```kotlin
- * GalleryPickerLauncher(
- *     onPhotosSelected = { photos ->
- *         photos.forEach { photo ->
- *             println("Selected: \${photo.uri}")
+ * @Composable
+ * fun MyScreen() {
+ *     val picker = rememberImagePickerKMP()
+ *     val result = picker.result
+ *
+ *     Row(
+ *         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+ *         horizontalArrangement = Arrangement.spacedBy(8.dp)
+ *     ) {
+ *         Button(onClick = { picker.launchCamera() }, modifier = Modifier.weight(1f)) {
+ *             Text("Camera")
  *         }
- *     },
- *     onError = { error ->
- *         println("Error: \${error.message}")
+ *         Button(onClick = { picker.launchGallery() }, modifier = Modifier.weight(1f)) {
+ *             Text("Gallery")
+ *         }
  *     }
- * )
- * ```
  *
- * ## Filtering by MIME type
- * ```kotlin
- * GalleryPickerLauncher(
- *     mimeTypes = listOf(MimeType.IMAGE_PNG, MimeType.IMAGE_WEBP),
- *     mimeTypeMismatchMessage = "Only PNG and WebP images are allowed.",
- *     onPhotosSelected = { photos -> },
- *     onError = { error -> }
- * )
- * ```
- *
- * ## Multiple selection with limit
- * ```kotlin
- * GalleryPickerLauncher(
- *     allowMultiple = true,
- *     selectionLimit = 5,
- *     onPhotosSelected = { photos -> },
- *     onError = { error -> }
- * )
- * ```
- *
- * ## With crop enabled
- * ```kotlin
- * GalleryPickerLauncher(
- *     enableCrop = true,
- *     onPhotosSelected = { photos -> },
- *     onError = { error -> }
- * )
- * ```
- *
- * ## With EXIF metadata
- * ```kotlin
- * GalleryPickerLauncher(
- *     includeExif = true,
- *     onPhotosSelected = { photos ->
- *         photos.firstOrNull()?.exif?.let { exif ->
- *             println("GPS: \${exif.latitude}, \${exif.longitude}")
+ *     when (result) {
+ *         is ImagePickerResult.Loading -> {
+ *             Column(
+ *                 horizontalAlignment = Alignment.CenterHorizontally,
+ *                 modifier = Modifier.padding(16.dp)
+ *             ) {
+ *                 CircularProgressIndicator()
+ *                 Text("Loading...", color = Color.Gray, modifier = Modifier.padding(top = 12.dp))
+ *             }
  *         }
- *     },
- *     onError = { error -> }
- * )
+ *         is ImagePickerResult.Success -> {
+ *             val photos = result.photos
+ *             if (photos.size == 1) {
+ *                 CameraResultCard(photo = photos.first())
+ *             } else {
+ *                 MultiPhotoGrid(photos = photos)
+ *             }
+ *         }
+ *         is ImagePickerResult.Error     -> Text("Error: \${result.exception.message}", color = Color.Red)
+ *         is ImagePickerResult.Dismissed -> Text("Selection cancelled", color = Color.Gray)
+ *         is ImagePickerResult.Idle      -> Text("Press a button to get started", color = Color.Gray)
+ *     }
+ * }
  * ```
  *
- * @param onPhotosSelected Called with the list of [GalleryPhotoResult] when the user confirms
- *   the selection. On single-selection mode ([allowMultiple] = `false`), the list contains
- *   exactly one element.
- * @param onError Called when an error occurs during the picking process. The [Exception]
- *   message describes the failure reason (e.g., permission denied, MIME type mismatch).
- * @param onDismiss Called when the user dismisses the picker without selecting any file.
- *   Defaults to an empty lambda.
- * @param allowMultiple Whether to allow selecting multiple files at once. When `true`,
- *   the picker enables multi-selection up to [selectionLimit] items. Defaults to `false`.
- * @param mimeTypes List of [MimeType] values that restrict which files the user can select.
- *   Files not matching any of the specified types will trigger [onError] with a mismatch
- *   message. Defaults to [MimeType.IMAGE_ALL] (accepts all image formats).
- *   Example: `listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)`.
- * @param selectionLimit Maximum number of files the user can select when [allowMultiple]
- *   is `true`. Must be between 1 and the platform maximum. Defaults to [SELECTION_LIMIT].
- * @param cameraCaptureConfig Optional [CameraCaptureConfig] to enable an integrated camera
- *   capture option alongside the gallery. When non-null, a camera button or flow is
- *   presented to the user. Defaults to `null` (gallery-only).
- * @param enableCrop Whether to show an interactive crop UI after the user selects an image.
- *   When `true`, the user can freely crop the image before it is delivered via
- *   [onPhotosSelected]. Defaults to `false`.
- *   > **Note:** Crop is only applied to images, not documents (e.g., PDFs).
- * @param fileFilterDescription A human-readable label describing the allowed file types.
- *   Shown in the Desktop (JVM) file chooser dialog filter dropdown.
- *   Defaults to `"Image files"`.
- * @param includeExif Whether to extract and include EXIF metadata (e.g., GPS coordinates,
- *   camera model, date taken) in the [GalleryPhotoResult.exif] field. Requires photo
- *   library permission on iOS. Defaults to `false`.
- * @param mimeTypeMismatchMessage Optional custom error message shown when the selected file
- *   does not match any of the specified [mimeTypes]. When `null`, a default localized
- *   message is used. Defaults to `null`.
- *   Example: `"Only JPEG images are allowed."`.
+ * > ✅ **That's all you need for a basic implementation.**
+ * > `rememberImagePickerKMP()` with no arguments works fully on all platforms out of the box.
  *
- * @see GalleryPhotoResult
- * @see MimeType
- * @see CameraCaptureConfig
+ * ---
+ *
+ * ### Optional: configure multiple selection and filters
+ *
+ * ```kotlin
+ * val picker = rememberImagePickerKMP(
+ *     config = ImagePickerKMPConfig(
+ *         galleryConfig = GalleryConfig(
+ *             allowMultiple  = true,
+ *             selectionLimit = 10,
+ *             mimeTypes      = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+ *             includeExif    = true
+ *         )
+ *     )
+ * )
+ * picker.launchGallery()
+ * ```
+ *
+ * ### Per-launch overrides
+ *
+ * Pass parameters directly to `launchGallery()` to override the global config only for
+ * that specific call:
+ *
+ * ```kotlin
+ * // Allow multiple selection only for this launch
+ * picker.launchGallery(allowMultiple = true, selectionLimit = 5)
+ *
+ * // Filter by JPEG only for this launch
+ * picker.launchGallery(mimeTypes = listOf(MimeType.IMAGE_JPEG))
+ * ```
+ *
+ * ---
+ *
+ * ## Migration reference (old API → new API)
+ *
+ * | Old parameter | New API equivalent |
+ * |---|---|
+ * | `onPhotosSelected = { photos -> }` | `picker.result is ImagePickerResult.Success → result.photos` |
+ * | `onError = { e -> }` | `picker.result is ImagePickerResult.Error` |
+ * | `onDismiss = { }` | `picker.result is ImagePickerResult.Dismissed` |
+ * | `allowMultiple = true` | `GalleryConfig(allowMultiple = true)` or `launchGallery(allowMultiple = true)` |
+ * | `selectionLimit = 5` | `GalleryConfig(selectionLimit = 5)` or `launchGallery(selectionLimit = 5)` |
+ * | `mimeTypes = listOf(...)` | `GalleryConfig(mimeTypes = ...)` or `launchGallery(mimeTypes = ...)` |
+ * | `includeExif = true` | `GalleryConfig(includeExif = true)` or `launchGallery(includeExif = true)` |
+ * | `enableCrop = true` | `ImagePickerKMPConfig(cropConfig = CropConfig(enabled = true))` |
+ * | `cameraCaptureConfig = ...` | `launchGallery(cameraCaptureConfig = ...)` |
+ *
+ * @see io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP
+ * @see io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig
+ * @see io.github.ismoy.imagepickerkmp.features.imagepicker.state.ImagePickerKMPState
+ * @see io.github.ismoy.imagepickerkmp.features.imagepicker.model.ImagePickerResult
+ * @see io.github.ismoy.imagepickerkmp.domain.config.GalleryConfig
  */
+@Deprecated(
+    message = """
+        GalleryPickerLauncher belongs to the legacy API (v1) and will be removed in a future release.
+        
+        DELETE the entire GalleryPickerLauncher { ... } block and replace it with:
+        
+            val picker = rememberImagePickerKMP(
+                config = ImagePickerKMPConfig(
+                    cropConfig    = CropConfig(enabled = true),
+                    galleryConfig = GalleryConfig(
+                        allowMultiple  = false,
+                        selectionLimit = 1,
+                        mimeTypes      = listOf(MimeType.IMAGE_ALL),
+                        includeExif    = true
+                    )
+                )
+            )
+            val result = picker.result
+        
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { picker.launchCamera() },  modifier = Modifier.weight(1f)) { Text("Camera")  }
+                Button(onClick = { picker.launchGallery() }, modifier = Modifier.weight(1f)) { Text("Gallery") }
+            }
+        
+            when (result) {
+                is ImagePickerResult.Loading   -> CircularProgressIndicator()
+                is ImagePickerResult.Success   -> { val photos = result.photos; /* use photos */ }
+                is ImagePickerResult.Error     -> Text("Error: ${'$'}{result.exception.message}", color = Color.Red)
+                is ImagePickerResult.Dismissed -> Text("Selection cancelled", color = Color.Gray)
+                is ImagePickerResult.Idle      -> Text("Press a button to get started", color = Color.Gray)
+            }
+        
+        Per-launch override (no global config change needed):
+            picker.launchGallery(allowMultiple = true, selectionLimit = 5)
+            picker.launchGallery(mimeTypes = listOf(MimeType.IMAGE_JPEG))
+    """,
+    replaceWith = ReplaceWith(
+        expression = "rememberImagePickerKMP()",
+        imports = ["io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP"]
+    ),
+    level = DeprecationLevel.WARNING
+)
 @Suppress("LongParameterList")
 @Composable
 expect fun GalleryPickerLauncher(
@@ -122,6 +189,6 @@ expect fun GalleryPickerLauncher(
     enableCrop: Boolean = false,
     fileFilterDescription: String = "Image files",
     includeExif: Boolean = false,
-    mimeTypeMismatchMessage: String? = null
+    mimeTypeMismatchMessage: String? = null,
+    onCropPending: () -> Unit = {}
 )
-

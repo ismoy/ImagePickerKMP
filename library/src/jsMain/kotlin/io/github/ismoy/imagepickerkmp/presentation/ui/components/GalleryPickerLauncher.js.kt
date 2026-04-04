@@ -19,7 +19,8 @@ actual fun GalleryPickerLauncher(
     enableCrop: Boolean,
     fileFilterDescription: String,
     includeExif: Boolean,
-    mimeTypeMismatchMessage: String?
+    mimeTypeMismatchMessage: String?,
+    onCropPending: () -> Unit
 ) {
     JsFilePicker(
         onPhotosSelected = onPhotosSelected,

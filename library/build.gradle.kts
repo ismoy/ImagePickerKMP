@@ -57,6 +57,9 @@ kover {
                     "*.domain.config.HighPerformanceConfig",
                     "*.domain.config.AndroidGalleryConfig",
                     "*.domain.config.PermissionConfig",
+                    // ── Top-level API (state holder uses Compose internally) ─
+                    "*.ImagePickerKMPState",
+                    "*.ImagePickerKMPStateKt",
                     // ── Domain repository interfaces (no logic) ─────────────
                     "*.domain.repository.*",
                     // ── Domain use cases (delegators only a repositories) ────
@@ -266,6 +269,7 @@ kotlin {
                 implementation(libs.compose.animation)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material)
+                implementation(compose.material3)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation("io.coil-kt.coil3:coil-compose:3.2.0")
                 implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")

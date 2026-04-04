@@ -84,7 +84,7 @@ Full-featured sample application showcasing:
 **Kotlin Multiplatform:**
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:{latest-version}")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.35-alpha1")
 }
 ```
 
@@ -93,25 +93,181 @@ dependencies {
 npm install imagepickerkmp
 ```
 
-### Basic Usage
+### New — `rememberImagePickerKMP` (recommended)
 
-**Camera Capture:**
+The modern, idiomatic Compose API. A single state holder — no manual booleans, no `Render()` call needed.
+
+```kotlin
+@Composable
+fun basicUsageScreen() {
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            galleryConfig = GalleryConfig(
+                allowMultiple = true,
+                selectionLimit = 20
+            )
+        )
+    )
+    val result = picker.result
+
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text("Basic Usage") },
+                navigationIcon = {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Go back"
+                        )
+                    }
+                }
+            )
+        },
+        bottomBar = {
+            BottomAppBar {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = { picker.launchCamera() },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Camera")
+                    }
+                    Button(
+                        onClick = { picker.launchGallery() },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Gallery")
+                    }
+                }
+            }
+        }
+    ){scaffoldPadding->
+        Column(
+            modifier = Modifier
+                .padding(scaffoldPadding)
+                .fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                when (result) {
+
+                    is ImagePickerResult.Loading -> {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            CircularProgressIndicator()
+                            Text(
+                                text = "Loading...",
+                                color = Color.Gray,
+                                modifier = Modifier.padding(top = 12.dp)
+                            )
+                        }
+                    }
+
+                    is ImagePickerResult.Success -> {
+                        // Result here
+                    }
+
+                    is ImagePickerResult.Error -> {
+                        Text(
+                            text = "Error: ${result.exception.message}",
+                            color = Color.Red,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+
+                    is ImagePickerResult.Dismissed -> {
+                        Text("Selection cancelled", color = Color.Gray)
+                    }
+
+                    is ImagePickerResult.Idle -> {
+                        Text("Press a button to get started", color = Color.Gray)
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+**Per-launch overrides:**
+```kotlin
+// Override gallery options for a single launch
+picker.launchGallery(
+    allowMultiple = true,
+    selectionLimit = 5,
+    mimeTypes = listOf(MimeType.IMAGE_JPEG),
+    includeExif = true
+)
+
+// Override camera options for a single launch
+picker.launchCamera(
+    cameraCaptureConfig = CameraCaptureConfig(compressionLevel = CompressionLevel.HIGH),
+    enableCrop = false
+)
+```
+
+---
+
+## New API vs Legacy API — Migration Guide
+
+> **TL;DR:** Use `rememberImagePickerKMP` for all new code. The legacy `ImagePickerLauncher` / `GalleryPickerLauncher` are **deprecated** and will be removed in a future major release.
+
+### Side-by-side comparison
+
+| | Legacy API (v1) — Deprecated | New API (v2) — Recommended |
+|---|---|---|
+| Camera | `ImagePickerLauncher(config = ...)` | `picker.launchCamera()` |
+| Gallery | `GalleryPickerLauncher(...)` | `picker.launchGallery()` |
+| Result handling | Callbacks (`onPhotoCaptured`, `onDismiss`, `onError`) | Reactive `when (picker.result)` |
+| State management | Manual `showCamera`, `showGallery` booleans | Automatic via `ImagePickerKMPState` |
+| Per-launch config | Not supported | Override any param on each `launch*()` call |
+| Reset | Call `onDismiss` callback | `picker.reset()` |
+| Configuration | `ImagePickerConfig` + `GalleryPickerConfig` | `ImagePickerKMPConfig` (unified) |
+
+### Migration table
+
+| Legacy pattern | New API equivalent |
+|---|---|
+| `showCamera = true` | `picker.launchCamera()` |
+| `showGallery = true` | `picker.launchGallery()` |
+| `onPhotoCaptured = { result -> ... }` | `is ImagePickerResult.Success -> result.photos` |
+| `onDismiss = { showCamera = false }` | `is ImagePickerResult.Dismissed -> ...` |
+| `onError = { e -> ... }` | `is ImagePickerResult.Error -> result.exception` |
+| `ImagePickerConfig(cameraCaptureConfig = ...)` | `ImagePickerKMPConfig(cameraCaptureConfig = ...)` |
+| `GalleryPickerConfig(includeExif = true)` | `ImagePickerKMPConfig(galleryConfig = GalleryConfig(includeExif = true))` |
+| `allowMultiple = true` in `GalleryPickerLauncher` | `picker.launchGallery(allowMultiple = true)` |
+
+### Legacy API (still functional, migration recommended)
+
+The legacy API still works and will **not break** existing apps. You will see a compiler **warning** recommending migration to `rememberImagePickerKMP`.
+
+**Camera Capture (legacy):**
 ```kotlin
 var showCamera by remember { mutableStateOf(false) }
 var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
-var mimeTypeMismatchMessage by remember { mutableStateOf<String?>(null) }
-
 
 if (showCamera) {
-    ImagePickerLauncher(
+    ImagePickerLauncher(  // Deprecated — migrate to rememberImagePickerKMP
         config = ImagePickerConfig(
             onPhotoCaptured = { result ->
                 capturedPhoto = result
                 showCamera = false
             },
-            onError = {
-                showCamera = false
-              },
+            onError = { showCamera = false },
             onDismiss = { showCamera = false }
         )
     )
@@ -122,33 +278,21 @@ Button(onClick = { showCamera = true }) {
 }
 ```
 
-**Gallery Selection:**
+**Gallery Selection (legacy):**
 ```kotlin
 var showGallery by remember { mutableStateOf(false) }
 var selectedImages by remember { mutableStateOf<List<PhotoResult>>(emptyList()) }
 
 if (showGallery) {
-    GalleryPickerLauncher(
-        config = GalleryPickerConfig(
-            includeExif = true // Enable EXIF data extraction
-        ),
+    GalleryPickerLauncher(  // Deprecated — migrate to rememberImagePickerKMP
+        config = GalleryPickerConfig(includeExif = true),
         onPhotosSelected = { photos ->
             selectedImages = photos
             showGallery = false
-            // Access EXIF data for each selected photo
-            photos.forEach { photo ->
-                val exifData = photo.exif
-                println("Camera: ${exifData?.camera}")
-                println("Location: ${exifData?.location}")
-            }
         },
-        onError = { it->
-            showGallery = false
-            mimeTypeMismatchMessage = it.message
-        },
+        onError = { showGallery = false },
         onDismiss = { showGallery = false },
-        allowMultiple = true,
-        mimeTypeMismatchMessage = "Only allows PNG images"
+        allowMultiple = true
     )
 }
 
@@ -191,18 +335,19 @@ if (showCamera) {
 > *Thanks to [@rnstewart](https://github.com/rnstewart) and other contributors for pointing this out! 🙏*
 
 
-##  Key Features
+## Key Features
 
--  **Cross-platform** - Android, iOS, Desktop, Web
--  **Camera & Gallery** - Direct access with unified API
--  **Image Cropping** - Built-in crop functionality
--  **Smart Compression** - Configurable quality levels
--  **EXIF Metadata** - GPS, camera info, timestamps (Android/iOS)
--  **PDF Support** - Select PDF documents alongside images
--  **Extension Functions** - Easy image processing (`loadPainter()`, `loadBytes()`, `loadBase64()`)
--  **Permission Handling** - Automatic permission management
--  **Async Processing** - Non-blocking UI with coroutines
--  **Format Support** - JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP, PDF
+- **`rememberImagePickerKMP`** — New idiomatic API: single state holder, `launchCamera()` / `launchGallery()` with per-launch overrides, reactive result via `ImagePickerResult` (Idle → Loading → Success/Dismissed/Error). No `Render()`, no manual booleans.
+- **Cross-platform** — Android, iOS, Desktop, Web
+- **Camera & Gallery** — Direct access with unified API
+- **Image Cropping** — Built-in crop functionality
+- **Smart Compression** — Configurable quality levels
+- **EXIF Metadata** — GPS, camera info, timestamps (Android/iOS)
+- **PDF Support** — Select PDF documents alongside images
+- **Extension Functions** — Easy image processing (`loadPainter()`, `loadBytes()`, `loadBase64()`)
+- **Permission Handling** — Automatic permission management
+- **Async Processing** — Non-blocking UI with coroutines
+- **Format Support** — JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP, PDF
 
 ##  Platform Support
 
@@ -344,7 +489,7 @@ Need to extract text from images or documents? Try the new experimental OCR func
         },
         onError = {
         isOCRActive =false
-        println("Error en OCR: $it")
+        println("OCR error: $it")
          },
        onCancel = {
         isOCRActive =false
@@ -378,7 +523,7 @@ CloudOCRProvider.Custom(
 CloudOCRProvider.Custom(
     name = "Local OCR Server",
     baseUrl = "http://localhost:8080/api/ocr",
-    apiKey = null, // Sin API key
+    apiKey = null, // No API key required
     requestFormat = RequestFormat.JSON
 )
 ```
@@ -416,12 +561,12 @@ CloudOCRProvider.Custom(
 
 ---
 
-### Fields available in CloudOCRProvider.Custom`
+### Fields available in `CloudOCRProvider.Custom`
 - **name**: Descriptive name of your OCR service.
 - **baseUrl**: Base URL of your OCR API.
 - **apiKey** (optional): API key, may be `null`.
 - **headers** (optional): Custom HTTP headers.
-- **requestFormat**: Request format (`MULTIPART_FORM` o `JSON`).
+- **requestFormat**: Request format (`MULTIPART_FORM` or `JSON`).
 - **model** (optional): Specific model to use.
 
 
@@ -431,7 +576,7 @@ CloudOCRProvider.Custom(
 ---
 
 
-##  React/Web Integration
+## React/Web Integration
 
 ImagePickerKMP is available as an NPM package for web development:
 
@@ -452,6 +597,27 @@ Features:
 - **Automatic Detection**: No configuration needed - works out of the box!
 
 **[Complete React Integration Guide →](REACT_INTEGRATION_GUIDE.md)**
+
+## ⚠️ Known Issues & Troubleshooting
+
+### iOS build fails with `_OBJC_CLASS_$_CLLocation` linker error
+
+If your iOS build fails with:
+
+```
+ld: Undefined symbols: _OBJC_CLASS_$_CLLocation
+linker command failed with exit code 1
+```
+
+**Android and JVM Desktop work fine**, but iOS fails during the linking phase.
+
+**Fix:** Add `CoreLocation.framework` manually in Xcode:
+
+1. Select your app target → **Build Phases → Link Binary With Libraries**
+2. Click **+**, search for **CoreLocation**, and click **Add**
+3. Clean (**⇧⌘K**) and rebuild
+
+> No code changes needed. See [FAQ](docs/FAQ.md#ios-build-fails-with-linker-error-_objc_class_cllocation-or-corelocationframework-not-found) and [Integration Guide](docs/INTEGRATION_GUIDE.md) for full details.
 
 ##  Support & Contributing
 

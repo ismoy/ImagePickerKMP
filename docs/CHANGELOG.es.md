@@ -9,6 +9,15 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## [Sin Publicar]
 
+### Deprecado
+
+- **`ImagePickerLauncher`** — marcado con `@Deprecated(level = WARNING)`. La función sigue compilando y ejecutándose normalmente, pero el compilador emite una advertencia de migración apuntando a `rememberImagePickerKMP`. Será eliminada en una versión mayor futura.
+  - **Migración**: Reemplaza `ImagePickerLauncher(config = ImagePickerConfig(...))` con `val picker = rememberImagePickerKMP(...)` + `picker.launchCamera()`
+- **`GalleryPickerLauncher`** — marcado con `@Deprecated(level = WARNING)` por el mismo motivo.
+  - **Migración**: Reemplaza `GalleryPickerLauncher(...)` con `val picker = rememberImagePickerKMP(...)` + `picker.launchGallery()`
+
+> **Nota — decisión arquitectónica:** `rememberImagePickerKMP` llama internamente a `ImagePickerLauncher` / `GalleryPickerLauncher` (son la capa de renderizado específica de cada plataforma). El punto de llamada interno está anotado con `@Suppress("DEPRECATION")` para que los usuarios de la nueva API no vean advertencias. Solo los desarrolladores que llaman directamente a la API heredada ven la advertencia de migración.
+
 ### ⚠️ Cambios Incompatibles (Breaking Changes)
 
 - **BREAKING: La versión mínima de Kotlin es ahora 2.3.20**
