@@ -6,6 +6,8 @@ on:
     types:
       - completed
 
+permissions: read-all
+
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -47,13 +49,14 @@ jobs:
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          WF_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          WF_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          WF_ACTOR: ${{ github.event.workflow_run.actor.login }}
+          WF_URL: ${{ github.event.workflow_run.html_url }}
+          HAS_COVERAGE: ${{ steps.coverage.outputs.has_coverage }}
+          LINE_COVERAGE: ${{ steps.coverage.outputs.line_coverage }}
         run: |
-          CONCLUSION="${{ github.event.workflow_run.conclusion }}"
-          BRANCH="${{ github.event.workflow_run.head_branch }}"
-          ACTOR="${{ github.event.workflow_run.actor.login }}"
-          URL="${{ github.event.workflow_run.html_url }}"
-
-          if [ "$CONCLUSION" == "success" ]; then
+          if [ "$WF_CONCLUSION" == "success" ]; then
             ICON="✅"
             STATUS="Success"
           else
@@ -62,10 +65,10 @@ jobs:
           fi
 
           COVERAGE_TEXT="not available"
-          if [ "${{ steps.coverage.outputs.has_coverage }}" == "true" ]; then
-            COVERAGE_TEXT="${{ steps.coverage.outputs.line_coverage }}%"
+          if [ "$HAS_COVERAGE" == "true" ]; then
+            COVERAGE_TEXT="${LINE_COVERAGE}%"
           fi
 
           curl -s -X POST "$DISCORD_WEBHOOK" \
             -H "Content-Type: application/json" \
-            -d "{\"content\":\"${ICON} **CI ${STATUS}** — ImagePickerKMP\n**Branch:** \`${BRANCH}\`\n**Author:** ${ACTOR}\n**Coverage:** ${COVERAGE_TEXT}\n🔗 ${URL}\"}"
+            -d "{\"content\":\"${ICON} **CI ${STATUS}** — ImagePickerKMP\n**Branch:** \`${WF_BRANCH}\`\n**Author:** ${WF_ACTOR}\n**Coverage:** ${COVERAGE_TEXT}\n${WF_URL}\"}"

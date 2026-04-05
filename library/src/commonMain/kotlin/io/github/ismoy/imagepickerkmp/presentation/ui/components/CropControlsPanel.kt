@@ -15,12 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
-import androidx.compose.material.Slider
-import androidx.compose.material.SliderDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.outlined.Circle
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,9 +61,8 @@ fun CropControlsPanel(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             val showBothByDefault = cropConfig.circularCrop && cropConfig.squareCrop
-            val showBothFallback = !cropConfig.circularCrop && !cropConfig.squareCrop
 
-            if (showBothByDefault || cropConfig.squareCrop || showBothFallback) {
+            if (showBothByDefault || cropConfig.squareCrop) {
                 Button(
                     onClick = { onToggleCropShape(false) },
                     modifier = Modifier
@@ -86,7 +85,7 @@ fun CropControlsPanel(
             }
 
 
-            if (showBothByDefault || cropConfig.circularCrop || showBothFallback) {
+            if (showBothByDefault || cropConfig.circularCrop) {
                 Button(
                     onClick = { onToggleCropShape(true) },
                     modifier = Modifier
@@ -108,7 +107,7 @@ fun CropControlsPanel(
                 }
             }
 
-            if (showBothByDefault || cropConfig.squareCrop || showBothFallback) {
+            if (showBothByDefault || cropConfig.squareCrop) {
                 val ratios = listOf("1:1", "4:3", "16:9", "9:16")
                 ratios.forEach { ratio ->
                     Button(
@@ -150,10 +149,11 @@ fun CropControlsPanel(
             Slider(
                 value = zoomLevel,
                 onValueChange = onZoomChange,
-                valueRange = 0.5f..2.5f,
+                valueRange = 0.5f..3.0f,
                 colors = SliderDefaults.colors(
                     thumbColor = Color.White,
-                    activeTrackColor = Color.White
+                    activeTrackColor = Color.White,
+                    inactiveTrackColor = Color.White.copy(alpha = 0.3f)
                 )
             )
         }
@@ -173,7 +173,8 @@ fun CropControlsPanel(
                 valueRange = -180f..180f,
                 colors = SliderDefaults.colors(
                     thumbColor = Color.White,
-                    activeTrackColor = Color.White
+                    activeTrackColor = Color.White,
+                    inactiveTrackColor = Color.White.copy(alpha = 0.3f)
                 )
             )
         }

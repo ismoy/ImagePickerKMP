@@ -62,6 +62,7 @@ fun CameraCaptureView(
             customDeniedDialog = cameraCaptureConfig.permissionAndConfirmationConfig.customDeniedDialog,
             customSettingsDialog = cameraCaptureConfig.permissionAndConfirmationConfig.customSettingsDialog,
             onPermissionGranted = { hasPermission = true },
+            onDismiss = onDismiss,
             onError = { exception ->
                 imagePickerViewModel.onError(exception)
                 onError(exception)
@@ -72,6 +73,7 @@ fun CameraCaptureView(
 
     Box(modifier = Modifier.fillMaxSize()) {
         when {
+            // 1. Crop takes absolute priority — must be checked FIRST before confirmation
             enableCrop && showCropView && photoResult != null -> {
                 ImageCropView(
                     photoResult = photoResult!!,
@@ -83,10 +85,12 @@ fun CameraCaptureView(
                     onCancel = {
                         showCropView = false
                         photoResult = null
+                        onDismiss()
                     }
                 )
             }
 
+            // 2. Camera preview — shown when no photo captured yet, or after crop cancel
             photoResult == null -> {
                 CameraAndPreview(
                     cameraCaptureConfig = cameraCaptureConfig,
@@ -108,7 +112,8 @@ fun CameraCaptureView(
                 )
             }
 
-            photoResult != null && !cameraCaptureConfig.permissionAndConfirmationConfig.skipConfirmation -> {
+            // 3. Confirmation — only reached when enableCrop=false and skipConfirmation=false
+            photoResult != null && !enableCrop && !cameraCaptureConfig.permissionAndConfirmationConfig.skipConfirmation -> {
                 ConfirmationView(
                     photoResult = photoResult!!,
                     onConfirm = { onPhotoResult(it) },
@@ -124,9 +129,10 @@ fun CameraCaptureView(
 @Composable
 private fun PermissionHandler(
     customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))? = null,
-    customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null,
+    customDeniedDialog: (@Composable (onRetry: () -> Unit, onDismiss: () -> Unit) -> Unit)? = null,
+    customSettingsDialog: (@Composable (onOpenSettings: () -> Unit, onDismiss: () -> Unit) -> Unit)? = null,
     onPermissionGranted: () -> Unit,
+    onDismiss: () -> Unit = {},
     onError: (Exception) -> Unit
 ) {
     val defaultConfig = PermissionConfig.createLocalizedComposable()
@@ -143,6 +149,9 @@ private fun PermissionHandler(
         RequestCameraPermission(
             dialogConfig = dialogConfig,
             onPermissionPermanentlyDenied = {
+                // Cuando el permiso es denegado permanentemente, cerrar el picker
+                // para que la UI no quede bloqueada esperando una acción que ya no vendrá
+                onDismiss()
                 onError(PhotoCaptureException(cameraPermissionPermanentlyDeniedMsg))
             },
             onResult = { _: Boolean -> onPermissionGranted() },

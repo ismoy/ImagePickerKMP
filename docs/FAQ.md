@@ -430,6 +430,39 @@ fun debugPermissions(context: Context) {
 }
 ```
 
+### iOS build fails with linker error: `_OBJC_CLASS_$_CLLocation` or `CoreLocation.framework` not found
+
+**Symptoms:**
+
+```
+Could not find or use auto-linked framework '_LocationEssentials': framework '_LocationEssentials' not found
+ld: Undefined symbols:
+  _OBJC_CLASS_$_CLLocation, referenced from:
+       in ComposeApp[...](libImagePickerKMP:library-cache.a.o)
+linker command failed with exit code 1
+```
+
+Android and JVM Desktop work fine, but the iOS build fails during the linking phase.
+
+**Cause:**
+
+ImagePickerKMP uses `CoreLocation` internally (e.g. for location metadata when capturing images). On some Xcode / KMP configurations the framework is **not auto-linked**, so the linker cannot resolve `CLLocation` symbols.
+
+**Solution:**
+
+Add `CoreLocation.framework` manually to your Xcode project's **Build Phases**:
+
+1. Open your iOS project (`.xcworkspace` or `.xcodeproj`) in **Xcode**.
+2. Select your app target in the Project navigator.
+3. Go to **Build Phases → Link Binary With Libraries**.
+4. Click **+** and search for **CoreLocation**.
+5. Select `CoreLocation.framework` and click **Add**.
+6. Clean the build folder (**Product → Clean Build Folder**, or `⇧⌘K`) and rebuild.
+
+> ✅ No code changes are required — this is a project-level configuration step only.
+
+**Reported environment:** Xcode 15.2 · iOS 15 · Kotlin 2.2.x · ImagePickerKMP 1.0.35
+
 ## Performance & Optimization
 
 ### How do I optimize memory usage?

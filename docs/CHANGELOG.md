@@ -5,7 +5,33 @@ All notable changes to ImagePickerKMP will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.35-alpha1] — 2026-03-28
+
+### Added
+
+- **`rememberImagePickerKMP` — unified Compose state-holder API**
+  - New top-level composable function `rememberImagePickerKMP(config)` that returns an `ImagePickerKMPState`
+  - Replaces the manual `showCamera`/`showGallery` boolean pattern with a single remembered state object. **No `Render()` call needed — the picker self-manages when `launchCamera()` or `launchGallery()` is invoked**
+  - `ImagePickerKMPState.launchCamera(cameraCaptureConfig?, enableCrop?, onDismiss?, onError?)` — opens the camera picker. All parameters are optional per-launch overrides of the global config
+  - `ImagePickerKMPState.launchGallery(allowMultiple?, mimeTypes?, selectionLimit?, enableCrop?, includeExif?, redactGpsData?, mimeTypeMismatchMessage?, cameraCaptureConfig?, onDismiss?, onError?)` — opens the gallery picker with per-launch overrides
+  - `ImagePickerKMPState.result: ImagePickerResult` — observable reactive state; `Idle | Loading | Success | Dismissed | Error`
+  - `ImagePickerKMPState.reset()` — resets result back to `Idle` and closes any active picker
+  - `ImagePickerKMPConfig` data class — single configuration object for all defaults (camera, gallery, crop, UI, permissions)
+  - `ImagePickerResult` sealed hierarchy for exhaustive result handling. `Success` exposes `photos: List<PhotoResult>` and `first: PhotoResult?`
+  - All existing `ImagePickerLauncher` / `GalleryPickerLauncher` APIs remain fully supported
+
+### Deprecated
+
+- **`ImagePickerLauncher`** — marked `@Deprecated(level = WARNING)`. The function still compiles and runs normally, but the compiler emits a migration warning pointing to `rememberImagePickerKMP`. Will be removed in a future major release.
+  - **Migration**: Replace `ImagePickerLauncher(config = ImagePickerConfig(...))` with `val picker = rememberImagePickerKMP(...)` + `picker.launchCamera()`
+- **`GalleryPickerLauncher`** — marked `@Deprecated(level = WARNING)` for the same reason.
+  - **Migration**: Replace `GalleryPickerLauncher(...)` with `val picker = rememberImagePickerKMP(...)` + `picker.launchGallery()`
+
+> **Note — architectural decision:** `rememberImagePickerKMP` itself calls `ImagePickerLauncher` / `GalleryPickerLauncher` internally (they are the platform-specific rendering layer). The call site inside the library is annotated with `@Suppress("DEPRECATION")` so end-users of the new API see no warnings. Users of the legacy API directly still see the migration warning.
+
+### Fixed
+
+- **Android — `ImagePickerLauncher` now rendered inside a full-screen `Dialog`**: fixes camera preview not visible when the composable is placed outside a `Box(Modifier.fillMaxSize())` container. The new `Dialog` wrapper handles dismissal via back press and does not dismiss on outside click.
 
 ### ⚠️ Breaking Changes
 
@@ -27,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CameraX** (`camera-core`, `camera-camera2`, `camera-lifecycle`, `camera-view`) upgraded from `1.5.1` → `1.5.3`
 - **ZXing Core** upgraded from `3.5.3` → `3.5.4`
 - **Android Gradle Plugin** upgraded from `8.13.0` → `8.13.2`
-- **Deprecated `ByteArray.encodeBase64()`** (Ktor util) replaced with `Base64.Default.encode()` from Kotlin stdlib in `GeminiOCRProvider` and `CustomService`
+- **Deprecated `ByteArray.encodeBase64()`** (Ktor util) replaced with `Base64.Default.encode()` from Kotlin stdlib
 
 
 
@@ -75,26 +101,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Flexible Configuration**: `AndroidGalleryConfig` allows manual override when needed
   - **Backward Compatibility**: All existing code continues working without changes
 
-- ** Full PDF Support for OCR**: `ImagePickerLauncherOCR` now works correctly with PDF documents
-  - **Automatic Detection**: When `MimeType.APPLICATION_PDF` is specified, automatically uses file explorer
-  - **Document OCR**: PDFs can be processed by OCR engine (Gemini, etc.)
-  - **Unchanged API**: Existing OCR code now works with PDFs without modifications
-
 - ** AndroidGalleryConfig Configuration**: New configuration class to control Android picker behavior
   - `forceGalleryOnly: Boolean`: Forces gallery vs file explorer usage
   - `localOnly: Boolean`: Include only local images (no cloud storage)
   - Convenience methods: `forMimeTypes()` and `forMimeTypeStrings()` for automatic configuration
-
-- ** Experimental Cloud OCR Functionality**: Complete optical character recognition system with AI providers
-  - **Experimental API**: Marked with `@ExperimentalOCRApi` - subject to change and requires external configuration (API keys)
-  - **Multiple Cloud Providers**: Support for Gemini, OpenAI, Claude, Azure, Ollama, and custom services
-  - **GeminiOCRProvider Integration**: Default implementation for text extraction using Gemini AI
-  - **Centralized Network Management**: `KtorInstance` singleton for HTTP client reuse and better performance
-  - **API Key Validation**: `APIKeyValidator` verifies configuration before making requests
-  - **Custom Exceptions**: `OCRException`, `CloudOCRException`, `MissingAPIKeyException`, `InvalidAPIKeyException`
-  - **Progress UI**: `OCRProgressDialog` provides visual feedback during text extraction
-  - **OCR Utilities**: `OCRUtils` with helper functions for timeouts and MIME type detection
-  - **Cross-platform Support**: Works on Android, iOS, Desktop, Web, and WASM
 
 ### Enhanced
 
@@ -143,10 +153,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Implemented custom contracts that guarantee gallery usage for images
   - User experience is now consistent and predictable
   - Developers don't need to make changes to existing code
-- ** PDF Access for OCR**: Fixed issue where `ImagePickerLauncherOCR` couldn't access PDF files
-  - System now automatically detects when PDFs are requested
-  - Uses appropriate picker (file explorer) for full document access
-  - OCR works correctly with PDF documents
 
 ## [1.0.22] - 2024-12-XX
 

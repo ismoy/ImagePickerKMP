@@ -25,7 +25,8 @@ actual fun GalleryPickerLauncher(
     enableCrop: Boolean,
     fileFilterDescription: String,
     includeExif: Boolean,
-    mimeTypeMismatchMessage: String?
+    mimeTypeMismatchMessage: String?,
+    onCropPending: () -> Unit
 ) {
     val context = LocalContext.current
     val activity = context

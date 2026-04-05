@@ -60,6 +60,25 @@ En tu `ComposeApp/iosMain/iosApp/` `Info.plist`:
 <string>Esta app necesita acceso a la cámara para capturar fotos</string>
 ```
 
+### 3. Añadir `CoreLocation.framework` (obligatorio)
+
+ImagePickerKMP usa `CoreLocation` internamente. En algunas configuraciones de Xcode / KMP este framework **no se enlaza automáticamente**, lo que provoca el siguiente error de enlazador en tiempo de compilación:
+
+```
+Could not find or use auto-linked framework '_LocationEssentials'
+ld: Undefined symbols: _OBJC_CLASS_$_CLLocation
+linker command failed with exit code 1
+```
+
+**Para solucionarlo, añade el framework manualmente:**
+
+1. Abre tu proyecto iOS en **Xcode**.
+2. Selecciona el target de tu app → **Build Phases → Link Binary With Libraries**.
+3. Haz clic en **+**, busca **CoreLocation** y haz clic en **Add**.
+4. Limpia (**⇧⌘K**) y vuelve a compilar.
+
+> ✅ No se requieren cambios en el código — es una configuración única a nivel de proyecto Xcode.
+
 ## Personalización Específica de Plataforma
 
 <h1>Android && Compose Multiplatform</h1>

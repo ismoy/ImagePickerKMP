@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPermissionDialogConfig
 import io.github.ismoy.imagepickerkmp.domain.utils.AppLifecycleObserver
@@ -34,25 +35,38 @@ actual fun RequestCameraPermission(
     var isProcessingSettingsAction by remember { mutableStateOf(false) }
     var hasNavigatedToSettings by remember { mutableStateOf(false) }
 
+    // rememberUpdatedState garantiza que AppLifecycleObserver siempre usa los callbacks
+    // más recientes aunque el composable se haya recompuesto — evita stale lambda crash
+    val currentOnResult by rememberUpdatedState(onResult)
+    val currentOnPermissionPermanentlyDenied by rememberUpdatedState(onPermissionPermanentlyDenied)
+
     AppLifecycleObserver(
         onAppBecomeActive = {
-            if (hasNavigatedToSettings && isProcessingSettingsAction) {
-                val currentStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
-                if (currentStatus == AVAuthorizationStatusAuthorized) {
+            val currentStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
+            when {
+                // Caso 1: el usuario fue a Settings y concedió el permiso
+                currentStatus == AVAuthorizationStatusAuthorized -> {
+                    isProcessingSettingsAction = false
+                    hasNavigatedToSettings = false
                     showDialog = false
-                    isProcessingSettingsAction = false
-                    hasNavigatedToSettings = false
-                    onResult(true)
-                } else {
-                    isProcessingSettingsAction = false
-                    hasNavigatedToSettings = false
-                    showDialog = true
-                    isPermissionDeniedPermanently = true
+                    currentOnResult(true)
                 }
+                // Caso 2: el usuario fue a Settings (via botón del dialog) y NO concedió el permiso
+                hasNavigatedToSettings && isProcessingSettingsAction -> {
+                    isProcessingSettingsAction = false
+                    hasNavigatedToSettings = false
+                    showDialog = false
+                    // Cerrar picker — usuario decide cuándo volver a intentarlo
+                    currentOnPermissionPermanentlyDenied()
+                }
+                // Caso 3: volvió de otra app sin haber ido a Settings — no hacer nada
+                else -> Unit
             }
         },
         onAppResignActive = {
-            if (isProcessingSettingsAction) {
+            // Si ya marcamos hasNavigatedToSettings=true directamente en onOpenSettings,
+            // no es necesario hacer nada aquí — evita condición de carrera con dispatch_async
+            if (isProcessingSettingsAction && !hasNavigatedToSettings) {
                 hasNavigatedToSettings = true
                 showDialog = false
             }
@@ -71,12 +85,12 @@ actual fun RequestCameraPermission(
         val currentStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
         when (currentStatus) {
             AVAuthorizationStatusAuthorized -> {
-                onResult(true)
+                currentOnResult(true)
             }
             AVAuthorizationStatusNotDetermined -> {
                 requestCameraAccess { granted ->
                     if (granted) {
-                        onResult(true)
+                        currentOnResult(true)
                     } else {
                         isPermissionDeniedPermanently = true
                         showDialog = true
@@ -92,29 +106,42 @@ actual fun RequestCameraPermission(
 
     if (showDialog && isPermissionDeniedPermanently) {
         if (dialogConfig.customSettingsDialog != null) {
-            dialogConfig.customSettingsDialog.invoke { 
-                if (!isProcessingSettingsAction) {
-                    isProcessingSettingsAction = true
-                    openSettings()
+            dialogConfig.customSettingsDialog.invoke(
+                // onOpenSettings — marcar navegación ANTES de abrir Settings
+                // para evitar condición de carrera con dispatch_async de openSettings()
+                {
+                    if (!isProcessingSettingsAction) {
+                        isProcessingSettingsAction = true
+                        hasNavigatedToSettings = true
+                        showDialog = false
+                        openSettings()
+                    }
+                },
+                // onDismiss — el usuario cerró el dialog sin ir a settings
+                {
+                    showDialog = false
+                    currentOnPermissionPermanentlyDenied()
                 }
-            }
+            )
         } else {
             CustomPermissionDialog(
                 title = dialogConfig.titleDialogDenied,
                 description = dialogConfig.descriptionDialogDenied,
                 confirmationButtonText = dialogConfig.btnDialogDenied,
-                cancelButtonText = dialogConfig.cancelButtonText,
+                cancelButtonText = dialogConfig.cancelButtonText ?: "Cancel",
                 onConfirm = {
                     if (!isProcessingSettingsAction) {
                         isProcessingSettingsAction = true
+                        hasNavigatedToSettings = true
+                        showDialog = false
                         openSettings()
                     }
                 },
-                onCancel = dialogConfig.onCancelPermissionConfigIOS
+                onCancel = dialogConfig.onCancelPermissionConfigIOS ?: {
+                    showDialog = false
+                    currentOnPermissionPermanentlyDenied()
+                }
             )
-        }
-        LaunchedEffect(Unit) {
-            onPermissionPermanentlyDenied()
         }
     }
 }

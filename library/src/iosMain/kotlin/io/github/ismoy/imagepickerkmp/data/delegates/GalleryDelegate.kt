@@ -7,6 +7,9 @@ import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
+import platform.Foundation.NSData
+import platform.Foundation.NSUUID
+import platform.Foundation.dataWithContentsOfURL
 import platform.UIKit.UIImage
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerDelegateProtocol
@@ -33,9 +36,28 @@ internal class GalleryDelegate(
         picker: UIImagePickerController,
         didFinishPickingMediaWithInfo: Map<Any?, *>
     ) {
+        val imageUrl = didFinishPickingMediaWithInfo[UIImagePickerControllerImageURL] as? platform.Foundation.NSURL
+        // GIF bypass: UIImage only retains the first frame, destroying animation.
+        // Read raw bytes from the original file URL instead of going through UIImage.
+        if (imageUrl != null) {
+            val ext = imageUrl.pathExtension?.lowercase()
+            logDebug("imagePickerController — url=$imageUrl | extension=$ext")
+            if (ext == "gif") {
+                logDebug("GIF detected — bypassing UIImage pipeline")
+                if (!urlMatchesMimeTypes(imageUrl, allowedMimeTypes)) {
+                    val msg = mimeTypeMismatchMessage
+                        ?: "The selected file does not match the allowed types: ${allowedMimeTypes.joinToString { it.value }}"
+                    onError?.invoke(Exception(msg))
+                    dismissPicker(picker)
+                    return
+                }
+                processSelectedGif(imageUrl, picker)
+                return
+            }
+        }
+
         val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
         if (image != null) {
-            val imageUrl = didFinishPickingMediaWithInfo[UIImagePickerControllerImageURL] as? platform.Foundation.NSURL
             if (imageUrl != null && !urlMatchesMimeTypes(imageUrl, allowedMimeTypes)) {
                 val msg = mimeTypeMismatchMessage
                     ?: "The selected file does not match the allowed types: ${allowedMimeTypes.joinToString { it.value }}"
@@ -56,6 +78,40 @@ internal class GalleryDelegate(
 
     override fun presentationControllerDidDismiss(presentationController: UIPresentationController) {
         onDismiss()
+    }
+
+    private fun processSelectedGif(gifUrl: platform.Foundation.NSURL, picker: UIImagePickerController) {
+        try {
+            val gifData = NSData.dataWithContentsOfURL(gifUrl)
+            if (gifData == null) {
+                dismissPicker(picker)
+                return
+            }
+            val fileName = "${NSUUID().UUIDString}.gif"
+            val tempURL = ImageProcessor.saveDataToTempDirectory(gifData, fileName)
+            if (tempURL == null) {
+                dismissPicker(picker)
+                return
+            }
+            // Read dimensions from first frame only — file on disk is untouched
+            val previewImage = UIImage.imageWithData(gifData)
+            val width = previewImage?.size?.useContents { width.toInt() } ?: 0
+            val height = previewImage?.size?.useContents { height.toInt() } ?: 0
+            val galleryResult = GalleryPhotoResult(
+                uri = tempURL.absoluteString ?: "",
+                width = width,
+                height = height,
+                fileName = fileName,
+                fileSize = gifData.length.toLong() / 1024,
+                mimeType = MimeType.IMAGE_GIF.value,
+                exif = null
+            )
+            onImagePicked(galleryResult)
+        } catch (e: Exception) {
+            onError?.invoke(e)
+        } finally {
+            dismissPicker(picker)
+        }
     }
 
     private fun processSelectedImage(image: UIImage, picker: UIImagePickerController) {

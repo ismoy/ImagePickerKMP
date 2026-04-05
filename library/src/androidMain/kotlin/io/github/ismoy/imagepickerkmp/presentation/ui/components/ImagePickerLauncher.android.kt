@@ -3,6 +3,8 @@ package io.github.ismoy.imagepickerkmp.presentation.ui.components
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import io.github.ismoy.imagepickerkmp.presentation.ui.screens.CameraCaptureView
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerConfig
 import io.github.ismoy.imagepickerkmp.domain.config.CropConfig
@@ -22,28 +24,30 @@ actual fun ImagePickerLauncher(
         config.onError(Exception(stringResource(Res.string.invalid_context_error)))
         return
     }
-    CameraCaptureView(
-        activity = activity,
-        onPhotoResult = { result ->
-            config.onPhotoCaptured(result)
-        },
-        onError = { exception ->
-            config.onError(exception)
-        },
-        onDismiss = config.onDismiss,
-        cameraCaptureConfig = config.cameraCaptureConfig.copy(
-            cropConfig = if (config.cameraCaptureConfig.cropConfig.enabled) {
-                config.cameraCaptureConfig.cropConfig
-            } else if (config.enableCrop) {
-                CropConfig(
-                    enabled = true,
-                    circularCrop = true,
-                    squareCrop = true
-                )
-            } else {
-                config.cameraCaptureConfig.cropConfig
-            }
-        ),
-        enableCrop = config.cameraCaptureConfig.cropConfig.enabled || config.enableCrop
-    )
+
+    val effectiveCropConfig = if (config.cameraCaptureConfig.cropConfig.enabled) {
+        config.cameraCaptureConfig.cropConfig
+    } else if (config.enableCrop) {
+        CropConfig(enabled = true, circularCrop = true, squareCrop = true)
+    } else {
+        config.cameraCaptureConfig.cropConfig
+    }
+
+    Dialog(
+        onDismissRequest = { config.onDismiss() },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = false
+        )
+    ) {
+        CameraCaptureView(
+            activity = activity,
+            onPhotoResult = { result -> config.onPhotoCaptured(result) },
+            onError = { exception -> config.onError(exception) },
+            onDismiss = config.onDismiss,
+            cameraCaptureConfig = config.cameraCaptureConfig.copy(cropConfig = effectiveCropConfig),
+            enableCrop = config.cameraCaptureConfig.cropConfig.enabled || config.enableCrop
+        )
+    }
 }

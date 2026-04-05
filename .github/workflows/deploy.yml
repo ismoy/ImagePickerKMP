@@ -2,13 +2,15 @@ name: Deploy to Maven Central
 
 on:
   workflow_dispatch:
-    # Permite ejecución manual desde la UI de GitHub Actions
   # push:
   #   branches: [ main ]
   # workflow_run:
   #   workflows: ["Version Bump"]
   #   types:
   #     - completed
+
+permissions:
+  contents: read
 
 jobs:
   deploy:

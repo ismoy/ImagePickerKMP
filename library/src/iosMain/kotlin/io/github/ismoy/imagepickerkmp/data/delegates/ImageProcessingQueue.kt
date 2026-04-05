@@ -12,6 +12,7 @@ import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.useContents
 import platform.Foundation.NSData
 import platform.Foundation.NSURL
+import platform.Foundation.NSUUID
 import platform.Foundation.dataWithContentsOfURL
 import platform.Photos.PHAsset
 import platform.PhotosUI.PHPickerResult
@@ -61,11 +62,14 @@ internal class ImageProcessingQueue(
 
         val pickerResult = pickerResults[index]
 
+        // For GIFs, request the original GIF file directly to preserve animation.
+        // "public.image" causes iOS to transcode GIFs into a static JPEG/PNG frame.
+        val isGifRequest = pickerResult.itemProvider.hasItemConformingToTypeIdentifier("com.compuserve.gif")
+        val typeIdentifier = if (isGifRequest) "com.compuserve.gif" else "public.image"
         pickerResult.itemProvider.loadFileRepresentationForTypeIdentifier(
-            "public.image"
+            typeIdentifier
         ) { url, error ->
             if (error != null || url == null) {
-                println("ImageProcessingQueue: Failed to load image $index: ${error?.localizedDescription}")
                 dispatch_async(dispatch_get_main_queue()) {
                     processedCount++
                     checkAndFinish()
@@ -73,10 +77,7 @@ internal class ImageProcessingQueue(
                 return@loadFileRepresentationForTypeIdentifier
             }
 
-            // Filtro post-selección: verificar el MIME type real usando la extensión del archivo temporal
-            // (igual que Android hace con contentResolver.getType)
             if (!urlMatchesMimeTypes(url, allowedMimeTypes)) {
-                println("ImageProcessingQueue: MIME type mismatch for image $index. Allowed: ${allowedMimeTypes.joinToString { it.value }}")
                 dispatch_async(dispatch_get_main_queue()) {
                     mismatchedCount++
                     processedCount++
@@ -93,7 +94,12 @@ internal class ImageProcessingQueue(
                 }
                 return@loadFileRepresentationForTypeIdentifier
             }
-            processImageDataInBackground(imageData, pickerResult, index)
+            // GIFs must bypass the JPEG compression pipeline to preserve animation frames.
+            if (isGifRequest) {
+                processGifDataInBackground(imageData, pickerResult, index)
+            } else {
+                processImageDataInBackground(imageData, pickerResult, index)
+            }
         }
         processNextImage()
     }
@@ -121,6 +127,34 @@ internal class ImageProcessingQueue(
         }
     }
 
+    /**
+     * Saves animated GIF bytes as-is, bypassing the JPEG compression pipeline.
+     * Transcoding a GIF through UIImage/UIImageJPEGRepresentation discards all animation
+     * frames and produces a static image.
+     */
+    private fun processGifDataInBackground(imageData: NSData, pickerResult: PHPickerResult, index: Int) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT.toLong(), 0u)) {
+            var galleryResult: GalleryPhotoResult? = null
+            autoreleasepool {
+                try {
+                    galleryResult = processGifFromData(imageData, pickerResult)
+                } catch (e: Exception) {
+                    // Fall back to static processing rather than dropping the result entirely
+                    galleryResult = createFallbackResult(imageData, pickerResult, index)
+                }
+            }
+
+            dispatch_async(dispatch_get_main_queue()) {
+                galleryResult?.let {
+                    results.add(it)
+                    successCount++
+                }
+                processedCount++
+                checkAndFinish()
+            }
+        }
+    }
+
     private fun checkAndFinish() {
         if (processedCount >= totalCount) {
             isProcessing = false
@@ -129,10 +163,6 @@ internal class ImageProcessingQueue(
         }
     }
 
-    /**
-     * Verifica si una URL de archivo temporal cumple con alguno de los MimeTypes permitidos.
-     * Usa la extensión del archivo, igual que Android usa contentResolver.getType(uri).
-     */
     private fun urlMatchesMimeTypes(url: NSURL, allowedMimeTypes: List<MimeType>): Boolean {
         if (allowedMimeTypes.any { it == MimeType.IMAGE_ALL }) return true
 
@@ -192,6 +222,33 @@ internal class ImageProcessingQueue(
             fileSize = finalSizeKB,
             mimeType = "${MimeType.IMAGE_WEBP}",
             exif = exifData
+        )
+    }
+
+    /**
+     * Saves animated GIF bytes directly to disk, bypassing the JPEG/WebP compression pipeline.
+     *
+     * Transcoding GIF data through UIImage + UIImageJPEGRepresentation discards all animation
+     * frames and produces a static image. Instead, the original GIF bytes are written verbatim
+     * to a temporary .gif file so that the URI retained in [GalleryPhotoResult] points to a
+     * valid animated GIF that can be displayed by any GIF-capable renderer.
+     */
+    private fun processGifFromData(imageData: NSData, pickerResult: PHPickerResult): GalleryPhotoResult? {
+        val fileName = "${NSUUID().UUIDString}.gif"
+        val tempURL = ImageProcessor.saveDataToTempDirectory(imageData, fileName)
+            ?: throw Exception("Failed to save GIF to temp directory")
+        // Read dimensions from the first frame via UIImage (does not affect the saved file)
+        val previewImage = UIImage.imageWithData(imageData)
+        val width = previewImage?.size?.useContents { width.toInt() } ?: 0
+        val height = previewImage?.size?.useContents { height.toInt() } ?: 0
+        return GalleryPhotoResult(
+            uri = tempURL.absoluteString ?: "",
+            width = width,
+            height = height,
+            fileName = fileName,
+            fileSize = imageData.length.toLong() / 1024,
+            mimeType = MimeType.IMAGE_GIF.value,
+            exif = null  // EXIF is not meaningful for GIFs
         )
     }
 

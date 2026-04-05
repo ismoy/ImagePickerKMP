@@ -3,8 +3,10 @@ name: Main Branch Deployment
 on:
   # push:
   #   branches: [ main ]
-  # Solo ejecución manual si se requiere
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   deploy:

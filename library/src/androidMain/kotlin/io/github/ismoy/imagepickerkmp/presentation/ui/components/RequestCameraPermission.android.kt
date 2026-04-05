@@ -30,6 +30,8 @@ actual fun RequestCameraPermission(
     var showRationale by remember { mutableStateOf(false) }
     var permissionDeniedPermanently by remember { mutableStateOf(false) }
     var hasCalledPermanentlyDenied by remember { mutableStateOf(false) }
+    // true cuando el usuario ya fue a Settings — al volver se evalúa si el permiso fue concedido
+    var waitingForSettingsReturn by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -55,7 +57,12 @@ actual fun RequestCameraPermission(
         if (isGranted) {
             permissionDeniedPermanently = false
             showRationale = false
+            waitingForSettingsReturn = false
             onResult(true)
+        } else if (waitingForSettingsReturn) {
+            // El usuario regresó de Settings sin conceder el permiso → cerrar el picker
+            waitingForSettingsReturn = false
+            onPermissionPermanentlyDenied()
         } else if (!showRationale && !permissionDeniedPermanently) {
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
@@ -63,18 +70,31 @@ actual fun RequestCameraPermission(
 
     if (showRationale) {
         if (dialogConfig.customDeniedDialog != null) {
-            dialogConfig.customDeniedDialog.invoke {
-                showRationale = false
-                permissionLauncher.launch(Manifest.permission.CAMERA)
-            }
+            dialogConfig.customDeniedDialog.invoke(
+                // onRetry
+                {
+                    showRationale = false
+                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                },
+                // onDismiss — el usuario cerró el dialog sin reintentar
+                {
+                    showRationale = false
+                    onPermissionPermanentlyDenied()
+                }
+            )
         } else {
             CustomPermissionDialog(
                 title = dialogConfig.titleDialogDenied,
                 description = dialogConfig.descriptionDialogDenied,
                 confirmationButtonText = dialogConfig.btnDialogDenied,
+                cancelButtonText = "Cancel",
                 onConfirm = {
                     showRationale = false
                     permissionLauncher.launch(Manifest.permission.CAMERA)
+                },
+                onCancel = {
+                    showRationale = false
+                    onPermissionPermanentlyDenied()
                 }
             )
         }
@@ -82,19 +102,36 @@ actual fun RequestCameraPermission(
 
     if (permissionDeniedPermanently && !hasCalledPermanentlyDenied) {
         if (dialogConfig.customSettingsDialog != null) {
-            dialogConfig.customSettingsDialog.invoke {
-                hasCalledPermanentlyDenied = true
-                openAppSettings(context)
-                onPermissionPermanentlyDenied()
-            }
+            dialogConfig.customSettingsDialog.invoke(
+                // onOpenSettings — ir a Settings y esperar que el usuario regrese
+                {
+                    hasCalledPermanentlyDenied = true
+                    permissionDeniedPermanently = false  // oculta el dialog inmediatamente
+                    waitingForSettingsReturn = true       // ON_RESUME decidirá qué hacer
+                    openAppSettings(context)
+                },
+                // onDismiss — el usuario cerró el dialog sin ir a settings
+                {
+                    hasCalledPermanentlyDenied = true
+                    permissionDeniedPermanently = false
+                    onPermissionPermanentlyDenied()
+                }
+            )
         } else {
             CustomPermissionDialog(
                 title = dialogConfig.titleDialogConfig,
                 description = dialogConfig.descriptionDialogConfig,
                 confirmationButtonText = dialogConfig.btnDialogConfig,
+                cancelButtonText = "Cancel",
                 onConfirm = {
                     hasCalledPermanentlyDenied = true
+                    permissionDeniedPermanently = false
+                    waitingForSettingsReturn = true
                     openAppSettings(context)
+                },
+                onCancel = {
+                    hasCalledPermanentlyDenied = true
+                    permissionDeniedPermanently = false
                     onPermissionPermanentlyDenied()
                 }
             )

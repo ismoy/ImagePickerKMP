@@ -57,6 +57,9 @@ kover {
                     "*.domain.config.HighPerformanceConfig",
                     "*.domain.config.AndroidGalleryConfig",
                     "*.domain.config.PermissionConfig",
+                    // ── Top-level API (state holder uses Compose internally) ─
+                    "*.ImagePickerKMPState",
+                    "*.ImagePickerKMPStateKt",
                     // ── Domain repository interfaces (no logic) ─────────────
                     "*.domain.repository.*",
                     // ── Domain use cases (delegators only a repositories) ────
@@ -266,18 +269,12 @@ kotlin {
                 implementation(libs.compose.animation)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material)
+                implementation(compose.material3)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation("io.coil-kt.coil3:coil-compose:3.2.0")
                 implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
                 implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
                 implementation(libs.components.resources)
-                // OCR dependencies
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
-                // Ktor dependencies for HTTP client
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.serialization.kotlinx.json)
-                implementation(libs.ktor.client.logging)
             }
         }
         val androidMain by getting {
@@ -294,10 +291,7 @@ kotlin {
                 implementation(libs.androidx.ui)
                 implementation(libs.androidx.ui.tooling.preview)
                 implementation(libs.androidx.material.icons.extended)
-                // EXIF interface for metadata extraction
                 implementation(libs.androidx.exifinterface)
-                 // Ktor Android engine
-                implementation(libs.ktor.client.okhttp)
             }
         }
         val iosResourcesDir =
@@ -306,10 +300,6 @@ kotlin {
             resources.srcDirs(iosResourcesDir)
             tasks.withType<ProcessResources> {
                 duplicatesStrategy = DuplicatesStrategy.INCLUDE
-            }
-            dependencies {
-                // Ktor iOS engine
-                implementation(libs.ktor.client.darwin)
             }
         }
         
@@ -410,8 +400,6 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-test:2.3.20")
-                // Ktor mock engine — permite simular respuestas HTTP sin red real (KMP)
-                implementation(libs.ktor.client.mock)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
             }
         }

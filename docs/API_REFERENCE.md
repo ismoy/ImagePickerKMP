@@ -6,11 +6,261 @@ Complete API documentation for the ImagePickerKMP library.
 
 ## Table of Contents
 
+- [API v2 vs Legacy API — Migration Guide](#api-v2-vs-legacy-api--migration-guide)
+- [rememberImagePickerKMP (Recommended)](#rememberimagePickerkmp)
 - [Main Components](#main-components)
 - [Data Classes](#data-classes)
 - [Enums](#enums)
 - [Configuration](#configuration)
 - [Platform-specific APIs](#platform-specific-apis)
+
+---
+
+## API v2 vs Legacy API — Migration Guide
+
+> **TL;DR:** Use `rememberImagePickerKMP` for all new code. `ImagePickerLauncher` and `GalleryPickerLauncher` are **deprecated** (`@Deprecated(level = WARNING)`) and will be removed in a future major release. Existing code keeps working without changes.
+
+### At-a-glance comparison
+
+| Feature | Legacy API (v1) ⚠️ Deprecated | New API (v2) ✅ Recommended |
+|---|---|---|
+| Camera | `ImagePickerLauncher(config = ImagePickerConfig(...))` | `picker.launchCamera()` |
+| Gallery | `GalleryPickerLauncher(onPhotosSelected = { }, ...)` | `picker.launchGallery()` |
+| Result | Callbacks: `onPhotoCaptured`, `onDismiss`, `onError` | Reactive: `when (picker.result) { is Success -> }` |
+| State management | Manual `showCamera`/`showGallery` booleans | Automatic via `ImagePickerKMPState` |
+| Per-launch overrides | Not supported | Every `launch*()` parameter is optional override |
+| Reset | Call `onDismiss` callback | `picker.reset()` |
+| Config class | `ImagePickerConfig` + `GalleryPickerConfig` | `ImagePickerKMPConfig` (unified) |
+| `Render()` call needed | ❌ Legacy required wrapper composables | ❌ No `Render()` in new API either |
+
+### Migration table
+
+| Legacy pattern | New API equivalent |
+|---|---|
+| `var showCamera by remember { mutableStateOf(false) }` | *(remove — not needed)* |
+| `showCamera = true` | `picker.launchCamera()` |
+| `showGallery = true` | `picker.launchGallery()` |
+| `onPhotoCaptured = { result -> ... }` | `is ImagePickerResult.Success -> result.photos` |
+| `onDismiss = { showCamera = false }` | `is ImagePickerResult.Dismissed -> ...` |
+| `onError = { e -> ... }` | `is ImagePickerResult.Error -> result.exception` |
+| `ImagePickerConfig(cameraCaptureConfig = ...)` | `ImagePickerKMPConfig(cameraCaptureConfig = ...)` |
+| `GalleryPickerConfig(includeExif = true)` | `ImagePickerKMPConfig(galleryConfig = GalleryConfig(includeExif = true))` |
+| `GalleryPickerLauncher(allowMultiple = true)` | `picker.launchGallery(allowMultiple = true)` |
+| `GalleryPickerLauncher(selectionLimit = 5)` | `picker.launchGallery(selectionLimit = 5)` |
+| `GalleryPickerLauncher(mimeTypes = listOf(...))` | `picker.launchGallery(mimeTypes = listOf(...))` |
+
+### Code comparison
+
+**Legacy — camera capture (still works, deprecated):**
+```kotlin
+var showCamera by remember { mutableStateOf(false) }
+
+if (showCamera) {
+    ImagePickerLauncher(  // ⚠️ Deprecated
+        config = ImagePickerConfig(
+            onPhotoCaptured = { result -> /* use result */ showCamera = false },
+            onDismiss = { showCamera = false },
+            onError = { showCamera = false }
+        )
+    )
+}
+Button(onClick = { showCamera = true }) { Text("Camera") }
+```
+
+**New API — camera capture (recommended):**
+```kotlin
+val picker = rememberImagePickerKMP()
+
+Button(onClick = { picker.launchCamera() }) { Text("Camera") }
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success   -> result.first?.let { /* use photo */ }
+    is ImagePickerResult.Dismissed -> { /* user cancelled */ }
+    is ImagePickerResult.Error     -> Text("Error: ${result.exception.message}")
+    is ImagePickerResult.Loading   -> CircularProgressIndicator()
+    is ImagePickerResult.Idle      -> { /* initial state */ }
+}
+```
+
+**Legacy — gallery selection (still works, deprecated):**
+```kotlin
+var showGallery by remember { mutableStateOf(false) }
+
+if (showGallery) {
+    GalleryPickerLauncher(  // ⚠️ Deprecated
+        onPhotosSelected = { photos -> selectedImages = photos; showGallery = false },
+        onDismiss = { showGallery = false },
+        onError = { showGallery = false },
+        allowMultiple = true,
+        mimeTypes = listOf(MimeType.IMAGE_JPEG)
+    )
+}
+Button(onClick = { showGallery = true }) { Text("Gallery") }
+```
+
+**New API — gallery selection (recommended):**
+```kotlin
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        galleryConfig = GalleryConfig(allowMultiple = true, selectionLimit = 10)
+    )
+)
+
+Button(onClick = { picker.launchGallery() }) { Text("Gallery") }
+// or with per-launch override:
+Button(onClick = { picker.launchGallery(allowMultiple = true, selectionLimit = 5) }) { Text("Gallery (5 max)") }
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> result.photos.forEach { /* use each photo */ }
+    else -> { /* handle other states */ }
+}
+```
+
+> **Note — internal architecture:** `rememberImagePickerKMP` calls `ImagePickerLauncher` / `GalleryPickerLauncher` internally as platform-specific rendering layers. The internal call site uses `@Suppress("DEPRECATION")` so consumers of the new API see no compiler warnings. Only developers who call the legacy functions directly see the migration warning.
+
+---
+
+## rememberImagePickerKMP (Recommended) {#rememberimagePickerkmp}
+
+> **Available since:** `1.0.35-alpha1` · All platforms
+
+`rememberImagePickerKMP` es el punto de entrada **recomendado** para Compose. Retorna un `ImagePickerKMPState` — un state holder estable que reemplaza los booleans manuales `showCamera`/`showGallery`. **No requiere ningún `Render()` ni composable adicional** — el picker se auto-gestiona al invocar `launchCamera()` o `launchGallery()`.
+
+### Signature
+
+```kotlin
+@Composable
+fun rememberImagePickerKMP(
+    config: ImagePickerKMPConfig = ImagePickerKMPConfig()
+): ImagePickerKMPState
+```
+
+### ImagePickerKMPConfig
+
+```kotlin
+data class ImagePickerKMPConfig(
+    val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(),
+    val galleryConfig: GalleryConfig = GalleryConfig(),
+    val enableCrop: Boolean = false,
+    val cropConfig: CropConfig = CropConfig(),
+    val uiConfig: UiConfig = UiConfig(),
+    val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig()
+)
+```
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `cameraCaptureConfig` | `CameraCaptureConfig` | defaults | Camera behaviour, compression, EXIF, UI styling |
+| `galleryConfig` | `GalleryConfig` | defaults | Multi-select, MIME types, selection limit, EXIF |
+| `enableCrop` | `Boolean` | `false` | Show crop UI after every capture / selection |
+| `cropConfig` | `CropConfig` | defaults | Crop shape, aspect ratio, freeform |
+| `uiConfig` | `UiConfig` | defaults | Custom button colors and icons |
+| `permissionAndConfirmationConfig` | `PermissionAndConfirmationConfig` | defaults | Custom permission dialogs and confirmation screen |
+
+### ImagePickerKMPState
+
+| Method / Property | Description |
+|---|---|
+| `result: ImagePickerResult` | Estado reactivo. Empieza en `Idle`. Observar con `when`. Se actualiza automáticamente cuando el picker abre, el usuario selecciona o cancela. |
+| `launchCamera(cameraCaptureConfig?, enableCrop?, onDismiss?, onError?)` | Abre la cámara. Todos los parámetros son opcionales y sobreescriben el config global solo para este lanzamiento. |
+| `launchGallery(allowMultiple?, mimeTypes?, selectionLimit?, enableCrop?, includeExif?, redactGpsData?, mimeTypeMismatchMessage?, cameraCaptureConfig?, onDismiss?, onError?)` | Abre la galería. Todos los parámetros son opcionales y sobreescriben el `GalleryConfig` global solo para este lanzamiento. |
+| `reset()` | Resetea `result` a `Idle` y cierra cualquier picker activo. |
+
+> ⚠️ **No existe `Render()` ni `launchPicker()`** en esta API. El picker se gestiona internamente.
+
+### ImagePickerResult
+
+```kotlin
+sealed class ImagePickerResult {
+    data object Idle        : ImagePickerResult()   // Estado inicial / tras reset()
+    data object Loading     : ImagePickerResult()   // Picker abierto, esperando acción
+    data class  Success(val photos: List<PhotoResult>) : ImagePickerResult()
+    data object Dismissed   : ImagePickerResult()   // Usuario cerró sin seleccionar
+    data class  Error(val exception: Exception) : ImagePickerResult()
+}
+```
+
+`Success` also exposes `val first: PhotoResult?` — primera foto (útil en captura de cámara).
+
+### Ejemplo real completo
+
+```kotlin
+@Composable
+fun MyScreen(innerPadding: PaddingValues) {
+
+    // No se necesita Render() ni booleans manuales
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            enableCrop = false,
+            galleryConfig = GalleryConfig(
+                allowMultiple = true,
+                selectionLimit = 10,
+                includeExif = true,
+                redactGpsData = true,
+                mimeTypes = listOf(MimeType.IMAGE_JPEG)
+            )
+        )
+    )
+
+    val result = picker.result
+
+    Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
+            when (result) {
+                is ImagePickerResult.Loading -> CircularProgressIndicator()
+                is ImagePickerResult.Success -> {
+                    val photos = result.photos
+                    if (photos.size == 1) {
+                        photos.first().loadPainter()?.let { Image(it, contentDescription = null) }
+                    } else {
+                        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                            items(photos) { photo ->
+                                photo.loadPainter()?.let { Image(it, contentDescription = null) }
+                            }
+                        }
+                    }
+                }
+                is ImagePickerResult.Error     -> Text("Error: ${result.exception.message}")
+                is ImagePickerResult.Dismissed,
+                is ImagePickerResult.Idle      -> Text("No image selected")
+            }
+        }
+
+        Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Button(onClick = { picker.launchCamera() }, modifier = Modifier.weight(1f)) {
+                Text("Cámara")
+            }
+            Button(onClick = { picker.launchGallery() }, modifier = Modifier.weight(1f)) {
+                Text("Galería")
+            }
+        }
+    }
+}
+```
+
+### Override por lanzamiento
+
+```kotlin
+// Override solo para este botón — no afecta el config global
+Button(onClick = {
+    picker.launchGallery(
+        allowMultiple = true,
+        mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+        selectionLimit = 5,
+        includeExif = true
+    )
+}) { Text("Pick up to 5 images") }
+
+// Cámara con compresión HIGH y crop, solo para este tap
+Button(onClick = {
+    picker.launchCamera(
+        cameraCaptureConfig = CameraCaptureConfig(compressionLevel = CompressionLevel.HIGH),
+        enableCrop = true
+    )
+}) { Text("Camera HD") }
+```
+
+---
 
 ##  Photo Capture – Specific Documentation
 
@@ -345,9 +595,12 @@ GalleryPickerLauncher(
 
 ### ImagePickerLauncher
 
+> ⚠️ **Deprecated** — `ImagePickerLauncher` is marked `@Deprecated(level = WARNING)`. It still compiles and runs normally, but the compiler will show a migration warning. **Migrate to [`rememberImagePickerKMP`](#rememberimagePickerkmp) for new code.**
+
 Main composable for launching the image picker.
 
 ```kotlin
+@Deprecated("Use rememberImagePickerKMP() instead.")
 @Composable
 expect fun ImagePickerLauncher(
     config: ImagePickerConfig
@@ -361,6 +614,8 @@ expect fun ImagePickerLauncher(
 ---
 
 ### GalleryPickerLauncher
+
+> ⚠️ **Deprecated** — `GalleryPickerLauncher` is marked `@Deprecated(level = WARNING)`. It still compiles and runs normally, but the compiler will show a migration warning. **Migrate to [`rememberImagePickerKMP`](#rememberimagePickerkmp) for new code.**
 
 Composable for selecting images from gallery with intelligent picker selection for Android.
 
@@ -1191,367 +1446,3 @@ fun ImagePickerLauncher(
 - `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Custom confirmation view
 - `preference: CapturePhotoPreference?` - Photo capture preferences
 
----
-
-## 📄 OCR Text Recognition – Specific Documentation
-
-## Description
-The OCR (Optical Character Recognition) functionality in ImagePickerKMP allows developers to extract text from images using both local and cloud-based analysis. It integrates seamlessly with the existing camera and gallery features to provide a complete text extraction solution.
-
----
-
-## Basic OCR example with local analysis
-
-```kotlin
-ImagePickerKMP.scanOCR(
-    mode = ScanMode.Local,
-    onResult = { result ->
-        // Handle the OCR result
-        println("Extracted text: ${result.text}")
-        println("Lines found: ${result.lines.size}")
-    },
-    onError = { exception ->
-        // Handle errors
-        println("OCR Error: ${exception.message}")
-    }
-)
-```
-
----
-
-## Advanced OCR example with cloud analysis (Gemini API)
-
-```kotlin
-ImagePickerKMP.scanOCR(
-    mode = ScanMode.Cloud(apiKey = "YOUR_GEMINI_API_KEY"),
-    onResult = { result ->
-        // Handle advanced OCR result
-        println("Text: ${result.text}")
-        println("Language: ${result.language}")
-        println("Confidence: ${result.confidence}")
-        println("Metadata: ${result.metadata}")
-    },
-    onError = { exception ->
-        // Handle errors
-        println("Cloud OCR Error: ${exception.message}")
-    }
-)
-```
-
----
-
-## OCR with Composable UI integration
-
-```kotlin
-@Composable
-fun OCRExample() {
-    var showScanner by remember { mutableStateOf(false) }
-    var ocrResult by remember { mutableStateOf<OCRResult?>(null) }
-    
-    Column {
-        Button(onClick = { showScanner = true }) {
-            Text("Scan Text")
-        }
-        
-        ocrResult?.let { result ->
-            Text("Result: ${result.text}")
-        }
-    }
-    
-    if (showScanner) {
-        OCRScanner(
-            mode = ScanMode.Local,
-            onResult = { result ->
-                ocrResult = result
-                showScanner = false
-            },
-            onError = { error ->
-                showScanner = false
-            },
-            onDismiss = { showScanner = false }
-        )
-    }
-}
-```
-
----
-
-## Direct OCR analysis from existing image URI
-
-```kotlin
-// Analyze existing image
-ImagePickerKMP.scanOCRFromUri(
-    imageUri = "file://path/to/image.jpg",
-    mode = ScanMode.Cloud("API_KEY"),
-    onResult = { result ->
-        println("Text found: ${result.text}")
-    },
-    onError = { error ->
-        println("Analysis failed: ${error.message}")
-    }
-)
-
-// Or using suspend function
-suspend fun analyzeImage() {
-    try {
-        val result = scanOCR(
-            mode = ScanMode.Local,
-            imageUri = "content://..."
-        )
-        println("OCR Result: ${result.text}")
-    } catch (e: Exception) {
-        println("Error: ${e.message}")
-    }
-}
-```
-
----
-
-## OCR Data Classes
-
-### ScanMode
-
-```kotlin
-sealed class ScanMode {
-    object Local : ScanMode()                    // Offline OCR analysis
-    data class Cloud(val apiKey: String) : ScanMode()  // Cloud OCR with Gemini API
-}
-```
-
-### OCRResult
-
-```kotlin
-data class OCRResult(
-    val text: String,                        // Complete extracted text
-    val lines: List<String>,                 // Individual text lines
-    val language: String? = null,            // Detected language (if available)
-    val confidence: Float? = null,           // Analysis confidence (0.0 to 1.0)
-    val metadata: Map<String, Any>? = null   // Additional analysis data
-)
-```
-
----
-
-## Platform Support
-
-| Platform | Local OCR | Cloud OCR | Technology |
-|----------|-----------|-----------|------------|
-| Android | ✅ ML Kit Text Recognition | ✅ Gemini API | Offline + Online |
-| iOS | ✅ VisionKit Text Recognition | ✅ Gemini API | Offline + Online |
-
----
-
-## OCR Functions
-
-### ImagePickerKMP.scanOCR
-
-Main OCR function that handles camera/gallery integration and text analysis.
-
-```kotlin
-suspend fun scanOCR(
-    mode: ScanMode,
-    onResult: (OCRResult) -> Unit,
-    onError: (Throwable) -> Unit
-)
-```
-
-#### Parameters
-
-- `mode: ScanMode` - Analysis mode (Local or Cloud with API key)
-- `onResult: (OCRResult) -> Unit` - Callback with successful OCR result
-- `onError: (Throwable) -> Unit` - Callback with error information
-
-### ImagePickerKMP.scanOCRFromUri
-
-Direct OCR analysis from existing image URI.
-
-```kotlin
-suspend fun scanOCRFromUri(
-    imageUri: String,
-    mode: ScanMode,
-    onResult: (OCRResult) -> Unit,
-    onError: (Throwable) -> Unit
-)
-```
-
-#### Parameters
-
-- `imageUri: String` - URI of the image to analyze
-- `mode: ScanMode` - Analysis mode (Local or Cloud with API key)
-- `onResult: (OCRResult) -> Unit` - Callback with successful OCR result
-- `onError: (Throwable) -> Unit` - Callback with error information
-
-### OCRScanner Composable
-
-Composable UI component for OCR integration.
-
-```kotlin
-@Composable
-fun OCRScanner(
-    mode: ScanMode,
-    onResult: (OCRResult) -> Unit,
-    onError: (Throwable) -> Unit,
-    onDismiss: () -> Unit = {}
-)
-```
-
-#### Parameters
-
-- `mode: ScanMode` - Analysis mode (Local or Cloud with API key)
-- `onResult: (OCRResult) -> Unit` - Callback with successful OCR result
-- `onError: (Throwable) -> Unit` - Callback with error information
-- `onDismiss: () -> Unit` - Callback when picker is dismissed
-
----
-
-## OCR Exceptions
-
-### OCRException
-
-Base exception for OCR-related errors.
-
-```kotlin
-open class OCRException(message: String, cause: Throwable? = null) : Exception(message, cause)
-```
-
-### LocalOCRException
-
-Exception for local OCR analysis failures.
-
-```kotlin
-class LocalOCRException(message: String, cause: Throwable? = null) : OCRException(message, cause)
-```
-
-### CloudOCRException
-
-Exception for cloud OCR analysis failures.
-
-```kotlin
-class CloudOCRException(message: String, cause: Throwable? = null) : OCRException(message, cause)
-```
-
-### InvalidAPIKeyException
-
-Exception for invalid or missing API keys.
-
-```kotlin
-class InvalidAPIKeyException(message: String = "Invalid or missing API key") : OCRException(message)
-```
-
----
-
-## Setup Requirements
-
-### For Local OCR
-
-- **Android**: Automatic (ML Kit included in dependencies)
-- **iOS**: Automatic (VisionKit is part of the system)
-
-### For Cloud OCR
-
-1. Get a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Use it in your application:
-
-```kotlin
-val apiKey = "AIzaSyC..." // Your Gemini API key
-ImagePickerKMP.scanOCR(ScanMode.Cloud(apiKey)) { result ->
-    // Process result
-}
-```
-
----
-
-### ImagePickerLauncherOCR (Experimental)
-
-Experimental component for text extraction using cloud OCR.
-
-```kotlin
-@ExperimentalOCRApi
-@Composable
-expect fun ImagePickerLauncherOCR(
-    config: ImagePickerOCRConfig,
-    onOCRResult: (OCRResult) -> Unit,
-    onError: (OCRException) -> Unit = {},
-    onDismiss: () -> Unit = {}
-)
-```
-
-#### Parameters
-
-- `config` - Configuration for OCR provider and extraction parameters
-- `onOCRResult` - Callback with text extraction result
-- `onError` - Callback to handle OCR-specific errors
-- `onDismiss` - Callback when user cancels
-
-#### Supported Providers
-
-```kotlin
-sealed class CloudOCRProvider {
-    data class Gemini(val apiKey: String) : CloudOCRProvider()
-    data class OpenAI(val apiKey: String) : CloudOCRProvider()
-    data class Claude(val apiKey: String) : CloudOCRProvider()
-    data class Azure(val apiKey: String, val endpoint: String) : CloudOCRProvider()
-    data class Ollama(val baseUrl: String) : CloudOCRProvider()
-    data class Custom(val service: CustomService) : CloudOCRProvider()
-}
-```
-
-#### Complete Example
-
-```kotlin
-@OptIn(ExperimentalOCRApi::class)
-ImagePickerLauncherOCR(
-    config = ImagePickerOCRConfig(
-        provider = GeminiOCRProvider(apiKey = "your-gemini-key"),
-        requestConfig = OCRRequestConfig(
-            scanMode = ScanMode.TEXT_EXTRACTION,
-            extractionIndicators = ExtractionIndicators(
-                extractTables = true,
-                extractText = true,
-                extractStructure = true
-            ),
-            requestFormat = RequestFormat.STRUCTURED_JSON
-        )
-    ),
-    onOCRResult = { result ->
-        when (result) {
-            is OCRResult.Success -> {
-                println("Extracted text: ${result.text}")
-                result.tables?.forEach { table ->
-                    println("Detected table: ${table.content}")
-                }
-            }
-            is OCRResult.Error -> {
-                println("OCR error: ${result.message}")
-                println("Error code: ${result.errorCode}")
-            }
-        }
-    },
-    onError = { exception ->
-        when (exception) {
-            is MissingAPIKeyException -> {
-                // Handle missing API key
-            }
-            is InvalidAPIKeyException -> {
-                // Handle invalid API key
-            }
-            is CloudOCRException -> {
-                // Handle provider errors
-            }
-        }
-    }
-)
-```
-
-#### Features
-
-- ** Experimental API**: Marked with `@ExperimentalOCRApi` - subject to change
-- ** Multiple Providers**: Gemini, OpenAI, Claude, Azure, Ollama, custom services
-- ** PDF Support**: Extracts text from PDF documents and images
-- ** Table Detection**: Identifies and extracts structured table content
-- ** Cross-platform**: Android, iOS, Desktop, Web, WASM
-- ** API Validation**: Verifies keys before making requests
-- ** Configurable Timeouts**: Custom timeout control
-- ** Progress UI**: Visual dialog during processing
-
----
