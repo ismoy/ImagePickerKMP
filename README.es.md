@@ -474,14 +474,6 @@ GalleryPickerLauncher(
     mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)
 )
 
-// ✅ Abre EXPLORADOR DE ARCHIVOS automáticamente  
-ImagePickerLauncherOCR(
-    config = ImagePickerOCRConfig(
-        allowedMimeTypes = listOf(MimeType.APPLICATION_PDF) // PDF + OCR ahora funciona!
-    )
-)
-```
-
 ### Extracción de Datos EXIF
 
 Para habilitar datos EXIF (metadatos de ubicación, cámara, etc.):
@@ -594,37 +586,3 @@ GalleryPickerLauncher(
   <em>¡Dale una estrella ⭐ a este repo si te ayudó!</em>
 </p>
 
-### 🤖 Experimental Cloud OCR
-Need to extract text from images or documents? Try the new experimental OCR functionality:
-
-```kotlin
-@OptIn(ExperimentalOCRApi::class)
-ImagePickerLauncherOCR(
-    config = ImagePickerOCRConfig(
-        provider = GeminiOCRProvider(apiKey = "your-gemini-api-key"),
-        requestConfig = OCRRequestConfig(
-            scanMode = ScanMode.TEXT_EXTRACTION,
-            extractionIndicators = ExtractionIndicators(
-                extractTables = true,
-                extractText = true,
-                extractStructure = true
-            )
-        )
-    ),
-    onOCRResult = { result ->
-        when (result) {
-            is OCRResult.Success -> {
-                println("Extracted text: ${result.text}")
-                println("Tables: ${result.tables}")
-            }
-            is OCRResult.Error -> {
-                println("OCR failed: ${result.message}")
-            }
-        }
-    }
-)
-```
-
-**Supported Providers**: Gemini, OpenAI, Claude, Azure, Ollama, and custom services.
-
----

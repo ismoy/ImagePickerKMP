@@ -43,7 +43,7 @@ Built with **Compose Multiplatform**, designed for **simplicity, performance, an
 ---
 
 <p align="center">
-  <a href="https://ismoy.github.io/ImagePickerKMP/">
+  <a href="https://imagepickerkmp.dev/">
     <img src="https://img.shields.io/badge/%20Full%20Documentation-Visit%20Docs%20Site-0ea5e9?style=for-the-badge&logoColor=white" alt="Documentation Site">
   </a>
   &nbsp;
@@ -469,112 +469,6 @@ ImagePickerLauncher(
     )
 )
 ```
-
-### Experimental Cloud OCR
-Need to extract text from images or documents? Try the new experimental OCR functionality:
-
-```kotlin
- var isOCRActive = remember { mutableStateOf(false) }
- var resultOCR by remember { mutableStateOf<OCRResult?>(null) }
-@OptIn(ExperimentalOCRApi::class)
-  if (isOCRActive) {
-   ImagePickerLauncherOCR(
-      config = ImagePickerOCRConfig(
-       scanMode = ScanMode.Cloud(
-        provider = CloudOCRProvider.Gemini("${your_gemini_api_key}")
-        ),
-      onOCRCompleted = { result ->
-        resultOCR = result
-         isOCRActive=false
-        },
-        onError = {
-        isOCRActive =false
-        println("OCR error: $it")
-         },
-       onCancel = {
-        isOCRActive =false
-        },
-       directCameraLaunch = false // IOS,
-        allowedMimeTypes =listOf(MimeType.APPLICATION_PDF, MimeType.IMAGE_ALL),
-         )
-       )
-    }
-    
-    Button(onClick{
-      isOCRActive =true
-    }){
-      Text("Click me")
-    }
-```
-### More Options
-
-#### SCustom OCR service with simple authentication:
-```kotlin
-CloudOCRProvider.Custom(
-    name = "MyCompany OCR",
-    baseUrl = "https://api.mycompany.com/ocr/analyze",
-    apiKey = "abc123def456",
-    requestFormat = RequestFormat.MULTIPART_FORM
-)
-```
-
-#### Service without authentication (local or public):
-```kotlin
-CloudOCRProvider.Custom(
-    name = "Local OCR Server",
-    baseUrl = "http://localhost:8080/api/ocr",
-    apiKey = null, // No API key required
-    requestFormat = RequestFormat.JSON
-)
-```
-
-#### Service with custom headers:
-```kotlin
-CloudOCRProvider.Custom(
-    name = "Enterprise OCR Service",
-    baseUrl = "https://enterprise-ocr.internal.com/v2/extract",
-    headers = mapOf(
-        "X-API-Version" to "2.1",
-        "X-Client-ID" to "mobile-app",
-        "Authorization" to "Bearer $token",
-        "User-Agent" to "ImagePickerKMP/1.0"
-    ),
-    requestFormat = RequestFormat.MULTIPART_FORM,
-    model = "enterprise-model-v3"
-)
-```
-#### Service using JSON request format:
-```kotlin
-CloudOCRProvider.Custom(
-    name = "JSON OCR API",
-    baseUrl = "https://api.json-ocr.com/v1/process",
-    apiKey = "json-api-key-123",
-    headers = mapOf(
-        "Content-Type" to "application/json"
-    ),
-    requestFormat = RequestFormat.JSON
-)
-```
-### `RequestFormat` Options
-- **RequestFormat.MULTIPART_FORM**: For APIs expecting `multipart/form-data`.
-- **RequestFormat.JSON**: For APIs expecting JSON with a Base64-encoded image.
-
----
-
-### Fields available in `CloudOCRProvider.Custom`
-- **name**: Descriptive name of your OCR service.
-- **baseUrl**: Base URL of your OCR API.
-- **apiKey** (optional): API key, may be `null`.
-- **headers** (optional): Custom HTTP headers.
-- **requestFormat**: Request format (`MULTIPART_FORM` or `JSON`).
-- **model** (optional): Specific model to use.
-
-
-
-**Supported Providers**: Gemini, OpenAI, Claude, Azure, Ollama, and custom services.
-
----
-
 
 ## React/Web Integration
 
