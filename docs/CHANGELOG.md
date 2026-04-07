@@ -72,6 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **API Compatibility**: Useful for any service that requires precise byte values
   - **Migration Guide**: To get KB from bytes, divide by 1024: `val fileSizeKB = (result.fileSize ?: 0) / 1024.0`
   - **Updated Documentation**: All examples and documentation updated to reflect byte-based sizes
+  - ### Fixed
+  - Resolved manifest merge conflict with host apps using FileProvider
 
 ### Added
 
