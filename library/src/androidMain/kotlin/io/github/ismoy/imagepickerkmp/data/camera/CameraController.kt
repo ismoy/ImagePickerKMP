@@ -67,7 +67,7 @@ internal class CameraController(
         previewView: PreviewView,
         preference: CapturePhotoPreference
     ) {
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
             delay(DELAY_TO_TAKE_PHOTO)
         }
    

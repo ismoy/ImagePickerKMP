@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp.presentation.ui.components
 
+import android.os.Build
 import android.view.ViewGroup.LayoutParams
 import androidx.activity.ComponentActivity
 import androidx.camera.view.PreviewView
@@ -106,12 +107,19 @@ fun CameraCapturePreview(
                 factory = { context ->
                     PreviewView(context).apply {
                         scaleType = PreviewView.ScaleType.FILL_CENTER
-                        implementationMode = PreviewView.ImplementationMode.PERFORMANCE
+                    
+                        implementationMode = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+                            PreviewView.ImplementationMode.COMPATIBLE
+                        } else {
+                            PreviewView.ImplementationMode.PERFORMANCE
+                        }
                         layoutParams = LayoutParams(
                             LayoutParams.MATCH_PARENT,
                             LayoutParams.MATCH_PARENT
                         )
-                        setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
+                            setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
+                        }
                         setBackgroundColor(android.graphics.Color.TRANSPARENT)
                         alpha = 0f
                         post {

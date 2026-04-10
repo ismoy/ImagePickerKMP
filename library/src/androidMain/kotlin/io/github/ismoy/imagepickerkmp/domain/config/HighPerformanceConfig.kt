@@ -37,7 +37,7 @@ internal object HighPerformanceConfig {
     }
 
     fun requiresCompatibilityMode(): Boolean {
-        return Build.VERSION.SDK_INT == Build.VERSION_CODES.Q
+        return Build.VERSION.SDK_INT <= Build.VERSION_CODES.R
     }
 
     fun getOptimalJpegQuality(context: Context? = null): Int {
