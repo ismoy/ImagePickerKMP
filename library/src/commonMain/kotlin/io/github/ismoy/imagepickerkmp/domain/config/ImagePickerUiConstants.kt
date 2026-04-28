@@ -53,6 +53,7 @@ internal object ImagePickerUiConstants {
     const val GALLERY_FILE_UTILS_TAG = "GalleryFileUtils: Error querying file name:"
     const val NUMBER_THREE = 3
     const val MINVALUE_COMPRESSOR = 8192
+    const val PREFIX_GALLERY = "gallery_"
     const val PREFIX_COMPRESSED_GALLERY = "compressed_gallery_"
     const val SUFFIX_COMPRESSED_GALLERY = ".jpg"
     const val NUMBER_ZERO = 0

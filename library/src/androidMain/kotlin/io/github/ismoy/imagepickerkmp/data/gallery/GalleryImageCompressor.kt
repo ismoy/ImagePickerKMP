@@ -2,10 +2,13 @@ package io.github.ismoy.imagepickerkmp.data.gallery
 
 import android.content.Context
 import android.graphics.Bitmap
+import io.github.ismoy.imagepickerkmp.data.gallery.GalleryFileUtils.getNameAndExtension
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.GALLERY_PROCESSOR_TAG
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.IMAGE_TEMP
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.MINVALUE_COMPRESSOR
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.NUMBER_THREE
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.PREFIX_COMPRESSED_GALLERY
+import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.PREFIX_GALLERY
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.SUFFIX_COMPRESSED_GALLERY
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.utils.DefaultLogger
@@ -23,12 +26,15 @@ internal object GalleryImageCompressor {
         return out.toByteArray()
     }
 
-    fun createTempImageFile(context: Context, imageBytes: ByteArray): File? {
+    fun createTempImageFile(context: Context, imageBytes: ByteArray, fileName: String? = null): File? {
+        val (name, extension) = fileName.getNameAndExtension()
+        val storageDir = context.cacheDir.resolve(IMAGE_TEMP).also { it.mkdirs() }
+
         val tempFile = try {
             File.createTempFile(
-                "$PREFIX_COMPRESSED_GALLERY${System.currentTimeMillis()}",
-                SUFFIX_COMPRESSED_GALLERY,
-                context.cacheDir
+                name ?: "$PREFIX_COMPRESSED_GALLERY${System.currentTimeMillis()}",
+                extension ?: SUFFIX_COMPRESSED_GALLERY,
+                storageDir
             )
         } catch (e: Exception) {
             DefaultLogger.logDebug("$GALLERY_PROCESSOR_TAG: Error creating temp file: ${e.javaClass.simpleName}")
