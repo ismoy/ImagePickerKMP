@@ -16,3 +16,6 @@ actual fun PhotoResult.loadBase64(): String = ""
 actual fun PhotoResult.loadImageBitmap(): ImageBitmap? = null
 
 actual fun PhotoResult.loadPainter(): Painter? = null
+
+actual val PhotoResult.absolutePath: String
+    get() = uri

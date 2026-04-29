@@ -57,3 +57,6 @@ actual fun PhotoResult.loadPainter(): Painter? {
         null
     }
 }
+
+actual val PhotoResult.absolutePath: String
+    get() = File(java.net.URI(uri)).absolutePath

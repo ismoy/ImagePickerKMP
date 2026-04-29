@@ -5,5 +5,7 @@ package io.github.ismoy.imagepickerkmp.domain.models
  *
  * Both gallery picks and camera captures share the same result model.
  * This alias exists for API readability and backwards compatibility.
+ *
+ * All [PhotoResult] extensions apply directly to this type.
  */
 typealias GalleryPhotoResult = PhotoResult
