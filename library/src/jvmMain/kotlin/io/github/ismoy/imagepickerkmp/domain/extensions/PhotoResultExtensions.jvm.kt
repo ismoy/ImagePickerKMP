@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.toComposeImageBitmap
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import org.jetbrains.skia.Image
 import java.io.File
-import java.net.URL
 import java.util.Base64
 
 /**

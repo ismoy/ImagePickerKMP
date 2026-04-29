@@ -57,14 +57,25 @@ fun PhotoResult.asPath(): Path {
 }
 
 /**
+ * Checks whether the photo file actually exists on disk.
+ *
+ * @return Boolean indicating if the photo file exists
+ */
+fun PhotoResult.exists(): Boolean {
+    return SystemFileSystem.exists(asPath())
+}
+
+/**
  * Creates a [RawSource] for reading the photo file directly.
  * Use this for low-level file operations without buffering.
  *
  * @return RawSource for the photo file
  */
 fun PhotoResult.asRawSource(): RawSource {
-    return SystemFileSystem
-        .source(asPath())
+    return if (exists())
+        SystemFileSystem.source(asPath())
+    else
+        error("Photo file deleted or application cache cleared.")
 }
 
 /**
@@ -74,9 +85,7 @@ fun PhotoResult.asRawSource(): RawSource {
  * @return Buffered Source for the photo file
  */
 fun PhotoResult.asSource(): Source {
-    return asRawSource().use {
-        it.buffered()
-    }
+    return asRawSource().buffered()
 }
 
 /**
@@ -92,5 +101,7 @@ fun PhotoResult.asSource(): Source {
  * ```
  */
 fun PhotoResult.transferToSink(sink: RawSink) {
-    asSource().transferTo(sink)
+    asSource().use {
+        it.transferTo(sink)
+    }
 }

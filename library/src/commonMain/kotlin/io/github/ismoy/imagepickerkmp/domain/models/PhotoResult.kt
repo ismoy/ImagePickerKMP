@@ -11,6 +11,26 @@ package io.github.ismoy.imagepickerkmp.domain.models
  * @property fileSize The size of the file in bytes, if available.
  * @property mimeType The MIME type of the file (e.g., "image/jpeg", "application/pdf").
  * @property exif EXIF metadata including GPS location data (only available when includeExif is enabled).
+ *
+ * ## Available Extensions
+ *
+ * ### Data Access
+ * - [.absolutePath] — Absolute file system path of the photo
+ * - [.asPath()] — Converts to a [kotlinx.io.files.Path] object
+ * - [.exists()] — Checks whether the file exists on disk
+ *
+ * ### Reading
+ * - [.loadBytes()] — Reads the file into a [ByteArray]
+ * - [.loadBase64()] — Reads the file and encodes it as a `Base64` string
+ * - [.asRawSource()] — Opens an unbuffered [kotlinx.io.RawSource] for reading
+ * - [.asSource()] — Opens a buffered [kotlinx.io.Source] for efficient reading
+ *
+ * ### UI / Compose
+ * - [.loadImageBitmap()] — Decodes the file into an [androidx.compose.ui.graphics.ImageBitmap] for Compose
+ * - [.loadPainter()] — Decodes the file into a [androidx.compose.ui.graphics.painter.Painter] for Compose
+ *
+ * ### Writing
+ * - [.transferToSink()] — Transfers the file content to a [kotlinx.io.RawSink]
  */
 data class PhotoResult(
     val uri: String,
