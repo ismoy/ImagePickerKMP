@@ -3,6 +3,7 @@ accompanistPermissions = "0.37.3"
 agp = "8.13.2"
 cameraCore = "1.6.0"
 cameraView = "1.6.0"
+coilCompose = "3.2.0"
 core = "3.5.4"
 exifinterface = "1.4.2"
 lifecycleRuntimeCompose = "2.10.0"
@@ -10,7 +11,9 @@ kotlin = "2.3.20"
 compose = "1.10.3"
 androidx-activityCompose = "1.13.0"
 kotlinxCoroutinesCore = "1.10.2"
-materialIconsExtendedVersion = "1.7.8"
+kotlinxIoCore = "0.9.0"
+material3 = "1.9.0"
+materialIcons = "1.7.3"
 ui = "1.10.5"
 kover = "0.9.7"
 
@@ -22,22 +25,27 @@ androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", versi
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraView" }
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
-androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtendedVersion" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "ui" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
 core = { module = "com.google.zxing:core", version.ref = "core" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
 compose-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "compose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
 compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose" }
-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIoCore" }
+material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "materialIcons" }
+material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIcons" }
+
 [plugins]
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version = "2.3.20" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }

@@ -465,6 +465,18 @@ ImagePickerLauncher(
             val imagePainter = result.loadPainter()    // Painter for Compose UI
             val imageBitmap = result.loadImageBitmap() // ImageBitmap for graphics
             val imageBase64 = result.loadBase64()      // Base64 string for APIs
+
+            // File system operations (kotlinx-io)
+            val absolutePath = result.absolutePath     // String - absolute file path
+            val path = result.asPath()                 // Path object for file operations
+            val exists = result.exists()               // Check if file exists
+            val rawSource = result.asRawSource()       // RawSource for low-level reading
+            val source = result.asSource()             // Buffered Source for efficient reading
+
+            // Copy photo to another location
+            val sink = SystemFileSystem
+                .sink(Path("copy.jpg"))
+            result.transferToSink(sink)                // Transfer content to RawSink
         }
     )
 )

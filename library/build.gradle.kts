@@ -262,37 +262,32 @@ kotlin {
     }
     withSourcesJar(true)
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(libs.compose.runtime)
-                implementation(libs.compose.ui)
-                implementation(libs.compose.animation)
-                implementation(libs.compose.foundation)
-                implementation(libs.compose.material)
-                implementation(compose.material3)
-                implementation(libs.kotlinx.coroutines.core)
-                implementation("io.coil-kt.coil3:coil-compose:3.2.0")
-                implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
-                implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
-                implementation(libs.components.resources)
-            }
+        commonMain.dependencies {
+            api(libs.compose.runtime)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.animation)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material)
+            implementation(libs.compose.material3)
+            implementation(libs.kotlinx.coroutines.core)
+            api(libs.kotlinx.io.core)
+            implementation(libs.coil.compose)
+            implementation(libs.material.icons.core)
+            implementation(libs.material.icons.extended)
+            implementation(libs.components.resources)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.androidx.activity.compose)
-                implementation(libs.androidx.lifecycle.runtime.compose)
-                implementation(libs.androidx.camera.core)
-                implementation(libs.androidx.camera.camera2)
-                implementation(libs.androidx.camera.lifecycle)
-                implementation(libs.androidx.camera.view)
-                implementation(libs.accompanist.permissions)
-                implementation(libs.core)
-                implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.androidx.ui)
-                implementation(libs.androidx.ui.tooling.preview)
-                implementation(libs.androidx.material.icons.extended)
-                implementation(libs.androidx.exifinterface)
-            }
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.androidx.camera.core)
+            implementation(libs.androidx.camera.camera2)
+            implementation(libs.androidx.camera.lifecycle)
+            implementation(libs.androidx.camera.view)
+            implementation(libs.accompanist.permissions)
+            implementation(libs.core)
+            implementation(libs.androidx.ui)
+            implementation(libs.androidx.ui.tooling.preview)
+            implementation(libs.androidx.exifinterface)
         }
         val iosResourcesDir =
             project.findProperty("iosResourcesDir") as? String ?: "src/iosMain/resources"
@@ -302,36 +297,14 @@ kotlin {
                 duplicatesStrategy = DuplicatesStrategy.INCLUDE
             }
         }
-        
-        val jvmMain by getting {
-            dependencies {
-                implementation(libs.compose.ui)
-                implementation(libs.compose.material)
-                implementation(libs.compose.foundation)
-                implementation(libs.compose.runtime)
-                implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
-            }
+        jvmMain.dependencies {
+            implementation(libs.kotlinx.coroutines.swing)
         }
-        
-        val jsMain by getting {
-            dependencies {
-                implementation(libs.compose.runtime)
-                implementation(libs.compose.ui)
-                implementation(libs.compose.foundation)
-                implementation(libs.compose.material)
-                implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
-            }
+        jsMain.dependencies {
+
         }
-        
-        val wasmJsMain by getting {
-            dependencies {
-                implementation(libs.compose.runtime)
-                implementation(libs.compose.ui)
-                implementation(libs.compose.foundation)
-                implementation(libs.compose.material)
-                implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
-            }
+        wasmJsMain.dependencies {
+
         }
 
         tasks.register("copyLocalizationResources") {

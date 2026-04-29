@@ -361,6 +361,18 @@ if (showCamera) {
                 val imageBitmap = result.loadImageBitmap() // Para operaciones gráficas
                 val imageBase64 = result.loadBase64()      // Para llamadas API
                 
+                // Operaciones con el sistema de archivos (kotlinx-io)
+                val absolutePath = result.absolutePath     // String - ruta absoluta del archivo
+                val path = result.asPath()                 // Objeto Path para operaciones de archivo
+                val exists = result.exists()               // Comprobar si el archivo existe
+                val rawSource = result.asRawSource()       // RawSource para lectura de bajo nivel
+                val source = result.asSource()             // Buffered Source para lectura eficiente
+
+                // Copiar la foto a otra ubicación
+                val sink = SystemFileSystem
+                    .sink(Path("copy.jpg"))
+                result.transferToSink(sink)                // Transferir contenido a RawSink
+
                 // Guardar el painter para mostrar después
                 capturedImage = imagePainter
                 showCamera = false

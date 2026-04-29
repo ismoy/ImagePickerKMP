@@ -16,8 +16,14 @@ import java.io.ByteArrayOutputStream
 import kotlin.math.max
 import androidx.core.net.toUri
 import androidx.core.graphics.scale
+import kotlinx.io.Source
+import kotlinx.io.asSource
+import kotlinx.io.buffered
+import kotlinx.io.files.FileNotFoundException
+import kotlinx.io.readByteArray
 import java.lang.Class.forName
 import java.io.File
+import java.net.URI
 
 
 private val painterCache     = object : LruCache<String, Painter>(50) {}
@@ -350,3 +356,28 @@ private fun compressBitmapToByteArrayDirect(bitmap: Bitmap): ByteArray {
         ByteArray(0)
     }
 }
+private fun openUriSource(uri: String): Source {
+    val androidUri = uri.toUri()
+    return getApplicationContext().contentResolver
+        .openInputStream(androidUri)
+        ?.asSource()?.buffered()
+        ?: throw FileNotFoundException("Cannot open: $uri")
+}
+
+
+actual val PhotoResult.absolutePath: String
+    get() {
+        try {
+            val file = if (uri.startsWith("content://")) {
+                File(getApplicationContext().cacheDir, fileName ?: "photo.jpg").apply {
+                    writeBytes(openUriSource(uri).readByteArray())
+                }
+            } else if (uri.startsWith("file://"))
+                File(URI(uri))
+            else
+                throw FileNotFoundException("Cannot open: $uri")
+            return file.absolutePath
+        } catch (e: Exception) {
+            throw FileNotFoundException("Cannot open: $uri ${e::class.simpleName}")
+        }
+    }
