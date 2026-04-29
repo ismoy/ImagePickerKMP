@@ -43,7 +43,7 @@ internal object GalleryImageProcessor {
                 ?: return@withContext null
 
             if (compressionLevel == null && !includeExif) {
-                return@withContext createFallbackResult(uri, originalBytes, fileName, mimeType, null)
+                return@withContext createFallbackResult(context, uri, originalBytes, fileName, mimeType, null)
             }
 
             val exifData: ExifData? = if (includeExif && mimeType?.startsWith(IMAGE_PREFIX_TEXT) == true) {
@@ -56,10 +56,10 @@ internal object GalleryImageProcessor {
                 if (bitmap != null) {
                     createResultFromBitmap(context, bitmap, fileName, mimeType, exifData, compressionLevel)
                 } else {
-                    createFallbackResult(uri, originalBytes, fileName, mimeType, exifData)
+                    createFallbackResult(context, uri, originalBytes, fileName, mimeType, exifData)
                 }
             } else {
-                createFallbackResult(uri, originalBytes, fileName, mimeType, exifData)
+                createFallbackResult(context, uri, originalBytes, fileName, mimeType, exifData)
             }
         } catch (e: Exception) {
             DefaultLogger.logDebug("$IMAGEPROCESSOR_TAG: ${e.message}")
@@ -135,6 +135,7 @@ internal object GalleryImageProcessor {
     }
 
     private fun createFallbackResult(
+        context: Context,
         uri: Uri,
         originalBytes: ByteArray,
         fileName: String?,
@@ -143,11 +144,15 @@ internal object GalleryImageProcessor {
     ): GalleryPhotoResult {
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(originalBytes, NUMBER_ZERO, originalBytes.size, options)
+
+        val tempFile = GalleryImageCompressor.createTempImageFile(context, originalBytes, fileName)
+        val tempUri = tempFile?.let { Uri.fromFile(it).toString() }
+
         return GalleryPhotoResult(
-            uri = uri.toString(),
+            uri = tempUri ?: uri.toString(),
             width = options.outWidth,
             height = options.outHeight,
-            fileName = fileName,
+            fileName = tempFile?.name ?: fileName,
             fileSize = originalBytes.size.toLong(),
             mimeType = mimeType,
             exif = exifData
