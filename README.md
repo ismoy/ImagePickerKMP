@@ -582,18 +582,18 @@ Thanks to these wonderful people ([emoji key](https://allcontributors.org/docs/e
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=medAndro" title="Contributions">💻 🐛</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/daniil-pastuhov">
-          <img src="https://avatars.githubusercontent.com/u/8494442?v=4" width="100px;" alt="daniil-pastuhov"/><br />
-          <sub><b>daniil-pastuhov</b></sub>
-        </a><br />
-        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
-      </td>
-      <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/YaminMahdi">
           <img src="https://avatars.githubusercontent.com/u/48239104?v=4" width="100px;" alt="YaminMahdi"/><br />
           <sub><b>YaminMahdi</b></sub>
         </a><br />
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=YaminMahdi" title="Contributions">💻</a>
+      </td>
+      <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/daniil-pastuhov">
+          <img src="https://avatars.githubusercontent.com/u/8494442?v=4" width="100px;" alt="daniil-pastuhov"/><br />
+          <sub><b>daniil-pastuhov</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
       </td>
     </tr>
   </tbody>
