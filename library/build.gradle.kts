@@ -270,6 +270,7 @@ kotlin {
             implementation(libs.compose.material)
             implementation(libs.compose.material3)
             implementation(libs.kotlinx.coroutines.core)
+            api(libs.kotlinx.io.core)
             implementation(libs.coil.compose)
             implementation(libs.material.icons.core)
             implementation(libs.material.icons.extended)

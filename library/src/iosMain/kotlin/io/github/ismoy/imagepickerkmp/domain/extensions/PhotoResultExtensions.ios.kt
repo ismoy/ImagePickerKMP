@@ -12,10 +12,13 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.useContents
 import kotlinx.cinterop.usePinned
+import kotlinx.io.files.FileNotFoundException
 import org.jetbrains.skia.Image
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
+import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSData
+import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.base64EncodedStringWithOptions
 import platform.Foundation.create
@@ -26,6 +29,8 @@ import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
 import platform.Foundation.NSLock
+import platform.Foundation.NSUserDomainMask
+import platform.Foundation.writeToURL
 
 
 private class SynchronizedCache<V> {
@@ -229,4 +234,32 @@ private fun resizeImageIOS(image: UIImage, newSize: CValue<platform.CoreGraphics
     return resizedImage ?: image
 }
 
+private val cacheDirectoryURL: NSURL by lazy {
+    NSFileManager.defaultManager
+        .URLsForDirectory(NSCachesDirectory, NSUserDomainMask)
+        .first() as NSURL
+}
 
+private fun String.toNSURL(): NSURL =
+    NSURL.URLWithString(this) ?: throw IllegalArgumentException("Invalid URL: $this")
+
+private fun NSURL.readData(): NSData =
+    NSData.dataWithContentsOfURL(this)
+        ?: throw FileNotFoundException("Cannot read: $absoluteString")
+
+actual val PhotoResult.absolutePath: String
+    get() {
+        val compressedData = uri.toNSURL()
+            .readData()
+
+        val destURL = cacheDirectoryURL
+            .URLByAppendingPathComponent(fileName ?: "photo.jpg")
+            ?: throw IllegalStateException("Could not build cache path for: $fileName")
+
+        check(compressedData.writeToURL(destURL, atomically = true)) {
+            "Failed to write file to ${destURL.path ?: destURL}"
+        }
+
+        return destURL.path
+            ?: throw IllegalStateException("Cache file URL has no path: $destURL")
+    }

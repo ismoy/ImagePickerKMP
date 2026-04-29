@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.toComposeImageBitmap
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import org.jetbrains.skia.Image
 import java.io.File
+import java.net.URL
 import java.util.Base64
 
 /**
@@ -57,3 +58,6 @@ actual fun PhotoResult.loadPainter(): Painter? {
         null
     }
 }
+
+actual val PhotoResult.absolutePath: String
+    get() = File(java.net.URI(uri)).absolutePath
