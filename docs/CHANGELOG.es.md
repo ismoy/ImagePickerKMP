@@ -7,6 +7,58 @@ Todos los cambios notables en ImagePickerKMP serán documentados en este archivo
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.40] — 2026-04-29
+
+### Agregado
+
+- **Nueva extensión `PhotoResult.absolutePath` para acceso directo a rutas del sistema de archivos**
+  - `PhotoResult.absolutePath: String?` — retorna la ruta absoluta del sistema de archivos como String (implementación específica por plataforma)
+  - Implementaciones por plataforma:
+    - **Android**: Usa ContentResolver para resolver URIs content:// a rutas de archivo reales
+    - **iOS**: Usa URL.path para extraer la ruta del sistema de archivos
+    - **Desktop/Web**: Extracción directa de ruta desde URIs file://
+  - Permite acceso directo al sistema de archivos sin parseo manual de URI
+  - Complementa la extensión existente `toPath()` para compatibilidad con kotlinx-io
+
+### Cambiado
+
+- Mejoras internas menores y optimizaciones
+
+## [1.0.39] — 2026-04-29
+
+### Corregido
+
+- **Android — La vista previa de la cámara ahora se muestra correctamente en Android 7–11 (API 24–30)**
+  - Causa raíz: `PreviewView` estaba hardcodeado a `ImplementationMode.PERFORMANCE` (SurfaceView), que no se renderiza dentro de Jetpack Compose en Android ≤ API 30, resultando en una vista previa de cámara negra/en blanco
+  - **Solución**: `PreviewView` ahora usa `ImplementationMode.COMPATIBLE` (TextureView) en Android ≤ API 30, asegurando renderizado correcto en todas las versiones soportadas de Android
+  - **Archivos modificados**:
+    - `HighPerformanceConfig.requiresCompatibilityMode()` ahora retorna `true` para `SDK_INT <= 30` (antes solo `SDK_INT == 29`)
+    - `CameraCapturePreview.kt` ahora establece `implementationMode` condicionalmente según la versión de Android
+    - `setLayerType(LAYER_TYPE_HARDWARE)` ya no se aplica en Android ≤ API 30, eliminando el conflicto con TextureView
+    - El delay de inicialización de cámara en `CameraController.kt` ahora se aplica a Android 7–11 (antes solo Android 10), previniendo errores de surface-not-ready en dispositivos antiguos
+
+## [1.0.38] — 2026-04-29
+
+### Agregado
+
+- **Nueva extensión `PhotoResult.toPath()` para operaciones de archivo multiplataforma**
+  - `PhotoResult.toPath(): Path?` — convierte el URI de la foto a un `kotlinx.io.files.Path` para operaciones de archivo multiplataforma (Android, iOS, Desktop, Web)
+  - Permite manipulación de archivos multiplataforma usando APIs de kotlinx-io
+  - Retorna `null` si la conversión falla
+  - Requiere dependencia `kotlinx-io`
+
+### Cambiado
+
+- Kotlin actualizado a `2.3.20`
+- Compose Multiplatform actualizado a `1.10.3`
+- Android Gradle Plugin actualizado a `8.13.2`
+- Mejoras menores de estabilidad
+
+### Corregido
+
+- Documentación mejorada para las extensiones disponibles de `PhotoResult`
+- Ejemplos corregidos en README para uso de rutas de archivo
+
 ## [Sin Publicar]
 
 ### Deprecado

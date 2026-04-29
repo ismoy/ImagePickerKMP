@@ -463,6 +463,46 @@ data class PhotoResult(
 )
 ```
 
+#### Extensiones de PhotoResult
+
+**Acceso a Rutas de Archivo**
+
+```kotlin
+// Convertir a kotlinx.io Path para operaciones de archivo multiplataforma (v1.0.38+)
+val path: Path? = photoResult.toPath()
+
+// Obtener ruta absoluta del sistema de archivos como String (v1.0.40+)
+val absolutePath: String? = photoResult.absolutePath
+```
+
+**Extensiones:**
+- `fun PhotoResult.toPath(): Path?` — *(Disponible desde v1.0.38)* Convierte el URI de la foto a un `kotlinx.io.files.Path` para operaciones de archivo multiplataforma. Retorna `null` si la conversión falla. Requiere dependencia `kotlinx-io`.
+- `val PhotoResult.absolutePath: String?` — *(Disponible desde v1.0.40)* Retorna la ruta absoluta del sistema de archivos como String. Implementación específica por plataforma (Android usa ContentResolver, iOS usa URL.path, Desktop/Web usan extracción directa de ruta).
+
+**Ejemplo de uso:**
+
+```kotlin
+val picker = rememberImagePickerKMP()
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> {
+        result.first?.let { photo ->
+            // Usando kotlinx.io Path (multiplataforma, v1.0.38+)
+            photo.toPath()?.let { path ->
+                println("Ruta del archivo: $path")
+                // Usar operaciones de archivo kotlinx-io
+            }
+            
+            // Usando ruta absoluta String (específico por plataforma, v1.0.40+)
+            photo.absolutePath?.let { path ->
+                println("Ruta absoluta: $path")
+            }
+        }
+    }
+    else -> {}
+}
+```
+
 ### GalleryPhotoHandler.PhotoResult
 
 Representa el resultado de una imagen seleccionada desde la galería.

@@ -5,6 +5,58 @@ All notable changes to ImagePickerKMP will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.40] — 2026-04-29
+
+### Added
+
+- **New `PhotoResult.absolutePath` extension for direct file system path access**
+  - `PhotoResult.absolutePath: String?` — returns the absolute file system path as a String (platform-specific implementation)
+  - Platform implementations:
+    - **Android**: Uses ContentResolver to resolve content:// URIs to actual file paths
+    - **iOS**: Uses URL.path to extract the file system path
+    - **Desktop/Web**: Direct path extraction from file:// URIs
+  - Enables direct file system access without manual URI parsing
+  - Complements the existing `toPath()` extension for kotlinx-io compatibility
+
+### Changed
+
+- Minor internal improvements and optimizations
+
+## [1.0.39] — 2026-04-29
+
+### Fixed
+
+- **Android — Camera preview now displays correctly on Android 7–11 (API 24–30)**
+  - Root cause: `PreviewView` was hardcoded to `ImplementationMode.PERFORMANCE` (SurfaceView), which does not render inside Jetpack Compose on Android ≤ API 30, resulting in a black/blank camera preview
+  - **Solution**: `PreviewView` now uses `ImplementationMode.COMPATIBLE` (TextureView) on Android ≤ API 30, ensuring correct rendering on all supported Android versions
+  - **Changed files**:
+    - `HighPerformanceConfig.requiresCompatibilityMode()` now returns `true` for `SDK_INT <= 30` (was only `SDK_INT == 29`)
+    - `CameraCapturePreview.kt` now conditionally sets `implementationMode` based on Android version
+    - `setLayerType(LAYER_TYPE_HARDWARE)` is no longer applied on Android ≤ API 30, eliminating the conflict with TextureView
+    - Camera initialization delay in `CameraController.kt` now applies to Android 7–11 (was only Android 10), preventing surface-not-ready errors on older devices
+
+## [1.0.38] — 2026-04-29
+
+### Added
+
+- **New `PhotoResult.toPath()` extension for cross-platform file operations**
+  - `PhotoResult.toPath(): Path?` — converts the photo's URI to a `kotlinx.io.files.Path` for cross-platform file operations (Android, iOS, Desktop, Web)
+  - Enables cross-platform file manipulation using kotlinx-io APIs
+  - Returns `null` if conversion fails
+  - Requires `kotlinx-io` dependency
+
+### Changed
+
+- Updated Kotlin to `2.3.20`
+- Updated Compose Multiplatform to `1.10.3`
+- Updated Android Gradle Plugin to `8.13.2`
+- Minor stability improvements
+
+### Fixed
+
+- Improved documentation for available `PhotoResult` extensions
+- Fixed examples in README for file path usage
+
 ## [1.0.35-alpha1] — 2026-03-28
 
 ### Added

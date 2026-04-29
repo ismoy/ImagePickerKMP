@@ -84,7 +84,7 @@ Full-featured sample application showcasing:
 **Kotlin Multiplatform:**
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.35-alpha1")
+    implementation("io.github.ismoy:imagepickerkmp:1.0.40")
 }
 ```
 
