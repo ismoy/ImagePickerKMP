@@ -3,6 +3,7 @@ package io.github.ismoy.imagepickerkmp.domain.config
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.PreviewScaleType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -37,17 +38,20 @@ class ImagePickerConfigTest {
     @Test
     fun `CameraCaptureConfig should have default values`() {
         val config = CameraCaptureConfig()
-        
+
         assertEquals(CapturePhotoPreference.BALANCED, config.preference)
+        assertEquals(PreviewScaleType.FILL_CENTER, config.previewScaleType)
     }
 
     @Test
     fun `CameraCaptureConfig should allow custom values`() {
         val config = CameraCaptureConfig(
-            preference = CapturePhotoPreference.FAST
+            preference = CapturePhotoPreference.FAST,
+            previewScaleType = PreviewScaleType.FIT_CENTER,
         )
-        
+
         assertEquals(CapturePhotoPreference.FAST, config.preference)
+        assertEquals(PreviewScaleType.FIT_CENTER, config.previewScaleType)
     }
 
     @Test
@@ -86,10 +90,18 @@ class ImagePickerConfigTest {
     @Test
     fun `CameraPreviewConfig should have default values`() {
         val config = CameraPreviewConfig()
-        
+
         assertFalse(config.captureButtonSize.value == 0f)
         assertEquals(null, config.uiConfig.buttonColor)
         assertEquals(null, config.cameraCallbacks.onCameraReady)
+        assertEquals(PreviewScaleType.FILL_CENTER, config.previewScaleType)
+    }
+
+    @Test
+    fun `CameraPreviewConfig should allow custom previewScaleType`() {
+        val config = CameraPreviewConfig(previewScaleType = PreviewScaleType.FIT_CENTER)
+
+        assertEquals(PreviewScaleType.FIT_CENTER, config.previewScaleType)
     }
 
     @Test
