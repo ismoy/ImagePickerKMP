@@ -173,7 +173,8 @@ private fun CameraAndPreview(
         previewConfig = CameraPreviewConfig(
             captureButtonSize = cameraCaptureConfig.captureButtonSize,
             uiConfig = cameraCaptureConfig.uiConfig,
-            cameraCallbacks = cameraCaptureConfig.cameraCallbacks
+            cameraCallbacks = cameraCaptureConfig.cameraCallbacks,
+            previewScaleType = cameraCaptureConfig.previewScaleType,
         ),
         compressionLevel = cameraCaptureConfig.compressionLevel,
         includeExif = cameraCaptureConfig.includeExif,
