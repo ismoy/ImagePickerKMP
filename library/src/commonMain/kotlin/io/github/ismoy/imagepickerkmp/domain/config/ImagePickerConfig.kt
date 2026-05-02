@@ -9,7 +9,6 @@ import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
-import io.github.ismoy.imagepickerkmp.domain.models.PreviewScaleType
 
 /**
  * Configuration for the visual styling of camera UI elements.
@@ -162,11 +161,6 @@ data class CropConfig(
  *   post-capture confirmation screen. See [PermissionAndConfirmationConfig].
  * @property cropConfig Configuration for the interactive crop UI shown after capture.
  *   See [CropConfig].
- * @property previewScaleType How the camera preview is scaled inside its viewport.
- *   Defaults to [PreviewScaleType.FILL_CENTER] (preserves prior behavior — fills the
- *   viewport, cropping the camera feed to fit). Use [PreviewScaleType.FIT_CENTER] to
- *   letterbox the preview so the viewfinder framing matches the captured image.
- *   Currently applied on Android only.
  */
 @Suppress("EndOfSentenceFormat")
 data class CameraCaptureConfig(
@@ -178,8 +172,7 @@ data class CameraCaptureConfig(
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
-    val cropConfig: CropConfig = CropConfig(),
-    val previewScaleType: PreviewScaleType = PreviewScaleType.FILL_CENTER,
+    val cropConfig: CropConfig = CropConfig()
 )
 
 /**
@@ -278,8 +271,7 @@ data class ImagePickerConfig(
 data class CameraPreviewConfig(
     val captureButtonSize: Dp = 72.dp,
     val uiConfig: UiConfig = UiConfig(),
-    val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
-    val previewScaleType: PreviewScaleType = PreviewScaleType.FILL_CENTER,
+    val cameraCallbacks: CameraCallbacks = CameraCallbacks()
 )
 
 /**
