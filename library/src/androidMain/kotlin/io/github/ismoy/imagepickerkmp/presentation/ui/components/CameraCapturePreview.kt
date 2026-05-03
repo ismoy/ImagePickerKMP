@@ -34,6 +34,7 @@ import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.DELAY
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.CameraScaleType
 import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.playShutterSound
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
@@ -101,8 +102,8 @@ fun CameraCapturePreview(
         AndroidView(
                 factory = { context ->
                     PreviewView(context).apply {
-                        scaleType = PreviewView.ScaleType.FILL_CENTER
-                    
+                        scaleType = previewConfig.cameraScaleType.toPreviewViewScaleType()
+
                         implementationMode = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
                             PreviewView.ImplementationMode.COMPATIBLE
                         } else {
@@ -177,4 +178,13 @@ fun CameraCapturePreview(
         }
         FlashOverlay(visible = stateHolder?.showFlashOverlay ?: false)
     }
+}
+
+private fun CameraScaleType.toPreviewViewScaleType(): PreviewView.ScaleType = when (this) {
+    CameraScaleType.FILL_CENTER -> PreviewView.ScaleType.FILL_CENTER
+    CameraScaleType.FILL_START -> PreviewView.ScaleType.FILL_START
+    CameraScaleType.FILL_END -> PreviewView.ScaleType.FILL_END
+    CameraScaleType.FIT_CENTER -> PreviewView.ScaleType.FIT_CENTER
+    CameraScaleType.FIT_START -> PreviewView.ScaleType.FIT_START
+    CameraScaleType.FIT_END -> PreviewView.ScaleType.FIT_END
 }
