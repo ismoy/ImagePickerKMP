@@ -854,56 +854,62 @@ Configuration for camera capture.
 
 ```kotlin
 data class CameraCaptureConfig(
-    val preference: CapturePhotoPreference = CapturePhotoPreference.QUALITY,
+    val preference: CapturePhotoPreference = CapturePhotoPreference.BALANCED,
     val captureButtonSize: Dp = 72.dp,
-    val compressionLevel: CompressionLevel? = null, 
-    val includeExif: Boolean = false, 
+    val compressionLevel: CompressionLevel? = CompressionLevel.MEDIUM,
+    val includeExif: Boolean = false,
+    val redactGpsData: Boolean = true,
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
-    val galleryConfig: GalleryConfig = GalleryConfig()
+    val cropConfig: CropConfig = CropConfig(),
+    val cameraScaleType: CameraScaleType = CameraScaleType.FILL_CENTER  // NEW in v1.0.41
 )
 ```
 
 **Parameters:**
 - `preference` - Photo capture quality preference
 - `captureButtonSize` - Size of the capture button
-- `compressionLevel` - Automatic image compression level (null = disabled, MEDIUM = recommended)
-- `includeExif` - **NEW**: Extract EXIF metadata including GPS, camera model, timestamps (Android/iOS only)
+- `compressionLevel` - Automatic image compression level (`null` = disabled, `MEDIUM` = recommended)
+- `includeExif` - Extract EXIF metadata including GPS, camera model, timestamps (Android/iOS only)
+- `redactGpsData` - Strip GPS coordinates from EXIF before delivery (default `true`). Effective only when `includeExif = true`
 - `uiConfig` - UI customization configuration
 - `cameraCallbacks` - Camera lifecycle callbacks
 - `permissionAndConfirmationConfig` - Permission and confirmation dialogs
-- `galleryConfig` - Gallery selection configuration
+- `cropConfig` - Interactive crop UI configuration
+- `cameraScaleType` - <span class="pill-new">NEW in v1.0.41</span> How the camera preview is scaled inside its viewport (Android only). Defaults to `CameraScaleType.FILL_CENTER`
 
-**Image Compression Examples:**
+**Camera scale type examples:**
 
 ```kotlin
+// Default — fills the viewport, crops the feed to fit
 CameraCaptureConfig()
 
+// Letterbox — full camera feed visible, matches captured image framing
 CameraCaptureConfig(
-    compressionLevel = CompressionLevel.MEDIUM
+    cameraScaleType = CameraScaleType.FIT_CENTER
 )
 
+// Fill from top-left
 CameraCaptureConfig(
-    compressionLevel = CompressionLevel.HIGH
-)
-
-CameraCaptureConfig(
-    compressionLevel = CompressionLevel.LOW
+    cameraScaleType = CameraScaleType.FILL_START
 )
 ```
 
 ### PermissionAndConfirmationConfig
 
-Configuration for permissions and confirmation.
+Configuration for permissions and post-capture confirmation screen.
 
 ```kotlin
 data class PermissionAndConfirmationConfig(
     val customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    val customConfirmationView: (@Composable (CameraPhotoHandler.PhotoResult, (CameraPhotoHandler.PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    val customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))? = null,
-    val customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))? = null,
-    val skipConfirmation: Boolean = false
+    val customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
+    val customDeniedDialog: (@Composable (onRetry: () -> Unit, onDismiss: () -> Unit) -> Unit)? = null,
+    val customSettingsDialog: (@Composable (onOpenSettings: () -> Unit, onDismiss: () -> Unit) -> Unit)? = null,
+    val skipConfirmation: Boolean = false,
+    val cancelButtonTextIOS: String? = "Cancel",
+    val onCancelPermissionConfigIOS: (() -> Unit)? = null,
+    val confirmationImageContentScale: ContentScale = ContentScale.Crop  // NEW in v1.0.41
 )
 ```
 
@@ -911,9 +917,29 @@ data class PermissionAndConfirmationConfig(
 
 - `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Custom permission handler for text-based customization
 - `customConfirmationView: (@Composable (...) -> Unit)?` - Custom composable for photo confirmation
-- `customDeniedDialog: (@Composable ((onRetry: () -> Unit) -> Unit))?` - Custom composable dialog when permission is denied
-- `customSettingsDialog: (@Composable ((onOpenSettings: () -> Unit) -> Unit))?` - Custom composable dialog for opening settings
-- `skipConfirmation: Boolean` - If true, automatically confirms the photo without showing confirmation screen (Android only)
+- `customDeniedDialog: (@Composable (...) -> Unit)?` - Custom composable dialog when permission is denied. Always call `onRetry` or `onDismiss` on user interaction
+- `customSettingsDialog: (@Composable (...) -> Unit)?` - Custom composable dialog for opening system settings. Always call `onOpenSettings` or `onDismiss` on user interaction
+- `skipConfirmation: Boolean` - If `true`, delivers the captured photo directly without showing the confirmation screen (Android)
+- `cancelButtonTextIOS: String?` - Text label for the cancel button in the iOS permission alert. Defaults to `"Cancel"`
+- `onCancelPermissionConfigIOS: (() -> Unit)?` - Callback invoked when the user taps cancel in the iOS permission alert
+- `confirmationImageContentScale: ContentScale` - <span class="pill-new">NEW in v1.0.41</span> How the captured photo is scaled in the post-capture confirmation preview. Accepts any Compose `ContentScale` value. Defaults to `ContentScale.Crop`
+
+**Confirmation image scale examples:**
+
+```kotlin
+// Default — crop to fill the preview area
+PermissionAndConfirmationConfig()
+
+// Fit — show the entire photo letterboxed
+PermissionAndConfirmationConfig(
+    confirmationImageContentScale = ContentScale.Fit
+)
+
+// Fill width
+PermissionAndConfirmationConfig(
+    confirmationImageContentScale = ContentScale.FillWidth
+)
+```
 
 ### UiConfig
 
@@ -1297,6 +1323,29 @@ try {
 ---
 
 ## Enums
+
+### CameraScaleType
+
+> <span class="pill-new">NEW in v1.0.41</span>
+
+Controls how the camera preview is scaled inside its viewport on Android. Mirrors `androidx.camera.view.PreviewView.ScaleType`.
+
+```kotlin
+enum class CameraScaleType {
+    FILL_CENTER, // Fill viewport, center-crop any overflow (default)
+    FILL_START,  // Fill viewport, align to top-left, crop overflow
+    FILL_END,    // Fill viewport, align to bottom-right, crop overflow
+    FIT_CENTER,  // Letterbox — entire feed visible, centered
+    FIT_START,   // Letterbox — entire feed visible, aligned to top-left
+    FIT_END      // Letterbox — entire feed visible, aligned to bottom-right
+}
+```
+
+**Notes:**
+- `FILL_*` values crop the camera feed to fill the entire viewport. The visible viewfinder area may be narrower than the captured image.
+- `FIT_*` values show the entire camera feed with letterboxing. The viewfinder framing matches the captured image exactly.
+- Currently applied on Android only. iOS uses the system camera UI where preview and capture framing already match.
+- Used in `CameraCaptureConfig.cameraScaleType`. Defaults to `FILL_CENTER`.
 
 ### CompressionLevel
 

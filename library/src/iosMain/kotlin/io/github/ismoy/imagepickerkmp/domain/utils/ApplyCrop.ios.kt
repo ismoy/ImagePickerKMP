@@ -45,10 +45,10 @@ actual fun ApplyCrop(
         val image = UIImage.imageWithData(data ?: return onComplete(photoResult))
 
         if (image != null) {
-            // ── Paso 1: rotar la imagen completa al ángulo indicado ──────────────
-            // Esto replica exactamente el graphicsLayer(rotationZ = rotationAngle)
-            // que se ve en CropImageCanvas. Una vez rotada, el cropRect del canvas
-            // apunta directamente a la región correcta en la imagen rotada.
+            // ── Step 1: rotate the full image to the indicated angle ─────────────
+            // This exactly replicates the graphicsLayer(rotationZ = rotationAngle)
+            // visible in CropImageCanvas. Once rotated, the canvas cropRect
+            // points directly to the correct region in the rotated image.
             val rotatedImage: UIImage = if (rotationAngle != 0f) {
                 rotateUIImage(image, rotationAngle)
             } else {
@@ -70,7 +70,7 @@ actual fun ApplyCrop(
                 baseWidth = baseHeight * imageAspectRatio
             }
 
-            // Tamaño de la imagen rotada tal como se muestra en el canvas (con zoom)
+            // Size of the rotated image as displayed on the canvas (with zoom)
             val scaledWidth = baseWidth * zoomLevel
             val scaledHeight = baseHeight * zoomLevel
             val imageOffsetX = (canvasSize.width.toDouble() - scaledWidth) / 2.0
@@ -80,7 +80,7 @@ actual fun ApplyCrop(
             val scaleX = rotatedSize.useContents { width } / scaledWidth
             val scaleY = rotatedSize.useContents { height } / scaledHeight
 
-            // Crop rect en coordenadas de la imagen rotada (píxeles reales)
+            // Crop rect in rotated image coordinates (real pixels)
             val cropInImgX = (cropRect.left - imageOffsetX) * scaleX
             val cropInImgY = (cropRect.top - imageOffsetY) * scaleY
             val cropInImgW = cropRect.width * scaleX
@@ -96,8 +96,8 @@ actual fun ApplyCrop(
 
             val cropSize = CGSizeMake(finalW, finalH)
 
-            // ── Paso 3: extraer la región del crop de la imagen rotada ───────────
-            // scale = 0.0 → UIKit usa automáticamente el screen scale (@2x, @3x).
+            // ── Step 3: extract the crop region from the rotated image ──────────
+            // scale = 0.0 → UIKit automatically uses the screen scale (@2x, @3x).
             UIGraphicsBeginImageContextWithOptions(cropSize, false, 0.0)
             val context = UIGraphicsGetCurrentContext()
 
@@ -143,7 +143,7 @@ private fun rotateUIImage(image: UIImage, angleDegrees: Float): UIImage {
     val origW = originalSize.useContents { width }
     val origH = originalSize.useContents { height }
 
-    // Nuevo tamaño del canvas para no recortar esquinas
+    // New canvas size to avoid clipping corners
     val cosA = abs(cos(angleRad))
     val sinA = abs(sin(angleRad))
     val newW = origW * cosA + origH * sinA
@@ -151,14 +151,14 @@ private fun rotateUIImage(image: UIImage, angleDegrees: Float): UIImage {
 
     val newSize = CGSizeMake(newW, newH)
 
-    // scale = 0.0 → misma resolución que la pantalla (o la imagen original)
+    // scale = 0.0 → same resolution as the screen (or the original image)
     UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
     val context = UIGraphicsGetCurrentContext() ?: run {
         UIGraphicsEndImageContext()
         return image
     }
 
-    // Mover origen al centro del nuevo canvas, rotar, centrar la imagen
+    // Move origin to center of new canvas, rotate, center the image
     val toCenter = CGAffineTransformMakeTranslation(newW / 2.0, newH / 2.0)
     val rotation = CGAffineTransformMakeRotation(angleRad)
     val toOrigin = CGAffineTransformMakeTranslation(-origW / 2.0, -origH / 2.0)

@@ -5,6 +5,28 @@ All notable changes to ImagePickerKMP will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.41] — 2026-05-05
+
+### Added
+
+- **`CameraScaleType` enum — configurable camera preview scale type (Android)**
+  - New `CameraScaleType` enum: `FILL_CENTER`, `FILL_START`, `FILL_END`, `FIT_CENTER`, `FIT_START`, `FIT_END`
+  - Controls how the camera preview is scaled inside its viewport on Android
+  - `FILL_*` values fill the viewport entirely, cropping the camera feed to fit
+  - `FIT_*` values letterbox the preview so the entire camera feed is visible — viewfinder framing matches the captured image exactly
+  - Currently applied on Android only; iOS uses the system camera UI where preview and capture framing already match
+  - New `CameraCaptureConfig.cameraScaleType: CameraScaleType` — defaults to `CameraScaleType.FILL_CENTER` (preserves previous behavior)
+
+- **`PermissionAndConfirmationConfig.confirmationImageContentScale` — configurable post-capture confirmation image scale**
+  - New `confirmationImageContentScale: ContentScale` parameter in `PermissionAndConfirmationConfig`
+  - Controls how the captured photo is scaled in the post-capture confirmation preview screen (Android)
+  - Accepts any Compose `ContentScale` value: `Crop`, `Fit`, `FillWidth`, `FillHeight`, `FillBounds`, `Inside`, `None`
+  - Defaults to `ContentScale.Crop` (preserves previous behavior)
+
+### Changed
+
+- All Spanish-language inline comments across the codebase translated to English
+
 ## [1.0.40] — 2026-04-29
 
 ### Added

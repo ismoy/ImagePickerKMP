@@ -37,17 +37,17 @@ actual fun GalleryPickerLauncher(
     var showCropView by remember { mutableStateOf(false) }
     var cropCancelled by remember { mutableStateOf(false) }
 
-    // rememberUpdatedState garantiza que el LaunchedEffect siempre llama a la versión
-    // más reciente de los callbacks, incluso si el composable padre se recompuso mientras
-    // el UIImagePickerController estaba abierto.
+    // rememberUpdatedState ensures LaunchedEffect always calls the latest version
+    // of the callbacks, even if the parent composable recomposed while
+    // the UIImagePickerController was open.
     val currentOnPhotosSelected by rememberUpdatedState(onPhotosSelected)
     val currentOnError by rememberUpdatedState(onError)
     val currentOnDismiss by rememberUpdatedState(onDismiss)
     val currentOnCropPending by rememberUpdatedState(onCropPending)
 
-    // Cuando el usuario cancela el crop: el Dialog ya está desmontado (showCropView=false)
-    // y cropCancelled=true. SideEffect se ejecuta DESPUÉS de que la composición fue
-    // aplicada al árbol de UI → onDismiss puede mutar activeMode sin crash en iOS.
+    // When the user cancels the crop: the Dialog is already unmounted (showCropView=false)
+    // and cropCancelled=true. SideEffect runs AFTER the composition was
+    // applied to the UI tree → onDismiss can mutate activeMode without crashing on iOS.
     if (cropCancelled && !showCropView) {
         SideEffect {
             cropCancelled = false
@@ -102,16 +102,16 @@ actual fun GalleryPickerLauncher(
         }
     }
 
-    // Captura local inmutable: evita NullPointerException cuando el scope interno del Dialog
-    // recompone mientras selectedPhotoForCrop ya fue puesto a null en onCancel.
+    // Local immutable capture: prevents NullPointerException when the Dialog's inner scope
+    // recomposes while selectedPhotoForCrop was already set to null in onCancel.
     val photoForCrop = selectedPhotoForCrop
     if (showCropView && photoForCrop != null) {
-        // Dialog crea una UIWindow propia en iOS que siempre está por encima
-        // del Scaffold / NavHost del host — resuelve el problema de Z-order.
+        // Dialog creates its own UIWindow on iOS, always on top
+        // of the host Scaffold / NavHost — resolves the Z-order issue.
         Dialog(
             onDismissRequest = {
-                // No permitir cerrar tocando fuera — el usuario debe usar
-                // los botones Aceptar/Cancelar del crop view.
+                // Do not allow closing by tapping outside — the user must use
+                // the Accept/Cancel buttons of the crop view.
             },
             properties = DialogProperties(
                 dismissOnBackPress = false,

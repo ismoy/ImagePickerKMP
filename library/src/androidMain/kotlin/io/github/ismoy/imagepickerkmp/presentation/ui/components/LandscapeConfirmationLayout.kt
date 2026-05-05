@@ -55,7 +55,8 @@ internal fun LandscapeConfirmationLayout(
     resolvedButtonColor: Color,
     resolvedIconColor: Color,
     resolvedButtonSize: Dp,
-    uiConfig: UiConfig
+    uiConfig: UiConfig,
+    confirmationImageContentScale: ContentScale = ContentScale.Crop
 ) {
     Card(
         modifier = Modifier
@@ -83,7 +84,7 @@ internal fun LandscapeConfirmationLayout(
                             topStart = ImagePickerUiConstants.ConfirmationCardCornerRadius,
                             bottomStart = ImagePickerUiConstants.ConfirmationCardCornerRadius
                         )),
-                    contentScale = ContentScale.Crop
+                    contentScale = confirmationImageContentScale
                 )
 
                 val isHD = (result.width ?: 0) >= 1280 && (result.height ?: 0) >= 720

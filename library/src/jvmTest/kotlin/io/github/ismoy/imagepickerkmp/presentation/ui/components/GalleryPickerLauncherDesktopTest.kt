@@ -26,7 +26,7 @@ class GalleryPickerLauncherDesktopTest {
 
     @Test
     fun `test gallery photo result creation`() {
-        // Esta es una prueba básica de estructura
+        // This is a basic structure test
         val result = GalleryPhotoResult(
             uri = "file:///test/image.jpg",
             width = 1920,
@@ -42,7 +42,7 @@ class GalleryPickerLauncherDesktopTest {
         assertEquals(500, result.fileSize)
     }
 
-    // Función helper para obtener extensiones de tipos MIME
+    // Helper function to get extensions from MIME types
     private fun getMimeTypeExtensions(mimeType: MimeType): List<String> {
         return when (mimeType) {
             MimeType.IMAGE_JPEG -> listOf("jpg", "jpeg")

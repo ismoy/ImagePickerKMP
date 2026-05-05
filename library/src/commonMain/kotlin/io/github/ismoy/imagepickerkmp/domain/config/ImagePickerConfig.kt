@@ -3,6 +3,7 @@ package io.github.ismoy.imagepickerkmp.domain.config
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
@@ -86,7 +87,8 @@ data class PermissionAndConfirmationConfig(
     val customSettingsDialog: (@Composable (onOpenSettings: () -> Unit, onDismiss: () -> Unit) -> Unit)? = null,
     val skipConfirmation: Boolean = false,
     val cancelButtonTextIOS: String? = "Cancel",
-    val onCancelPermissionConfigIOS: (() -> Unit)? = null
+    val onCancelPermissionConfigIOS: (() -> Unit)? = null,
+    val confirmationImageContentScale: ContentScale = ContentScale.Crop
 )
 
 /**

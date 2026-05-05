@@ -56,7 +56,7 @@ internal class PHPickerDelegate(
             allowedMimeTypes = allowedMimeTypes,
             onComplete = { results, mismatchedCount ->
                 if (results.isEmpty() && mismatchedCount > 0) {
-                    // Todas las imágenes seleccionadas tenían MIME type incorrecto
+                    // All selected images had the wrong MIME type
                     val msg = mimeTypeMismatchMessage
                         ?: "The selected file(s) do not match the allowed types: ${allowedMimeTypes.joinToString { it.value }}"
                     onError(Exception(msg))

@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import imagepickerkmp.library.generated.resources.Res
 import imagepickerkmp.library.generated.resources.camera_permission_permanently_denied
@@ -119,7 +120,8 @@ fun CameraCaptureView(
                     onConfirm = { onPhotoResult(it) },
                     onRetry = { photoResult = null },
                     customConfirmationView = cameraCaptureConfig.permissionAndConfirmationConfig.customConfirmationView,
-                    uiConfig = cameraCaptureConfig.uiConfig
+                    uiConfig = cameraCaptureConfig.uiConfig,
+                    confirmationImageContentScale = cameraCaptureConfig.permissionAndConfirmationConfig.confirmationImageContentScale
                 )
             }
         }
@@ -149,8 +151,8 @@ private fun PermissionHandler(
         RequestCameraPermission(
             dialogConfig = dialogConfig,
             onPermissionPermanentlyDenied = {
-                // Cuando el permiso es denegado permanentemente, cerrar el picker
-                // para que la UI no quede bloqueada esperando una acción que ya no vendrá
+                // When the permission is permanently denied, close the picker
+                // so the UI doesn't get stuck waiting for an action that will never come
                 onDismiss()
                 onError(PhotoCaptureException(cameraPermissionPermanentlyDeniedMsg))
             },
@@ -188,13 +190,15 @@ private fun ConfirmationView(
     onConfirm: (PhotoResult) -> Unit,
     onRetry: () -> Unit,
     customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    uiConfig: UiConfig = UiConfig()
+    uiConfig: UiConfig = UiConfig(),
+    confirmationImageContentScale: ContentScale = ContentScale.Crop
 ) {
     ImageConfirmationViewWithCustomButtons(
         result = photoResult,
         onConfirm = onConfirm,
         onRetry = onRetry,
         customConfirmationView = customConfirmationView,
-        uiConfig = uiConfig
+        uiConfig = uiConfig,
+        confirmationImageContentScale = confirmationImageContentScale
     )
 }
