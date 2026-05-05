@@ -63,7 +63,7 @@ actual fun ImagePickerLauncher(
             val preferCamera = isMobileContext() && hasCameraSupport
             
             if (hasCameraSupport && preferCamera) {
-                // Preferir cámara en móviles
+                // Prefer camera on mobile devices
                 handleCameraCapture(
                     onSuccess = { result ->
                         val photoResult = PhotoResult(
@@ -81,10 +81,10 @@ actual fun ImagePickerLauncher(
                     onCancel = config.onDismiss
                 )
             } else {
-                // Usar file picker como fallback
+                // Use file picker as fallback
                 handleFilePicker(
                     onSuccess = { result ->
-                        // Un solo archivo
+                        // Single file
                         val photoResult = PhotoResult(
                             uri = result.uri as String,
                             fileName = result.fileName as String,

@@ -30,7 +30,7 @@ actual fun RequestCameraPermission(
     var showRationale by remember { mutableStateOf(false) }
     var permissionDeniedPermanently by remember { mutableStateOf(false) }
     var hasCalledPermanentlyDenied by remember { mutableStateOf(false) }
-    // true cuando el usuario ya fue a Settings — al volver se evalúa si el permiso fue concedido
+    // true when the user already went to Settings — on return it evaluates if permission was granted
     var waitingForSettingsReturn by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -60,7 +60,7 @@ actual fun RequestCameraPermission(
             waitingForSettingsReturn = false
             onResult(true)
         } else if (waitingForSettingsReturn) {
-            // El usuario regresó de Settings sin conceder el permiso → cerrar el picker
+            // The user returned from Settings without granting the permission → close the picker
             waitingForSettingsReturn = false
             onPermissionPermanentlyDenied()
         } else if (!showRationale && !permissionDeniedPermanently) {
@@ -76,7 +76,7 @@ actual fun RequestCameraPermission(
                     showRationale = false
                     permissionLauncher.launch(Manifest.permission.CAMERA)
                 },
-                // onDismiss — el usuario cerró el dialog sin reintentar
+                // onDismiss — the user closed the dialog without retrying
                 {
                     showRationale = false
                     onPermissionPermanentlyDenied()
@@ -103,14 +103,14 @@ actual fun RequestCameraPermission(
     if (permissionDeniedPermanently && !hasCalledPermanentlyDenied) {
         if (dialogConfig.customSettingsDialog != null) {
             dialogConfig.customSettingsDialog.invoke(
-                // onOpenSettings — ir a Settings y esperar que el usuario regrese
+                // onOpenSettings — go to Settings and wait for the user to return
                 {
                     hasCalledPermanentlyDenied = true
-                    permissionDeniedPermanently = false  // oculta el dialog inmediatamente
-                    waitingForSettingsReturn = true       // ON_RESUME decidirá qué hacer
+                    permissionDeniedPermanently = false  // hides the dialog immediately
+                    waitingForSettingsReturn = true       // ON_RESUME will decide what to do
                     openAppSettings(context)
                 },
-                // onDismiss — el usuario cerró el dialog sin ir a settings
+                // onDismiss — the user closed the dialog without going to settings
                 {
                     hasCalledPermanentlyDenied = true
                     permissionDeniedPermanently = false

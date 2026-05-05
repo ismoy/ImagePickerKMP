@@ -7,14 +7,12 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cached
 import androidx.compose.runtime.Composable
@@ -32,11 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import io.github.ismoy.imagepickerkmp.data.models.FlashMode
 import io.github.ismoy.imagepickerkmp.domain.config.CameraPreviewConfig
-import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.BackgroundColor
 import io.github.ismoy.imagepickerkmp.domain.config.ImagePickerUiConstants.DELAY_TO_TAKE_PHOTO
 import io.github.ismoy.imagepickerkmp.domain.models.CapturePhotoPreference
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.models.CameraScaleType
 import io.github.ismoy.imagepickerkmp.presentation.ui.extensions.activity
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.playShutterSound
 import io.github.ismoy.imagepickerkmp.presentation.ui.utils.rememberCameraManager
@@ -84,8 +82,6 @@ fun CameraCapturePreview(
         playShutterSound()
         stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif, redactGpsData)
     }
-    val isDark = isSystemInDarkTheme()
-    val backgroundColor = if (isDark) MaterialTheme.colors.background else BackgroundColor
     val resolvedButtonColor = previewConfig.uiConfig.buttonColor ?: Color.Gray
     val resolvedIconColor = previewConfig.uiConfig.iconColor ?: Color.White
     val resolvedButtonSize = previewConfig.uiConfig.buttonSize ?: 56.dp
@@ -102,12 +98,12 @@ fun CameraCapturePreview(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
         AndroidView(
                 factory = { context ->
                     PreviewView(context).apply {
-                        scaleType = PreviewView.ScaleType.FILL_CENTER
-                    
+                        scaleType = previewConfig.cameraScaleType.toPreviewViewScaleType()
+
                         implementationMode = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
                             PreviewView.ImplementationMode.COMPATIBLE
                         } else {
@@ -182,4 +178,13 @@ fun CameraCapturePreview(
         }
         FlashOverlay(visible = stateHolder?.showFlashOverlay ?: false)
     }
+}
+
+private fun CameraScaleType.toPreviewViewScaleType(): PreviewView.ScaleType = when (this) {
+    CameraScaleType.FILL_CENTER -> PreviewView.ScaleType.FILL_CENTER
+    CameraScaleType.FILL_START -> PreviewView.ScaleType.FILL_START
+    CameraScaleType.FILL_END -> PreviewView.ScaleType.FILL_END
+    CameraScaleType.FIT_CENTER -> PreviewView.ScaleType.FIT_CENTER
+    CameraScaleType.FIT_START -> PreviewView.ScaleType.FIT_START
+    CameraScaleType.FIT_END -> PreviewView.ScaleType.FIT_END
 }

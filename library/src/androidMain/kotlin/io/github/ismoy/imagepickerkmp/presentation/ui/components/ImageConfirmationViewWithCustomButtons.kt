@@ -60,7 +60,8 @@ fun ImageConfirmationViewWithCustomButtons(
     onConfirm: (PhotoResult) -> Unit,
     onRetry: () -> Unit,
     customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    uiConfig: UiConfig = UiConfig()
+    uiConfig: UiConfig = UiConfig(),
+    confirmationImageContentScale: ContentScale = ContentScale.Crop
 ) {
     if (customConfirmationView != null) {
         customConfirmationView(result, onConfirm, onRetry)
@@ -90,7 +91,8 @@ fun ImageConfirmationViewWithCustomButtons(
                 resolvedButtonColor = resolvedButtonColor,
                 resolvedIconColor = resolvedIconColor,
                 resolvedButtonSize = resolvedButtonSize,
-                uiConfig = uiConfig
+                uiConfig = uiConfig,
+                confirmationImageContentScale = confirmationImageContentScale
             )
         } else {
             Card(
@@ -114,7 +116,7 @@ fun ImageConfirmationViewWithCustomButtons(
                                .aspectRatio(ImagePickerUiConstants.ConfirmationCardImageAspectRatio)
                                .clip(RoundedCornerShape(topStart = ImagePickerUiConstants.ConfirmationCardCornerRadius,
                                    topEnd = ImagePickerUiConstants.ConfirmationCardCornerRadius)),
-                           contentScale = ContentScale.Crop
+                           contentScale = confirmationImageContentScale
                        )
                        val isHD = (result.width ?: 0) >= 1280 && (result.height ?: 0) >= 720
                        Column( modifier = Modifier

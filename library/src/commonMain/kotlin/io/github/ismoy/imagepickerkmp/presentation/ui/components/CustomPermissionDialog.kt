@@ -161,7 +161,7 @@ private fun DialogButtons(
             )
         }
     } else {
-        // Botón único horizontal (comportamiento original)
+        // Single horizontal button (original behavior)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly

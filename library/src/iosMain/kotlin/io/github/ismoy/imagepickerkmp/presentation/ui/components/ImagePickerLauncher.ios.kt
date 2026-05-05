@@ -45,11 +45,11 @@ actual fun ImagePickerLauncher(
 
     val currentConfig by rememberUpdatedState(config)
 
-    // SideEffect se ejecuta DESPUÉS de que la composición fue aplicada al árbol de UI,
-    // nunca durante ella. Esto es crítico: onDismiss() → notifyDismiss() → activeMode=None
-    // es una mutación de MutableState externo. Si se hace durante la composición (en el
-    // cuerpo del composable o en onDispose) Compose/iOS lanza CoroutineExceptionHandler.
-    // SideEffect garantiza que el árbol ya fue commiteado antes de ejecutar el callback.
+    // SideEffect runs AFTER the composition has been applied to the UI tree,
+    // never during it. This is critical: onDismiss() → notifyDismiss() → activeMode=None
+    // is a mutation of an external MutableState. If done during composition (in the
+    // composable body or in onDispose) Compose/iOS throws CoroutineExceptionHandler.
+    // SideEffect guarantees the tree has been committed before the callback is executed.
     if (cropCancelled && !showCropView) {
         SideEffect {
             cropCancelled = false
@@ -68,8 +68,8 @@ actual fun ImagePickerLauncher(
                     isProcessingSettingsAction = false
                     hasNavigatedToSettings = false
                     showSettingsDialog = false
-                    // El permiso fue concedido desde Settings — relanzar cámara
-                    // No hay acción directa aquí: el usuario tendrá que pulsar de nuevo.
+                    // Permission was granted from Settings — relaunch camera
+                    // No direct action here: the user will need to tap again.
                     currentConfig.onDismiss()
                 }
                 hasNavigatedToSettings && isProcessingSettingsAction -> {
@@ -89,9 +89,9 @@ actual fun ImagePickerLauncher(
         }
     )
 
-    // UN SOLO LaunchedEffect: verifica permiso y lanza cámara sin frame intermedio.
-    // Antes había 2 LaunchedEffect en cadena (RequestCameraPermission → launchCameraInternal)
-    // lo que añadía ~2 frames de latencia. Ahora todo ocurre en el mismo bloque.
+    // SINGLE LaunchedEffect: checks permission and launches camera without an intermediate frame.
+    // Previously there were 2 chained LaunchedEffects (RequestCameraPermission → launchCameraInternal)
+    // which added ~2 frames of latency. Now everything happens in the same block.
     LaunchedEffect(Unit) {
         if (!UIImagePickerController.isSourceTypeAvailable(
                 UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
@@ -119,7 +119,7 @@ actual fun ImagePickerLauncher(
 
         when (AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)) {
             AVAuthorizationStatusAuthorized -> {
-                // Permiso ya concedido — lanzar cámara directamente sin ningún dialog
+                // Permission already granted — launch camera directly without any dialog
                 PhotoCaptureOrchestrator.launchCamera(
                     onPhotoCaptured = onPhotoCapturedHandler,
                     onError = { e -> currentConfig.onError(e); currentConfig.onDismiss() },
@@ -129,7 +129,7 @@ actual fun ImagePickerLauncher(
                 )
             }
             AVAuthorizationStatusNotDetermined -> {
-                // Primera vez — pedir permiso al sistema y lanzar si se concede
+                // First time — request system permission and launch if granted
                 requestCameraAccess { granted ->
                     if (granted) {
                         PhotoCaptureOrchestrator.launchCamera(
@@ -191,13 +191,13 @@ actual fun ImagePickerLauncher(
         }
     }
 
-    // Captura local inmutable: evita que una recomposición del scope interno del Dialog
-    // vea selectedPhotoForCrop=null mientras el Dialog aún está desmontándose,
-    // lo que causaría NullPointerException en el !! al cancelar el crop.
+    // Local immutable capture: prevents a recomposition of the Dialog's inner scope
+    // from seeing selectedPhotoForCrop=null while the Dialog is still being unmounted,
+    // which would cause NullPointerException on !! when cancelling the crop.
     val photoForCrop = selectedPhotoForCrop
     if (showCropView && photoForCrop != null) {
-        // Dialog crea una UIWindow propia en iOS que siempre está por encima
-        // del Scaffold / NavHost del host — resuelve el problema de Z-order.
+        // Dialog creates its own UIWindow on iOS, always on top
+        // of the host Scaffold / NavHost — resolves the Z-order issue.
         Dialog(
             onDismissRequest = {},
             properties = DialogProperties(
@@ -221,9 +221,9 @@ actual fun ImagePickerLauncher(
                     selectedPhotoForCrop = null
                 },
                 onCancel = {
-                    // Primero cerrar el Dialog (showCropView=false),
-                    // luego marcar cancelación. El bloque DisposableEffect
-                    // del padre llamará onDismiss tras el desmontaje completo.
+                    // First close the Dialog (showCropView=false),
+                    // then mark cancellation. The parent's DisposableEffect
+                    // will call onDismiss after full unmounting.
                     showCropView = false
                     selectedPhotoForCrop = null
                     cropCancelled = true

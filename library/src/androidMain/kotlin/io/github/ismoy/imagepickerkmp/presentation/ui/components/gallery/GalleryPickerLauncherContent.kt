@@ -149,7 +149,7 @@ internal fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
                 cropConfig = if (config.cameraCaptureConfig?.cropConfig?.enabled == true) {
                     config.cameraCaptureConfig.cropConfig
                 } else {
-                    // Fallback: crop habilitado sin cropConfig personalizado — usar defaults mínimos
+                    // Fallback: crop enabled without custom cropConfig — use minimum defaults
                     CropConfig(enabled = true)
                 },
                 onAccept = { croppedResult: PhotoResult ->

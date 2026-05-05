@@ -35,8 +35,8 @@ actual fun RequestCameraPermission(
     var isProcessingSettingsAction by remember { mutableStateOf(false) }
     var hasNavigatedToSettings by remember { mutableStateOf(false) }
 
-    // rememberUpdatedState garantiza que AppLifecycleObserver siempre usa los callbacks
-    // más recientes aunque el composable se haya recompuesto — evita stale lambda crash
+    // rememberUpdatedState ensures AppLifecycleObserver always uses the latest callbacks
+    // even if the composable has been recomposed — prevents stale lambda crash
     val currentOnResult by rememberUpdatedState(onResult)
     val currentOnPermissionPermanentlyDenied by rememberUpdatedState(onPermissionPermanentlyDenied)
 
@@ -44,28 +44,28 @@ actual fun RequestCameraPermission(
         onAppBecomeActive = {
             val currentStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
             when {
-                // Caso 1: el usuario fue a Settings y concedió el permiso
+                // Case 1: the user went to Settings and granted the permission
                 currentStatus == AVAuthorizationStatusAuthorized -> {
                     isProcessingSettingsAction = false
                     hasNavigatedToSettings = false
                     showDialog = false
                     currentOnResult(true)
                 }
-                // Caso 2: el usuario fue a Settings (via botón del dialog) y NO concedió el permiso
+                // Case 2: the user went to Settings (via dialog button) and did NOT grant the permission
                 hasNavigatedToSettings && isProcessingSettingsAction -> {
                     isProcessingSettingsAction = false
                     hasNavigatedToSettings = false
                     showDialog = false
-                    // Cerrar picker — usuario decide cuándo volver a intentarlo
+                    // Close picker — user decides when to try again
                     currentOnPermissionPermanentlyDenied()
                 }
-                // Caso 3: volvió de otra app sin haber ido a Settings — no hacer nada
+                // Case 3: returned from another app without having gone to Settings — do nothing
                 else -> Unit
             }
         },
         onAppResignActive = {
-            // Si ya marcamos hasNavigatedToSettings=true directamente en onOpenSettings,
-            // no es necesario hacer nada aquí — evita condición de carrera con dispatch_async
+            // If hasNavigatedToSettings=true was already set directly in onOpenSettings,
+            // nothing needs to be done here — prevents race condition with dispatch_async
             if (isProcessingSettingsAction && !hasNavigatedToSettings) {
                 hasNavigatedToSettings = true
                 showDialog = false
@@ -107,8 +107,8 @@ actual fun RequestCameraPermission(
     if (showDialog && isPermissionDeniedPermanently) {
         if (dialogConfig.customSettingsDialog != null) {
             dialogConfig.customSettingsDialog.invoke(
-                // onOpenSettings — marcar navegación ANTES de abrir Settings
-                // para evitar condición de carrera con dispatch_async de openSettings()
+                // onOpenSettings — mark navigation BEFORE opening Settings
+                // to prevent race condition with dispatch_async from openSettings()
                 {
                     if (!isProcessingSettingsAction) {
                         isProcessingSettingsAction = true
@@ -117,7 +117,7 @@ actual fun RequestCameraPermission(
                         openSettings()
                     }
                 },
-                // onDismiss — el usuario cerró el dialog sin ir a settings
+                // onDismiss — the user closed the dialog without going to settings
                 {
                     showDialog = false
                     currentOnPermissionPermanentlyDenied()
