@@ -601,6 +601,13 @@ Thanks to these wonderful people ([emoji key](https://allcontributors.org/docs/e
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=YaminMahdi" title="Contributions">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/jadlr">
+          <img src="https://avatars.githubusercontent.com/u/696999?v=4" width="100px;" alt="jadlr"/><br />
+          <sub><b>jadlr</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=jadlr" title="Contributions">💻</a>
+      </td>
+      <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/daniil-pastuhov">
           <img src="https://avatars.githubusercontent.com/u/8494442?v=4" width="100px;" alt="daniil-pastuhov"/><br />
           <sub><b>daniil-pastuhov</b></sub>
