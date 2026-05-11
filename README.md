@@ -556,8 +556,8 @@ If this library saves you time or money in production, please consider supportin
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/james-codersHT">
-        <img src="https://github.com/james-codersHT.png" width="80px" alt="james-codersHT"/><br/>
+      <a href="https://github.com/james-codersHT" title="james-codersHT · Silver Sponsor">
+        <img src="https://avatars.githubusercontent.com/james-codersHT?s=80" width="80px" alt="james-codersHT"/><br/>
         <sub><b>james-codersHT</b></sub>
       </a>
     </td>
