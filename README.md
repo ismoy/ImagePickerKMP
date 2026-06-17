@@ -531,8 +531,8 @@ If this library saves you time or money in production, please consider supportin
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/james-codersHT">
-        <img src="https://github.com/james-codersHT.png" width="80px" alt="james-codersHT"/><br/>
+      <a href="https://github.com/james-codersHT" title="james-codersHT · Silver Sponsor">
+        <img src="https://avatars.githubusercontent.com/james-codersHT?s=80" width="80px" alt="james-codersHT"/><br/>
         <sub><b>james-codersHT</b></sub>
       </a>
     </td>
@@ -588,6 +588,13 @@ Thanks to these wonderful people ([emoji key](https://allcontributors.org/docs/e
           <sub><b>daniil-pastuhov</b></sub>
         </a><br />
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
+      </td>
+      <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/fanqieVip">
+          <img src="https://avatars.githubusercontent.com/u/42194904?v=4" width="100px;" alt="fanqieVip"/><br />
+          <sub><b>fanqieVip</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=fanqieVip" title="Contributions">💻</a>
       </td>
     </tr>
   </tbody>
