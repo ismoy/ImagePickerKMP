@@ -19,7 +19,7 @@ import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 
 @Suppress("LongParameterList")
 @Composable
-actual fun GalleryPickerLauncher(
+internal actual fun PlatformGalleryRenderer(
     onPhotosSelected: (List<GalleryPhotoResult>) -> Unit,
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,

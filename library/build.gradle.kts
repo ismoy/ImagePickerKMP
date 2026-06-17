@@ -106,9 +106,7 @@ kover {
     }
 }
 
-tasks.matching { it.name.contains("WasmJs") && (it.name.startsWith("compile") || it.name.startsWith("link")) }.configureEach {
-    enabled = false
-}
+
 
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)

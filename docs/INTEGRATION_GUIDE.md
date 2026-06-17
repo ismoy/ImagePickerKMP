@@ -9,6 +9,10 @@ This guide will help you integrate ImagePickerKMP into your Kotlin Multiplatform
 - [Prerequisites](#prerequisites)
 - [Android Setup](#android-setup)
 - [KMP Setup](#kmp-setup)
+- [Basic Usage](#basic-usage)
+- [Selecting Images from Gallery](#selecting-images-from-gallery)
+- [Image Compression Integration](#image-compression-integration)
+
 ## Prerequisites
 
 Before integrating ImagePickerKMP, ensure you have:
@@ -78,18 +82,48 @@ linker command failed with exit code 1
 
 > ✅ No code changes are required — this is a one-time Xcode project configuration.
 
-## Platform-Specific Custom
+## Basic Usage
 
 <h1>Android && Compose Multiplatform</h1>
 
-### ImagePickerLauncher
+### Camera Capture
 
 ```kotlin
-    var showCameraPicker by remember { mutableStateOf(false) }
+@Composable
+fun CameraScreen() {
     var photoResult by remember { mutableStateOf<PhotoResult?>(null) }
-    var isPickerSheetVisible by remember { mutableStateOf(false) }
 
- Scaffold { innerPadding ->
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    customConfirmationView = { result, onConfirm, onRetry ->
+                        CustomAndroidConfirmationView(
+                            result = result,
+                            onConfirm = onConfirm,
+                            onRetry = onRetry
+                        )
+                    },
+                    customDeniedDialog = { onRetry ->
+                        CustomPermissionDialog(
+                            title = "Permission Required",
+                            message = "We need access to the camera to take photos",
+                            onRetry = onRetry
+                        )
+                    },
+                    customSettingsDialog = { onOpenSettings ->
+                        CustomPermissionSettingsDialog(
+                            title = "Go to Settings",
+                            message = "Camera permission is required to capture photos. Please grant it in settings",
+                            onOpenSettings = onOpenSettings
+                        )
+                    }
+                )
+            )
+        )
+    )
+
+    Scaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -101,53 +135,9 @@ linker command failed with exit code 1
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-                when {
-                    showCameraPicker -> {
-                        ImagePickerLauncher(
-                            config = ImagePickerConfig(
-                                onPhotoCaptured = { result ->
-                                    photoResult = result
-                                    showCameraPicker = false
-                                    isPickerSheetVisible = false
-                                },
-                                onError = {
-                                    showCameraPicker = false
-                                    isPickerSheetVisible = false
-                                },
-                                onDismiss = {
-                                    showCameraPicker = false
-                                    isPickerSheetVisible = false
-                                },
-                                 cameraCaptureConfig = CameraCaptureConfig(
-                                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                                        customConfirmationView = { photoResult, onConfirm, onRetry ->
-                                            CustomAndroidConfirmationView(
-                                                result = photoResult,
-                                                onConfirm = onConfirm,
-                                                onRetry = onRetry
-                                            )
-                                        },
-                                        customDeniedDialog = { onRetry ->
-                                            CustomPermissionDialog(
-                                                title = "Permission Required",
-                                                message = "We need access to the camera to take photos",
-                                                onRetry = onRetry
-                                            )
-                                        },
-                                        customSettingsDialog = { onOpenSettings ->
-                                            CustomPermissionSettingsDialog(
-                                                title = "Go to Settings",
-                                                message = "Camera permission is required to capture photos. Please grant it in settings",
-                                                onOpenSettings = onOpenSettings
-                                            )
-                                        }
-                                    )
-                                )
-                            )
-                        )
-                    }
-
-                    photoResult != null -> {
+                when (val result = picker.result) {
+                    is ImagePickerResult.Success -> {
+                        photoResult = result.photos.first()
                         Card(
                             shape = RoundedCornerShape(16.dp),
                             elevation = 8.dp,
@@ -156,45 +146,51 @@ linker command failed with exit code 1
                                 .padding(8.dp)
                         ) {
                             AsyncImage(
-                                model = cameraPhoto?.uri,
+                                model = photoResult?.uri,
                                 contentDescription = "Captured photo",
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
                     }
-
-                    else -> {
+                    is ImagePickerResult.Error -> {
+                        Text("Error: ${result.exception.message}", color = Color.Red)
+                    }
+                    is ImagePickerResult.Dismissed -> {
+                        Text("No image selected", color = Color.Gray)
+                    }
+                    is ImagePickerResult.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    is ImagePickerResult.Idle -> {
                         Text("No image selected", color = Color.Gray)
                     }
                 }
             }
 
-            if (!isPickerSheetVisible) {
-                Column(
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                OutlinedButton(
+                    onClick = { picker.launchCamera() },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(horizontal = 16.dp)
                 ) {
-                    OutlinedButton(
-                        onClick = {
-                            selectedImages = emptyList()
-                            cameraPhoto = null
-                            showCameraPicker = true
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        Text("Open Camera")
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Open Camera")
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
-    } 
+    }
+}
 ```
+
+### Custom UI Components
+
 ```kotlin
 @Composable
 fun CustomPermissionSettingsDialog(title: String, message: String, onOpenSettings: () -> Unit) {
@@ -544,104 +540,80 @@ fun CustomAndroidConfirmationView(
 ```
 
 ## Selecting Images from Gallery
+
 <h1>GalleryPicker</h1>
 
 ```kotlin
 @Composable
-fun CameraScreen() {
-  var showGalleryPicker by remember { mutableStateOf(false) }
+fun GalleryScreen() {
+    var selectedImages by remember { mutableStateOf<List<PhotoResult>>(emptyList()) }
 
-  GalleryPickerLauncher(
-    onPhotosSelected = { results ->
-      selectedImages = results
-      showGalleryPicker = false
-      results.forEach { result ->},
-      onError = {
-        showGalleryPicker = false
-      },
-      onDismiss = {
-        showGalleryPicker = false
-      },
-      allowMultiple = true,
-      mimeTypes = mutableListOf("image/jpeg", "image/png"),
-      cameraCaptureConfig = CameraCaptureConfig(
-        permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-          customConfirmationView = { photoResult, onConfirm, onRetry ->
-            CustomAndroidConfirmationView(
-              result = photoResult,
-              onConfirm = onConfirm,
-              onRetry = onRetry
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            galleryConfig = GalleryConfig(
+                allowMultiple = true,
+                mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)
+            ),
+            cameraCaptureConfig = CameraCaptureConfig(
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    customConfirmationView = { photoResult, onConfirm, onRetry ->
+                        CustomAndroidConfirmationView(
+                            result = photoResult,
+                            onConfirm = onConfirm,
+                            onRetry = onRetry
+                        )
+                    }
+                )
             )
-          }
         )
-      )
-      )
+    )
 
-    }
-
-    @Composable
-    fun CustomAndroidConfirmationView(
-      result: PhotoResult,
-      onConfirm: (PhotoResult) -> Unit,
-      onRetry: () -> Unit
-    ) {
-      Column(
-        modifier = Modifier
-          .fillMaxSize()
-          .padding(16.dp),
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-        Text(
-          text = "Review photo",
-          fontSize = 18.sp,
-          fontWeight = FontWeight.SemiBold,
-          color = MaterialTheme.colors.onSurface.copy(alpha = 0.9f),
-          modifier = Modifier.padding(bottom = 12.dp)
-        )
-
-        Card(
-          shape = RoundedCornerShape(20.dp),
-          elevation = 10.dp,
-          modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)
-        ) {
-          AsyncImage(
-            model = result.uri,
-            contentDescription = "Captured photo preview",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-          )
+    ) {
+        Button(onClick = { picker.launchGallery() }) {
+            Text("Select from Gallery")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-          modifier = Modifier.fillMaxWidth(),
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-          OutlinedButton(
-            onClick = { onRetry() },
-            modifier = Modifier
-              .weight(1f)
-              .height(52.dp)
-          ) {
-            Text(text = "Retry")
-          }
-
-          Button(
-            onClick = { onConfirm(result) },
-            modifier = Modifier
-              .weight(1f)
-              .height(52.dp),
-            shape = RoundedCornerShape(12.dp)
-          ) {
-            Text(text = "Confirm", color = Color.White)
-          }
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                selectedImages = result.photos
+                selectedImages.forEach { photo ->
+                    Card(
+                        shape = RoundedCornerShape(20.dp),
+                        elevation = 10.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .padding(bottom = 8.dp)
+                    ) {
+                        AsyncImage(
+                            model = photo.uri,
+                            contentDescription = "Selected photo",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}", color = Color.Red)
+            }
+            is ImagePickerResult.Dismissed -> {
+                Text("Selection cancelled", color = Color.Gray)
+            }
+            is ImagePickerResult.Loading -> {
+                CircularProgressIndicator()
+            }
+            is ImagePickerResult.Idle -> {
+                Text("No images selected", color = Color.Gray)
+            }
         }
-      }
     }
+}
 ```
 
 ## Image Compression Integration
@@ -652,45 +624,82 @@ ImagePickerKMP includes automatic image compression to optimize file sizes while
 
 #### Camera with Compression
 ```kotlin
-ImagePickerLauncher(
-    config = ImagePickerConfig(
-        onPhotoCaptured = { result ->
-            // result.uri contains the compressed image
-            photoResult = result
-            showCameraPicker = false
-        },
-        onError = { 
-            showCameraPicker = false 
-        },
-        onDismiss = { 
-            showCameraPicker = false 
-        },
-        cameraCaptureConfig = CameraCaptureConfig(
-            compressionLevel = CompressionLevel.MEDIUM // Enable compression
+@Composable
+fun CompressedCameraScreen() {
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = CompressionLevel.MEDIUM
+            )
         )
     )
-)
+
+    Column {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Capture Photo (Compressed)")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                Text("Photo captured!")
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}", color = Color.Red)
+            }
+            is ImagePickerResult.Dismissed -> { /* cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* initial state */ }
+        }
+    }
+}
 ```
 
 #### Gallery with Compression
 ```kotlin
-GalleryPickerLauncher(
-    onPhotosSelected = { photos ->
-        selectedImages = photos
-        showGalleryPicker = false
-    },
-    onError = { 
-        showGalleryPicker = false 
-    },
-    onDismiss = { 
-        showGalleryPicker = false 
-    },
-    allowMultiple = true,
-    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
-    cameraCaptureConfig = CameraCaptureConfig(
-        compressionLevel = CompressionLevel.HIGH // Optimize for storage
+@Composable
+fun CompressedGalleryScreen() {
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            galleryConfig = GalleryConfig(
+                allowMultiple = true,
+                mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)
+            ),
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = CompressionLevel.HIGH
+            )
+        )
     )
-)
+
+    Column {
+        Button(onClick = { picker.launchGallery() }) {
+            Text("Select from Gallery (Compressed)")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                result.photos.forEach { photo ->
+                    AsyncImage(
+                        model = photo.uri,
+                        contentDescription = "Selected photo",
+                        modifier = Modifier.size(200.dp)
+                    )
+                }
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}", color = Color.Red)
+            }
+            is ImagePickerResult.Dismissed -> { /* cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* initial state */ }
+        }
+    }
+}
 ```
 
 ### Compression Levels
@@ -699,23 +708,31 @@ Choose the appropriate compression level based on your use case:
 
 ```kotlin
 // Low compression - High quality, larger files (95% quality, 2560px max)
-CameraCaptureConfig(
-    compressionLevel = CompressionLevel.LOW
+ImagePickerKMPConfig(
+    cameraCaptureConfig = CameraCaptureConfig(
+        compressionLevel = CompressionLevel.LOW
+    )
 )
 
 // Medium compression - Balanced quality/size (75% quality, 1920px max) 
 // RECOMMENDED for most applications
-CameraCaptureConfig(
-    compressionLevel = CompressionLevel.MEDIUM
+ImagePickerKMPConfig(
+    cameraCaptureConfig = CameraCaptureConfig(
+        compressionLevel = CompressionLevel.MEDIUM
+    )
 )
 
 // High compression - Smaller files, good quality (50% quality, 1280px max)
-CameraCaptureConfig(
-    compressionLevel = CompressionLevel.HIGH
+ImagePickerKMPConfig(
+    cameraCaptureConfig = CameraCaptureConfig(
+        compressionLevel = CompressionLevel.HIGH
+    )
 )
 
 // No compression (default)
-CameraCaptureConfig()
+ImagePickerKMPConfig(
+    cameraCaptureConfig = CameraCaptureConfig()
+)
 ```
 
 ### Supported Image Formats
@@ -741,41 +758,43 @@ All common image formats are supported for compression:
 ```kotlin
 @Composable
 fun PhotoCaptureWithCompression() {
-    var showCamera by remember { mutableStateOf(false) }
     var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
-    
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = CompressionLevel.MEDIUM,
+                preference = CapturePhotoPreference.QUALITY
+            )
+        )
+    )
+
     Column {
-        Button(onClick = { showCamera = true }) {
+        Button(onClick = { picker.launchCamera() }) {
             Text("Capture Photo (Compressed)")
         }
-        
-        capturedPhoto?.let { photo ->
-            Text("Photo captured!")
-            Text("Size: ${photo.fileSize} bytes")
-            Text("Dimensions: ${photo.width}x${photo.height}")
-            
-            AsyncImage(
-                model = photo.uri,
-                contentDescription = "Captured photo",
-                modifier = Modifier.size(200.dp)
-            )
-        }
-        
-        if (showCamera) {
-            ImagePickerLauncher(
-                config = ImagePickerConfig(
-                    onPhotoCaptured = { result ->
-                        capturedPhoto = result
-                        showCamera = false
-                    },
-                    onError = { showCamera = false },
-                    onDismiss = { showCamera = false },
-                    cameraCaptureConfig = CameraCaptureConfig(
-                        compressionLevel = CompressionLevel.MEDIUM,
-                        preference = CapturePhotoPreference.QUALITY
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                capturedPhoto = result.photos.first()
+                capturedPhoto?.let { photo ->
+                    Text("Photo captured!")
+                    Text("Size: ${photo.fileSize} bytes")
+                    Text("Dimensions: ${photo.width}x${photo.height}")
+
+                    AsyncImage(
+                        model = photo.uri,
+                        contentDescription = "Captured photo",
+                        modifier = Modifier.size(200.dp)
                     )
-                )
-            )
+                }
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}", color = Color.Red)
+            }
+            is ImagePickerResult.Dismissed -> { /* cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* initial state */ }
         }
     }
 }

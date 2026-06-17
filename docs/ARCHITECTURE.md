@@ -24,7 +24,7 @@ graph TD;
     CameraCaptureStateHolder --> CameraXManager
     CameraXManager --> CameraController
     CameraCaptureView --> ImageConfirmationViewWithCustomButtons
-    CameraCaptureView --> GalleryPickerLauncher
+    CameraCaptureView --> GalleryPicker
 ```
 
 ---

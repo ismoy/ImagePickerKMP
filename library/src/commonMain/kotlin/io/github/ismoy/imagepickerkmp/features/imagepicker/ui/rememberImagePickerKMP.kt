@@ -12,8 +12,8 @@ import io.github.ismoy.imagepickerkmp.domain.models.PhotoResult
 import io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig
 import io.github.ismoy.imagepickerkmp.features.imagepicker.model.PickerMode
 import io.github.ismoy.imagepickerkmp.features.imagepicker.state.ImagePickerKMPState
-import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
-import io.github.ismoy.imagepickerkmp.presentation.ui.components.ImagePickerLauncher
+import io.github.ismoy.imagepickerkmp.presentation.ui.components.PlatformGalleryRenderer
+import io.github.ismoy.imagepickerkmp.presentation.ui.components.PlatformCameraRenderer
 
 /**
  * Creates and remembers an [ImagePickerKMPState] that is automatically connected to the
@@ -91,10 +91,9 @@ fun rememberImagePickerKMP(
         }
     }
 
-    @Suppress("DEPRECATION")
     when (val mode = state.activeMode) {
         is PickerMode.Camera -> {
-            ImagePickerLauncher(
+            PlatformCameraRenderer(
                 config = ImagePickerConfig(
                     cameraCaptureConfig = applyGlobalDefaults(mode.cameraCaptureConfig),
                     enableCrop = mode.enableCrop,
@@ -111,7 +110,7 @@ fun rememberImagePickerKMP(
                 mode.enableCrop -> CameraCaptureConfig(cropConfig = config.cropConfig)
                 else -> null
             }
-            GalleryPickerLauncher(
+            PlatformGalleryRenderer(
                 allowMultiple = mode.allowMultiple,
                 mimeTypes = mode.mimeTypes,
                 selectionLimit = mode.selectionLimit,

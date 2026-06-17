@@ -132,24 +132,24 @@ Para funciones avanzadas, podrías necesitar:
 ```kotlin
 @Composable
 fun MyImagePicker() {
-    var showImagePicker by remember { mutableStateOf(false) }
-    
-    if (showImagePicker) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                println("Photo captured: ${result.uri}")
-                showImagePicker = false
-            },
-            onError = { exception ->
-                println("Error: ${exception.message}")
-                showImagePicker = false
-            }
-        )
-    }
-    
-    Button(onClick = { showImagePicker = true }) {
+    val picker = rememberImagePicker()
+
+    Button(onClick = { picker.launchCamera() }) {
         Text("Take Photo")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
+            println("Photo captured: ${photo.uri}")
+        }
+        is ImagePickerResult.Error -> {
+            println("Error: ${result.exception.message}")
+        }
+        is ImagePickerResult.Dismissed -> {
+            println("User dismissed")
+        }
+        else -> { /* Idle */ }
     }
 }
 ```
@@ -180,29 +180,36 @@ fun CustomPermissionHandler() {
 ```kotlin
 @Composable
 fun CustomImagePicker() {
-    var showPicker by remember { mutableStateOf(false) }
-    if (showPicker) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result -> showPicker = false },
-                onError = { exception -> showPicker = false },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    preference = CapturePhotoPreference.HIGH_QUALITY,
-                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                        customPermissionHandler = { config ->
-                            // Manejo personalizado de permisos
-                        },
-                        customConfirmationView = { result, onConfirm, onRetry ->
-                            // Vista de confirmación personalizada
-                        }
-                    )
-                )
+    val picker = rememberImagePicker(
+        cameraCaptureConfig = CameraCaptureConfig(
+            preference = CapturePhotoPreference.HIGH_QUALITY,
+            permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                customPermissionHandler = { config ->
+                    // Manejo personalizado de permisos
+                },
+                customConfirmationView = { result, onConfirm, onRetry ->
+                    // Vista de confirmación personalizada
+                }
             )
         )
-    }
-    Button(onClick = { showPicker = true }) {
+    )
+
+    Button(onClick = { picker.launchCamera() }) {
         Text("Tomar foto")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
+            // Manejar foto capturada
+        }
+        is ImagePickerResult.Error -> {
+            // Manejar errores
+        }
+        is ImagePickerResult.Dismissed -> {
+            // Usuario canceló
+        }
+        else -> { /* Idle */ }
     }
 }
 ```
@@ -212,83 +219,86 @@ fun CustomImagePicker() {
 ```kotlin
 @Composable
 fun HighQualityImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Manejar foto de alta calidad
-        },
-        onError = { exception ->
-            // Manejar errores
-        },
+    val picker = rememberImagePicker(
         preference = CapturePhotoPreference.HIGH_QUALITY
     )
+
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Capturar en alta calidad")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
+            // Manejar foto de alta calidad
+        }
+        is ImagePickerResult.Error -> {
+            println("Error: ${result.exception.message}")
+        }
+        else -> {}
+    }
 }
 ```
 
 ## ¿Cómo manejo la cancelación del usuario?
 
-La librería proporciona un callback `onDismiss` que se activa cuando el usuario cancela o cierra el selector sin seleccionar nada. Esto es esencial para resetear el estado de tu UI.
+La librería proporciona el estado `ImagePickerResult.Dismissed` que se activa cuando el usuario cancela o cierra el selector sin seleccionar nada. Esto es esencial para resetear el estado de tu UI.
 
-### Ejemplo con ImagePickerLauncher
+### Ejemplo con Cámara
 
 ```kotlin
 @Composable
 fun MiSelectorImagen() {
-    var mostrarSelector by remember { mutableStateOf(false) }
-    if (mostrarSelector) {
-        ImagePickerLauncher(
-            config = ImagePickerConfig(
-                onPhotoCaptured = { resultado -> 
-                    println("Foto capturada: ${resultado.uri}")
-                    mostrarSelector = false
-                },
-                onError = { excepcion -> 
-                    println("Error: ${excepcion.message}")
-                    mostrarSelector = false
-                },
-                onDismiss = { 
-                    println("Usuario canceló o cerró el selector")
-                    mostrarSelector = false // Resetear estado cuando el usuario no selecciona nada
-                }
-            )
-        )
-    }
-    Button(onClick = { mostrarSelector = true }) {
+    val picker = rememberImagePicker()
+
+    Button(onClick = { picker.launchCamera() }) {
         Text("Tomar Foto")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val foto = result.photos.first()
+            println("Foto capturada: ${foto.uri}")
+        }
+        is ImagePickerResult.Error -> {
+            println("Error: ${result.exception.message}")
+        }
+        is ImagePickerResult.Dismissed -> {
+            println("Usuario canceló o cerró el selector")
+        }
+        else -> { /* Idle */ }
     }
 }
 ```
 
-### Ejemplo con GalleryPickerLauncher
+### Ejemplo con Galería
 
 ```kotlin
 @Composable
 fun MiSelectorGaleria() {
-    var mostrarGaleria by remember { mutableStateOf(false) }
-    if (mostrarGaleria) {
-        GalleryPickerLauncher(
-            onPhotosSelected = { resultados -> 
-                println("Seleccionadas ${resultados.size} imágenes")
-                mostrarGaleria = false
-            },
-            onError = { excepcion -> 
-                println("Error: ${excepcion.message}")
-                mostrarGaleria = false
-            },
-            onDismiss = { 
-                println("Usuario canceló la selección de galería")
-                mostrarGaleria = false // Resetear estado cuando el usuario no selecciona nada
-            },
-            allowMultiple = true
-        )
-    }
-    Button(onClick = { mostrarGaleria = true }) {
+    val picker = rememberImagePicker()
+
+    Button(onClick = { picker.launchGallery(allowMultiple = true) }) {
         Text("Seleccionar de la Galería")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val fotos = result.photos
+            println("Seleccionadas ${fotos.size} imágenes")
+        }
+        is ImagePickerResult.Error -> {
+            println("Error: ${result.exception.message}")
+        }
+        is ImagePickerResult.Dismissed -> {
+            println("Usuario canceló la selección de galería")
+        }
+        else -> { /* Idle */ }
     }
 }
 ```
 
-**Cuándo se activa `onDismiss`:**
+**Cuándo se activa `ImagePickerResult.Dismissed`:**
 - **Android:** Usuario cancela el diálogo de selección o la interfaz de cámara
 - **iOS:** Usuario toca "Cancelar" en el diálogo o la interfaz de cámara
 - **iOS:** Usuario cancela la solicitud de permisos de cámara
@@ -307,7 +317,6 @@ fun MiSelectorGaleria() {
 **Diferencias:**
 - Android usa CameraX, iOS usa AVFoundation
 - El flujo de permisos es ligeramente diferente (iOS muestra ajustes tras la primera denegación)
-- Parámetro context (Android lo requiere, iOS usa null)
 - Algunas optimizaciones específicas de plataforma
 
 ### ¿Cómo manejo código específico de plataforma?
@@ -315,13 +324,19 @@ fun MiSelectorGaleria() {
 ```kotlin
 @Composable
 fun PlatformSpecificImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current, // null para iOS
-        onPhotoCaptured = { result ->
+    val picker = rememberImagePicker()
+
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Capturar foto")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
             // Manejo agnóstico de plataforma
-        },
-        onError = { exception ->
-            when (exception) {
+        }
+        is ImagePickerResult.Error -> {
+            when (result.exception) {
                 is CameraPermissionException -> {
                     // Manejar errores de permisos
                 }
@@ -333,7 +348,11 @@ fun PlatformSpecificImagePicker() {
                 }
             }
         }
-    )
+        is ImagePickerResult.Dismissed -> {
+            // Usuario canceló
+        }
+        else -> {}
+    }
 }
 ```
 
@@ -343,18 +362,24 @@ Las características específicas de iOS son gestionadas internamente por la lib
 
 Para funciones avanzadas de iOS:
 ```kotlin
-// Configuración específica de iOS
 @Composable
 fun IOSImagePicker() {
-    ImagePickerLauncher(
-        context = null, // iOS no necesita context
-        onPhotoCaptured = { result ->
+    val picker = rememberImagePicker()
+
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Capturar foto")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
             // Manejo específico de iOS
-        },
-        onError = { exception ->
+        }
+        is ImagePickerResult.Error -> {
             // Manejo de errores específico de iOS
         }
-    )
+        else -> {}
+    }
 }
 ```
 
@@ -364,9 +389,8 @@ fun IOSImagePicker() {
 
 1. **Permisos**: Asegúrate de que el permiso de cámara esté concedido
 2. **Hardware**: Verifica que el dispositivo tenga cámara
-3. **Contexto**: Asegúrate de pasar el context correcto (Android)
-4. **Ciclo de vida**: Verifica el estado del componente
-5. **Dependencias**: Revisa que todas las dependencias estén agregadas
+3. **Ciclo de vida**: Verifica el estado del componente
+4. **Dependencias**: Revisa que todas las dependencias estén agregadas
 
 ### El diálogo de permisos no aparece. ¿Qué pasa?
 
@@ -386,28 +410,34 @@ fun IOSImagePicker() {
 
 1. **Memoria**: Usa compresión de imagen para fotos grandes
 2. **Ciclo de vida**: Maneja correctamente el ciclo de vida
-3. **Contexto**: Verifica la validez del context
-4. **Manejo de excepciones**: Añade manejo de errores adecuado
+3. **Manejo de excepciones**: Añade manejo de errores adecuado
 
 ```kotlin
 @Composable
 fun RobustImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
+    val picker = rememberImagePicker()
+
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Capturar foto")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
             try {
                 // Procesar foto de forma segura
-                processPhoto(result)
+                processPhoto(photo)
             } catch (e: Exception) {
                 // Manejar errores de procesamiento
                 showError("Error al procesar la foto: ${e.message}")
             }
-        },
-        onError = { exception ->
-            // Manejar errores de captura
-            showError("Error de cámara: ${exception.message}")
         }
-    )
+        is ImagePickerResult.Error -> {
+            // Manejar errores de captura
+            showError("Error de cámara: ${result.exception.message}")
+        }
+        else -> {}
+    }
 }
 ```
 
@@ -466,16 +496,21 @@ Añade `CoreLocation.framework` manualmente en las **Build Phases** de tu proyec
 ```kotlin
 @Composable
 fun MemoryEfficientImagePicker() {
+    val picker = rememberImagePicker()
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
+
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Capturar foto")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
             // Guarda URI en vez de Bitmap
-            imageUri = result.uri
+            imageUri = result.photos.first().uri
         }
-    )
-    
+        else -> {}
+    }
+
     // Carga la imagen solo cuando sea necesario
     imageUri?.let { uri ->
         AsyncImage(
@@ -490,13 +525,19 @@ fun MemoryEfficientImagePicker() {
 ```kotlin
 @Composable
 fun CompressedImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
+    val picker = rememberImagePicker()
+
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Capturar foto")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
             // Comprime la imagen antes de procesar
-            val compressedImage = compressImage(result.uri, 80)
+            val compressedImage = compressImage(result.photos.first().uri, 80)
         }
-    )
+        else -> {}
+    }
 }
 ```
 
@@ -504,10 +545,13 @@ fun CompressedImagePicker() {
 
 1. **Usa preferencia FAST**:
 ```kotlin
-ImagePickerLauncher(
-    context = LocalContext.current,
+val picker = rememberImagePicker(
     preference = CapturePhotoPreference.FAST
 )
+
+Button(onClick = { picker.launchCamera() }) {
+    Text("Captura rápida")
+}
 ```
 
 2. **Preinicializa la cámara**:
@@ -523,18 +567,24 @@ LaunchedEffect(Unit) {
 ```kotlin
 @Composable
 fun LargePhotoHandler() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
+    val picker = rememberImagePicker()
+
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Capturar foto")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
             lifecycleScope.launch(Dispatchers.IO) {
                 // Procesa la foto grande en background
-                val processedImage = processLargeImage(result.uri)
+                val processedImage = processLargeImage(result.photos.first().uri)
                 withContext(Dispatchers.Main) {
                     // Actualiza la UI con la imagen procesada
                 }
             }
         }
-    )
+        else -> {}
+    }
 }
 ```
 
@@ -614,17 +664,24 @@ fun ThemedImagePicker() {
             secondary = Color(0xFF42A5F5)
         )
     }
-    
+
     MaterialTheme(colors = customTheme) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            onPhotoCaptured = { result ->
+        val picker = rememberImagePicker()
+
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Capturar foto")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
                 // Manejar captura de foto
-            },
-            onError = { exception ->
+            }
+            is ImagePickerResult.Error -> {
                 // Manejar errores
             }
-        )
+            else -> {}
+        }
     }
 }
 ```
@@ -646,13 +703,20 @@ fun ThemedImagePicker() {
 
 **Ejemplo de uso**:
 ```kotlin
-ImagePickerLauncher(
-    context = LocalContext.current,
-    onPhotoCaptured = { result ->
+val picker = rememberImagePicker()
+
+Button(onClick = { picker.launchCamera() }) {
+    Text("Capturar foto")
+}
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> {
+        val photo = result.photos.first()
         // La imagen ya viene corregida automáticamente
         // No necesitas hacer nada adicional
     }
-)
+    else -> {}
+}
 ```
 
 **Nota**: Esta corrección se aplica automáticamente y es transparente para el desarrollador. No necesitas configurar nada adicional.

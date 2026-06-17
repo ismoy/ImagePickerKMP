@@ -144,7 +144,7 @@ data class CropConfig(
 /**
  * Configuration for the embedded camera capture feature.
  *
- * Used by both [io.github.ismoy.imagepickerkmp.presentation.ui.components.ImagePickerLauncher] and [io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher] to control camera behavior,
+ * Used by both [io.github.ismoy.imagepickerkmp.presentation.ui.components.PlatformCameraRenderer] and [io.github.ismoy.imagepickerkmp.presentation.ui.components.PlatformGalleryRenderer] to control camera behavior,
  * compression, UI styling, permission handling, and crop integration.
  *
  * @property preference Capture quality preference that balances speed, quality, and
@@ -185,95 +185,18 @@ data class CameraCaptureConfig(
 )
 
 /**
- * ⚠️ **DEPRECATED — Belongs to the legacy API (v1).**
+ * Internal configuration for the camera picker composable.
  *
- * `ImagePickerConfig` was the central configuration object for [ImagePickerLauncher],
- * the old-API composable. Both (`ImagePickerConfig` + `ImagePickerLauncher`) will be
- * removed in a future release.
- *
- * ## Migrating to the new API
- *
- * In the new API you **do not construct an `ImagePickerConfig` manually**. Instead:
- *
- * 1. Call `rememberImagePickerKMP()` inside your composable — it returns an
- *    [ImagePickerKMPState][io.github.ismoy.imagepickerkmp.features.imagepicker.state.ImagePickerKMPState].
- * 2. Call `picker.launchCamera()` or `picker.launchGallery()` on user interaction.
- * 3. Observe `picker.result` reactively with a `when` expression.
- *
- * ### Minimal working implementation
- *
- * ```kotlin
- * @Composable
- * fun MyScreen() {
- *     val picker = rememberImagePickerKMP()
- *     val result = picker.result
- *
- *     Row(
- *         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
- *         horizontalArrangement = Arrangement.spacedBy(8.dp)
- *     ) {
- *         Button(onClick = { picker.launchCamera() }, modifier = Modifier.weight(1f)) {
- *             Text("Camera")
- *         }
- *         Button(onClick = { picker.launchGallery() }, modifier = Modifier.weight(1f)) {
- *             Text("Gallery")
- *         }
- *     }
- *
- *     when (result) {
- *         is ImagePickerResult.Loading -> {
- *             Column(
- *                 horizontalAlignment = Alignment.CenterHorizontally,
- *                 modifier = Modifier.padding(16.dp)
- *             ) {
- *                 CircularProgressIndicator()
- *                 Text("Loading...", color = Color.Gray, modifier = Modifier.padding(top = 12.dp))
- *             }
- *         }
- *         is ImagePickerResult.Success -> {
- *             val photos = result.photos
- *             if (photos.size == 1) {
- *                 CameraResultCard(photo = photos.first())
- *             } else {
- *                 MultiPhotoGrid(photos = photos)
- *             }
- *         }
- *         is ImagePickerResult.Error     -> Text("Error: \${result.exception.message}", color = Color.Red)
- *         is ImagePickerResult.Dismissed -> Text("Selection cancelled", color = Color.Gray)
- *         is ImagePickerResult.Idle      -> Text("Press a button to get started", color = Color.Gray)
- *     }
- * }
- * ```
- *
- * > ✅ **That's all you need for a basic implementation.**
- *
- * Configuration that previously went into [ImagePickerConfig] now goes into
- * [ImagePickerKMPConfig][io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig]:
- *
- * ```kotlin
- * val picker = rememberImagePickerKMP(
- *     config = ImagePickerKMPConfig(
- *         cropConfig          = CropConfig(enabled = true),
- *         cameraCaptureConfig = CameraCaptureConfig(compressionLevel = CompressionLevel.HIGH)
- *     )
- * )
- * ```
- *
- * @see io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP
- * @see io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig
- * @see io.github.ismoy.imagepickerkmp.features.imagepicker.state.ImagePickerKMPState
- * @see io.github.ismoy.imagepickerkmp.features.imagepicker.model.ImagePickerResult
+ * Used by [rememberImagePickerKMP][io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP]
+ * to pass callbacks and settings to the platform-specific [PlatformCameraRenderer][io.github.ismoy.imagepickerkmp.presentation.ui.components.PlatformCameraRenderer].
+ * Not part of the public API.
  */
-data class ImagePickerConfig(
+internal data class ImagePickerConfig(
     val onPhotoCaptured: (PhotoResult) -> Unit,
     val onError: (Exception) -> Unit,
     val onDismiss: () -> Unit = {},
     val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig(),
     val enableCrop: Boolean = false,
-    /**
-     * Llamado justo antes de mostrar el crop view, después de capturar/seleccionar la foto.
-     * Úsalo para cambiar el estado de tu UI (p.ej. ocultar un spinner de "Loading").
-     */
     val onCropPending: () -> Unit = {}
 )
 

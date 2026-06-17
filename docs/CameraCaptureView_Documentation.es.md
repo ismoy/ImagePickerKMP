@@ -111,36 +111,44 @@ El `CameraCaptureView` maneja tres estados principales:
 - Proporciona opciones de confirmar y reintentar
 - Soporta vistas de confirmación personalizadas
 
-### GalleryPickerLauncher
+### Selección de Galería (vía rememberImagePickerKMP)
 - Maneja la selección de fotos de galería
 - Soporta selección múltiple de fotos
 - Se integra con la galería del sistema
 
-> **Nota:** En Android no se requieren permisos de galería ya que el sistema maneja el acceso automáticamente. En iOS, el sistema gestiona permisos y acceso limitado de forma nativa.
+> **Nota:** No necesitas solicitar permisos de galería manualmente. La librería gestiona automáticamente la solicitud de permisos y el flujo de usuario tanto en Android como en iOS, proporcionando una experiencia nativa en cada plataforma.
 
 **Detalles por plataforma:**
-- En **Android**, se usa el selector de galería del sistema y no se requieren permisos ya que el sistema maneja el acceso automáticamente.
+- En **Android**, se usa el selector de galería del sistema y los permisos se solicitan automáticamente si es necesario.
 - En **iOS**, se usa el selector nativo de galería. En iOS 14+ se soporta selección múltiple. El sistema gestiona permisos y acceso limitado de forma nativa.
-- El callback `onPhotosSelected` siempre recibe una lista, incluso para selección simple.
-- Usa `allowMultiple` para habilitar o deshabilitar la selección múltiple de imágenes.
-- El parámetro `mimeTypes` es opcional y permite filtrar los tipos de archivos seleccionables.
+- El resultado `ImagePickerResult.Success` siempre contiene una lista en `result.photos`, incluso para selección simple.
+- Usa `picker.launchGallery(allowMultiple = true)` para habilitar la selección múltiple de imágenes.
+- El parámetro `mimeTypes` en `GalleryConfig` es opcional y permite filtrar los tipos de archivos seleccionables.
 
 #### Ejemplo
 ```kotlin
 @Composable
 fun MiSelectorGaleria() {
-    var mostrarGaleria by remember { mutableStateOf(false) }
-    if (mostrarGaleria) {
-        GalleryPickerLauncher(
-            context = LocalContext.current, // Solo Android
-            onPhotosSelected = { resultados -> mostrarGaleria = false },
-            onError = { mostrarGaleria = false },
-            onDismiss = { mostrarGaleria = false }, // Manejar cierre
-            allowMultiple = true
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            galleryConfig = GalleryConfig(allowMultiple = true)
         )
-    }
-    Button(onClick = { mostrarGaleria = true }) {
+    )
+
+    Button(onClick = { picker.launchGallery() }) {
         Text("Seleccionar de la galería")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            result.photos.forEach { foto ->
+                // Usar foto.uri, foto.width, foto.height
+            }
+        }
+        is ImagePickerResult.Error -> { /* manejar error */ }
+        is ImagePickerResult.Dismissed -> { /* cancelado */ }
+        is ImagePickerResult.Loading -> { /* cargando */ }
+        is ImagePickerResult.Idle -> { /* estado inicial */ }
     }
 }
 ```
