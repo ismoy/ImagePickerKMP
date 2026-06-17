@@ -614,6 +614,13 @@ Thanks to these wonderful people ([emoji key](https://allcontributors.org/docs/e
         </a><br />
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
       </td>
+      <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/fanqieVip">
+          <img src="https://avatars.githubusercontent.com/u/42194904?v=4" width="100px;" alt="fanqieVip"/><br />
+          <sub><b>fanqieVip</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=fanqieVip" title="Contributions">💻</a>
+      </td>
     </tr>
   </tbody>
 </table>
