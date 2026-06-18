@@ -130,7 +130,7 @@ fun MyPermissionHandler() {
 **¡Importante!** La librería ahora usa automáticamente traducciones por defecto en todos los componentes internos:
 
 - `CameraCaptureView` usa `PermissionConfig.createLocalizedComposable()` automáticamente
-- `ImagePickerLauncher` (iOS) usa `PermissionConfig.createLocalizedComposable()` automáticamente
+- `rememberImagePickerKMP` (iOS) usa `PermissionConfig.createLocalizedComposable()` automáticamente
 - Los diálogos de permisos aparecerán en el idioma del dispositivo sin configuración adicional
 
 ## Configuración automática

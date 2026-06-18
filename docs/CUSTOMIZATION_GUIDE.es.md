@@ -407,15 +407,34 @@ fun ThemedImagePicker() {
     }
     
     MaterialTheme(colors = customTheme) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Handle photo capture
-            },
-            onError = { exception ->
-                // Handle errors
-            }
+        val picker = rememberImagePickerKMP(
+            config = ImagePickerKMPConfig(
+                uiConfig = UiConfig(
+                    buttonColor = Color(0xFF6200EE),
+                    iconColor = Color.White
+                ),
+                preference = CapturePhotoPreference.HIGH_QUALITY
+            )
         )
+        
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                // Manejar captura exitosa
+                val photo = result.photos.first()
+            }
+            is ImagePickerResult.Error -> {
+                // Manejar errores
+                val exception = result.exception
+            }
+            is ImagePickerResult.Dismissed -> {
+                // Usuario canceló
+            }
+            else -> {}
+        }
+        
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Tomar Foto")
+        }
     }
 }
 ```
@@ -437,15 +456,30 @@ fun DarkThemeImagePicker() {
     }
     
     MaterialTheme(colors = darkTheme) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Handle photo capture
-            },
-            onError = { exception ->
-                // Handle errors
-            }
+        val picker = rememberImagePickerKMP(
+            config = ImagePickerKMPConfig(
+                uiConfig = UiConfig(
+                    buttonColor = Color(0xFFBB86FC),
+                    iconColor = Color.White
+                ),
+                preference = CapturePhotoPreference.HIGH_QUALITY
+            )
         )
+        
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+            }
+            is ImagePickerResult.Error -> {
+                val exception = result.exception
+            }
+            is ImagePickerResult.Dismissed -> {}
+            else -> {}
+        }
+        
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Tomar Foto")
+        }
     }
 }
 ```
@@ -467,15 +501,26 @@ fun CustomTypographyImagePicker() {
     }
     
     MaterialTheme(typography = customTypography) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                // Handle photo capture
-            },
-            onError = { exception ->
-                // Handle errors
-            }
+        val picker = rememberImagePickerKMP(
+            config = ImagePickerKMPConfig(
+                preference = CapturePhotoPreference.HIGH_QUALITY
+            )
         )
+        
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+            }
+            is ImagePickerResult.Error -> {
+                val exception = result.exception
+            }
+            is ImagePickerResult.Dismissed -> {}
+            else -> {}
+        }
+        
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Tomar Foto")
+        }
     }
 }
 ```
@@ -487,16 +532,26 @@ fun CustomTypographyImagePicker() {
 ```kotlin
 @Composable
 fun CustomPhotoPreferences() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Handle photo capture
-        },
-        onError = { exception ->
-            // Handle errors
-        },
-        preference = CapturePhotoPreference.HIGH_QUALITY // Preferencia personalizada
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            preference = CapturePhotoPreference.HIGH_QUALITY
+        )
     )
+    
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
+        }
+        is ImagePickerResult.Error -> {
+            val exception = result.exception
+        }
+        is ImagePickerResult.Dismissed -> {}
+        else -> {}
+    }
+    
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Capturar Foto en Alta Calidad")
+    }
 }
 ```
 
@@ -505,13 +560,18 @@ fun CustomPhotoPreferences() {
 ```kotlin
 @Composable
 fun CustomErrorHandling() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Handle photo capture
-        },
-        onError = { exception ->
-            when (exception) {
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            preference = CapturePhotoPreference.HIGH_QUALITY
+        )
+    )
+    
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
+        }
+        is ImagePickerResult.Error -> {
+            when (val exception = result.exception) {
                 is CameraPermissionException -> {
                     // Manejar errores de permisos
                     showPermissionErrorDialog()
@@ -526,7 +586,13 @@ fun CustomErrorHandling() {
                 }
             }
         }
-    )
+        is ImagePickerResult.Dismissed -> {}
+        else -> {}
+    }
+    
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Tomar Foto")
+    }
 }
 ```
 
@@ -537,90 +603,129 @@ fun CustomErrorHandling() {
 fun CustomLoadingStates() {
     var isLoading by remember { mutableStateOf(false) }
     
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            preference = CapturePhotoPreference.HIGH_QUALITY
+        )
+    )
+    
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            isLoading = true
+            val photo = result.photos.first()
+            // Procesar foto
+            processPhoto(photo) {
+                isLoading = false
+            }
+        }
+        is ImagePickerResult.Error -> {
+            // Manejar errores
+            isLoading = false
+        }
+        is ImagePickerResult.Dismissed -> {}
+        else -> {}
+    }
+    
     if (isLoading) {
         CustomLoadingView()
     } else {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            onPhotoCaptured = { result ->
-                isLoading = true
-                // Procesar foto
-                processPhoto(result) {
-                    isLoading = false
-                }
-            },
-            onError = { exception ->
-                // Manejar errores
-            }
-        )
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Tomar Foto")
+        }
     }
 }
 ```
 
 ## Callbacks Personalizados
 
-### 1. Callbacks de Permiso Personalizados
+### 1. Manejo de Permisos Personalizado
 
 ```kotlin
 @Composable
 fun CustomPermissionCallbacks() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Handle photo capture
-        },
-        onError = { exception ->
-            // Handle errors
-        },
-        customPermissionHandler = { config ->
-            // Manejo de permisos personalizado
-            when {
-                shouldShowPermissionRationale() -> {
-                    showRationaleDialog(config)
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            preference = CapturePhotoPreference.HIGH_QUALITY,
+            permissionConfig = PermissionAndConfirmationConfig(
+                customPermissionHandler = { config ->
+                    // Manejo de permisos personalizado
+                    when {
+                        shouldShowPermissionRationale() -> {
+                            showRationaleDialog(config)
+                        }
+                        isPermissionPermanentlyDenied() -> {
+                            showSettingsDialog(config)
+                        }
+                        else -> {
+                            requestPermission()
+                        }
+                    }
                 }
-                isPermissionPermanentlyDenied() -> {
-                    showSettingsDialog(config)
-                }
-                else -> {
-                    requestPermission()
-                }
-            }
-        }
+            )
+        )
     )
+    
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
+        }
+        is ImagePickerResult.Error -> {
+            val exception = result.exception
+        }
+        is ImagePickerResult.Dismissed -> {}
+        else -> {}
+    }
+    
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Tomar Foto")
+    }
 }
 ```
 
-### 2. Callbacks de Confirmación Personalizados
+### 2. Vista de Confirmación Personalizada
 
 ```kotlin
 @Composable
 fun CustomConfirmationCallbacks() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        onPhotoCaptured = { result ->
-            // Handle photo capture
-        },
-        onError = { exception ->
-            // Handle errors
-        },
-        customConfirmationView = { result, onConfirm, onRetry ->
-            // Vista de confirmación personalizada
-            CustomConfirmationView(
-                result = result,
-                onConfirm = { 
-                    // Procesamiento adicional antes de confirmar
-                    processPhoto(result) { processedResult ->
-                        onConfirm(processedResult)
-                    }
-                },
-                onRetry = {
-                    // Lógica adicional antes de reintentar
-                    resetCamera()
-                    onRetry()
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            preference = CapturePhotoPreference.HIGH_QUALITY,
+            permissionConfig = PermissionAndConfirmationConfig(
+                customConfirmationView = { result, onConfirm, onRetry ->
+                    // Vista de confirmación personalizada
+                    CustomConfirmationView(
+                        result = result,
+                        onConfirm = { 
+                            // Procesamiento adicional antes de confirmar
+                            processPhoto(result) { processedResult ->
+                                onConfirm(processedResult)
+                            }
+                        },
+                        onRetry = {
+                            // Lógica adicional antes de reintentar
+                            resetCamera()
+                            onRetry()
+                        }
+                    )
                 }
             )
-        }
+        )
     )
+    
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
+        }
+        is ImagePickerResult.Error -> {
+            val exception = result.exception
+        }
+        is ImagePickerResult.Dismissed -> {}
+        else -> {}
+    }
+    
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Tomar Foto")
+    }
 }
 ```
 
@@ -631,50 +736,52 @@ fun CustomConfirmationCallbacks() {
 ```kotlin
 @Composable
 fun CompleteCustomImagePicker() {
-    var showPicker by remember { mutableStateOf(false) }
-    
-    if (showPicker) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    // Manejar captura exitosa
-                    showPicker = false
-                    processAndSavePhoto(result)
-                },
-                onError = { exception ->
-                    // Manejar errores
-                    showPicker = false
-                    showErrorDialog(exception)
-                },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    preference = CapturePhotoPreference.HIGH_QUALITY,
-                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                        customPermissionHandler = { config ->
-                            // Manejo de permisos personalizado
-                            CustomPermissionDialog(
-                                title = config.titleDialogConfig,
-                                description = config.descriptionDialogConfig,
-                                onConfirm = { requestPermission() },
-                                onDismiss = { showPicker = false }
-                            )
-                        },
-                        customConfirmationView = { result, onConfirm, onRetry ->
-                            // Vista de confirmación personalizada
-                            CustomConfirmationView(
-                                result = result,
-                                onConfirm = { onConfirm(result) },
-                                onRetry = { onRetry() }
-                            )
-                        }
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            uiConfig = UiConfig(
+                buttonColor = MaterialTheme.colors.primary,
+                iconColor = Color.White
+            ),
+            preference = CapturePhotoPreference.HIGH_QUALITY,
+            permissionConfig = PermissionAndConfirmationConfig(
+                customPermissionHandler = { config ->
+                    // Manejo de permisos personalizado
+                    CustomPermissionDialog(
+                        title = config.titleDialogConfig,
+                        description = config.descriptionDialogConfig,
+                        onConfirm = { requestPermission() },
+                        onDismiss = { /* cancelar */ }
                     )
-                )
+                },
+                customConfirmationView = { result, onConfirm, onRetry ->
+                    // Vista de confirmación personalizada
+                    CustomConfirmationView(
+                        result = result,
+                        onConfirm = { onConfirm(result) },
+                        onRetry = { onRetry() }
+                    )
+                }
             )
         )
+    )
+    
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            // Manejar captura exitosa
+            processAndSavePhoto(result.photos.first())
+        }
+        is ImagePickerResult.Error -> {
+            // Manejar errores
+            showErrorDialog(result.exception)
+        }
+        is ImagePickerResult.Dismissed -> {
+            // Usuario canceló
+        }
+        else -> {}
     }
     
     Button(
-        onClick = { showPicker = true },
+        onClick = { picker.launchCamera() },
         colors = ButtonDefaults.buttonColors(
             backgroundColor = MaterialTheme.colors.primary
         )
@@ -705,40 +812,57 @@ fun BrandedImagePicker() {
             secondary = brandColors["secondary"]!!
         )
     ) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    // Lógica específica de marca
-                    trackBrandEvent("photo_captured")
-                    processPhotoWithBranding(result)
-                },
-                onError = { exception ->
-                    // Mensajería de error específica de marca
-                    showBrandedErrorDialog(exception)
-                },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    preference = CapturePhotoPreference.HIGH_QUALITY,
-                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                        customPermissionHandler = { config ->
-                            // Diálogo de permisos con marca
-                            BrandedPermissionDialog(
-                                config = config,
-                                onConfirm = { requestPermission() }
-                            )
-                        },
-                        customConfirmationView = { result, onConfirm, onRetry ->
-                            // Vista de confirmación con marca
-                            BrandedConfirmationView(
-                                result = result,
-                                onConfirm = { onConfirm(result) },
-                                onRetry = { onRetry() }
-                            )
-                        }
-                    )
+        val picker = rememberImagePickerKMP(
+            config = ImagePickerKMPConfig(
+                uiConfig = UiConfig(
+                    buttonColor = brandColors["primary"]!!,
+                    iconColor = Color.White
+                ),
+                preference = CapturePhotoPreference.HIGH_QUALITY,
+                permissionConfig = PermissionAndConfirmationConfig(
+                    customPermissionHandler = { config ->
+                        // Diálogo de permisos con marca
+                        BrandedPermissionDialog(
+                            config = config,
+                            onConfirm = { requestPermission() }
+                        )
+                    },
+                    customConfirmationView = { result, onConfirm, onRetry ->
+                        // Vista de confirmación con marca
+                        BrandedConfirmationView(
+                            result = result,
+                            onConfirm = { onConfirm(result) },
+                            onRetry = { onRetry() }
+                        )
+                    }
                 )
             )
         )
+        
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                // Lógica específica de marca
+                trackBrandEvent("photo_captured")
+                processPhotoWithBranding(result.photos.first())
+            }
+            is ImagePickerResult.Error -> {
+                // Mensajería de error específica de marca
+                showBrandedErrorDialog(result.exception)
+            }
+            is ImagePickerResult.Dismissed -> {}
+            else -> {}
+        }
+        
+        Button(
+            onClick = { picker.launchCamera() },
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = brandColors["primary"]!!
+            )
+        ) {
+            Icon(Icons.Default.Camera, "Camera")
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Take Photo")
+        }
     }
 }
 ```
@@ -748,22 +872,28 @@ fun BrandedImagePicker() {
 ```kotlin
 @Composable
 fun MinimalImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result ->
-                // Manejo simple de la foto
-                savePhoto(result)
-            },
-            onError = { exception ->
-                // Manejo simple de errores
-                showToast(exception.message)
-            },
-            cameraCaptureConfig = CameraCaptureConfig(
-                preference = CapturePhotoPreference.HIGH_QUALITY
-            )
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            preference = CapturePhotoPreference.HIGH_QUALITY
         )
     )
+    
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            // Manejo simple de la foto
+            savePhoto(result.photos.first())
+        }
+        is ImagePickerResult.Error -> {
+            // Manejo simple de errores
+            showToast(result.exception.message)
+        }
+        is ImagePickerResult.Dismissed -> {}
+        else -> {}
+    }
+    
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Tomar Foto")
+    }
 }
 ```
 
@@ -778,20 +908,30 @@ fun ConsistentImagePicker() {
     val appTheme = remember { getAppTheme() }
     
     MaterialTheme(colors = appTheme.colors) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    // Handle photo capture
-                },
-                onError = { exception ->
-                    // Handle errors
-                },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    preference = CapturePhotoPreference.HIGH_QUALITY
-                )
+        val picker = rememberImagePickerKMP(
+            config = ImagePickerKMPConfig(
+                uiConfig = UiConfig(
+                    buttonColor = appTheme.colors.primary,
+                    iconColor = appTheme.colors.onPrimary
+                ),
+                preference = CapturePhotoPreference.HIGH_QUALITY
             )
         )
+        
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+            }
+            is ImagePickerResult.Error -> {
+                val exception = result.exception
+            }
+            is ImagePickerResult.Dismissed -> {}
+            else -> {}
+        }
+        
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Tomar Foto")
+        }
     }
 }
 ```
@@ -801,30 +941,36 @@ fun ConsistentImagePicker() {
 ```kotlin
 @Composable
 fun AccessibleImagePicker() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result ->
-                // Handle photo capture
-            },
-            onError = { exception ->
-                // Handle errors
-            },
-            cameraCaptureConfig = CameraCaptureConfig(
-                preference = CapturePhotoPreference.HIGH_QUALITY,
-                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                    customConfirmationView = { result, onConfirm, onRetry ->
-                        // Vista de confirmación accesible
-                        AccessibleConfirmationView(
-                            result = result,
-                            onConfirm = { onConfirm(result) },
-                            onRetry = { onRetry() }
-                        )
-                    }
-                )
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            preference = CapturePhotoPreference.HIGH_QUALITY,
+            permissionConfig = PermissionAndConfirmationConfig(
+                customConfirmationView = { result, onConfirm, onRetry ->
+                    // Vista de confirmación accesible
+                    AccessibleConfirmationView(
+                        result = result,
+                        onConfirm = { onConfirm(result) },
+                        onRetry = { onRetry() }
+                    )
+                }
             )
         )
     )
+    
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            val photo = result.photos.first()
+        }
+        is ImagePickerResult.Error -> {
+            val exception = result.exception
+        }
+        is ImagePickerResult.Dismissed -> {}
+        else -> {}
+    }
+    
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Tomar Foto")
+    }
 }
 ```
 
@@ -834,29 +980,36 @@ fun AccessibleImagePicker() {
 @Composable
 fun PerformantImagePicker() {
     val processedResult = remember { mutableStateOf<PhotoResult?>(null) }
+    val scope = rememberCoroutineScope()
     
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result ->
-                // Procesar foto en background
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val processed = processPhoto(result)
-                    processedResult.value = processed
-                }
-            },
-            onError = { exception ->
-                // Manejar errores
-            },
-            cameraCaptureConfig = CameraCaptureConfig(
-                preference = CapturePhotoPreference.HIGH_QUALITY
-            )
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            preference = CapturePhotoPreference.HIGH_QUALITY
         )
     )
+    
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            // Procesar foto en background
+            scope.launch(Dispatchers.IO) {
+                val processed = processPhoto(result.photos.first())
+                processedResult.value = processed
+            }
+        }
+        is ImagePickerResult.Error -> {
+            // Manejar errores
+        }
+        is ImagePickerResult.Dismissed -> {}
+        else -> {}
+    }
     
     // Mostrar resultado procesado
     processedResult.value?.let { result ->
         ProcessedPhotoView(result = result)
+    }
+    
+    Button(onClick = { picker.launchCamera() }) {
+        Text("Tomar Foto")
     }
 }
 ```
@@ -881,18 +1034,26 @@ ImagePickerKMP incluye **corrección automática de orientación** que:
 
 ```kotlin
 // No necesitas hacer nada especial
-ImagePickerLauncher(
-    context = LocalContext.current,
-    config = ImagePickerConfig(
-        onPhotoCaptured = { result ->
-            // La imagen ya viene corregida automáticamente
-            // Tu cabeza aparecerá en la dirección correcta
-        },
-        cameraCaptureConfig = CameraCaptureConfig(
-            preference = CapturePhotoPreference.HIGH_QUALITY
-        )
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        preference = CapturePhotoPreference.HIGH_QUALITY
     )
 )
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> {
+        // La imagen ya viene corregida automáticamente
+        // Tu cabeza aparecerá en la dirección correcta
+        val photo = result.photos.first()
+    }
+    is ImagePickerResult.Error -> {}
+    is ImagePickerResult.Dismissed -> {}
+    else -> {}
+}
+
+Button(onClick = { picker.launchCamera() }) {
+    Text("Tomar Foto")
+}
 ```
 
 ### Detalles Técnicos

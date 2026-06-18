@@ -31,14 +31,13 @@ import platform.UIKit.UIImagePickerControllerSourceType
 
 @Suppress("FunctionNaming", "LongMethod", "ComplexMethod")
 @Composable
-actual fun ImagePickerLauncher(
+internal actual fun PlatformCameraRenderer(
     config: ImagePickerConfig
 ) {
     var selectedPhotoForCrop by remember { mutableStateOf<PhotoResult?>(null) }
     var showCropView by remember { mutableStateOf(false) }
     var cropCancelled by remember { mutableStateOf(false) }
 
-    // Permiso denegado permanentemente — necesitamos mostrar dialog de Settings
     var showSettingsDialog by remember { mutableStateOf(false) }
     var isProcessingSettingsAction by remember { mutableStateOf(false) }
     var hasNavigatedToSettings by remember { mutableStateOf(false) }
@@ -57,10 +56,7 @@ actual fun ImagePickerLauncher(
         }
     }
 
-    val onCameraFinished = { showCropView = false; selectedPhotoForCrop = null }
-
-    // Observador de lifecycle para detectar retorno desde Settings
-    io.github.ismoy.imagepickerkmp.domain.utils.AppLifecycleObserver(
+    AppLifecycleObserver(
         onAppBecomeActive = {
             val status = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
             when {
@@ -145,13 +141,11 @@ actual fun ImagePickerLauncher(
                 }
             }
             AVAuthorizationStatusDenied, AVAuthorizationStatusRestricted -> {
-                // Ya denegado permanentemente — mostrar dialog de Settings
                 showSettingsDialog = true
             }
         }
     }
 
-    // Dialog de permiso denegado (solo aparece si el permiso fue denegado)
     if (showSettingsDialog) {
         val dialogConfig = CameraPermissionDialogConfig(
             titleDialogConfig = "Camera permission required",

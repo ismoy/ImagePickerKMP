@@ -15,7 +15,7 @@ import imagepickerkmp.library.generated.resources.invalid_context_error
 
 @Suppress("FunctionNaming")
 @Composable
-actual fun ImagePickerLauncher(
+internal actual fun PlatformCameraRenderer(
     config: ImagePickerConfig
 ) {
     val context = LocalContext.current

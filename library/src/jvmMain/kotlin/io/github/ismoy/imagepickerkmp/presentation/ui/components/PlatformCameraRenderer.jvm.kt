@@ -9,7 +9,7 @@ import io.github.ismoy.imagepickerkmp.domain.utils.JvmFilePicker
 
 @Suppress("FunctionNaming")
 @Composable
-actual fun ImagePickerLauncher(
+internal actual fun PlatformCameraRenderer(
     config: ImagePickerConfig
 ) {
     // On JVM, we can only access the file gallery

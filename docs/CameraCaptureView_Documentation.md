@@ -111,7 +111,7 @@ The `CameraCaptureView` manages three main states:
 - Provides confirm and retry options
 - Supports custom confirmation views
 
-### GalleryPickerLauncher
+### Gallery Selection (via rememberImagePickerKMP)
 - Handles gallery photo selection
 - Supports multiple photo selection
 - Integrates with system gallery
@@ -121,25 +121,34 @@ The `CameraCaptureView` manages three main states:
 **Platform details:**
 - On **Android**, the system gallery picker is used and permissions are requested automatically if needed.
 - On **iOS**, the native gallery picker is used. On iOS 14+, multiple selection is supported. The system handles permissions and limited access natively.
-- The callback `onPhotosSelected` always receives a list, even for single selection.
-- Use `allowMultiple` to enable or disable multi-image selection.
-- The `mimeTypes` parameter is optional and lets you filter selectable file types.
+- The result `ImagePickerResult.Success` always contains a list in `result.photos`, even for single selection.
+- Use `picker.launchGallery(allowMultiple = true)` to enable multi-image selection.
+- The `mimeTypes` parameter in `GalleryConfig` is optional and lets you filter selectable file types.
 
 #### Example
 ```kotlin
 @Composable
 fun MyGalleryPicker() {
-    var showGallery by remember { mutableStateOf(false) }
-    if (showGallery) {
-        GalleryPickerLauncher(
-            context = LocalContext.current, // Android only
-            onPhotosSelected = { results -> showGallery = false },
-            onError = { showGallery = false },
-            allowMultiple = true
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            galleryConfig = GalleryConfig(allowMultiple = true)
         )
-    }
-    Button(onClick = { showGallery = true }) {
+    )
+
+    Button(onClick = { picker.launchGallery() }) {
         Text("Pick from Gallery")
+    }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success -> {
+            result.photos.forEach { photo ->
+                // Use photo.uri, photo.width, photo.height
+            }
+        }
+        is ImagePickerResult.Error -> { /* handle error */ }
+        is ImagePickerResult.Dismissed -> { /* cancelled */ }
+        is ImagePickerResult.Loading -> { /* loading */ }
+        is ImagePickerResult.Idle -> { /* initial state */ }
     }
 }
 ```

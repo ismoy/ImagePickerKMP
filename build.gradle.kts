@@ -7,4 +7,4 @@ plugins {
     alias(libs.plugins.kover)
 }
 
-version = "1.0.41"
+version = "1.0.42"

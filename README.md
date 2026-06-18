@@ -222,117 +222,73 @@ picker.launchCamera(
 
 ---
 
-## New API vs Legacy API — Migration Guide
+## API — `rememberImagePickerKMP`
 
-> **TL;DR:** Use `rememberImagePickerKMP` for all new code. The legacy `ImagePickerLauncher` / `GalleryPickerLauncher` are **deprecated** and will be removed in a future major release.
+The library exposes a single public API based on the standard Compose state-hook pattern:
 
-### Side-by-side comparison
-
-| | Legacy API (v1) — Deprecated | New API (v2) — Recommended |
-|---|---|---|
-| Camera | `ImagePickerLauncher(config = ...)` | `picker.launchCamera()` |
-| Gallery | `GalleryPickerLauncher(...)` | `picker.launchGallery()` |
-| Result handling | Callbacks (`onPhotoCaptured`, `onDismiss`, `onError`) | Reactive `when (picker.result)` |
-| State management | Manual `showCamera`, `showGallery` booleans | Automatic via `ImagePickerKMPState` |
-| Per-launch config | Not supported | Override any param on each `launch*()` call |
-| Reset | Call `onDismiss` callback | `picker.reset()` |
-| Configuration | `ImagePickerConfig` + `GalleryPickerConfig` | `ImagePickerKMPConfig` (unified) |
-
-### Migration table
-
-| Legacy pattern | New API equivalent |
-|---|---|
-| `showCamera = true` | `picker.launchCamera()` |
-| `showGallery = true` | `picker.launchGallery()` |
-| `onPhotoCaptured = { result -> ... }` | `is ImagePickerResult.Success -> result.photos` |
-| `onDismiss = { showCamera = false }` | `is ImagePickerResult.Dismissed -> ...` |
-| `onError = { e -> ... }` | `is ImagePickerResult.Error -> result.exception` |
-| `ImagePickerConfig(cameraCaptureConfig = ...)` | `ImagePickerKMPConfig(cameraCaptureConfig = ...)` |
-| `GalleryPickerConfig(includeExif = true)` | `ImagePickerKMPConfig(galleryConfig = GalleryConfig(includeExif = true))` |
-| `allowMultiple = true` in `GalleryPickerLauncher` | `picker.launchGallery(allowMultiple = true)` |
-
-### Legacy API (still functional, migration recommended)
-
-The legacy API still works and will **not break** existing apps. You will see a compiler **warning** recommending migration to `rememberImagePickerKMP`.
-
-**Camera Capture (legacy):**
 ```kotlin
-var showCamera by remember { mutableStateOf(false) }
-var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
+@Composable
+fun MyScreen() {
+    val picker = rememberImagePickerKMP()
+    val result = picker.result
 
-if (showCamera) {
-    ImagePickerLauncher(  // Deprecated — migrate to rememberImagePickerKMP
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result ->
-                capturedPhoto = result
-                showCamera = false
-            },
-            onError = { showCamera = false },
-            onDismiss = { showCamera = false }
-        )
-    )
-}
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Button(onClick = { picker.launchCamera() }, modifier = Modifier.weight(1f)) {
+            Text("Camera")
+        }
+        Button(onClick = { picker.launchGallery() }, modifier = Modifier.weight(1f)) {
+            Text("Gallery")
+        }
+    }
 
-Button(onClick = { showCamera = true }) {
-    Text("Take Photo")
-}
-```
-
-**Gallery Selection (legacy):**
-```kotlin
-var showGallery by remember { mutableStateOf(false) }
-var selectedImages by remember { mutableStateOf<List<PhotoResult>>(emptyList()) }
-
-if (showGallery) {
-    GalleryPickerLauncher(  // Deprecated — migrate to rememberImagePickerKMP
-        config = GalleryPickerConfig(includeExif = true),
-        onPhotosSelected = { photos ->
-            selectedImages = photos
-            showGallery = false
-        },
-        onError = { showGallery = false },
-        onDismiss = { showGallery = false },
-        allowMultiple = true
-    )
-}
-
-Button(onClick = { showGallery = true }) {
-    Text("Choose from Gallery")
-}
-```
-## ⚠️ Important Usage Note
-
-**Camera Preview Not Showing?** Some developers have reported that the camera usage indicator appears, but the preview doesn't show up. This happens when `ImagePickerLauncher` is not placed inside a visible container composable.
-
-**✅ Correct usage:**
-```kotlin
-Box(modifier = Modifier.fillMaxSize()) {
-    if (showCamera) {
-        ImagePickerLauncher(
-            config = ImagePickerConfig(
-                onPhotoCaptured = { /* handle image */ },
-                onDismiss = { showCamera = false }
-            )
-        )
+    when (result) {
+        is ImagePickerResult.Loading   -> CircularProgressIndicator()
+        is ImagePickerResult.Success   -> {
+            val photos = result.photos
+            if (photos.size == 1) {
+                CameraResultCard(photo = photos.first())
+            } else {
+                MultiPhotoGrid(photos = photos)
+            }
+        }
+        is ImagePickerResult.Error     -> Text("Error: ${result.exception.message}", color = Color.Red)
+        is ImagePickerResult.Dismissed -> Text("Selection cancelled", color = Color.Gray)
+        is ImagePickerResult.Idle      -> Text("Press a button to get started", color = Color.Gray)
     }
 }
 ```
 
-**❌ Incorrect usage:**
+### Configuration
+
+Pass an `ImagePickerKMPConfig` to customize behavior globally:
+
 ```kotlin
-if (showCamera) {
-    ImagePickerLauncher(
-        config = ImagePickerConfig(
-            onPhotoCaptured = { /* handle image */ },
-            onDismiss = { showCamera = false }
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        cropConfig          = CropConfig(enabled = true, squareCrop = true),
+        galleryConfig       = GalleryConfig(allowMultiple = true, selectionLimit = 10),
+        cameraCaptureConfig = CameraCaptureConfig(
+            compressionLevel = CompressionLevel.HIGH,
+            includeExif      = true
         )
     )
-}
+)
 ```
 
-> **💡 Always wrap the camera launcher inside a composable container (Box, Column, Row) and control its visibility with state.**
->
-> *Thanks to [@rnstewart](https://github.com/rnstewart) and other contributors for pointing this out! 🙏*
+### Per-launch overrides
+
+Override any parameter for a single invocation without changing the global config:
+
+```kotlin
+// Allow multiple selection only for this launch
+picker.launchGallery(allowMultiple = true, selectionLimit = 5)
+
+// Enable EXIF only for this camera launch
+picker.launchCamera(cameraCaptureConfig = CameraCaptureConfig(includeExif = true))
+```
 
 
 ## Key Features
@@ -388,54 +344,71 @@ Experience ImagePickerKMP in action:
 
 ### Image Compression
 ```kotlin
-ImagePickerLauncher(
-    config = ImagePickerConfig(
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
         cameraCaptureConfig = CameraCaptureConfig(
-            compressionLevel = CompressionLevel.HIGH, // LOW, MEDIUM, HIGH
+            compressionLevel = CompressionLevel.HIGH // LOW, MEDIUM, HIGH
+        ),
+        permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
             skipConfirmation = true
         )
     )
 )
+picker.launchCamera()
 ```
 
-### EXIF Metadata Extraction
+### EXIF Metadata Extraction (Camera)
 ```kotlin
-ImagePickerLauncher(
-    config = ImagePickerConfig(
-        onPhotoCaptured = { result ->
-            result.exif?.let { exif ->
-                println(" Location: ${exif.latitude}, ${exif.longitude}")
-                println(" Camera: ${exif.cameraModel}")
-                println(" Taken: ${exif.dateTaken}")
-            }
-        },
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
         cameraCaptureConfig = CameraCaptureConfig(
             includeExif = true  // Android/iOS only
         )
     )
 )
 
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> {
+        result.photos.first().exif?.let { exif ->
+            println(" Location: ${exif.latitude}, ${exif.longitude}")
+            println(" Camera: ${exif.cameraModel}")
+            println(" Taken: ${exif.dateTaken}")
+        }
+    }
+    else -> Unit
+}
 ```
-### EXIF Metadata Extraction
+
+### EXIF Metadata Extraction (Gallery)
 ```kotlin
-GalleryPickerLauncher(
-    allowMultiple = true,
-    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
-    includeExif = true  // Android/iOS only
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        galleryConfig = GalleryConfig(
+            allowMultiple = true,
+            mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+            includeExif = true  // Android/iOS only
+        )
+    )
 )
+picker.launchGallery()
 ```
+
 ### Multiple Selection with Filtering
 ```kotlin
 // Images only
-GalleryPickerLauncher(
-    allowMultiple = true,
-    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
-    enableCrop = true
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        galleryConfig = GalleryConfig(
+            allowMultiple = true,
+            mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)
+        ),
+        cropConfig = CropConfig(enabled = true)
+    )
 )
+picker.launchGallery()
 
 // Images and PDFs
-GalleryPickerLauncher(
-    allowMultiple = true,
+picker.launchGallery(
     mimeTypes = listOf(
         MimeType.IMAGE_JPEG,
         MimeType.IMAGE_PNG,
@@ -458,28 +431,30 @@ Add to your `Info.plist`:
 Process images easily with built-in extension functions:
 
 ```kotlin
-ImagePickerLauncher(
-    config = ImagePickerConfig(
-        onPhotoCaptured = { result ->
-            val imageBytes = result.loadBytes()        // ByteArray for file operations
-            val imagePainter = result.loadPainter()    // Painter for Compose UI
-            val imageBitmap = result.loadImageBitmap() // ImageBitmap for graphics
-            val imageBase64 = result.loadBase64()      // Base64 string for APIs
+val picker = rememberImagePickerKMP()
 
-            // File system operations (kotlinx-io)
-            val absolutePath = result.absolutePath     // String - absolute file path
-            val path = result.asPath()                 // Path object for file operations
-            val exists = result.exists()               // Check if file exists
-            val rawSource = result.asRawSource()       // RawSource for low-level reading
-            val source = result.asSource()             // Buffered Source for efficient reading
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> {
+        val photo = result.photos.first()
 
-            // Copy photo to another location
-            val sink = SystemFileSystem
-                .sink(Path("copy.jpg"))
-            result.transferToSink(sink)                // Transfer content to RawSink
-        }
-    )
-)
+        val imageBytes = photo.loadBytes()        // ByteArray for file operations
+        val imagePainter = photo.loadPainter()    // Painter for Compose UI
+        val imageBitmap = photo.loadImageBitmap() // ImageBitmap for graphics
+        val imageBase64 = photo.loadBase64()      // Base64 string for APIs
+
+        // File system operations (kotlinx-io)
+        val absolutePath = photo.absolutePath     // String - absolute file path
+        val path = photo.asPath()                 // Path object for file operations
+        val exists = photo.exists()               // Check if file exists
+        val rawSource = photo.asRawSource()       // RawSource for low-level reading
+        val source = photo.asSource()             // Buffered Source for efficient reading
+
+        // Copy photo to another location
+        val sink = SystemFileSystem.sink(Path("copy.jpg"))
+        photo.transferToSink(sink)                // Transfer content to RawSink
+    }
+    else -> Unit
+}
 ```
 
 ## React/Web Integration
@@ -556,8 +531,8 @@ If this library saves you time or money in production, please consider supportin
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/james-codersHT">
-        <img src="https://github.com/james-codersHT.png" width="80px" alt="james-codersHT"/><br/>
+      <a href="https://github.com/james-codersHT" title="james-codersHT · Silver Sponsor">
+        <img src="https://avatars.githubusercontent.com/james-codersHT?s=80" width="80px" alt="james-codersHT"/><br/>
         <sub><b>james-codersHT</b></sub>
       </a>
     </td>
@@ -613,6 +588,13 @@ Thanks to these wonderful people ([emoji key](https://allcontributors.org/docs/e
           <sub><b>daniil-pastuhov</b></sub>
         </a><br />
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
+      </td>
+      <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/fanqieVip">
+          <img src="https://avatars.githubusercontent.com/u/42194904?v=4" width="100px;" alt="fanqieVip"/><br />
+          <sub><b>fanqieVip</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=fanqieVip" title="Contributions">💻</a>
       </td>
     </tr>
   </tbody>
