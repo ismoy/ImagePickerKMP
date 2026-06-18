@@ -14,7 +14,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Suppress("ReturnCount","LongParameterList")
 @Composable
-actual fun GalleryPickerLauncher(
+internal actual fun PlatformGalleryRenderer(
     onPhotosSelected: (List<GalleryPhotoResult>) -> Unit,
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,

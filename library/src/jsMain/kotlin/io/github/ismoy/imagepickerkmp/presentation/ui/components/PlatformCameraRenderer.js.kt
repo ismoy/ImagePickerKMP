@@ -46,11 +46,11 @@ private fun isMobileContext(): Boolean {
 }
 
 /**
- * JS implementation for ImagePickerLauncher.
+ * JS implementation for PlatformCameraRenderer.
  * Uses WebRTC camera capture and file picker functionality for web browsers.
  */
 @Composable
-actual fun ImagePickerLauncher(
+internal actual fun PlatformCameraRenderer(
     config: ImagePickerConfig
 ) {
     val launchKey = remember {

@@ -6,125 +6,21 @@ Complete API documentation for the ImagePickerKMP library.
 
 ## Table of Contents
 
-- [API v2 vs Legacy API — Migration Guide](#api-v2-vs-legacy-api--migration-guide)
-- [rememberImagePickerKMP (Recommended)](#rememberimagePickerkmp)
+- [rememberImagePickerKMP](#rememberimagePickerkmp)
 - [Main Components](#main-components)
 - [Data Classes](#data-classes)
 - [Enums](#enums)
 - [Configuration](#configuration)
+- [Extension Functions](#extension-functions)
 - [Platform-specific APIs](#platform-specific-apis)
 
 ---
 
-## API v2 vs Legacy API — Migration Guide
-
-> **TL;DR:** Use `rememberImagePickerKMP` for all new code. `ImagePickerLauncher` and `GalleryPickerLauncher` are **deprecated** (`@Deprecated(level = WARNING)`) and will be removed in a future major release. Existing code keeps working without changes.
-
-### At-a-glance comparison
-
-| Feature | Legacy API (v1) ⚠️ Deprecated | New API (v2) ✅ Recommended |
-|---|---|---|
-| Camera | `ImagePickerLauncher(config = ImagePickerConfig(...))` | `picker.launchCamera()` |
-| Gallery | `GalleryPickerLauncher(onPhotosSelected = { }, ...)` | `picker.launchGallery()` |
-| Result | Callbacks: `onPhotoCaptured`, `onDismiss`, `onError` | Reactive: `when (picker.result) { is Success -> }` |
-| State management | Manual `showCamera`/`showGallery` booleans | Automatic via `ImagePickerKMPState` |
-| Per-launch overrides | Not supported | Every `launch*()` parameter is optional override |
-| Reset | Call `onDismiss` callback | `picker.reset()` |
-| Config class | `ImagePickerConfig` + `GalleryPickerConfig` | `ImagePickerKMPConfig` (unified) |
-| `Render()` call needed | ❌ Legacy required wrapper composables | ❌ No `Render()` in new API either |
-
-### Migration table
-
-| Legacy pattern | New API equivalent |
-|---|---|
-| `var showCamera by remember { mutableStateOf(false) }` | *(remove — not needed)* |
-| `showCamera = true` | `picker.launchCamera()` |
-| `showGallery = true` | `picker.launchGallery()` |
-| `onPhotoCaptured = { result -> ... }` | `is ImagePickerResult.Success -> result.photos` |
-| `onDismiss = { showCamera = false }` | `is ImagePickerResult.Dismissed -> ...` |
-| `onError = { e -> ... }` | `is ImagePickerResult.Error -> result.exception` |
-| `ImagePickerConfig(cameraCaptureConfig = ...)` | `ImagePickerKMPConfig(cameraCaptureConfig = ...)` |
-| `GalleryPickerConfig(includeExif = true)` | `ImagePickerKMPConfig(galleryConfig = GalleryConfig(includeExif = true))` |
-| `GalleryPickerLauncher(allowMultiple = true)` | `picker.launchGallery(allowMultiple = true)` |
-| `GalleryPickerLauncher(selectionLimit = 5)` | `picker.launchGallery(selectionLimit = 5)` |
-| `GalleryPickerLauncher(mimeTypes = listOf(...))` | `picker.launchGallery(mimeTypes = listOf(...))` |
-
-### Code comparison
-
-**Legacy — camera capture (still works, deprecated):**
-```kotlin
-var showCamera by remember { mutableStateOf(false) }
-
-if (showCamera) {
-    ImagePickerLauncher(  // ⚠️ Deprecated
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result -> /* use result */ showCamera = false },
-            onDismiss = { showCamera = false },
-            onError = { showCamera = false }
-        )
-    )
-}
-Button(onClick = { showCamera = true }) { Text("Camera") }
-```
-
-**New API — camera capture (recommended):**
-```kotlin
-val picker = rememberImagePickerKMP()
-
-Button(onClick = { picker.launchCamera() }) { Text("Camera") }
-
-when (val result = picker.result) {
-    is ImagePickerResult.Success   -> result.first?.let { /* use photo */ }
-    is ImagePickerResult.Dismissed -> { /* user cancelled */ }
-    is ImagePickerResult.Error     -> Text("Error: ${result.exception.message}")
-    is ImagePickerResult.Loading   -> CircularProgressIndicator()
-    is ImagePickerResult.Idle      -> { /* initial state */ }
-}
-```
-
-**Legacy — gallery selection (still works, deprecated):**
-```kotlin
-var showGallery by remember { mutableStateOf(false) }
-
-if (showGallery) {
-    GalleryPickerLauncher(  // ⚠️ Deprecated
-        onPhotosSelected = { photos -> selectedImages = photos; showGallery = false },
-        onDismiss = { showGallery = false },
-        onError = { showGallery = false },
-        allowMultiple = true,
-        mimeTypes = listOf(MimeType.IMAGE_JPEG)
-    )
-}
-Button(onClick = { showGallery = true }) { Text("Gallery") }
-```
-
-**New API — gallery selection (recommended):**
-```kotlin
-val picker = rememberImagePickerKMP(
-    config = ImagePickerKMPConfig(
-        galleryConfig = GalleryConfig(allowMultiple = true, selectionLimit = 10)
-    )
-)
-
-Button(onClick = { picker.launchGallery() }) { Text("Gallery") }
-// or with per-launch override:
-Button(onClick = { picker.launchGallery(allowMultiple = true, selectionLimit = 5) }) { Text("Gallery (5 max)") }
-
-when (val result = picker.result) {
-    is ImagePickerResult.Success -> result.photos.forEach { /* use each photo */ }
-    else -> { /* handle other states */ }
-}
-```
-
-> **Note — internal architecture:** `rememberImagePickerKMP` calls `ImagePickerLauncher` / `GalleryPickerLauncher` internally as platform-specific rendering layers. The internal call site uses `@Suppress("DEPRECATION")` so consumers of the new API see no compiler warnings. Only developers who call the legacy functions directly see the migration warning.
-
----
-
-## rememberImagePickerKMP (Recommended) {#rememberimagePickerkmp}
+## rememberImagePickerKMP {#rememberimagePickerkmp}
 
 > **Available since:** `1.0.35-alpha1` · All platforms
 
-`rememberImagePickerKMP` es el punto de entrada **recomendado** para Compose. Retorna un `ImagePickerKMPState` — un state holder estable que reemplaza los booleans manuales `showCamera`/`showGallery`. **No requiere ningún `Render()` ni composable adicional** — el picker se auto-gestiona al invocar `launchCamera()` o `launchGallery()`.
+`rememberImagePickerKMP` is the entry point for Compose. It returns an `ImagePickerKMPState` — a stable state holder that replaces manual `showCamera`/`showGallery` booleans. **No `Render()` or additional composable is required** — the picker self-manages when you call `launchCamera()` or `launchGallery()`.
 
 ### Signature
 
@@ -161,34 +57,33 @@ data class ImagePickerKMPConfig(
 
 | Method / Property | Description |
 |---|---|
-| `result: ImagePickerResult` | Estado reactivo. Empieza en `Idle`. Observar con `when`. Se actualiza automáticamente cuando el picker abre, el usuario selecciona o cancela. |
-| `launchCamera(cameraCaptureConfig?, enableCrop?, onDismiss?, onError?)` | Abre la cámara. Todos los parámetros son opcionales y sobreescriben el config global solo para este lanzamiento. |
-| `launchGallery(allowMultiple?, mimeTypes?, selectionLimit?, enableCrop?, includeExif?, redactGpsData?, mimeTypeMismatchMessage?, cameraCaptureConfig?, onDismiss?, onError?)` | Abre la galería. Todos los parámetros son opcionales y sobreescriben el `GalleryConfig` global solo para este lanzamiento. |
-| `reset()` | Resetea `result` a `Idle` y cierra cualquier picker activo. |
+| `result: ImagePickerResult` | Reactive state. Starts at `Idle`. Observe with `when`. Updates automatically when the picker opens, the user selects or cancels. |
+| `launchCamera(cameraCaptureConfig?, enableCrop?, onDismiss?, onError?)` | Opens the camera. All parameters are optional and override the global config only for this launch. |
+| `launchGallery(allowMultiple?, mimeTypes?, selectionLimit?, enableCrop?, includeExif?, redactGpsData?, mimeTypeMismatchMessage?, cameraCaptureConfig?, onDismiss?, onError?)` | Opens the gallery. All parameters are optional and override the global `GalleryConfig` only for this launch. |
+| `reset()` | Resets `result` to `Idle` and closes any active picker. |
 
-> ⚠️ **No existe `Render()` ni `launchPicker()`** en esta API. El picker se gestiona internamente.
+> ⚠️ **There is no `Render()` or `launchPicker()`** in this API. The picker is managed internally.
 
 ### ImagePickerResult
 
 ```kotlin
 sealed class ImagePickerResult {
-    data object Idle        : ImagePickerResult()   // Estado inicial / tras reset()
-    data object Loading     : ImagePickerResult()   // Picker abierto, esperando acción
+    data object Idle        : ImagePickerResult()   // Initial state / after reset()
+    data object Loading     : ImagePickerResult()   // Picker open, waiting for action
     data class  Success(val photos: List<PhotoResult>) : ImagePickerResult()
-    data object Dismissed   : ImagePickerResult()   // Usuario cerró sin seleccionar
+    data object Dismissed   : ImagePickerResult()   // User closed without selecting
     data class  Error(val exception: Exception) : ImagePickerResult()
 }
 ```
 
-`Success` also exposes `val first: PhotoResult?` — primera foto (útil en captura de cámara).
+`Success` also exposes `val first: PhotoResult?` — first photo (useful for camera capture).
 
-### Ejemplo real completo
+### Full Example
 
 ```kotlin
 @Composable
 fun MyScreen(innerPadding: PaddingValues) {
 
-    // No se necesita Render() ni booleans manuales
     val picker = rememberImagePickerKMP(
         config = ImagePickerKMPConfig(
             enableCrop = false,
@@ -228,20 +123,20 @@ fun MyScreen(innerPadding: PaddingValues) {
 
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Button(onClick = { picker.launchCamera() }, modifier = Modifier.weight(1f)) {
-                Text("Cámara")
+                Text("Camera")
             }
             Button(onClick = { picker.launchGallery() }, modifier = Modifier.weight(1f)) {
-                Text("Galería")
+                Text("Gallery")
             }
         }
     }
 }
 ```
 
-### Override por lanzamiento
+### Per-Launch Override
 
 ```kotlin
-// Override solo para este botón — no afecta el config global
+// Override only for this button — does not affect the global config
 Button(onClick = {
     picker.launchGallery(
         allowMultiple = true,
@@ -251,7 +146,7 @@ Button(onClick = {
     )
 }) { Text("Pick up to 5 images") }
 
-// Cámara con compresión HIGH y crop, solo para este tap
+// Camera with HIGH compression and crop, only for this tap
 Button(onClick = {
     picker.launchCamera(
         cameraCaptureConfig = CameraCaptureConfig(compressionLevel = CompressionLevel.HIGH),
@@ -262,55 +157,40 @@ Button(onClick = {
 
 ---
 
-##  Photo Capture – Specific Documentation
+## Photo Capture – Specific Documentation
 
-## Description
+### Description
+
 The photo capture functionality in ImagePickerKMP allows developers to integrate a modern, customizable, and cross-platform camera experience into their applications. It includes flash control, camera switching, preview, confirmation, and complete UI customization.
 
 ---
 
-## Basic photo capture example for Android and iOS
+### Basic photo capture example
 
 ```kotlin
-ImagePickerLauncher(
-    config = ImagePickerConfig(
-        onPhotoCaptured = { result ->
-            // Handle the captured photo result
-            println("Photo captured: ${result.uri}")
-        },
-        onError = { exception ->
-            // Handle errors
-            println("Error: ${exception.message}")
-        },
-        onDismiss = {
-            // Handle when user cancels
-            println("User cancelled")
+val picker = rememberImagePickerKMP()
+
+Button(onClick = { picker.launchCamera() }) { Text("Camera") }
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> {
+        result.first?.let { photo ->
+            println("Photo captured: ${photo.uri}")
         }
-    )
-)
+    }
+    is ImagePickerResult.Error -> println("Error: ${result.exception.message}")
+    is ImagePickerResult.Dismissed -> println("User cancelled")
+    else -> {}
+}
 ```
 
 ---
 
-## Advanced example: Confirmation customization (Android only)
+### Advanced example: Confirmation customization (Android only)
 
 ```kotlin
-ImagePickerLauncher(
-    config = ImagePickerConfig(
-        onPhotoCaptured = { result ->
-            // Handle the captured photo result
-            cameraPhoto = result
-            showCameraPicker = false
-        },
-        onError = { exception ->
-            // Handle errors
-            showCameraPicker = false
-        },
-        onDismiss = {
-            // Handle cancellation
-            showCameraPicker = false
-        },
-        // Custom confirmation view (Android only)
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
         cameraCaptureConfig = CameraCaptureConfig(
             preference = CapturePhotoPreference.QUALITY,
             permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
@@ -325,51 +205,30 @@ ImagePickerLauncher(
         )
     )
 )
+
+Button(onClick = { picker.launchCamera() }) { Text("Camera") }
 ```
 
-## Example: Skip confirmation screen (Android only)
+### Example: Skip confirmation screen (Android only)
 
 ```kotlin
-ImagePickerLauncher(
-    config = ImagePickerConfig(
-        onPhotoCaptured = { result ->
-            // Photo is captured automatically without confirmation
-            cameraPhoto = result
-            showCameraPicker = false
-        },
-        onError = { exception ->
-            // Handle errors
-            showCameraPicker = false
-        },
-        onDismiss = {
-            // Handle cancellation
-            showCameraPicker = false
-        },
-        // Configuration to skip confirmation
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
         cameraCaptureConfig = CameraCaptureConfig(
             preference = CapturePhotoPreference.QUALITY,
             permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                skipConfirmation = true // NEW! Skips the confirmation screen
+                skipConfirmation = true
             )
         )
     )
 )
+
+Button(onClick = { picker.launchCamera() }) { Text("Camera (no confirmation)") }
 ```
 
 ---
 
-## Relevant parameters
-
-- **onPhotoCaptured**: Callback with the photo result (`CameraPhotoHandler.PhotoResult`)
-- **onError**: Callback to handle errors (`Exception`)
-- **onDismiss**: Callback when user cancels
-- **preference**: Photo quality preference (`CapturePhotoPreference.FAST`, `BALANCED`, `QUALITY`)
-- **customConfirmationView**: Composable to customize confirmation UI (Android only)
-- **customPickerDialog**: Composable to customize selection dialog (iOS only)
-
----
-
-## User experience
+### User experience
 - **Preview**: User sees the camera in real-time.
 - **Flash control**: Button to toggle between Auto, On, Off (visual icons).
 - **Camera switching**: Button to toggle between rear and front camera.
@@ -378,7 +237,7 @@ ImagePickerLauncher(
 
 ---
 
-## Notes and recommendations
+### Notes and recommendations
 - The permission system is managed automatically.
 - You can completely customize the confirmation UI.
 - Default texts are in English, but you can easily localize them.
@@ -387,7 +246,7 @@ ImagePickerLauncher(
 
 ---
 
-## Code references in the project
+### Code references in the project
 - **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraCapturePreview.kt**: Preview logic and camera controls.
 - **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/ImageConfirmationViewWithCustomButtons.kt**: Photo confirmation UI.
 - **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/CameraController.kt**: Camera control logic, flash and camera switching.
@@ -395,81 +254,78 @@ ImagePickerLauncher(
 
 ---
 
-##  Gallery Image Selection – Specific Documentation
+## Gallery Image Selection – Specific Documentation
 
-## Description
+### Description
+
 The gallery functionality in ImagePickerKMP allows developers to integrate a modern and customizable experience for selecting images from the device gallery. It supports single or multiple selection, file type filters, and custom confirmation.
 
 ---
-## Main Components
 
-### ImagePickerLauncher
-
-## Basic image selection example
+### Basic image selection example
 
 ```kotlin
-GalleryPickerLauncher(
-    onPhotosSelected = { results ->
-        // Handle selected images
-        println("Selected images: ${results}")
-    },
-    onError = { exception ->
-        // Handle errors
-        println("Error: ${exception.message}")
-    },
-    onDismiss = {
-        // Handle when user cancels
-        println("User cancelled selection")
+val picker = rememberImagePickerKMP()
+
+Button(onClick = { picker.launchGallery() }) { Text("Gallery") }
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> {
+        println("Selected images: ${result.photos}")
     }
-)
+    is ImagePickerResult.Error -> println("Error: ${result.exception.message}")
+    is ImagePickerResult.Dismissed -> println("User cancelled selection")
+    else -> {}
+}
 ```
 
 ---
 
-## Advanced example: Multiple selection with filters
+### Advanced example: Multiple selection with filters
 
 ```kotlin
-GalleryPickerLauncher(
-    onPhotosSelected = { results ->
-        // Handle multiple selected images
-        selectedImages = results
-        showGalleryPicker = false
-    },
-    onError = { exception ->
-        // Handle errors
-        showGalleryPicker = false
-    },
-    onDismiss = {
-        // Handle cancellation
-        showGalleryPicker = false
-    },
-    allowMultiple = true, // Allow multiple selection
-    mimeTypes = listOf("image/jpeg", "image/png"), // Filter by file types
-    selectionLimit = 30 // Selection limit (maximum 30 images) iOS only, Android has no limit
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        galleryConfig = GalleryConfig(
+            allowMultiple = true,
+            mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+            selectionLimit = 30
+        )
+    )
 )
+
+Button(onClick = { picker.launchGallery() }) { Text("Gallery") }
+
+// Or with per-launch override:
+Button(onClick = {
+    picker.launchGallery(
+        allowMultiple = true,
+        mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+        selectionLimit = 5
+    )
+}) { Text("Gallery (5 max)") }
 ```
 
 ---
 
-## Relevant parameters
+### Relevant parameters (via `GalleryConfig` or per-launch overrides)
 
-- **onPhotosSelected**: Callback with the list of selected images (`List<GalleryPhotoHandler.PhotoResult>`)
-- **onError**: Callback to handle errors (`Exception`)
-- **onDismiss**: Callback when user cancels
 - **allowMultiple**: Allows selecting multiple images (default: `false`)
 - **mimeTypes**: List of allowed MIME types (default: `listOf("image/*")`)
 - **selectionLimit**: Maximum selection limit (default: `30`)
+- **includeExif**: Extract EXIF metadata from selected images
+- **redactGpsData**: Strip GPS coordinates from EXIF before delivery
 
 ---
 
-## User experience
+### User experience
 - **Gallery selector**: User can choose one image or several (if `allowMultiple` is enabled)
 - **Filters**: File type filters can be applied using `mimeTypes`
 - **Limits**: A maximum selection limit can be set with `selectionLimit`
 
 ---
 
-## Notes and recommendations
+### Notes and recommendations
 - The permission system is managed automatically
 - Multiple selection is supported on both platforms (Android and iOS)
 - MIME types allow filtering by specific image formats
@@ -477,21 +333,15 @@ GalleryPickerLauncher(
 
 ---
 
-## Code references in the project
-- **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/GalleryPickerLauncher.android.kt**: Image selection logic on Android.
-- **library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/GalleryPickerLauncher.kt**: Cross-platform abstraction for gallery.
-- **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/ImageConfirmationViewWithCustomButtons.kt**: Image confirmation UI.
+## Image Compression – Specific Documentation
 
----
+### Description
 
-##  Image Compression – Specific Documentation
-
-## Description
 The image compression functionality in ImagePickerKMP automatically optimizes image size while maintaining acceptable quality. It works for both camera capture and gallery selection, with configurable compression levels and async processing.
 
 ---
 
-## Features
+### Features
 - **Automatic compression**: Applies compression transparently during image processing
 - **Configurable levels**: LOW, MEDIUM, HIGH compression options
 - **Multi-format support**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP
@@ -501,7 +351,7 @@ The image compression functionality in ImagePickerKMP automatically optimizes im
 
 ---
 
-## Compression Levels
+### Compression Levels
 
 | Level | Quality | Max Dimension | Use Case |
 |-------|---------|---------------|----------|
@@ -511,54 +361,66 @@ The image compression functionality in ImagePickerKMP automatically optimizes im
 
 ---
 
-## Camera with Compression
+### Camera with Compression
 
 ```kotlin
-ImagePickerLauncher(
-    config = ImagePickerConfig(
-        onPhotoCaptured = { result ->
-            val fileSizeKB = (result.fileSize ?: 0) / 1024.0
-            println("Compressed image size: ${String.format("%.2f", fileSizeKB)}KB")
-            println("Exact size: ${result.fileSize} bytes")
-        },
-        onError = { exception ->
-            println("Error: ${exception.message}")
-        },
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
         cameraCaptureConfig = CameraCaptureConfig(
             compressionLevel = CompressionLevel.MEDIUM
         )
     )
 )
+
+Button(onClick = { picker.launchCamera() }) { Text("Camera") }
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> {
+        result.first?.let { photo ->
+            val fileSizeKB = (photo.fileSize ?: 0) / 1024.0
+            println("Compressed image size: ${String.format("%.2f", fileSizeKB)}KB")
+            println("Exact size: ${photo.fileSize} bytes")
+        }
+    }
+    else -> {}
+}
 ```
 
 ---
 
-## Gallery with Compression
+### Gallery with Compression
 
 ```kotlin
-GalleryPickerLauncher(
-    onPhotosSelected = { results ->
-        results.forEach { photo ->
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        galleryConfig = GalleryConfig(
+            allowMultiple = true,
+            mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)
+        ),
+        cameraCaptureConfig = CameraCaptureConfig(
+            compressionLevel = CompressionLevel.HIGH
+        )
+    )
+)
+
+Button(onClick = { picker.launchGallery() }) { Text("Gallery") }
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> {
+        result.photos.forEach { photo ->
             val fileSizeKB = (photo.fileSize ?: 0) / 1024.0
             println("Original: ${photo.fileName}")
             println("Compressed size: ${String.format("%.2f", fileSizeKB)}KB")
             println("Exact size: ${photo.fileSize} bytes")
         }
-    },
-    onError = { exception ->
-        println("Error: ${exception.message}")
-    },
-    allowMultiple = true,
-    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
-    cameraCaptureConfig = CameraCaptureConfig(
-        compressionLevel = CompressionLevel.HIGH // Optimize for storage
-    )
-)
+    }
+    else -> {}
+}
 ```
 
 ---
 
-## Compression Process
+### Compression Process
 
 1. **Image Loading**: Original image is loaded from camera/gallery
 2. **Dimension Scaling**: Image is resized if larger than max dimension
@@ -568,7 +430,7 @@ GalleryPickerLauncher(
 
 ---
 
-## Platform Support
+### Platform Support
 
 | Platform | Camera Compression | Gallery Compression | Async Processing |
 |----------|-------------------|---------------------|------------------|
@@ -577,7 +439,7 @@ GalleryPickerLauncher(
 
 ---
 
-## Performance Considerations
+### Performance Considerations
 
 - **Memory Usage**: Original bitmaps are recycled after compression
 - **Processing Time**: Runs on background threads (Dispatchers.IO)
@@ -586,91 +448,13 @@ GalleryPickerLauncher(
 
 ---
 
-## Code References
+### Code References
 - **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/data/processors/ImageProcessor.kt**: Camera compression logic
-- **library/src/androidMain/kotlin/io/github/ismoy/imagepickerkmp/presentation/ui/components/GalleryPickerLauncher.android.kt**: Gallery compression implementation
 - **library/src/commonMain/kotlin/io/github/ismoy/imagepickerkmp/domain/models/CompressionLevel.kt**: Compression level definitions
 
 ---
 
-### ImagePickerLauncher
-
-> ⚠️ **Deprecated** — `ImagePickerLauncher` is marked `@Deprecated(level = WARNING)`. It still compiles and runs normally, but the compiler will show a migration warning. **Migrate to [`rememberImagePickerKMP`](#rememberimagePickerkmp) for new code.**
-
-Main composable for launching the image picker.
-
-```kotlin
-@Deprecated("Use rememberImagePickerKMP() instead.")
-@Composable
-expect fun ImagePickerLauncher(
-    config: ImagePickerConfig
-)
-```
-
-#### Parameters
-
-- `config: ImagePickerConfig` - Complete image picker configuration
-
----
-
-### GalleryPickerLauncher
-
-> ⚠️ **Deprecated** — `GalleryPickerLauncher` is marked `@Deprecated(level = WARNING)`. It still compiles and runs normally, but the compiler will show a migration warning. **Migrate to [`rememberImagePickerKMP`](#rememberimagePickerkmp) for new code.**
-
-Composable for selecting images from gallery with intelligent picker selection for Android.
-
-```kotlin
-@Composable
-expect fun GalleryPickerLauncher(
-    config: GalleryPickerConfig = GalleryPickerConfig(),
-    onPhotosSelected: (List<PhotoResult>) -> Unit,
-    onError: (Exception) -> Unit,
-    onDismiss: () -> Unit = {},
-    allowMultiple: Boolean = false,
-    mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
-    selectionLimit: Long = SELECTION_LIMIT
-)
-```
-
-#### Parameters
-
-- `config` - Configuration for gallery picker behavior and Android-specific settings
-- `onPhotosSelected` - Callback with the list of selected images
-- `onError` - Callback to handle errors
-- `onDismiss` - Callback when user cancels
-- `allowMultiple` - Allows multiple selection (default: `false`)
-- `mimeTypes` - List of allowed MIME types
-- `selectionLimit` - Maximum selection limit
-
-#### Smart Picker Selection (Android)
-
-The `GalleryPickerLauncher` automatically chooses the appropriate picker based on requested MIME types:
-
-- **Images only** (`image/*`): Opens native Android gallery using `MediaStore`
-- **PDFs included** (`application/pdf`): Opens file explorer for document access
-- **Mixed types**: Uses file explorer for maximum compatibility
-
-This ensures users get the expected interface for their content type without configuration.
-
-#### Configuration Example
-
-```kotlin
-GalleryPickerLauncher(
-    config = GalleryPickerConfig(
-        includeExif = true,
-        androidGalleryConfig = AndroidGalleryConfig(
-            forceGalleryOnly = false,
-            localOnly = true
-        )
-    ),
-    mimeTypes = listOf(MimeType.APPLICATION_PDF),
-    onPhotosSelected = { results ->
-        // Handle selected files
-    }
-)
-```
-
----
+## Main Components
 
 ### RequestCameraPermission
 
@@ -692,6 +476,33 @@ expect fun RequestCameraPermission(
 - `onPermissionPermanentlyDenied: () -> Unit` - Callback when permission is permanently denied
 - `onResult: (Boolean) -> Unit` - Callback with permission result
 - `customPermissionHandler: (() -> Unit)?` - Custom permission handler
+
+#### Example
+
+```kotlin
+@Composable
+fun CustomPermissionHandler() {
+    val dialogConfig = CameraPermissionDialogConfig(
+        titleDialogConfig = "Camera permission required",
+        descriptionDialogConfig = "Please enable camera access in settings",
+        btnDialogConfig = "Open settings",
+        titleDialogDenied = "Permission denied",
+        descriptionDialogDenied = "Camera permission is required",
+        btnDialogDenied = "Grant permission"
+    )
+    
+    RequestCameraPermission(
+        dialogConfig = dialogConfig,
+        onPermissionPermanentlyDenied = {
+            println("Permission permanently denied")
+        },
+        onResult = { granted ->
+            println("Permission granted: $granted")
+        },
+        customPermissionHandler = null
+    )
+}
+```
 
 ---
 
@@ -723,22 +534,15 @@ data class AndroidGalleryConfig(
   - `false`: Allows images from cloud storage
   - **Default**: `true`
 
-#### Convenience Methods
+#### Smart Picker Selection (Android)
 
-```kotlin
-//  Automatic configuration based on MIME types
-val autoConfig = AndroidGalleryConfig.forMimeTypes(listOf(MimeType.APPLICATION_PDF))
-// Result: forceGalleryOnly = false (uses file explorer for PDFs)
+The gallery picker automatically chooses the appropriate picker based on requested MIME types:
 
-//  Manual configuration
-GalleryPickerLauncher(
-    // ... other parameters ...
-    androidGalleryConfig = AndroidGalleryConfig(
-        forceGalleryOnly = false, // Force file explorer
-        localOnly = true
-    )
-)
-```
+- **Images only** (`image/*`): Opens native Android gallery using `MediaStore`
+- **PDFs included** (`application/pdf`): Opens file explorer for document access
+- **Mixed types**: Uses file explorer for maximum compatibility
+
+This ensures users get the expected interface for their content type without configuration.
 
 #### Automatic Detection Behavior
 
@@ -749,13 +553,28 @@ GalleryPickerLauncher(
 | Mixed types (image + others) | `false` | File explorer |
 | Non-image types | `false` | File explorer |
 
+#### Configuration Example
+
+```kotlin
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        galleryConfig = GalleryConfig(
+            mimeTypes = listOf(MimeType.APPLICATION_PDF),
+            includeExif = true
+        )
+    )
+)
+
+Button(onClick = { picker.launchGallery() }) { Text("Select PDF") }
+```
+
 ---
 
 ## Data Classes
 
-### CameraPhotoHandler.PhotoResult
+### PhotoResult
 
-Represents the result of a photo capture from camera.
+Represents the result of a photo capture from camera or gallery selection.
 
 ```kotlin
 data class PhotoResult(
@@ -765,7 +584,7 @@ data class PhotoResult(
     val fileName: String? = null,
     val fileSize: Long? = null,
     val mimeType: String? = null,
-    val exif: ExifData? = null  // EXIF metadata (Android/iOS only)
+    val exif: ExifData? = null
 )
 ```
 
@@ -796,7 +615,6 @@ when (val result = picker.result) {
             // Using kotlinx.io Path (cross-platform, v1.0.38+)
             photo.toPath()?.let { path ->
                 println("File path: $path")
-                // Use kotlinx-io file operations
             }
             
             // Using absolute path String (platform-specific, v1.0.40+)
@@ -809,44 +627,83 @@ when (val result = picker.result) {
 }
 ```
 
-### GalleryPhotoHandler.PhotoResult
+### ExifData
 
-Represents the result of an image selected from gallery.
+Contains comprehensive EXIF metadata extracted from images. **Available on Android and iOS only.**
 
 ```kotlin
-data class PhotoResult(
-    val uri: String,
-    val width: Int,
-    val height: Int,
-    val fileName: String? = null,
-    val fileSize: Long? = null, 
-    val mimeType: String? = null,
-    val exif: ExifData? = null 
+data class ExifData(
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val altitude: Double? = null,
+    
+    val dateTaken: String? = null,
+    val dateTime: String? = null,
+    val digitizedTime: String? = null,
+    val originalTime: String? = null,
+    
+    val cameraModel: String? = null,
+    val cameraManufacturer: String? = null,
+    val software: String? = null,
+    val owner: String? = null,
+    
+    val orientation: String? = null,
+    val colorSpace: String? = null,
+    val whiteBalance: String? = null,
+    val flash: String? = null,
+    val focalLength: String? = null,
+    val aperture: String? = null,
+    val shutterSpeed: String? = null,
+    val iso: String? = null,
+    val imageWidth: Int? = null,
+    val imageHeight: Int? = null
 )
 ```
 
-### ImagePickerConfig
-
-Main configuration for the image picker.
+**Example Usage:**
 
 ```kotlin
-data class ImagePickerConfig(
-    val onPhotoCaptured: (CameraPhotoHandler.PhotoResult) -> Unit,
-    val onPhotosSelected: ((List<GalleryPhotoHandler.PhotoResult>) -> Unit)? = null,
-    val onError: (Exception) -> Unit,
-    val onDismiss: () -> Unit = {},
-    val dialogTitle: String = "Select option",
-    val takePhotoText: String = "Take photo",
-    val selectFromGalleryText: String = "Select from gallery",
-    val cancelText: String = "Cancel",
-    val customPickerDialog: (@Composable (
-        onTakePhoto: () -> Unit,
-        onSelectFromGallery: () -> Unit,
-        onCancel: () -> Unit
-    ) -> Unit)? = null,
-    val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig()
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        cameraCaptureConfig = CameraCaptureConfig(includeExif = true)
+    )
+)
+
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> {
+        result.first?.exif?.let { exif ->
+            println("GPS: ${exif.latitude}, ${exif.longitude}")
+            println("Camera: ${exif.cameraModel}")
+            println("Date: ${exif.dateTaken}")
+            println("Settings: ISO ${exif.iso}, f/${exif.aperture}")
+        }
+    }
+    else -> {}
+}
+```
+
+**Platform Support:**
+- ✅ **Android**: Full support via `androidx.exifinterface`
+- ✅ **iOS**: Full support via native ImageIO framework
+- ❌ **Desktop/Web/Wasm**: Not supported (returns null)
+
+### GalleryConfig
+
+Configuration for image gallery.
+
+```kotlin
+data class GalleryConfig(
+    val allowMultiple: Boolean = false,
+    val mimeTypes: List<String> = listOf("image/*"),
+    val selectionLimit: Int = 30,
+    val includeExif: Boolean = false,
+    val redactGpsData: Boolean = true
 )
 ```
+
+---
+
+## Configuration
 
 ### CameraCaptureConfig
 
@@ -863,7 +720,7 @@ data class CameraCaptureConfig(
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
     val cropConfig: CropConfig = CropConfig(),
-    val cameraScaleType: CameraScaleType = CameraScaleType.FILL_CENTER  // NEW in v1.0.41
+    val cameraScaleType: CameraScaleType = CameraScaleType.FILL_CENTER
 )
 ```
 
@@ -877,7 +734,7 @@ data class CameraCaptureConfig(
 - `cameraCallbacks` - Camera lifecycle callbacks
 - `permissionAndConfirmationConfig` - Permission and confirmation dialogs
 - `cropConfig` - Interactive crop UI configuration
-- `cameraScaleType` - <span class="pill-new">NEW in v1.0.41</span> How the camera preview is scaled inside its viewport (Android only). Defaults to `CameraScaleType.FILL_CENTER`
+- `cameraScaleType` - How the camera preview is scaled inside its viewport (Android only). Defaults to `CameraScaleType.FILL_CENTER`
 
 **Camera scale type examples:**
 
@@ -909,7 +766,7 @@ data class PermissionAndConfirmationConfig(
     val skipConfirmation: Boolean = false,
     val cancelButtonTextIOS: String? = "Cancel",
     val onCancelPermissionConfigIOS: (() -> Unit)? = null,
-    val confirmationImageContentScale: ContentScale = ContentScale.Crop  // NEW in v1.0.41
+    val confirmationImageContentScale: ContentScale = ContentScale.Crop
 )
 ```
 
@@ -922,7 +779,7 @@ data class PermissionAndConfirmationConfig(
 - `skipConfirmation: Boolean` - If `true`, delivers the captured photo directly without showing the confirmation screen (Android)
 - `cancelButtonTextIOS: String?` - Text label for the cancel button in the iOS permission alert. Defaults to `"Cancel"`
 - `onCancelPermissionConfigIOS: (() -> Unit)?` - Callback invoked when the user taps cancel in the iOS permission alert
-- `confirmationImageContentScale: ContentScale` - <span class="pill-new">NEW in v1.0.41</span> How the captured photo is scaled in the post-capture confirmation preview. Accepts any Compose `ContentScale` value. Defaults to `ContentScale.Crop`
+- `confirmationImageContentScale: ContentScale` - How the captured photo is scaled in the post-capture confirmation preview. Accepts any Compose `ContentScale` value. Defaults to `ContentScale.Crop`
 
 **Confirmation image scale examples:**
 
@@ -969,88 +826,13 @@ data class CameraCallbacks(
 )
 ```
 
-### ExifData
+### CropConfig
 
-Contains comprehensive EXIF metadata extracted from images. **Available on Android and iOS only.**
-
-```kotlin
-data class ExifData(
-    val latitude: Double? = null,
-    val longitude: Double? = null,
-    val altitude: Double? = null,
-    
-    val dateTaken: String? = null,
-    val dateTime: String? = null,
-    val digitizedTime: String? = null,
-    val originalTime: String? = null,
-    
-    val cameraModel: String? = null,
-    val cameraManufacturer: String? = null,
-    val software: String? = null,
-    val owner: String? = null,
-    
-    val orientation: String? = null,
-    val colorSpace: String? = null,
-    val whiteBalance: String? = null,
-    val flash: String? = null,
-    val focalLength: String? = null,
-    val aperture: String? = null,
-    val shutterSpeed: String? = null,
-    val iso: String? = null,
-    val imageWidth: Int? = null,
-    val imageHeight: Int? = null
-)
-```
-
-**Example Usage:**
+Configuration for interactive crop UI.
 
 ```kotlin
-ImagePickerLauncher(
-    config = ImagePickerConfig(
-        onPhotoCaptured = { result ->
-            result.exif?.let { exif ->
-                println(" GPS: ${exif.latitude}, ${exif.longitude}")
-                println(" Camera: ${exif.cameraModel}")
-                println(" Date: ${exif.dateTaken}")
-                println(" Settings: ISO ${exif.iso}, f/${exif.aperture}")
-            }
-        },
-        cameraCaptureConfig = CameraCaptureConfig(
-            includeExif = true 
-        )
-    )
-)
-
-GalleryPickerLauncher(
-    onPhotosSelected = { results ->
-        results.forEachIndexed { index, result ->
-            println("Image $index:")
-            result.exif?.let { exif ->
-                println("   Location: ${exif.latitude}, ${exif.longitude}")
-                println("   Camera: ${exif.cameraModel}")
-                println("   Date: ${exif.dateTaken}")
-            } ?: println("   No EXIF data available")
-        }
-    },
-    allowMultiple = true,
-    includeExif = true 
-)
-```
-
-**Platform Support:**
-- ✅ **Android**: Full support via `androidx.exifinterface`
-- ✅ **iOS**: Full support via native ImageIO framework
-- ❌ **Desktop/Web/Wasm**: Not supported (returns null)
-
-### GalleryConfig
-
-Configuration for image gallery.
-
-```kotlin
-data class GalleryConfig(
-    val allowMultiple: Boolean = false,
-    val mimeTypes: List<String> = listOf("image/*"),
-    val selectionLimit: Int = 30
+data class CropConfig(
+    // Crop shape, aspect ratio, freeform options
 )
 ```
 
@@ -1146,187 +928,9 @@ data class PermissionConfig(
 
 ---
 
-## Utilities
-
-### ImagePickerLogger
-
-Interface for logging messages within the ImagePicker library.
-
-```kotlin
-interface ImagePickerLogger {
-    fun log(message: String)
-}
-```
-
-#### Default implementation
-
-```kotlin
-object DefaultLogger : ImagePickerLogger {
-    override fun log(message: String) {
-        println(message)
-    }
-}
-```
-
-#### Usage example
-
-```kotlin
-class CustomLogger : ImagePickerLogger {
-    override fun log(message: String) {
-        Log.d("ImagePicker", message)
-    }
-}
-```
-
-### ImagePickerUiConstants
-
-Constants for ImagePicker user interface.
-
-```kotlin
-object ImagePickerUiConstants {
-    const val ORIENTATION_ROTATE_90 = 90f
-    const val ORIENTATION_ROTATE_180 = 180f
-    const val ORIENTATION_ROTATE_270 = 270f
-    const val ORIENTATION_FLIP_HORIZONTAL_X = -1f
-    const val ORIENTATION_FLIP_HORIZONTAL_Y = 1f
-    const val ORIENTATION_FLIP_VERTICAL_X = 1f
-    const val ORIENTATION_FLIP_VERTICAL_Y = -1f
-    const val SYSTEM_VERSION_10 = 10.0
-    const val DELAY_TO_TAKE_PHOTO = 60L
-    const val SELECTION_LIMIT = 30L
-}
-```
-
-### RequestCameraPermission
-
-Composable for handling camera permissions.
-
-```kotlin
-@Composable
-expect fun RequestCameraPermission(
-    dialogConfig: CameraPermissionDialogConfig,
-    onPermissionPermanentlyDenied: () -> Unit,
-    onResult: (Boolean) -> Unit,
-    customPermissionHandler: (() -> Unit)?
-)
-```
-
-#### Parameters
-
-- `dialogConfig: CameraPermissionDialogConfig` - Permission dialog configuration
-- `onPermissionPermanentlyDenied: () -> Unit` - Callback when permission is permanently denied
-- `onResult: (Boolean) -> Unit` - Callback with permission result
-- `customPermissionHandler: (() -> Unit)?` - Custom permission handler
-
-#### Example
-
-```kotlin
-@Composable
-fun CustomPermissionHandler() {
-    val dialogConfig = CameraPermissionDialogConfig(
-        titleDialogConfig = "Camera permission required",
-        descriptionDialogConfig = "Please enable camera access in settings",
-        btnDialogConfig = "Open settings",
-        titleDialogDenied = "Permission denied",
-        descriptionDialogDenied = "Camera permission is required",
-        btnDialogDenied = "Grant permission"
-    )
-    
-    RequestCameraPermission(
-        dialogConfig = dialogConfig,
-        onPermissionPermanentlyDenied = {
-            println("Permission permanently denied")
-        },
-        onResult = { granted ->
-            println("Permission granted: $granted")
-        },
-        customPermissionHandler = null
-    )
-}
-```
-
----
-
-## Exceptions
-
-### PhotoCaptureException
-
-Exception thrown when an error occurs during photo capture or processing.
-
-```kotlin
-class PhotoCaptureException(message: String) : Exception(message)
-```
-
-#### Description
-
-Used to signal camera failures or image processing in the ImagePicker library.
-
-#### Usage example
-
-```kotlin
-@Composable
-fun ErrorHandlingExample() {
-    ImagePickerLauncher(
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result -> /* ... */ },
-            onError = { exception ->
-                when (exception) {
-                    is PhotoCaptureException -> {
-                        println("Photo capture error: ${exception.message}")
-                    }
-                    else -> {
-                        println("Unknown error: ${exception.message}")
-                    }
-                }
-            }
-        )
-    )
-}
-```
-
-#### Usage example
-
-```kotlin
-try {
-    capturePhoto()
-} catch (e: PhotoCaptureException) {
-    println("Error capturing photo: ${e.message}")
-}
-```
-
-### ImagePickerException
-
-Base exception for ImagePicker library errors.
-
-```kotlin
-open class ImagePickerException(message: String) : Exception(message)
-```
-
-### PermissionDeniedException
-
-Exception thrown when permissions are denied.
-
-```kotlin
-class PermissionDeniedException(message: String) : ImagePickerException(message)
-```
-
-#### Usage example
-
-```kotlin
-try {
-    requestCameraPermission()
-} catch (e: PermissionDeniedException) {
-    println("Permissions denied: ${e.message}")
-}
-```
-
----
-
 ## Enums
 
 ### CameraScaleType
-
-> <span class="pill-new">NEW in v1.0.41</span>
 
 Controls how the camera preview is scaled inside its viewport on Android. Mirrors `androidx.camera.view.PreviewView.ScaleType`.
 
@@ -1416,122 +1020,129 @@ enum class StringResource {
 
 ## Exceptions
 
-### ImagePickerException
+### PhotoCaptureException
 
-Represents a specific exception from ImagePickerKMP.
+Exception thrown when an error occurs during photo capture or processing.
 
 ```kotlin
-class ImagePickerException(message: String) : Exception(message)
+class PhotoCaptureException(message: String) : Exception(message)
+```
+
+#### Usage example
+
+```kotlin
+val picker = rememberImagePickerKMP()
+
+when (val result = picker.result) {
+    is ImagePickerResult.Error -> {
+        when (result.exception) {
+            is PhotoCaptureException -> {
+                println("Photo capture error: ${result.exception.message}")
+            }
+            else -> {
+                println("Unknown error: ${result.exception.message}")
+            }
+        }
+    }
+    else -> {}
+}
+```
+
+### ImagePickerException
+
+Base exception for ImagePicker library errors.
+
+```kotlin
+open class ImagePickerException(message: String) : Exception(message)
+```
+
+### PermissionDeniedException
+
+Exception thrown when permissions are denied.
+
+```kotlin
+class PermissionDeniedException(message: String) : ImagePickerException(message)
+```
+
+#### Usage example
+
+```kotlin
+try {
+    requestCameraPermission()
+} catch (e: PermissionDeniedException) {
+    println("Permissions denied: ${e.message}")
+}
 ```
 
 ---
 
-## Main Configuration
+## Utilities
 
-### ImagePickerConfig
+### ImagePickerLogger
 
-Main configuration class for launching the image picker.
-
-```kotlin
-data class ImagePickerConfig(
-    val onPhotoCaptured: (CameraPhotoHandler.PhotoResult) -> Unit,
-    val onPhotosSelected: ((List<GalleryPhotoHandler.PhotoResult>) -> Unit)? = null,
-    val onError: (Exception) -> Unit,
-    val onDismiss: () -> Unit = {},
-    val dialogTitle: String = "Select option",
-    val takePhotoText: String = "Take photo",
-    val selectFromGalleryText: String = "Select from gallery",
-    val cancelText: String = "Cancel",
-    val customPickerDialog: (
-        @Composable (
-            onTakePhoto: () -> Unit,
-            onSelectFromGallery: () -> Unit,
-            onCancel: () -> Unit
-        ) -> Unit
-    )? = null,
-    val cameraCaptureConfig: CameraCaptureConfig = CameraCaptureConfig()
-)
-```
-
-#### Properties
-
-- `onPhotoCaptured: (CameraPhotoHandler.PhotoResult) -> Unit` - Callback when a photo is captured
-- `onPhotosSelected: ((List<GalleryPhotoHandler.PhotoResult>) -> Unit)?` - Callback for multiple gallery selection
-- `onError: (Exception) -> Unit` - Callback when an error occurs
-- `onDismiss: () -> Unit` - Callback when picker is closed
-- `dialogTitle: String` - Selection dialog title
-- `takePhotoText: String` - Text for camera option
-- `selectFromGalleryText: String` - Text for gallery option
-- `cancelText: String` - Text for cancel
-- `customPickerDialog: (@Composable (...) -> Unit)?` - Custom dialog for iOS
-- `cameraCaptureConfig: CameraCaptureConfig` - Camera capture configuration
-
-#### Example
+Interface for logging messages within the ImagePicker library.
 
 ```kotlin
-val config = ImagePickerConfig(
-    onPhotoCaptured = { result ->
-        println("Photo captured: ${result.uri}")
-    },
-    onPhotosSelected = { results ->
-        println("${results.size} photos selected")
-    },
-    onError = { exception ->
-        println("Error: ${exception.message}")
-    },
-    onDismiss = {
-        println("Picker closed")
-    },
-    dialogTitle = "Select option", // Title for the dialog for iOS
-    takePhotoText = "Take photo", // Text for the camera option for iOS
-    selectFromGalleryText = "Select from gallery", // Text for the gallery option for iOS
-    cancelText = "Cancel", // Text for cancel for iOS
-     // Custom dialog for iOS
-    customPickerDialog = { onTakePhoto, onSelectFromGallery, onCancel ->
-        Column {
-            Button(onClick = onTakePhoto) {
-                Text("Camera")
-            }
-            Button(onClick = onSelectFromGallery) {
-                Text("Gallery")
-            }
-            Button(onClick = onCancel) {
-                Text("Cancel")
-            }
-        }
-    },
-    cameraCaptureConfig = CameraCaptureConfig(
-        preference = CapturePhotoPreference.HIGH_QUALITY,
-        permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-            customConfirmationView = { photoResult, onConfirm, onRetry ->
-                // Custom confirmation view
-            }
-        )
-    )
-)
+interface ImagePickerLogger {
+    fun log(message: String)
+}
 ```
 
-### ImagePickerLauncher
-
-The main composable function for launching the image picker.
+#### Default implementation
 
 ```kotlin
-@Composable
-fun ImagePickerLauncher(
-    onPhotoCaptured: (PhotoResult) -> Unit,
-    onError: (Exception) -> Unit,
-    onDismiss: () -> Unit = {},
-    customPermissionHandler: ((PermissionConfig) -> Unit)? = null,
-    customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)? = null,
-    preference: CapturePhotoPreference? = null
-)
+object DefaultLogger : ImagePickerLogger {
+    override fun log(message: String) {
+        println(message)
+    }
+}
 ```
 
-#### Parameters
+#### Usage example
 
-- `onPhotoCaptured: (PhotoResult) -> Unit` - Callback when a photo is captured
-- `onError: (Exception) -> Unit` - Callback when an error occurs
-- `customPermissionHandler: ((PermissionConfig) -> Unit)?` - Custom permission handling
-- `customConfirmationView: (@Composable (PhotoResult, (PhotoResult) -> Unit, () -> Unit) -> Unit)?` - Custom confirmation view
-- `preference: CapturePhotoPreference?` - Photo capture preferences
+```kotlin
+class CustomLogger : ImagePickerLogger {
+    override fun log(message: String) {
+        Log.d("ImagePicker", message)
+    }
+}
+```
 
+### ImagePickerUiConstants
+
+Constants for ImagePicker user interface.
+
+```kotlin
+object ImagePickerUiConstants {
+    const val ORIENTATION_ROTATE_90 = 90f
+    const val ORIENTATION_ROTATE_180 = 180f
+    const val ORIENTATION_ROTATE_270 = 270f
+    const val ORIENTATION_FLIP_HORIZONTAL_X = -1f
+    const val ORIENTATION_FLIP_HORIZONTAL_Y = 1f
+    const val ORIENTATION_FLIP_VERTICAL_X = 1f
+    const val ORIENTATION_FLIP_VERTICAL_Y = -1f
+    const val SYSTEM_VERSION_10 = 10.0
+    const val DELAY_TO_TAKE_PHOTO = 60L
+    const val SELECTION_LIMIT = 30L
+}
+```
+
+---
+
+## Platform-specific APIs
+
+### CameraCaptureView (Android)
+
+For direct Android usage, `CameraCaptureView` is available as a public composable that renders the camera preview with controls. This is used internally by `rememberImagePickerKMP` but can be consumed directly for advanced Android-only integrations.
+
+### Platform Support Summary
+
+| Feature | Android | iOS | Desktop | Web/Wasm |
+|---------|---------|-----|---------|----------|
+| Camera capture | ✅ | ✅ | ❌ | ❌ |
+| Gallery selection | ✅ | ✅ | ✅ | ✅ |
+| EXIF metadata | ✅ | ✅ | ❌ | ❌ |
+| Image compression | ✅ | ✅ | ❌ | ❌ |
+| Crop UI | ✅ | ✅ | ❌ | ❌ |
+| Custom confirmation | ✅ | ❌ | ❌ | ❌ |
+| Camera scale type | ✅ | ❌ | ❌ | ❌ |

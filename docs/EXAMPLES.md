@@ -24,16 +24,22 @@ This document provides comprehensive examples for using ImagePickerKMP in variou
 ```kotlin
 @Composable
 fun CameraWithCompressionLevels() {
-    var showCamera by remember { mutableStateOf(false) }
     var compressionLevel by remember { mutableStateOf(CompressionLevel.MEDIUM) }
-    var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = compressionLevel
+            )
+        )
+    )
 
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text("Select Compression Level:")
-        
+
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = { compressionLevel = CompressionLevel.LOW }) {
                 Text("LOW (Best Quality)")
@@ -45,43 +51,36 @@ fun CameraWithCompressionLevels() {
                 Text("HIGH (Smallest)")
             }
         }
-        
-        Button(onClick = { showCamera = true }) {
+
+        Button(onClick = { picker.launchCamera() }) {
             Text("Capture Photo with ${compressionLevel.name} Compression")
         }
-        
-        capturedPhoto?.let { photo ->
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Photo Captured!")
-                    Text("Size: ${photo.fileSize / 1024} KB")
-                    Text("Dimensions: ${photo.width}×${photo.height}")
-                    Text("Compression: ${compressionLevel.name}")
-                    
-                    AsyncImage(
-                        model = photo.uri,
-                        contentDescription = "Captured photo",
-                        modifier = Modifier.size(200.dp),
-                        contentScale = ContentScale.Crop
-                    )
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("Photo Captured!")
+                        Text("Size: ${photo.fileSize / 1024} KB")
+                        Text("Dimensions: ${photo.width}×${photo.height}")
+                        Text("Compression: ${compressionLevel.name}")
+
+                        AsyncImage(
+                            model = photo.uri,
+                            contentDescription = "Captured photo",
+                            modifier = Modifier.size(200.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
-        }
-        
-        if (showCamera) {
-            ImagePickerLauncher(
-                config = ImagePickerConfig(
-                    onPhotoCaptured = { result ->
-                        capturedPhoto = result
-                        showCamera = false
-                    },
-                    onError = { showCamera = false },
-                    onDismiss = { showCamera = false },
-                    cameraCaptureConfig = CameraCaptureConfig(
-                        compressionLevel = compressionLevel
-                    )
-                )
-            )
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            is ImagePickerResult.Dismissed -> { /* User cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* Initial state */ }
         }
     }
 }
@@ -92,9 +91,15 @@ fun CameraWithCompressionLevels() {
 ```kotlin
 @Composable
 fun GalleryWithCompression() {
-    var showGallery by remember { mutableStateOf(false) }
-    var selectedImages by remember { mutableStateOf<List<GalleryPhotoResult>>(emptyList()) }
     var compressionLevel by remember { mutableStateOf(CompressionLevel.MEDIUM) }
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = compressionLevel
+            )
+        )
+    )
 
     Column(modifier = Modifier.padding(16.dp)) {
         Row(
@@ -110,68 +115,65 @@ fun GalleryWithCompression() {
                 }
             )
         }
-        
+
         Button(
-            onClick = { showGallery = true },
+            onClick = {
+                picker.launchGallery(
+                    allowMultiple = true,
+                    mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)
+                )
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Select Images from Gallery")
         }
-        
-        if (selectedImages.isNotEmpty()) {
-            Text("Selected ${selectedImages.size} images:")
-            LazyColumn {
-                items(selectedImages) { photo ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                Text("Selected ${result.photos.size} images:")
+                LazyColumn {
+                    items(result.photos) { photo ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
                         ) {
-                            AsyncImage(
-                                model = photo.uri,
-                                contentDescription = null,
-                                modifier = Modifier.size(60.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(
-                                    text = photo.fileName ?: "Unknown",
-                                    style = MaterialTheme.typography.body2
+                            Row(
+                                modifier = Modifier.padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                AsyncImage(
+                                    model = photo.uri,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(60.dp),
+                                    contentScale = ContentScale.Crop
                                 )
-                                Text(
-                                    text = "${(photo.fileSize ?: 0) / 1024}KB",
-                                    style = MaterialTheme.typography.caption
-                                )
-                                Text(
-                                    text = "${photo.width}×${photo.height}",
-                                    style = MaterialTheme.typography.caption
-                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text(
+                                        text = photo.fileName ?: "Unknown",
+                                        style = MaterialTheme.typography.body2
+                                    )
+                                    Text(
+                                        text = "${(photo.fileSize ?: 0) / 1024}KB",
+                                        style = MaterialTheme.typography.caption
+                                    )
+                                    Text(
+                                        text = "${photo.width}×${photo.height}",
+                                        style = MaterialTheme.typography.caption
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-        
-        if (showGallery) {
-            GalleryPickerLauncher(
-                onPhotosSelected = { photos ->
-                    selectedImages = photos
-                    showGallery = false
-                },
-                onError = { showGallery = false },
-                onDismiss = { showGallery = false },
-                allowMultiple = true,
-                mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
-                cameraCaptureConfig = CameraCaptureConfig(
-                    compressionLevel = compressionLevel
-                )
-            )
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            is ImagePickerResult.Dismissed -> { /* User cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* Initial state */ }
         }
     }
 }
@@ -182,83 +184,76 @@ fun GalleryWithCompression() {
 ```kotlin
 @Composable
 fun CompressionComparisonTool() {
-    var showCamera by remember { mutableStateOf(false) }
-    var originalPhoto by remember { mutableStateOf<PhotoResult?>(null) }
     var compressedPhotos by remember { mutableStateOf<Map<CompressionLevel, PhotoResult>>(emptyMap()) }
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                compressionLevel = null // No compression for original
+            )
+        )
+    )
 
     Column(modifier = Modifier.padding(16.dp)) {
         Button(
-            onClick = { showCamera = true },
+            onClick = { picker.launchCamera() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Capture Photo for Comparison")
         }
-        
-        if (compressedPhotos.isNotEmpty()) {
-            Text(
-                "Compression Comparison Results:",
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
-            
-            LazyColumn {
-                items(CompressionLevel.values().toList()) { level ->
-                    compressedPhotos[level]?.let { photo ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    text = "${level.name} Compression",
-                                    style = MaterialTheme.typography.subtitle1
-                                )
-                                Text("Size: ${photo.fileSize / 1024} KB")
-                                Text("Dimensions: ${photo.width}×${photo.height}")
-                                
-                                val qualityInfo = when (level) {
-                                    CompressionLevel.LOW -> "95% quality, 2560px max"
-                                    CompressionLevel.MEDIUM -> "75% quality, 1920px max"
-                                    CompressionLevel.HIGH -> "50% quality, 1280px max"
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                Text(
+                    "Compression Comparison Results:",
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+
+                LazyColumn {
+                    items(CompressionLevel.values().toList()) { level ->
+                        compressedPhotos[level]?.let { photo ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Text(
+                                        text = "${level.name} Compression",
+                                        style = MaterialTheme.typography.subtitle1
+                                    )
+                                    Text("Size: ${photo.fileSize / 1024} KB")
+                                    Text("Dimensions: ${photo.width}×${photo.height}")
+
+                                    val qualityInfo = when (level) {
+                                        CompressionLevel.LOW -> "95% quality, 2560px max"
+                                        CompressionLevel.MEDIUM -> "75% quality, 1920px max"
+                                        CompressionLevel.HIGH -> "50% quality, 1280px max"
+                                    }
+                                    Text("Settings: $qualityInfo")
+
+                                    AsyncImage(
+                                        model = photo.uri,
+                                        contentDescription = "${level.name} compressed image",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(200.dp)
+                                            .padding(top = 8.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
                                 }
-                                Text("Settings: $qualityInfo")
-                                
-                                AsyncImage(
-                                    model = photo.uri,
-                                    contentDescription = "${level.name} compressed image",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp)
-                                        .padding(top = 8.dp),
-                                    contentScale = ContentScale.Crop
-                                )
                             }
                         }
                     }
                 }
             }
-        }
-        
-        if (showCamera) {
-            // Capture original photo first, then compress with all levels
-            ImagePickerLauncher(
-                config = ImagePickerConfig(
-                    onPhotoCaptured = { result ->
-                        originalPhoto = result
-                        showCamera = false
-                        
-                        // Trigger compression with all levels
-                        // (This would need additional implementation to capture
-                        // the same image with different compression levels)
-                    },
-                    onError = { showCamera = false },
-                    onDismiss = { showCamera = false },
-                    cameraCaptureConfig = CameraCaptureConfig(
-                        compressionLevel = null // No compression for original
-                    )
-                )
-            )
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            is ImagePickerResult.Dismissed -> { /* User cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* Initial state */ }
         }
     }
 }
@@ -271,10 +266,13 @@ fun CompressionComparisonTool() {
 ```kotlin
 @Composable
 fun SimpleCropExample() {
-    var showImagePicker by remember { mutableStateOf(false) }
     var selectedImage by remember { mutableStateOf<ByteArray?>(null) }
     var showCropView by remember { mutableStateOf(false) }
     var croppedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
 
     Column(
         modifier = Modifier
@@ -282,31 +280,40 @@ fun SimpleCropExample() {
             .padding(16.dp)
     ) {
         Button(
-            onClick = { showImagePicker = true },
+            onClick = { picker.launchGallery(allowMultiple = false) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Select Image to Crop")
         }
 
-        selectedImage?.let { imageBytes ->
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Original Image:")
-            Image(
-                bitmap = imageBytes.toComposeImageBitmap(),
-                contentDescription = "Original image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
-            )
-            
-            Button(
-                onClick = { showCropView = true },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Crop Image")
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val imageBytes = result.photos.first().photoBytes
+                selectedImage = imageBytes
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Original Image:")
+                Image(
+                    bitmap = imageBytes.toComposeImageBitmap(),
+                    contentDescription = "Original image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+
+                Button(
+                    onClick = { showCropView = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Crop Image")
+                }
             }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
         }
 
         croppedImageBytes?.let { croppedBytes ->
@@ -322,20 +329,6 @@ fun SimpleCropExample() {
                 contentScale = ContentScale.Crop
             )
         }
-    }
-
-    if (showImagePicker) {
-        GalleryPickerLauncher(
-            onPhotosSelected = { photos ->
-                photos.firstOrNull()?.let { photo ->
-                    selectedImage = photo.photoBytes
-                }
-                showImagePicker = false
-            },
-            onError = { showImagePicker = false },
-            onDismiss = { showImagePicker = false },
-            allowMultiple = false
-        )
     }
 
     if (showCropView && selectedImage != null) {
@@ -356,11 +349,14 @@ fun SimpleCropExample() {
 ```kotlin
 @Composable
 fun CropWithAspectRatios() {
-    var showImagePicker by remember { mutableStateOf(false) }
     var selectedImage by remember { mutableStateOf<ByteArray?>(null) }
     var showCropView by remember { mutableStateOf(false) }
     var croppedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
     var selectedAspectRatio by remember { mutableStateOf<AspectRatio?>(null) }
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
 
     Column(
         modifier = Modifier
@@ -368,53 +364,54 @@ fun CropWithAspectRatios() {
             .padding(16.dp)
     ) {
         Button(
-            onClick = { showImagePicker = true },
+            onClick = { picker.launchGallery(allowMultiple = false) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Select Image to Crop")
         }
 
-        selectedImage?.let { imageBytes ->
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            Text("Select Aspect Ratio:")
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Button(
-                    onClick = { selectedAspectRatio = AspectRatio.SQUARE }
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val imageBytes = result.photos.first().photoBytes
+                selectedImage = imageBytes
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text("Select Aspect Ratio:")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("1:1")
+                    Button(onClick = { selectedAspectRatio = AspectRatio.SQUARE }) {
+                        Text("1:1")
+                    }
+                    Button(onClick = { selectedAspectRatio = AspectRatio.RATIO_4_3 }) {
+                        Text("4:3")
+                    }
+                    Button(onClick = { selectedAspectRatio = AspectRatio.RATIO_16_9 }) {
+                        Text("16:9")
+                    }
+                    Button(onClick = { selectedAspectRatio = AspectRatio.RATIO_9_16 }) {
+                        Text("9:16")
+                    }
                 }
-                Button(
-                    onClick = { selectedAspectRatio = AspectRatio.RATIO_4_3 }
-                ) {
-                    Text("4:3")
-                }
-                Button(
-                    onClick = { selectedAspectRatio = AspectRatio.RATIO_16_9 }
-                ) {
-                    Text("16:9")
-                }
-                Button(
-                    onClick = { selectedAspectRatio = AspectRatio.RATIO_9_16 }
-                ) {
-                    Text("9:16")
-                }
-            }
-            
-            selectedAspectRatio?.let { ratio ->
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("Selected: ${ratio.displayName}")
-                
-                Button(
-                    onClick = { showCropView = true },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Crop with ${ratio.displayName} Ratio")
+
+                selectedAspectRatio?.let { ratio ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Selected: ${ratio.displayName}")
+
+                    Button(
+                        onClick = { showCropView = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Crop with ${ratio.displayName} Ratio")
+                    }
                 }
             }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
         }
 
         croppedImageBytes?.let { croppedBytes ->
@@ -430,20 +427,6 @@ fun CropWithAspectRatios() {
                 contentScale = ContentScale.Crop
             )
         }
-    }
-
-    if (showImagePicker) {
-        GalleryPickerLauncher(
-            onPhotosSelected = { photos ->
-                photos.firstOrNull()?.let { photo ->
-                    selectedImage = photo.photoBytes
-                }
-                showImagePicker = false
-            },
-            onError = { showImagePicker = false },
-            onDismiss = { showImagePicker = false },
-            allowMultiple = false
-        )
     }
 
     if (showCropView && selectedImage != null && selectedAspectRatio != null) {
@@ -465,7 +448,6 @@ fun CropWithAspectRatios() {
 ```kotlin
 @Composable
 fun AdvancedCropExample() {
-    var showImagePicker by remember { mutableStateOf(false) }
     var selectedImage by remember { mutableStateOf<ByteArray?>(null) }
     var showCropView by remember { mutableStateOf(false) }
     var croppedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
@@ -473,62 +455,75 @@ fun AdvancedCropExample() {
     var enableZoom by remember { mutableStateOf(true) }
     var showGrid by remember { mutableStateOf(true) }
 
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Button(
-            onClick = { showImagePicker = true },
+            onClick = { picker.launchGallery(allowMultiple = false) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Select Image to Crop")
         }
 
-        selectedImage?.let { imageBytes ->
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            Text("Crop Configuration:")
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = allowFreeform,
-                    onCheckedChange = { allowFreeform = it }
-                )
-                Text("Allow Freeform Crop")
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val imageBytes = result.photos.first().photoBytes
+                selectedImage = imageBytes
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text("Crop Configuration:")
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = allowFreeform,
+                        onCheckedChange = { allowFreeform = it }
+                    )
+                    Text("Allow Freeform Crop")
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = enableZoom,
+                        onCheckedChange = { enableZoom = it }
+                    )
+                    Text("Enable Zoom")
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = showGrid,
+                        onCheckedChange = { showGrid = it }
+                    )
+                    Text("Show Grid Lines")
+                }
+
+                Button(
+                    onClick = { showCropView = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Open Crop View")
+                }
             }
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = enableZoom,
-                    onCheckedChange = { enableZoom = it }
-                )
-                Text("Enable Zoom")
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
             }
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = showGrid,
-                    onCheckedChange = { showGrid = it }
-                )
-                Text("Show Grid Lines")
-            }
-            
-            Button(
-                onClick = { showCropView = true },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Open Crop View")
-            }
+            else -> { /* Idle, Dismissed, Loading */ }
         }
 
         croppedImageBytes?.let { croppedBytes ->
@@ -544,20 +539,6 @@ fun AdvancedCropExample() {
                 contentScale = ContentScale.Crop
             )
         }
-    }
-
-    if (showImagePicker) {
-        GalleryPickerLauncher(
-            onPhotosSelected = { photos ->
-                photos.firstOrNull()?.let { photo ->
-                    selectedImage = photo.photoBytes
-                }
-                showImagePicker = false
-            },
-            onError = { showImagePicker = false },
-            onDismiss = { showImagePicker = false },
-            allowMultiple = false
-        )
     }
 
     if (showCropView && selectedImage != null) {
@@ -581,10 +562,13 @@ fun AdvancedCropExample() {
 ```kotlin
 @Composable
 fun CameraCropWorkflow() {
-    var showCamera by remember { mutableStateOf(false) }
-    var capturedPhoto by remember { mutableStateOf<PhotoResult?>(null) }
+    var capturedPhotoBytes by remember { mutableStateOf<ByteArray?>(null) }
     var showCropView by remember { mutableStateOf(false) }
     var croppedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
 
     Column(
         modifier = Modifier
@@ -592,31 +576,40 @@ fun CameraCropWorkflow() {
             .padding(16.dp)
     ) {
         Button(
-            onClick = { showCamera = true },
+            onClick = { picker.launchCamera() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Capture Photo")
         }
 
-        capturedPhoto?.let { photo ->
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Captured Photo:")
-            Image(
-                bitmap = photo.photoBytes.toComposeImageBitmap(),
-                contentDescription = "Captured photo",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
-            )
-            
-            Button(
-                onClick = { showCropView = true },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Crop Photo")
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                capturedPhotoBytes = photo.photoBytes
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Captured Photo:")
+                Image(
+                    bitmap = photo.photoBytes.toComposeImageBitmap(),
+                    contentDescription = "Captured photo",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+
+                Button(
+                    onClick = { showCropView = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Crop Photo")
+                }
             }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
         }
 
         croppedImageBytes?.let { croppedBytes ->
@@ -634,20 +627,9 @@ fun CameraCropWorkflow() {
         }
     }
 
-    if (showCamera) {
-        CameraCaptureView(
-            onPhotoTaken = { photo ->
-                capturedPhoto = photo
-                showCamera = false
-            },
-            onError = { showCamera = false },
-            onDismiss = { showCamera = false }
-        )
-    }
-
-    if (showCropView && capturedPhoto != null) {
+    if (showCropView && capturedPhotoBytes != null) {
         ImageCropView(
-            originalImageBytes = capturedPhoto!!.photoBytes,
+            originalImageBytes = capturedPhotoBytes!!,
             onCropComplete = { croppedBytes ->
                 croppedImageBytes = croppedBytes
                 showCropView = false
@@ -666,29 +648,33 @@ fun CameraCropWorkflow() {
 ```kotlin
 @Composable
 fun SimplePhotoCapture() {
-    var showImagePicker by remember { mutableStateOf(false) }
-    var capturedImage by remember { mutableStateOf<PhotoResult?>(null) }
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
 
-    if (showImagePicker) {
-        ImagePickerLauncher(
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    capturedImage = result
-                    showImagePicker = false
-                },
-                onError = { exception -> 
-                    println("Error: ${exception.message}")
-                    showImagePicker = false
-                },
-                onDismiss = { 
-                    println("User cancelled or dismissed the picker")
-                    showImagePicker = false // Reset state when user doesn't select anything
-                }
-            )
-        )
-    }
-    Button(onClick = { showImagePicker = true }) {
-        Text("Take Photo")
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                println("Error: ${result.exception.message}")
+            }
+            is ImagePickerResult.Dismissed -> {
+                println("User cancelled or dismissed the picker")
+            }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* Initial state */ }
+        }
     }
 }
 ```
@@ -698,38 +684,46 @@ fun SimplePhotoCapture() {
 ```kotlin
 @Composable
 fun CustomConfirmationExample() {
-    var showPicker by remember { mutableStateOf(false) }
-
-    if (showPicker) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result -> showPicker = false },
-                onError = { showPicker = false },
-                onDismiss = { 
-                    println("User cancelled or dismissed the picker")
-                    showPicker = false 
-                },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                        customConfirmationView = { result, onConfirm, onRetry ->
-                            ImageConfirmationViewWithCustomButtons(
-                                result = result,
-                                onConfirm = onConfirm,
-                                onRetry = onRetry,
-                                questionText = "Do you like this photo?",
-                                retryText = "Retake",
-                                acceptText = "Perfect"
-                            )
-                        }
-                    )
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    customConfirmationView = { result, onConfirm, onRetry ->
+                        ImageConfirmationViewWithCustomButtons(
+                            result = result,
+                            onConfirm = onConfirm,
+                            onRetry = onRetry,
+                            questionText = "Do you like this photo?",
+                            retryText = "Retake",
+                            acceptText = "Perfect"
+                        )
+                    }
                 )
             )
         )
-    }
+    )
 
-    Button(onClick = { showPicker = true }) {
-        Text("Take Photo")
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            is ImagePickerResult.Dismissed -> { /* User cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* Initial state */ }
+        }
     }
 }
 ```
@@ -741,20 +735,40 @@ fun CustomConfirmationExample() {
 ```kotlin
 @Composable
 fun CustomUIExample() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result -> /* ... */ },
-            onError = { exception -> /* ... */ },
-            buttonColor = Color(0xFF6200EE),
-            iconColor = Color.White,
-            buttonSize = 56.dp,
-            flashIcon = Icons.Default.FlashOn,
-            switchCameraIcon = Icons.Default.CameraRear,
-            captureIcon = Icons.Default.Camera,
-            galleryIcon = Icons.Default.PhotoLibrary
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            uiConfig = UiConfig(
+                buttonColor = Color(0xFF6200EE),
+                iconColor = Color.White,
+                buttonSize = 56.dp,
+                flashIcon = Icons.Default.FlashOn,
+                switchCameraIcon = Icons.Default.CameraRear,
+                captureIcon = Icons.Default.Camera,
+                galleryIcon = Icons.Default.PhotoLibrary
+            )
         )
     )
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
+        }
+    }
 }
 ```
 
@@ -763,29 +777,48 @@ fun CustomUIExample() {
 ```kotlin
 @Composable
 fun CustomCallbacksExample() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result -> /* ... */ },
-            onError = { exception -> /* ... */ },
-            onDismiss = { 
-                    println("User cancelled or dismissed the picker")
-                    showImagePicker = false // Reset state when user doesn't select anything
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCallbacks = CameraCallbacks(
+                onCameraReady = {
+                    println("Camera is ready!")
                 },
-            onCameraReady = {
-                println("Camera is ready!")
-            },
-            onCameraSwitch = {
-                println("Camera switched!")
-            },
-            onPermissionError = { exception ->
-                println("Permission error: ${exception.message}")
-            },
-            onGalleryOpened = {
-                println("Gallery opened!")
-            }
+                onCameraSwitch = {
+                    println("Camera switched!")
+                },
+                onPermissionError = { exception ->
+                    println("Permission error: ${exception.message}")
+                },
+                onGalleryOpened = {
+                    println("Gallery opened!")
+                }
+            )
         )
     )
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            is ImagePickerResult.Dismissed -> {
+                println("User cancelled or dismissed the picker")
+            }
+            else -> { /* Idle, Loading */ }
+        }
+    }
 }
 ```
 
@@ -796,34 +829,44 @@ fun CustomCallbacksExample() {
 ```kotlin
 @Composable
 fun CustomPermissionExample() {
-    var showPicker by remember { mutableStateOf(false) }
-
-    if (showPicker) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result -> showPicker = false },
-                onError = { showPicker = false },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                        customPermissionHandler = { config ->
-                            CustomPermissionDialog(
-                                title = config.titleDialogConfig,
-                                description = config.descriptionDialogConfig,
-                                confirmationButtonText = config.btnDialogConfig,
-                                onConfirm = {
-                                    // Handle permission request
-                                }
-                            )
-                        }
-                    )
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    customPermissionHandler = { config ->
+                        CustomPermissionDialog(
+                            title = config.titleDialogConfig,
+                            description = config.descriptionDialogConfig,
+                            confirmationButtonText = config.btnDialogConfig,
+                            onConfirm = {
+                                // Handle permission request
+                            }
+                        )
+                    }
                 )
             )
         )
-    }
+    )
 
-    Button(onClick = { showPicker = true }) {
-        Text("Take Photo")
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
+        }
     }
 }
 
@@ -831,32 +874,54 @@ fun CustomPermissionExample() {
 @Composable
 fun LocalizedPermissionExample() {
     val config = PermissionConfig.createLocalizedComposable()
-    
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result -> /* ... */ },
-            onError = { exception -> /* ... */ },
-            customPermissionHandler = { _ ->
-                // Usar la configuración localizada
-                CustomPermissionDialog(
-                    title = config.titleDialogConfig,
-                    description = config.descriptionDialogConfig,
-                    confirmationButtonText = config.btnDialogConfig,
-                    onConfirm = {
-                        // Handle permission request
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    customPermissionHandler = { _ ->
+                        // Usar la configuración localizada
+                        CustomPermissionDialog(
+                            title = config.titleDialogConfig,
+                            description = config.descriptionDialogConfig,
+                            confirmationButtonText = config.btnDialogConfig,
+                            onConfirm = {
+                                // Handle permission request
+                            }
+                        )
                     }
                 )
-            }
+            )
         )
     )
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
+        }
+    }
 }
 
 // Ejemplo de prueba del flujo de permisos
 @Composable
 fun TestPermissionFlow() {
     var showPermissionTest by remember { mutableStateOf(false) }
-    
+
     if (showPermissionTest) {
         RequestCameraPermission(
             titleDialogConfig = "Camera Permission Required",
@@ -874,52 +939,62 @@ fun TestPermissionFlow() {
             }
         )
     }
-    
+
     Button(onClick = { showPermissionTest = true }) {
         Text("Test Permission Flow")
     }
 }
 ```
 
-### Custom Permission Dialog Composables (New in v1.0.22)
+### Custom Permission Dialog Composables
 
 ```kotlin
 @Composable
 fun CustomPermissionDialogsExample() {
-    var showPicker by remember { mutableStateOf(false) }
-
-    if (showPicker) {
-        ImagePickerLauncher(
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result -> showPicker = false },
-                onError = { showPicker = false },
-                onDismiss = { showPicker = false },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                        // Custom dialog when permission is denied
-                        customDeniedDialog = { onRetry ->
-                            CustomRetryDialog(
-                                title = "Camera Permission Needed",
-                                message = "We need camera access to take photos",
-                                onRetry = onRetry
-                            )
-                        },
-                        // Custom dialog when permission is permanently denied
-                        customSettingsDialog = { onOpenSettings ->
-                            CustomSettingsDialog(
-                                title = "Open Settings",
-                                message = "Please enable camera permission in Settings",
-                                onOpenSettings = onOpenSettings
-                            )
-                        }
-                    )
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    // Custom dialog when permission is denied
+                    customDeniedDialog = { onRetry ->
+                        CustomRetryDialog(
+                            title = "Camera Permission Needed",
+                            message = "We need camera access to take photos",
+                            onRetry = onRetry
+                        )
+                    },
+                    // Custom dialog when permission is permanently denied
+                    customSettingsDialog = { onOpenSettings ->
+                        CustomSettingsDialog(
+                            title = "Open Settings",
+                            message = "Please enable camera permission in Settings",
+                            onOpenSettings = onOpenSettings
+                        )
+                    }
                 )
             )
         )
-    }
+    )
 
-    Button(onClick = { showPicker = true }) {
-        Text("Take Photo with Custom Permission Dialogs")
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo with Custom Permission Dialogs")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
+        }
     }
 }
 
@@ -1023,20 +1098,31 @@ fun CustomSettingsDialog(
 ```kotlin
 @Composable
 fun GallerySelectionExample() {
-    var showGallery by remember { mutableStateOf(false) }
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
 
-    if (showGallery) {
-        GalleryPickerLauncher(
-            context = LocalContext.current, // Android only; ignored on iOS
-            onPhotosSelected = { results -> showGallery = false },
-            onError = { showGallery = false },
-            allowMultiple = false,
-            mimeTypes = listOf("image/*") // Optional
-        )
-    }
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchGallery(allowMultiple = false) }) {
+            Text("Select from Gallery")
+        }
 
-    Button(onClick = { showGallery = true }) {
-        Text("Select from Gallery")
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Selected photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            is ImagePickerResult.Dismissed -> { /* User cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* Initial state */ }
+        }
     }
 }
 ```
@@ -1046,20 +1132,38 @@ fun GallerySelectionExample() {
 ```kotlin
 @Composable
 fun MultipleGallerySelectionExample() {
-    var showGallery by remember { mutableStateOf(false) }
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
 
-    if (showGallery) {
-        GalleryPickerLauncher(
-            context = LocalContext.current, // Android only; ignored on iOS
-            onPhotosSelected = { results -> showGallery = false },
-            onError = { showGallery = false },
-            allowMultiple = true,
-            mimeTypes = listOf("image/jpeg", "image/png") // Optional
-        )
-    }
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = {
+            picker.launchGallery(
+                allowMultiple = true,
+                mimeTypes = listOf("image/jpeg", "image/png")
+            )
+        }) {
+            Text("Select Multiple Images")
+        }
 
-    Button(onClick = { showGallery = true }) {
-        Text("Select Multiple Images")
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                Text("Selected ${result.photos.size} images")
+                LazyColumn {
+                    items(result.photos) { photo ->
+                        AsyncImage(
+                            model = photo.uri,
+                            contentDescription = null,
+                            modifier = Modifier.size(100.dp)
+                        )
+                    }
+                }
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
+        }
     }
 }
 ```
@@ -1069,28 +1173,39 @@ fun MultipleGallerySelectionExample() {
 ```kotlin
 @Composable
 fun LimitedGallerySelectionExample() {
-    var showGallery by remember { mutableStateOf(false) }
-
-    if (showGallery) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result -> showGallery = false },
-                onPhotosSelected = { results -> showGallery = false },
-                onError = { exception -> showGallery = false },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    galleryConfig = GalleryConfig(
-                        allowMultiple = true,
-                        mimeTypes = listOf("image/jpeg", "image/png"),
-                        selectionLimit = 10 // Allow up to 10 images
-                    )
-                )
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            galleryConfig = GalleryConfig(
+                allowMultiple = true,
+                mimeTypes = listOf("image/jpeg", "image/png"),
+                selectionLimit = 10 // Allow up to 10 images
             )
         )
-    }
+    )
 
-    Button(onClick = { showGallery = true }) {
-        Text("Select Up to 10 Images")
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchGallery() }) {
+            Text("Select Up to 10 Images")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                Text("Selected ${result.photos.size} images")
+                LazyColumn {
+                    items(result.photos) { photo ->
+                        AsyncImage(
+                            model = photo.uri,
+                            contentDescription = null,
+                            modifier = Modifier.size(100.dp)
+                        )
+                    }
+                }
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
+        }
     }
 }
 ```
@@ -1100,34 +1215,36 @@ fun LimitedGallerySelectionExample() {
 ```kotlin
 @Composable
 fun HighPerformanceGalleryExample() {
-    var showGallery by remember { mutableStateOf(false) }
-
-    if (showGallery) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result -> showGallery = false },
-                onPhotosSelected = { results -> showGallery = false },
-                onError = { exception -> showGallery = false },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    galleryConfig = GalleryConfig(
-                        allowMultiple = true,
-                        selectionLimit = 5 // Conservative limit for better performance
-                    )
-                )
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            galleryConfig = GalleryConfig(
+                allowMultiple = true,
+                selectionLimit = 5 // Conservative limit for better performance
             )
         )
-    }
+    )
 
-    Button(onClick = { showGallery = true }) {
-        Text("Select Up to 5 Images (Optimized)")
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchGallery() }) {
+            Text("Select Up to 5 Images (Optimized)")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                Text("Selected ${result.photos.size} images")
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
+        }
     }
 }
 ```
 
 - On **Android**, the user will see the system gallery picker, and permissions are requested automatically if needed.
 - On **iOS**, the native gallery picker is used. On iOS 14+, multiple selection is supported. The system handles permissions and limited access natively.
-- The callback `onPhotosSelected` always receives a list, even for single selection.
+- The `result.photos` always contains a list, even for single selection.
 - You can use `allowMultiple` to enable or disable multi-image selection.
 - The `mimeTypes` parameter is optional and lets you filter selectable file types.
 
@@ -1141,14 +1258,31 @@ The library now automatically uses localized strings based on the device languag
 @Composable
 fun InternationalizationExample() {
     // The library automatically uses localized strings
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result -> /* ... */ },
-            onError = { exception -> /* ... */ }
-            // No need to specify text - it's automatically localized!
-        )
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+        // No need to specify text - it's automatically localized!
     )
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
+        }
+    }
 }
 ```
 
@@ -1242,12 +1376,26 @@ StringResource.PERMISSION_ERROR
 ```kotlin
 @Composable
 fun ErrorHandlingExample() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result -> /* ... */ },
-            onError = { exception ->
-                when (exception) {
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                when (val exception = result.exception) {
                     is PhotoCaptureException -> {
                         println("Photo capture failed: ${exception.message}")
                         // Show user-friendly error message
@@ -1266,8 +1414,11 @@ fun ErrorHandlingExample() {
                     }
                 }
             }
-        )
-    )
+            is ImagePickerResult.Dismissed -> { /* User cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* Initial state */ }
+        }
+    }
 }
 ```
 
@@ -1276,23 +1427,38 @@ fun ErrorHandlingExample() {
 ```kotlin
 @Composable
 fun CustomErrorMessagesExample() {
-    ImagePickerLauncher(
-        context = LocalContext.current,
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result -> /* ... */ },
-            onError = { exception ->
-                val errorMessage = when (exception) {
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                val errorMessage = when (result.exception) {
                     is PhotoCaptureException -> getStringResource(StringResource.PHOTO_CAPTURE_ERROR)
                     is CameraPermissionException -> getStringResource(StringResource.PERMISSION_ERROR)
                     is GallerySelectionException -> getStringResource(StringResource.GALLERY_SELECTION_ERROR)
                     else -> getStringResource(StringResource.INVALID_CONTEXT_ERROR)
                 }
-                
+
                 // Show localized error message
-                println("Error: $errorMessage")
+                Text("Error: $errorMessage", color = Color.Red)
             }
-        )
-    )
+            else -> { /* Idle, Dismissed, Loading */ }
+        }
+    }
 }
 ```
 
@@ -1335,9 +1501,12 @@ fun ImagePickerApp() {
 
 @Composable
 fun ImagePickerScreen() {
-    var showPicker by remember { mutableStateOf(false) }
     var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
-    
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -1357,10 +1526,10 @@ fun ImagePickerScreen() {
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-        
+
         // Camera button
         Button(
-            onClick = { showPicker = true },
+            onClick = { picker.launchCamera() },
             modifier = Modifier.padding(8.dp),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = MaterialTheme.colors.primary
@@ -1373,30 +1542,27 @@ fun ImagePickerScreen() {
             )
             Text("Take Photo")
         }
-        
-        if (showPicker) {
-            ImagePickerLauncher(
-                context = LocalContext.current,
-                config = ImagePickerConfig(
-                    onPhotoCaptured = { result ->
-                        capturedImageUri = result.uri
-                        showPicker = false
-                        Toast.makeText(
-                            LocalContext.current,
-                            "Photo captured successfully!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    },
-                    onError = { exception ->
-                        showPicker = false
-                        Toast.makeText(
-                            LocalContext.current,
-                            "Error: ${exception.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                )
-            )
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                capturedImageUri = photo.uri
+                Toast.makeText(
+                    LocalContext.current,
+                    "Photo captured successfully!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            is ImagePickerResult.Error -> {
+                Toast.makeText(
+                    LocalContext.current,
+                    "Error: ${result.exception.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            is ImagePickerResult.Dismissed -> { /* User cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* Initial state */ }
         }
     }
 }
@@ -1407,9 +1573,28 @@ fun ImagePickerScreen() {
 ```kotlin
 @Composable
 fun AdvancedAndroidImagePicker() {
-    var showPicker by remember { mutableStateOf(false) }
     var imageQuality by remember { mutableStateOf(CapturePhotoPreference.BALANCED) }
-    
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                preference = imageQuality,
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    customConfirmationView = { result, onConfirm, onRetry ->
+                        CustomConfirmationDialog(
+                            result = result,
+                            onConfirm = onConfirm,
+                            onRetry = onRetry,
+                            questionText = "¿Te gusta esta foto?",
+                            retryText = "Otra vez",
+                            acceptText = "Perfecto"
+                        )
+                    }
+                )
+            )
+        )
+    )
+
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
@@ -1423,57 +1608,36 @@ fun AdvancedAndroidImagePicker() {
                 onClick = { imageQuality = CapturePhotoPreference.FAST }
             )
             Text("Fast", modifier = Modifier.padding(start = 8.dp))
-            
+
             RadioButton(
                 selected = imageQuality == CapturePhotoPreference.BALANCED,
                 onClick = { imageQuality = CapturePhotoPreference.BALANCED }
             )
             Text("Balanced", modifier = Modifier.padding(start = 8.dp))
-            
+
             RadioButton(
                 selected = imageQuality == CapturePhotoPreference.HIGH_QUALITY,
                 onClick = { imageQuality = CapturePhotoPreference.HIGH_QUALITY }
             )
             Text("High Quality", modifier = Modifier.padding(start = 8.dp))
         }
-        
+
         Button(
-            onClick = { showPicker = true },
+            onClick = { picker.launchCamera() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Take Photo with ${imageQuality.name} Quality")
         }
-        
-        if (showPicker) {
-            ImagePickerLauncher(
-                context = LocalContext.current,
-                config = ImagePickerConfig(
-                    onPhotoCaptured = { result ->
-                        // Process the captured photo
-                        processImage(result.uri)
-                        showPicker = false
-                    },
-                    onError = { exception ->
-                        handleError(exception)
-                        showPicker = false
-                    },
-                    preference = imageQuality,
-                    cameraCaptureConfig = CameraCaptureConfig(
-                        permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                            customConfirmationView = { result, onConfirm, onRetry ->
-                                CustomConfirmationDialog(
-                                    result = result,
-                                    onConfirm = onConfirm,
-                                    onRetry = onRetry,
-                                    questionText = "¿Te gusta esta foto?",
-                                    retryText = "Otra vez",
-                                    acceptText = "Perfecto"
-                                )
-                            }
-                        )
-                    )
-                )
-            )
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                processImage(photo.uri)
+            }
+            is ImagePickerResult.Error -> {
+                handleError(result.exception)
+            }
+            else -> { /* Idle, Dismissed, Loading */ }
         }
     }
 }
@@ -1602,16 +1766,8 @@ struct ImagePickerView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let controller = UIViewController()
         
-        // Create ImagePickerKMP launcher
-        let imagePicker = ImagePickerLauncher(
-            context: nil, // iOS doesn't need context
-            config = ImagePickerConfig(
-                onPhotoCaptured: onPhotoCaptured,
-                onError: onError
-            )
-        )
-        
-        // Present the image picker
+        // Create and present the image picker
+        // The library handles iOS-specific implementation internally
         controller.present(imagePicker, animated: true)
         
         return controller
@@ -1723,16 +1879,8 @@ struct AdvancedImagePickerView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let controller = UIViewController()
         
-        // Create ImagePickerKMP launcher with custom configuration
-        let imagePicker = ImagePickerLauncher(
-            context: nil,
-            config = ImagePickerConfig(
-                onPhotoCaptured: onPhotoCaptured,
-                onError: onError,
-                preference = getPhotoPreference(for: quality)
-            )
-        )
-        
+        // Create image picker with custom configuration
+        // The library handles iOS-specific implementation internally
         controller.present(imagePicker, animated: true)
         
         return controller
@@ -1765,7 +1913,7 @@ kotlin {
     android {
         // Android configuration
     }
-    
+
     ios {
         binaries {
             framework {
@@ -1773,7 +1921,7 @@ kotlin {
             }
         }
     }
-    
+
     sourceSets {
         commonMain {
             dependencies {
@@ -1782,7 +1930,7 @@ kotlin {
                 implementation("org.jetbrains.compose.runtime:runtime:1.4.0")
             }
         }
-        
+
         androidMain {
             dependencies {
                 implementation("androidx.compose.ui:ui:1.4.0")
@@ -1790,7 +1938,7 @@ kotlin {
                 implementation("androidx.activity:activity-compose:1.7.0")
             }
         }
-        
+
         iosMain {
             dependencies {
                 // iOS-specific dependencies if needed
@@ -1805,36 +1953,33 @@ package io.github.ismoy.belzspeedscan.core.camera.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import io.github.ismoy.imagepickerkmp.CameraPhotoHandler
-import io.github.ismoy.imagepickerkmp.CapturePhotoPreference
-import io.github.ismoy.imagepickerkmp.ImagePickerLauncher
+import io.github.ismoy.imagepickerkmp.ImagePickerKMPConfig
+import io.github.ismoy.imagepickerkmp.ImagePickerResult
+import io.github.ismoy.imagepickerkmp.rememberImagePickerKMP
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CameraScreen(context: Any?) {
-    var showImagePicker by remember { mutableStateOf(false) }
-    var capturedImage by remember { mutableStateOf<CameraPhotoHandler.PhotoResult?>(null) }
+fun CameraScreen() {
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                preference = CapturePhotoPreference.QUALITY
+            )
+        )
+    )
 
     Scaffold { innerPadding ->
         Column(
@@ -1848,27 +1993,22 @@ fun CameraScreen(context: Any?) {
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-                if (showImagePicker) {
-                    ImagePickerLauncher(
-                        context = context,
-                        config = ImagePickerConfig(
-                            onPhotoCaptured = { photoResult ->
-                                capturedImage = photoResult
-                                showImagePicker = false
-                            },
-                            onError = { exception ->
-                                showImagePicker = false
-                            },
-                            preference = CapturePhotoPreference.QUALITY
+                when (val result = picker.result) {
+                    is ImagePickerResult.Success -> {
+                        val photo = result.photos.first()
+                        AsyncImage(
+                            model = photo.uri,
+                            contentDescription = "Imagen capturada",
+                            modifier = Modifier.fillMaxSize()
                         )
-                    )
-                } else if (capturedImage != null) {
-                    AsyncImage(
-                        model = capturedImage?.uri,
-                        contentDescription = "Imagen capturada",
-                        modifier = Modifier
-                            .fillMaxSize()
-                    )
+                    }
+                    is ImagePickerResult.Error -> {
+                        Text("Error: ${result.exception.message}")
+                    }
+                    is ImagePickerResult.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    else -> { /* Idle, Dismissed */ }
                 }
             }
             Column(
@@ -1878,9 +2018,7 @@ fun CameraScreen(context: Any?) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OutlinedButton(
-                    onClick = {
-                        showImagePicker = true
-                    },
+                    onClick = { picker.launchCamera() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
@@ -1902,8 +2040,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -1911,26 +2047,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface {
-                    // Pass the activity context to the shared component
-                    CameraScreen(context = LocalContext.current)
+                    CameraScreen()
                 }
             }
         }
     }
 }
-
-// Alternative: Using LocalContext directly in the screen
-@Composable
-fun AndroidCameraScreen() {
-    val context = LocalContext.current
-    CameraScreen(context = context)
-}
 ```
 
 #### iOS Implementation (KMP)
 
-```kotlin
-// App.kt (iOS app)
+```swift
+// App.swift (iOS app)
 import SwiftUI
 import ComposeUI
 
@@ -1939,8 +2067,7 @@ struct ImagePickerApp: App {
     var body: some Scene {
         WindowGroup {
             ComposeView {
-                // Pass null context for iOS - the library handles it internally
-                CameraScreen(context = null)
+                CameraScreen()
             }
         }
     }
@@ -1950,7 +2077,7 @@ struct ImagePickerApp: App {
 struct CameraScreenWrapper: View {
     var body: some View {
         ComposeView {
-            CameraScreen(context = null)
+            CameraScreen()
         }
     }
 }
@@ -1969,7 +2096,7 @@ fun ImagePickerApp() {
         ) {
             // The same component works on both platforms
             // The library handles platform differences internally
-            CameraScreen(context = null) // Context will be provided by the platform-specific app
+            CameraScreen()
         }
     }
 }
@@ -1979,9 +2106,7 @@ fun ImagePickerApp() {
 
 1. **Single Codebase**: The same `CameraScreen` component works on both Android and iOS
 2. **Platform Abstraction**: The library handles platform-specific differences internally
-3. **Context Handling**: 
-   - Android: Pass `LocalContext.current` or `context` parameter
-   - iOS: Pass `null` - the library handles it automatically
+3. **No Context Passing**: The `rememberImagePickerKMP` composable handles platform context automatically
 4. **No Platform Detection**: No need for manual platform detection in your code
 5. **Clean Architecture**: Platform-specific code is isolated in the app layer, not the shared component
 
@@ -1991,34 +2116,50 @@ This example shows:
 - Clean separation of concerns
 - Simplified development workflow
 
-For more information, see [Integration Guide](INTEGRATION_GUIDE.md) and [API Reference](API_REFERENCE.md). 
+For more information, see [Integration Guide](INTEGRATION_GUIDE.md) and [API Reference](API_REFERENCE.md).
+
+### Full-Featured Example
 
 ```kotlin
 @Composable
 fun CustomImagePicker() {
-    var showPicker by remember { mutableStateOf(false) }
-    if (showPicker) {
-        ImagePickerLauncher(
-            context = LocalContext.current,
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result -> showPicker = false },
-                onError = { exception -> showPicker = false },
-                cameraCaptureConfig = CameraCaptureConfig(
-                    preference = CapturePhotoPreference.HIGH_QUALITY,
-                    permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-                        customPermissionHandler = { config ->
-                            // Custom permission handling
-                        },
-                        customConfirmationView = { result, onConfirm, onRetry ->
-                            // Custom confirmation view
-                        }
-                    )
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            cameraCaptureConfig = CameraCaptureConfig(
+                preference = CapturePhotoPreference.HIGH_QUALITY,
+                permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
+                    customPermissionHandler = { config ->
+                        // Custom permission handling
+                    },
+                    customConfirmationView = { result, onConfirm, onRetry ->
+                        // Custom confirmation view
+                    }
                 )
             )
         )
-    }
-    Button(onClick = { showPicker = true }) {
-        Text("Take Photo")
+    )
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Take Photo")
+        }
+
+        when (val result = picker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                AsyncImage(
+                    model = photo.uri,
+                    contentDescription = "Captured photo",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
+            is ImagePickerResult.Error -> {
+                Text("Error: ${result.exception.message}")
+            }
+            is ImagePickerResult.Dismissed -> { /* User cancelled */ }
+            is ImagePickerResult.Loading -> { CircularProgressIndicator() }
+            is ImagePickerResult.Idle -> { /* Initial state */ }
+        }
     }
 }
 ```
@@ -2027,60 +2168,66 @@ fun CustomImagePicker() {
 
 ### Loading Image Data as ByteArray
 
-The library now supports loading image data as `ByteArray` for both `PhotoResult` and `GalleryPhotoResult`. This gives you control over when the full image data is loaded into memory.
+The library supports loading image data as `ByteArray` for both `PhotoResult` and `GalleryPhotoResult`. This gives you control over when the full image data is loaded into memory.
 
 #### Basic Usage
 
 ```kotlin
 @Composable
 fun ByteArrayExample() {
-    var photoResult by remember { mutableStateOf<PhotoResult?>(null) }
-    var galleryResult by remember { mutableStateOf<GalleryPhotoResult?>(null) }
     var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
-    
+
+    val cameraPicker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
+
+    val galleryPicker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
+
     Column(modifier = Modifier.padding(16.dp)) {
         // Camera capture
-        ImagePickerLauncher(
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    photoResult = result
-                }
-            )
-        )
-        
+        Button(onClick = { cameraPicker.launchCamera() }) {
+            Text("Capture Photo")
+        }
+
         // Gallery selection
-        GalleryPickerLauncher(
-            config = GalleryPickerConfig(
-                onPhotoSelected = { result ->
-                    galleryResult = result
-                }
-            )
-        )
-        
+        Button(onClick = { galleryPicker.launchGallery(allowMultiple = false) }) {
+            Text("Select from Gallery")
+        }
+
         // Load bytes from camera result - Zero config!
-        photoResult?.let { photo ->
-            Button(
-                onClick = {
-                    // Just works - no setup required!
-                    imageBytes = photo.loadBytes()
+        when (val result = cameraPicker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                Button(
+                    onClick = {
+                        // Just works - no setup required!
+                        imageBytes = photo.loadBytes()
+                    }
+                ) {
+                    Text("Load Camera Photo as ByteArray")
                 }
-            ) {
-                Text("Load Camera Photo as ByteArray")
             }
+            else -> { /* Other states */ }
         }
-        
+
         // Load bytes from gallery result - Zero config!
-        galleryResult?.let { gallery ->
-            Button(
-                onClick = {
-                    // Just works - no setup required!
-                    imageBytes = gallery.loadBytes()
+        when (val result = galleryPicker.result) {
+            is ImagePickerResult.Success -> {
+                val photo = result.photos.first()
+                Button(
+                    onClick = {
+                        // Just works - no setup required!
+                        imageBytes = photo.loadBytes()
+                    }
+                ) {
+                    Text("Load Gallery Photo as ByteArray")
                 }
-            ) {
-                Text("Load Gallery Photo as ByteArray")
             }
+            else -> { /* Other states */ }
         }
-        
+
         // Display byte array info
         imageBytes?.let { bytes ->
             Text("Image loaded: ${bytes.size} bytes")
@@ -2094,38 +2241,45 @@ fun ByteArrayExample() {
 ```kotlin
 @Composable
 fun ImageProcessingExample() {
-    var photoResult by remember { mutableStateOf<PhotoResult?>(null) }
     var processedImage by remember { mutableStateOf<String?>(null) }
-    
-    LaunchedEffect(photoResult) {
-        photoResult?.let { photo ->
-            // Load image data in background thread
-            withContext(Dispatchers.IO) {
-                // Zero-config loading
-                val imageBytes = photo.loadBytes()
-                
-                if (imageBytes.isNotEmpty()) {
-                    // Process the image data
-                    val base64 = Base64.encodeToString(imageBytes, Base64.DEFAULT)
-                    processedImage = "data:image/jpeg;base64,$base64"
-                    
-                    // Or save to file
-                    saveImageToFile(imageBytes, "processed_image.jpg")
-                    
-                    // Or upload to server
-                    uploadImageToServer(imageBytes)
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Capture Photo")
+        }
+
+        LaunchedEffect(picker.result) {
+            val result = picker.result
+            if (result is ImagePickerResult.Success) {
+                val photo = result.photos.first()
+                // Load image data in background thread
+                withContext(Dispatchers.IO) {
+                    // Zero-config loading
+                    val imageBytes = photo.loadBytes()
+
+                    if (imageBytes.isNotEmpty()) {
+                        // Process the image data
+                        val base64 = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+                        processedImage = "data:image/jpeg;base64,$base64"
+
+                        // Or save to file
+                        saveImageToFile(imageBytes, "processed_image.jpg")
+
+                        // Or upload to server
+                        uploadImageToServer(imageBytes)
+                    }
                 }
             }
         }
+
+        processedImage?.let {
+            Text("Image processed successfully!")
+        }
     }
-    
-    ImagePickerLauncher(
-        config = ImagePickerConfig(
-            onPhotoCaptured = { result ->
-                photoResult = result
-            }
-        )
-    )
 }
 
 private suspend fun saveImageToFile(bytes: ByteArray, fileName: String) {
@@ -2142,51 +2296,52 @@ private suspend fun uploadImageToServer(bytes: ByteArray) {
 ```kotlin
 @Composable
 fun SafeByteArrayExample() {
-    var photoResult by remember { mutableStateOf<PhotoResult?>(null) }
     var loadingState by remember { mutableStateOf<LoadingState>(LoadingState.Idle) }
-    
+
     sealed class LoadingState {
         object Idle : LoadingState()
         object Loading : LoadingState()
         data class Success(val bytes: ByteArray) : LoadingState()
         data class Error(val message: String) : LoadingState()
     }
-    
-    LaunchedEffect(photoResult) {
-        photoResult?.let { photo ->
-            loadingState = LoadingState.Loading
-            
-            try {
-                withContext(Dispatchers.IO) {
-                    // Zero-config loading
-                    val imageBytes = photo.loadBytes()
-                    
-                    if (imageBytes.isNotEmpty()) {
-                        loadingState = LoadingState.Success(imageBytes)
-                    } else {
-                        loadingState = LoadingState.Error("Failed to load image data")
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig()
+    )
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = { picker.launchCamera() }) {
+            Text("Capture Photo")
+        }
+
+        LaunchedEffect(picker.result) {
+            val result = picker.result
+            if (result is ImagePickerResult.Success) {
+                loadingState = LoadingState.Loading
+                val photo = result.photos.first()
+
+                try {
+                    withContext(Dispatchers.IO) {
+                        // Zero-config loading
+                        val imageBytes = photo.loadBytes()
+
+                        if (imageBytes.isNotEmpty()) {
+                            loadingState = LoadingState.Success(imageBytes)
+                        } else {
+                            loadingState = LoadingState.Error("Failed to load image data")
+                        }
                     }
+                } catch (e: Exception) {
+                    loadingState = LoadingState.Error("Error loading image: ${e.message}")
                 }
-            } catch (e: Exception) {
-                loadingState = LoadingState.Error("Error loading image: ${e.message}")
             }
         }
-    }
-    
-    Column {
-        ImagePickerLauncher(
-            config = ImagePickerConfig(
-                onPhotoCaptured = { result ->
-                    photoResult = result
-                }
-            )
-        )
-        
+
         when (loadingState) {
             is LoadingState.Idle -> Text("No image selected")
             is LoadingState.Loading -> CircularProgressIndicator()
-            is LoadingState.Success -> Text("Image loaded: ${loadingState.bytes.size} bytes")
-            is LoadingState.Error -> Text("Error: ${loadingState.message}", color = Color.Red)
+            is LoadingState.Success -> Text("Image loaded: ${(loadingState as LoadingState.Success).bytes.size} bytes")
+            is LoadingState.Error -> Text("Error: ${(loadingState as LoadingState.Error).message}", color = Color.Red)
         }
     }
 }
@@ -2201,7 +2356,7 @@ class ImageProcessor {
         return try {
             // Zero-config loading works on all platforms
             val imageBytes = photoResult.loadBytes()
-            
+
             if (imageBytes.isNotEmpty()) {
                 // Process the raw image bytes
                 ProcessedImage(
@@ -2216,7 +2371,7 @@ class ImageProcessor {
             null
         }
     }
-    
+
     private fun detectImageFormat(bytes: ByteArray): String {
         return when {
             bytes.size >= 2 && bytes[0] == 0xFF.toByte() && bytes[1] == 0xD8.toByte() -> "JPEG"

@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import io.github.ismoy.imagepickerkmp.domain.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
-import io.github.ismoy.imagepickerkmp.domain.utils.JvmFilePicker
+import io.github.ismoy.imagepickerkmp.domain.utils.JsFilePicker
 
 @Suppress("LongParameterList")
 @Composable
-actual fun GalleryPickerLauncher(
+internal actual fun PlatformGalleryRenderer(
     onPhotosSelected: (List<GalleryPhotoResult>) -> Unit,
     onError: (Exception) -> Unit,
     onDismiss: () -> Unit,
@@ -22,9 +22,7 @@ actual fun GalleryPickerLauncher(
     mimeTypeMismatchMessage: String?,
     onCropPending: () -> Unit
 ) {
-    // Use the common JVM file picker utility
-    // Note: cameraCaptureConfig and enableCrop are not supported on JVM platform
-    JvmFilePicker(
+    JsFilePicker(
         onPhotosSelected = onPhotosSelected,
         onError = onError,
         onDismiss = onDismiss,

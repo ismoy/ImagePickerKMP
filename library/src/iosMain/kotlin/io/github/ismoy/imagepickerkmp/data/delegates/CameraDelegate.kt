@@ -39,8 +39,9 @@ internal class CameraDelegate(
     }
 
     override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        onDismiss()
-        dismissPicker(picker)
+        picker.dismissViewControllerAnimated(true) {
+            onDismiss()
+        }
     }
 
     private fun processCapturedImage(image: UIImage, picker: UIImagePickerController) {
@@ -71,17 +72,23 @@ internal class CameraDelegate(
                         fileSize = fileSizeInBytes,
                         exif = exifData
                     )
-                    onPhotoCaptured(photoResult)
+                    // Dismiss the picker FIRST, then deliver the result in the completion
+                    // handler. This prevents "Unbalanced calls to begin/end appearance
+                    // transitions" when crop opens a Dialog immediately after capture.
+                    picker.dismissViewControllerAnimated(true) {
+                        onPhotoCaptured(photoResult)
+                    }
                 } else {
                     onError(PhotoCaptureException("Failed to save processed image"))
+                    dismissPicker(picker)
                 }
             } else {
                 onError(PhotoCaptureException("Failed to process image"))
+                dismissPicker(picker)
             }
         } catch (e: Exception) {
             logDebug("Error processing image: ${e.message}")
             onError(PhotoCaptureException("Failed to process image: ${e.message}"))
-        } finally {
             dismissPicker(picker)
         }
     }
