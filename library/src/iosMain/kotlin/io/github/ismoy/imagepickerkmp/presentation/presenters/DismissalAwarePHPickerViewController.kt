@@ -8,17 +8,18 @@ import platform.PhotosUI.PHPickerViewController
 @OptIn(ExperimentalForeignApi::class)
 internal object DismissalAwarePHPickerViewController {
     
-    private val pickerMonitors = mutableMapOf<Int, DismissalMonitor>()
+    // Strong reference prevents the monitor (and transitively the delegate) from being GC'd
+    // while the picker is presented. Cleared once dismissal is detected.
+    private var activeMonitor: DismissalMonitor? = null
     
     fun createPickerViewController(
         configuration: PHPickerConfiguration,
         pickerDelegate: PHPickerDelegate
     ): PHPickerViewController {
         val picker = PHPickerViewController(configuration)
-        
-        val monitor = DismissalMonitor(picker, pickerDelegate)
-        pickerMonitors[picker.hashCode()] = monitor
-        
+        activeMonitor = DismissalMonitor(picker, pickerDelegate) {
+            activeMonitor = null
+        }
         return picker
     }
 }
@@ -26,11 +27,13 @@ internal object DismissalAwarePHPickerViewController {
 @OptIn(ExperimentalForeignApi::class)
 private class DismissalMonitor(
     private val picker: PHPickerViewController,
-    private val pickerDelegate: PHPickerDelegate
+    private val pickerDelegate: PHPickerDelegate,
+    private val onCleanup: () -> Unit
 ) {
     
     private var didNotifyDismissal = false
-    private var previousWindowState: Boolean = true
+    // Start as false — the picker hasn't appeared in a window yet during presentation animation
+    private var hasAppearedInWindow = false
     
     init {
         scheduleCheck()
@@ -49,20 +52,25 @@ private class DismissalMonitor(
     }
     
     private fun performCheck() {
-        val currentWindowState = picker.view.window != null
+        if (didNotifyDismissal) return
         
-        if (previousWindowState && !currentWindowState && !didNotifyDismissal) {
+        val isInWindow = picker.view.window != null
+        
+        // Track when the picker first appears in a window (presentation animation completed)
+        if (isInWindow) {
+            hasAppearedInWindow = true
+        }
+        
+        // Only consider it a dismissal if it was previously visible and is now gone
+        if (hasAppearedInWindow && !isInWindow) {
             didNotifyDismissal = true
             if (!pickerDelegate.dismissHandled) {
                 pickerDelegate.onPickerDismissed()
             }
+            onCleanup()
             return
         }
         
-        previousWindowState = currentWindowState
-        
-        if (!didNotifyDismissal) {
-            scheduleCheck()
-        }
+        scheduleCheck()
     }
 }

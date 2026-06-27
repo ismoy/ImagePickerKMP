@@ -15,7 +15,6 @@ import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerDelegateProtocol
 import platform.UIKit.UIImagePickerControllerImageURL
 import platform.UIKit.UIImagePickerControllerOriginalImage
-import platform.UIKit.UIImageJPEGRepresentation
 import platform.UIKit.UIAdaptivePresentationControllerDelegateProtocol
 import platform.UIKit.UIPresentationController
 import platform.UIKit.UINavigationControllerDelegateProtocol
@@ -119,8 +118,10 @@ internal class GalleryDelegate(
             val processedData = if (compressionLevel != null) {
                 ImageProcessor.processImageForGallery(image, compressionLevel)
             } else {
-                logDebug("No compression - using original quality")
-                UIImageJPEGRepresentation(image, 1.0)
+                // Apply default resizing and adaptive compression to prevent memory spikes
+                // with high-resolution photos (e.g. 48MP sensors).
+                logDebug("No compression level specified - applying default optimization")
+                ImageOptimizer.processImage(image, null)
             }
             
             if (processedData != null) {
@@ -135,10 +136,30 @@ internal class GalleryDelegate(
                         null
                     }
                     
+                    // Calculate final dimensions based on resize constraints
+                    val maxDim = ImageOptimizer.getMaxDimension(compressionLevel)
+                    val origW = image.size.useContents { width.toInt() }
+                    val origH = image.size.useContents { height.toInt() }
+                    val finalWidth: Int
+                    val finalHeight: Int
+                    if (origW <= maxDim.toInt() && origH <= maxDim.toInt()) {
+                        finalWidth = origW
+                        finalHeight = origH
+                    } else {
+                        val aspectRatio = origW.toDouble() / origH.toDouble()
+                        if (origW > origH) {
+                            finalWidth = maxDim.toInt()
+                            finalHeight = (maxDim / aspectRatio).toInt()
+                        } else {
+                            finalWidth = (maxDim * aspectRatio).toInt()
+                            finalHeight = maxDim.toInt()
+                        }
+                    }
+
                     val galleryResult = GalleryPhotoResult(
                         uri = tempURL.absoluteString ?: "",
-                        width = image.size.useContents { width.toInt() },
-                        height = image.size.useContents { height.toInt() },
+                        width = finalWidth,
+                        height = finalHeight,
                         fileName = tempURL.lastPathComponent,
                         fileSize = fileSizeInBytes,
                         mimeType = "image/jpeg",
