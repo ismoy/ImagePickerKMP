@@ -11,6 +11,7 @@ import org.w3c.dom.events.Event
 import org.w3c.files.FileReader
 import org.w3c.files.get
 
+@OptIn(ExperimentalWasmJsInterop::class)
 private fun currentTimeMillis(): Double = js("Date.now()")
 
 /**
@@ -18,6 +19,7 @@ private fun currentTimeMillis(): Double = js("Date.now()")
  * Uses HTML file input with capture attribute to request camera on mobile browsers.
  * Falls back to a file picker for images on desktop browsers.
  */
+@OptIn(ExperimentalWasmJsInterop::class)
 @Composable
 internal actual fun PlatformCameraRenderer(
     config: ImagePickerConfig

@@ -368,14 +368,18 @@ private fun openUriSource(uri: String): Source {
 actual val PhotoResult.absolutePath: String
     get() {
         try {
-            val file = if (uri.startsWith("content://")) {
-                File(getApplicationContext().cacheDir, fileName ?: "photo.jpg").apply {
-                    writeBytes(openUriSource(uri).readByteArray())
+            val file = when {
+                uri.startsWith("content://") -> {
+                    File(getApplicationContext().cacheDir, fileName ?: "photo.jpg").apply {
+                        writeBytes(openUriSource(uri).readByteArray())
+                    }
                 }
-            } else if (uri.startsWith("file://"))
-                File(URI(uri))
-            else
-                throw FileNotFoundException("Cannot open: $uri")
+                uri.startsWith("file://") -> File(URI(uri))
+                // Raw absolute file paths (e.g. cropped images saved to cacheDir) are already
+                // on disk and need no copying — return the path directly.
+                uri.startsWith("/") -> File(uri)
+                else -> throw FileNotFoundException("Cannot open: $uri")
+            }
             return file.absolutePath
         } catch (e: Exception) {
             throw FileNotFoundException("Cannot open: $uri ${e::class.simpleName}")

@@ -4,7 +4,6 @@ import io.github.ismoy.imagepickerkmp.data.delegates.PHPickerDelegate
 import io.github.ismoy.imagepickerkmp.domain.models.CompressionLevel
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.domain.models.MimeType
-import platform.Photos.PHPhotoLibrary
 import platform.PhotosUI.PHPickerConfiguration
 import platform.PhotosUI.PHPickerFilter
 import platform.PhotosUI.PHPickerViewController
@@ -22,9 +21,11 @@ internal fun createPHPickerController(
     mimeTypeMismatchMessage: String? = null,
     onPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = null
 ): PHPickerViewController {
-    val configuration = PHPickerConfiguration(
-        photoLibrary = PHPhotoLibrary.sharedPhotoLibrary()
-    )
+    // Use the parameterless constructor which avoids the expensive
+    // PHPhotoLibrary.sharedPhotoLibrary() initialization — the main cause of cold-start delay.
+    // EXIF metadata is extracted directly from the image file data using CGImageSource,
+    // so asset identifiers from PHPhotoLibrary are not needed.
+    val configuration = PHPickerConfiguration()
     configuration.selectionLimit = selectionLimit
     configuration.filter = PHPickerFilter.imagesFilter
 
