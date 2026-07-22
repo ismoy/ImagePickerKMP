@@ -5,6 +5,21 @@ All notable changes to ImagePickerKMP will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`CameraCaptureConfig.enableShutterSound` — configurable shutter sound (Android)**
+  - New `enableShutterSound: Boolean` parameter in `CameraCaptureConfig` and `CameraPreviewConfig` — defaults to `true`
+  - Android only: on iOS the shutter sound is played by the system, cannot be disabled by apps, and already respects the mute switch
+
+### Fixed
+
+- **Shutter sound now respects the device silent/vibrate mode (Android)**
+  - The shutter click was played unconditionally via `MediaActionSound`, which ignores the ringer mode on many devices
+  - The sound is now suppressed unless the ringer is in normal mode, matching stock camera app behavior
+  - The shutter sound also no longer plays when the camera is not yet ready to capture
+
 ## [1.0.41] — 2026-05-05
 
 ### Added
