@@ -303,7 +303,8 @@ data class CameraCaptureConfig(
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
     val cropConfig: CropConfig = CropConfig(),
-    val cameraScaleType: CameraScaleType = CameraScaleType.FILL_CENTER
+    val cameraScaleType: CameraScaleType = CameraScaleType.FILL_CENTER,
+    val enableShutterSound: Boolean = true
 )
 ```
 
@@ -319,6 +320,7 @@ data class CameraCaptureConfig(
 - `permissionAndConfirmationConfig` - Diálogos de permisos y confirmación.
 - `cropConfig` - Configuración del recorte interactivo tras captura.
 - `cameraScaleType` - Cómo se escala la vista previa en el viewport (`FILL_CENTER` o `FIT_CENTER`). Solo Android.
+- `enableShutterSound` - Si se reproduce el sonido del obturador al capturar. Por defecto: `true`. Solo Android: incluso activado, el sonido se silencia cuando el dispositivo está en modo silencio o vibración. En iOS el sonido del obturador lo reproduce el sistema, las apps no pueden desactivarlo y ya respeta el interruptor de silencio (salvo en dispositivos donde es obligatorio por ley, p. ej. Japón/Corea).
 
 ---
 

@@ -177,6 +177,7 @@ private fun CameraAndPreview(
             uiConfig = cameraCaptureConfig.uiConfig,
             cameraCallbacks = cameraCaptureConfig.cameraCallbacks,
             cameraScaleType = cameraCaptureConfig.cameraScaleType,
+            enableShutterSound = cameraCaptureConfig.enableShutterSound,
         ),
         compressionLevel = cameraCaptureConfig.compressionLevel,
         includeExif = cameraCaptureConfig.includeExif,

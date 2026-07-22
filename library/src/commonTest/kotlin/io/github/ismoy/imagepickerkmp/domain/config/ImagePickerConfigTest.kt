@@ -41,6 +41,7 @@ class ImagePickerConfigTest {
 
         assertEquals(CapturePhotoPreference.BALANCED, config.preference)
         assertEquals(CameraScaleType.FILL_CENTER, config.cameraScaleType)
+        assertTrue(config.enableShutterSound)
     }
 
     @Test
@@ -48,10 +49,12 @@ class ImagePickerConfigTest {
         val config = CameraCaptureConfig(
             preference = CapturePhotoPreference.FAST,
             cameraScaleType = CameraScaleType.FIT_CENTER,
+            enableShutterSound = false,
         )
 
         assertEquals(CapturePhotoPreference.FAST, config.preference)
         assertEquals(CameraScaleType.FIT_CENTER, config.cameraScaleType)
+        assertFalse(config.enableShutterSound)
     }
 
     @Test
@@ -95,6 +98,7 @@ class ImagePickerConfigTest {
         assertEquals(null, config.uiConfig.buttonColor)
         assertEquals(null, config.cameraCallbacks.onCameraReady)
         assertEquals(CameraScaleType.FILL_CENTER, config.cameraScaleType)
+        assertTrue(config.enableShutterSound)
     }
 
     @Test
@@ -102,6 +106,13 @@ class ImagePickerConfigTest {
         val config = CameraPreviewConfig(cameraScaleType = CameraScaleType.FIT_CENTER)
 
         assertEquals(CameraScaleType.FIT_CENTER, config.cameraScaleType)
+    }
+
+    @Test
+    fun `CameraPreviewConfig should allow disabling shutter sound`() {
+        val config = CameraPreviewConfig(enableShutterSound = false)
+
+        assertFalse(config.enableShutterSound)
     }
 
     @Test

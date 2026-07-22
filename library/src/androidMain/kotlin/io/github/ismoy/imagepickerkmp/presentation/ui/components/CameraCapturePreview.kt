@@ -79,8 +79,10 @@ fun CameraCapturePreview(
     }
 
     VolumeButtonCapture {
-        playShutterSound()
-        stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif, redactGpsData)
+        if (stateHolder != null) {
+            if (previewConfig.enableShutterSound) playShutterSound(context)
+            stateHolder.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif, redactGpsData)
+        }
     }
     val resolvedButtonColor = previewConfig.uiConfig.buttonColor ?: Color.Gray
     val resolvedIconColor = previewConfig.uiConfig.iconColor ?: Color.White
@@ -152,8 +154,10 @@ fun CameraCapturePreview(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
-                    playShutterSound()
-                    stateHolder?.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif, redactGpsData)
+                    if (stateHolder != null) {
+                        if (previewConfig.enableShutterSound) playShutterSound(context)
+                        stateHolder.capturePhoto(onPhotoResult, onError, compressionLevel, includeExif, redactGpsData)
+                    }
                 }
         )
         Box(

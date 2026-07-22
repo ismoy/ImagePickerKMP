@@ -169,6 +169,11 @@ data class CropConfig(
  *   viewport, cropping the camera feed to fit). Use [CameraScaleType.FIT_CENTER] to
  *   letterbox the preview so the viewfinder framing matches the captured image.
  *   Currently applied on Android only.
+ * @property enableShutterSound Whether to play a shutter click sound on capture.
+ *   Defaults to `true`. Even when enabled, the sound is suppressed while the device
+ *   ringer is in silent or vibrate mode. Applies to Android only: on iOS the shutter
+ *   sound is played by the system, cannot be disabled by apps, and already respects
+ *   the mute switch (except on devices where it is legally mandated).
  */
 @Suppress("EndOfSentenceFormat")
 data class CameraCaptureConfig(
@@ -182,6 +187,7 @@ data class CameraCaptureConfig(
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
     val cropConfig: CropConfig = CropConfig(),
     val cameraScaleType: CameraScaleType = CameraScaleType.FILL_CENTER,
+    val enableShutterSound: Boolean = true,
 )
 
 /**
@@ -200,11 +206,27 @@ internal data class ImagePickerConfig(
     val onCropPending: () -> Unit = {}
 )
 
+/**
+ * Configuration for the camera preview composable.
+ *
+ * @property captureButtonSize Size of the shutter/capture button in [Dp]. Defaults to `72.dp`.
+ * @property uiConfig Visual styling overrides for camera UI elements. See [UiConfig].
+ * @property cameraCallbacks Lifecycle event callbacks for camera events. See [CameraCallbacks].
+ * @property cameraScaleType How the camera preview is scaled inside its viewport.
+ *   Defaults to [CameraScaleType.FILL_CENTER]. Currently applied on Android only.
+ * @property enableShutterSound Whether to play a shutter click sound on capture.
+ *   Defaults to `true`. Even when enabled, the sound is suppressed while the device
+ *   ringer is in silent or vibrate mode. Applies to Android only: on iOS the shutter
+ *   sound is played by the system, cannot be disabled by apps, and already respects
+ *   the mute switch (except on devices where it is legally mandated).
+ */
+@Suppress("EndOfSentenceFormat")
 data class CameraPreviewConfig(
     val captureButtonSize: Dp = 72.dp,
     val uiConfig: UiConfig = UiConfig(),
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val cameraScaleType: CameraScaleType = CameraScaleType.FILL_CENTER,
+    val enableShutterSound: Boolean = true,
 )
 
 /**

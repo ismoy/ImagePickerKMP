@@ -720,7 +720,8 @@ data class CameraCaptureConfig(
     val cameraCallbacks: CameraCallbacks = CameraCallbacks(),
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),
     val cropConfig: CropConfig = CropConfig(),
-    val cameraScaleType: CameraScaleType = CameraScaleType.FILL_CENTER
+    val cameraScaleType: CameraScaleType = CameraScaleType.FILL_CENTER,
+    val enableShutterSound: Boolean = true
 )
 ```
 
@@ -735,6 +736,7 @@ data class CameraCaptureConfig(
 - `permissionAndConfirmationConfig` - Permission and confirmation dialogs
 - `cropConfig` - Interactive crop UI configuration
 - `cameraScaleType` - How the camera preview is scaled inside its viewport (Android only). Defaults to `CameraScaleType.FILL_CENTER`
+- `enableShutterSound` - Whether to play a shutter click sound on capture (Android only). Defaults to `true`. Even when enabled, the sound is suppressed while the device is in silent or vibrate mode. On iOS the shutter sound is played by the system, cannot be disabled by apps, and already respects the mute switch (except on devices where it is legally mandated, e.g. Japan/Korea)
 
 **Camera scale type examples:**
 
