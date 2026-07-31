@@ -28,7 +28,7 @@ jobs:
       - name: Parse Kover coverage data
         id: coverage
         run: |
-          REPORT_PATH="./coverage/report.xml"
+          REPORT_PATH="./coverage/build/reports/kover/report.xml"
 
           if [ -f "$REPORT_PATH" ]; then
             MISSED=$(grep -o 'type="LINE" missed="[^"]*"' "$REPORT_PATH" | tail -1 | sed 's/.*missed="\([^"]*\)".*/\1/' || echo "0")
