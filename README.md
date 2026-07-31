@@ -67,7 +67,7 @@ Add only the modules you need. All modules are published to Maven Central.
 // build.gradle.kts (commonMain)
 dependencies {
     // Photo — camera capture and gallery image picking
-    implementation("io.github.ismoy:imagepickerkmp-photo:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp:1.1.0")
 
     // Video — video recording and gallery video picking
     implementation("io.github.ismoy:imagepickerkmp-video:1.1.0")
