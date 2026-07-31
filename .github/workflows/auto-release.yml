@@ -1,0 +1,74 @@
+name: Auto Release Modules
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Detect and create missing releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # List of modules to scan in the format "directory:prefix"
+          MODULES="imagepicker-core:core imagepickerkmp-photo:photo imagepickerkmp-video:video imagepickerkmp-audio:audio imagepickerkmp-audio-player:audio-player imagepickerkmp-scanner:scanner imagepickerkmp-video-player:video-player"
+          
+          for entry in $MODULES; do
+            DIR="${entry%%:*}"
+            PREFIX="${entry##*:}"
+            
+            # Skip if the module directory does not exist
+            if [ ! -d "$DIR" ]; then
+              echo "Directory $DIR not found, skipping..."
+              continue
+            fi
+            
+            echo "Checking version for $DIR..."
+            
+            # Extract version directly from Gradle using 'properties'
+            # Using tr -d '\r' to prevent Windows line ending issues
+            VERSION=$(./gradlew :$DIR:properties -q | grep "^version:" | awk '{print $2}' | tr -d '\r')
+            
+            if [ -z "$VERSION" ] || [ "$VERSION" == "unspecified" ]; then
+              echo "Could not determine version for $DIR. Skipping."
+              continue
+            fi
+            
+            TAG="${PREFIX}/v${VERSION}"
+            echo "Module $DIR is at version $VERSION. Expected tag: $TAG"
+            
+            # Check if the tag already exists in the local repository
+            if git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then
+              echo "Tag $TAG already exists. No new release needed."
+            else
+              echo "Tag $TAG does not exist. Creating new release..."
+              
+              # Automatically create the tag and release on GitHub
+              # --generate-notes automatically extracts merged PRs to populate the release notes
+              gh release create "$TAG" \
+                --title "${DIR} v${VERSION}" \
+                --generate-notes
+                
+              echo "Successfully created release for $TAG"
+            fi
+            echo "----------------------------------------"
+          done

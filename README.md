@@ -11,10 +11,17 @@
 <p align="center">
   <a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>
   <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Coverage"></a>
-  <a href="https://search.maven.org/search?q=g:io.github.ismoy"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp.svg?label=Maven%20Central" alt="Maven Central"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.3.20-blue.svg" alt="Kotlin"></a>
   <a href="https://github.com/ismoy/ImagePickerKMP/stargazers"><img src="https://img.shields.io/github/stars/ismoy/ImagePickerKMP?style=social" alt="Stars"></a>
+</p>
+
+<p align="center">
+  <a href="https://search.maven.org/search?q=g:io.github.ismoy+a:imagepicker-core"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepicker-core.svg?label=Core" alt="Core"></a>
+  <a href="https://search.maven.org/search?q=g:io.github.ismoy+a:imagepickerkmp"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp.svg?label=Photo" alt="Photo"></a>
+  <a href="https://search.maven.org/search?q=g:io.github.ismoy+a:imagepickerkmp-video"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp-video.svg?label=Video" alt="Video"></a>
+  <a href="https://search.maven.org/search?q=g:io.github.ismoy+a:imagepickerkmp-audio"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp-audio.svg?label=Audio" alt="Audio"></a>
+  <a href="https://search.maven.org/search?q=g:io.github.ismoy+a:imagepickerkmp-scanner"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp-scanner.svg?label=Scanner" alt="Scanner"></a>
 </p>
 
 <p align="center">
