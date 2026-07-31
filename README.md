@@ -4,8 +4,6 @@
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=b9cde436-d518-45b7-9a4a-7b4e084aeffa" />
 
-> 🚧 **Note: Full documentation, comprehensive video tutorials, and more examples will soon be available in English!**
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/ismoy/CameraKMP/main/thumnailImagePickerKMP.png" alt="ImagePickerKMP Banner" width="100%">
 </p>
@@ -70,19 +68,19 @@ dependencies {
     implementation("io.github.ismoy:imagepickerkmp:1.1.0")
 
     // Video — video recording and gallery video picking
-    implementation("io.github.ismoy:imagepickerkmp-video:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-video:1.1.0") // SOON
 
     // Audio — audio recording
-    implementation("io.github.ismoy:imagepickerkmp-audio:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-audio:1.1.0") // SOON
 
     // Audio Player — voice message and audio file playback
-    implementation("io.github.ismoy:imagepickerkmp-audioplayer:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-audioplayer:1.1.0") // SOON
 
     // Scanner — live barcode and QR code scanning
-    implementation("io.github.ismoy:imagepickerkmp-scanner:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-scanner:1.1.0") // SOON
 
     // Video Player — full-featured video playback
-    implementation("io.github.ismoy:imagepickerkmp-videoplayer:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-videoplayer:1.1.0") // SOON
 }
 ```
 
@@ -103,12 +101,6 @@ Every module that uses the camera or microphone requires a usage description. Ad
 <key>NSPhotoLibraryUsageDescription</key>
 <string>Required to select media from your library.</string>
 ```
-
-### iOS — Known Linker Issue
-
-If you get `_OBJC_CLASS_$_CLLocation` during an iOS build, add **CoreLocation.framework** in Xcode:
-> Target → Build Phases → Link Binary With Libraries → **+** → CoreLocation → Add. Clean and rebuild.
-
 ---
 
 ## Module Quick Start
@@ -294,7 +286,6 @@ Full-featured video player with play/pause, seek, volume, fullscreen, and qualit
 ```kotlin
 @Composable
 fun VideoPlayerScreen(videoUrl: String) {
-    // Simple usage — source and config only
     ImagePickerVideoPlayer(
         source = VideoSource.Url(videoUrl),
         config = VideoPlayerConfig(
@@ -322,7 +313,7 @@ player.seekTo(30_000L)
 |---------|:-------:|:---:|:-------:|:------:|:----:|
 | Photo — Camera | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Photo — Gallery | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Photo — Crop | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Photo — Crop | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Photo — EXIF | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Video — Camera | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Video — Gallery | ✅ | ✅ | ✅ | ✅ | ✅ |
