@@ -526,37 +526,59 @@ sequenceDiagram
 
 ## Contributors
 
-<!-- ALL-CONTRIBUTORS-LIST:START -->
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 <table>
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/ismoy"><img src="https://avatars.githubusercontent.com/u/72107070?v=4" width="80px;" alt="ismoy"/><br/><sub><b>ismoy</b></sub></a><br/>
-        <a title="Code + Docs + Maintenance">💻 📖 🚧</a>
+        <a href="https://github.com/ismoy">
+          <img src="https://avatars.githubusercontent.com/u/72107070?v=4" width="100px;" alt="ismoy"/><br />
+          <sub><b>ismoy</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=ismoy" title="Contributions">💻 📖 🚧 🎨 🤔</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/medAndro"><img src="https://avatars.githubusercontent.com/u/88672474?v=4" width="80px;" alt="medAndro"/><br/><sub><b>medAndro</b></sub></a><br/>
-        <a title="Code + Bug fixes">💻 🐛</a>
+        <a href="https://github.com/medAndro">
+          <img src="https://avatars.githubusercontent.com/u/88672474?v=4" width="100px;" alt="medAndro"/><br />
+          <sub><b>medAndro</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=medAndro" title="Contributions">💻 🐛</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/YaminMahdi"><img src="https://avatars.githubusercontent.com/u/48239104?v=4" width="80px;" alt="YaminMahdi"/><br/><sub><b>YaminMahdi</b></sub></a><br/>
-        <a title="Code">💻</a>
+        <a href="https://github.com/YaminMahdi">
+          <img src="https://avatars.githubusercontent.com/u/48239104?v=4" width="100px;" alt="YaminMahdi"/><br />
+          <sub><b>YaminMahdi</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=YaminMahdi" title="Contributions">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/jadlr"><img src="https://avatars.githubusercontent.com/u/696999?v=4" width="80px;" alt="jadlr"/><br/><sub><b>jadlr</b></sub></a><br/>
-        <a title="Code">💻</a>
+        <a href="https://github.com/jadlr">
+          <img src="https://avatars.githubusercontent.com/u/696999?v=4" width="100px;" alt="jadlr"/><br />
+          <sub><b>jadlr</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=jadlr" title="Contributions">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/daniil-pastuhov"><img src="https://avatars.githubusercontent.com/u/8494442?v=4" width="80px;" alt="daniil-pastuhov"/><br/><sub><b>daniil-pastuhov</b></sub></a><br/>
-        <a title="Code">💻</a>
+        <a href="https://github.com/daniil-pastuhov">
+          <img src="https://avatars.githubusercontent.com/u/8494442?v=4" width="100px;" alt="daniil-pastuhov"/><br />
+          <sub><b>daniil-pastuhov</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/fanqieVip"><img src="https://avatars.githubusercontent.com/u/42194904?v=4" width="80px;" alt="fanqieVip"/><br/><sub><b>fanqieVip</b></sub></a><br/>
-        <a title="Code">💻</a>
+        <a href="https://github.com/fanqieVip">
+          <img src="https://avatars.githubusercontent.com/u/42194904?v=4" width="100px;" alt="fanqieVip"/><br />
+          <sub><b>fanqieVip</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=fanqieVip" title="Contributions">💻</a>
       </td>
     </tr>
   </tbody>
 </table>
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ---
