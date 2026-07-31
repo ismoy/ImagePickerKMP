@@ -1,0 +1,73 @@
+package io.github.ismoy.imagepickerkmp.ui
+
+import io.github.ismoy.imagepickerkmp.gallery.PHPickerDelegate
+import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
+import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.picker.MimeType
+import platform.PhotosUI.PHPickerConfiguration
+import platform.PhotosUI.PHPickerFilter
+import platform.PhotosUI.PHPickerViewController
+
+private var strongPickerDelegate: PHPickerDelegate? = null
+
+internal fun createPHPickerController(
+    onPhotoSelected: (GalleryPhotoResult) -> Unit,
+    onError: (Exception) -> Unit,
+    onDismiss: () -> Unit,
+    selectionLimit: Long,
+    compressionLevel: CompressionLevel? = null,
+    includeExif: Boolean = false,
+    mimeTypes: List<MimeType> = listOf(MimeType.IMAGE_ALL),
+    mimeTypeMismatchMessage: String? = null,
+    onPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = null
+): PHPickerViewController {
+    // Use the parameterless constructor which avoids the expensive
+    // PHPhotoLibrary.sharedPhotoLibrary() initialization — the main cause of cold-start delay.
+    // EXIF metadata is extracted directly from the image file data using CGImageSource,
+    // so asset identifiers from PHPhotoLibrary are not needed.
+    val configuration = PHPickerConfiguration()
+    configuration.selectionLimit = selectionLimit
+    configuration.filter = PHPickerFilter.imagesFilter
+
+    val cleanup = {
+        strongPickerDelegate = null
+    }
+    val wrappedOnPhotoSelected: (GalleryPhotoResult) -> Unit = { result ->
+        onPhotoSelected(result)
+        cleanup()
+    }
+    val wrappedOnPhotosSelected: ((List<GalleryPhotoResult>) -> Unit)? = if (onPhotosSelected != null) {
+        { results ->
+            onPhotosSelected(results)
+            cleanup()
+        }
+    } else null
+
+    val wrappedOnError: (Exception) -> Unit = { error ->
+        onError(error)
+        cleanup()
+    }
+    val wrappedOnDismiss: () -> Unit = {
+        onDismiss()
+        cleanup()
+    }
+
+    strongPickerDelegate = PHPickerDelegate(
+        wrappedOnPhotoSelected,
+        wrappedOnPhotosSelected,
+        wrappedOnError,
+        wrappedOnDismiss,
+        compressionLevel,
+        includeExif,
+        mimeTypes,
+        mimeTypeMismatchMessage
+    )
+
+    val pickerDelegate = strongPickerDelegate ?: return PHPickerViewController(configuration).apply {
+        delegate = null
+    }
+
+    return DismissalAwarePHPickerViewController.createPickerViewController(configuration, pickerDelegate).apply {
+        delegate = pickerDelegate
+    }
+}

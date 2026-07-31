@@ -1,4 +1,4 @@
-This document is also available in Spanish: [FAQ.es.md](FAQ.es.md)
+
 
 # Frequently Asked Questions (FAQ)
 
@@ -76,7 +76,8 @@ Add the dependency to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.22")
+    implementation("io.github.ismoy:imagepickerkmp-photo:1.1.0")
+    // ... add other modules as needed (video, audio, scanner)
 }
 ```
 
@@ -735,66 +736,35 @@ fun ThemedImagePicker() {
 
 
 
-## Problemas Comunes
+## Common Issues & Recent Changes
 
-### ¿Por qué las fotos de la cámara frontal se ven "espejadas" o rotadas?
+### Why was PDF support removed from the Photo Picker?
 
-**Problema**: Las fotos capturadas con la cámara frontal aparecen con orientación incorrecta (espejadas o rotadas).
+**Question**: The photo picker used to allow selecting PDFs. Why was this removed?
 
-**Causa**: Las cámaras frontales de Android tienen una orientación diferente a las traseras. La imagen se captura con una orientación que no es natural para el usuario.
+**Answer**: To keep the library as lightweight and performant as possible, we restructured it into multiple modules (`imagepickerkmp-photo`, `imagepickerkmp-video`, etc.). The photo module is now strictly a *Photo Picker*. Handling PDFs introduced unnecessary overhead and generic MIME types (`*/*`), which complicated permissions and memory handling. If you need document selection, it's recommended to use a dedicated file picker library.
 
-**Solución**: La librería ahora incluye corrección automática de orientación para fotos de cámara frontal. El sistema:
+### I used to get Out Of Memory (OOM) errors on Android when selecting large images. Is this fixed?
 
-1. **Detecta automáticamente** si la foto fue tomada con cámara frontal
-2. **Aplica corrección de espejo** solo cuando es necesario
-3. **Mantiene la calidad** de la imagen original
-4. **Es eficiente** - solo procesa cuando realmente necesita corrección
+**Question**: My app crashed with an OOM error when a user selected multiple 15MB photos from the gallery.
 
-**Ejemplo de uso**:
-```kotlin
-val picker = rememberImagePickerKMP(
-    config = ImagePickerKMPConfig()
-)
+**Answer**: **Yes, this is completely resolved in version 1.1.0+!** 
+Previously, the library loaded the entire raw image byte array into memory just to calculate dimensions or apply compression. Now, it uses `ContentResolver.openFileDescriptor` and `inSampleSize` (downsampling) to read dimensions instantly and load a scaled-down version of the image directly from the stream. This reduces memory footprint to almost 0MB during the selection phase, making the library incredibly fast and safe for large photo selections on both Android and iOS.
 
-when (val result = picker.result) {
-    is ImagePickerResult.Success -> {
-        // La imagen ya viene corregida automáticamente
-        // No necesitas hacer nada adicional
-        val photo = result.photos.first()
-    }
-    is ImagePickerResult.Error -> { /* handle error */ }
-    is ImagePickerResult.Dismissed -> { /* cancelled */ }
-    is ImagePickerResult.Loading -> { /* loading */ }
-    is ImagePickerResult.Idle -> { /* initial state */ }
-}
+### Why do front-camera photos look "mirrored" or rotated?
 
-Button(onClick = { picker.launchCamera() }) {
-    Text("Take Photo")
-}
-```
+**Problem**: Photos taken with the front camera appear with incorrect orientation (mirrored or rotated).
 
-**Nota**: Esta corrección se aplica automáticamente y es transparente para el desarrollador. No necesitas configurar nada adicional.
+**Cause**: Android front cameras have a different orientation than rear cameras. The image is captured with an orientation that isn't natural for the user.
 
-### ¿Cómo funciona la corrección de orientación?
+**Solution**: The library now includes automatic orientation correction for front camera photos. The system:
 
-La corrección incluye:
+1. **Automatically detects** if the photo was taken with the front camera
+2. **Applies mirror correction** only when necessary
+3. **Maintains quality** of the original image
+4. **Is efficient** - only processes when it really needs correction
 
-1. **Lectura de metadatos EXIF**: Se lee la orientación original de la imagen
-2. **Aplicación de rotación**: Se corrige la rotación basada en los metadatos
-3. **Corrección de espejo**: Solo para cámara frontal, se aplica un espejo horizontal
-4. **Optimización**: Solo se procesa si realmente es necesario
-
-### ¿Afecta el rendimiento?
-
-No, la corrección está optimizada para:
-
-- **Procesamiento solo cuando es necesario**: Si no hay corrección requerida, se devuelve la imagen original
-- **Gestión eficiente de memoria**: Los bitmaps se reciclan correctamente
-- **Procesamiento asíncrono**: No bloquea la UI
-
-### ¿Puedo desactivar la corrección automática?
-
-Actualmente la corrección es automática y no se puede desactivar, ya que mejora significativamente la experiencia del usuario. Si necesitas el comportamiento original, puedes procesar la imagen manualmente después de recibirla.
+This is completely automatic and requires no configuration.
 
 ## Additional Questions
 

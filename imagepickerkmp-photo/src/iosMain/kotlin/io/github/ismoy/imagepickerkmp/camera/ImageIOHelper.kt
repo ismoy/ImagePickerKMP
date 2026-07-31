@@ -1,0 +1,43 @@
+package io.github.ismoy.imagepickerkmp.camera
+
+import kotlinx.cinterop.ExperimentalForeignApi
+import platform.CoreFoundation.CFStringCreateWithCString
+import platform.CoreFoundation.CFURLCreateWithFileSystemPath
+import platform.CoreFoundation.kCFStringEncodingUTF8
+import platform.CoreFoundation.kCFURLPOSIXPathStyle
+import platform.Foundation.CFBridgingRelease
+import platform.Foundation.NSDictionary
+import platform.ImageIO.CGImageSourceCopyPropertiesAtIndex
+import platform.ImageIO.CGImageSourceCreateWithURL
+import platform.ImageIO.CGImageSourceRef
+
+@OptIn(ExperimentalForeignApi::class)
+internal object ImageIOHelper {
+    
+    fun createImageSource(path: String): CGImageSourceRef? {
+        val pathString = CFStringCreateWithCString(null, path, kCFStringEncodingUTF8)
+        val cfUrl = CFURLCreateWithFileSystemPath(null, pathString, kCFURLPOSIXPathStyle, false)
+        val imageSource = CGImageSourceCreateWithURL(cfUrl, null)
+        
+        if (imageSource == null) {
+            ExifLogger.error("Failed to create image source")
+        }
+        
+        return imageSource
+    }
+    
+    fun getImageProperties(imageSource: CGImageSourceRef): NSDictionary? {
+        val properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0u, null)
+        if (properties == null) {
+            ExifLogger.error("Failed to get image properties")
+            return null
+        }
+        
+        val propertiesDict = CFBridgingRelease(properties) as? NSDictionary
+        if (propertiesDict == null) {
+            ExifLogger.error("Failed to convert properties to NSDictionary")
+        }
+        
+        return propertiesDict
+    }
+}

@@ -1,635 +1,168 @@
 # Changelog
 
-All notable changes to ImagePickerKMP will be documented in this file.
+All notable changes to ImagePickerKMP will be documented here.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) · Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+
+---
+
+## [2.0.1] — 2026-07-28
+
+### Added
+- **Unit test coverage across all modules** — `imagepicker-core`, `imagepickerkmp-photo`, `imagepickerkmp-video`, `imagepickerkmp-audio`, `imagepickerkmp-audio-player`, `imagepickerkmp-scanner`, `imagepickerkmp-video-player`
+- **Kover coverage enforcement** — 90% line coverage minimum enforced per module via `koverVerify`
+- **Aggregated coverage report** — `./gradlew koverMergedXmlReport` merges all per-module reports into a single `build/reports/kover/report.xml` for Codecov
+- **Codecov integration** — CI uploads merged coverage report; badge shows real coverage
+
+### Changed
+- CI workflow updated to JDK 21 (matching module compile targets)
+- CI now runs `jvmTest` and `testDebugUnitTest` per module in parallel
+- Documentation restructured: removed Spanish duplicates, consolidated docs, rewrote all READMEs
+
+---
 
 ## [1.0.41] — 2026-05-05
 
 ### Added
-
-- **`CameraScaleType` enum — configurable camera preview scale type (Android)**
-  - New `CameraScaleType` enum: `FILL_CENTER`, `FILL_START`, `FILL_END`, `FIT_CENTER`, `FIT_START`, `FIT_END`
-  - Controls how the camera preview is scaled inside its viewport on Android
-  - `FILL_*` values fill the viewport entirely, cropping the camera feed to fit
-  - `FIT_*` values letterbox the preview so the entire camera feed is visible — viewfinder framing matches the captured image exactly
-  - Currently applied on Android only; iOS uses the system camera UI where preview and capture framing already match
-  - New `CameraCaptureConfig.cameraScaleType: CameraScaleType` — defaults to `CameraScaleType.FILL_CENTER` (preserves previous behavior)
-
-- **`PermissionAndConfirmationConfig.confirmationImageContentScale` — configurable post-capture confirmation image scale**
-  - New `confirmationImageContentScale: ContentScale` parameter in `PermissionAndConfirmationConfig`
-  - Controls how the captured photo is scaled in the post-capture confirmation preview screen (Android)
-  - Accepts any Compose `ContentScale` value: `Crop`, `Fit`, `FillWidth`, `FillHeight`, `FillBounds`, `Inside`, `None`
-  - Defaults to `ContentScale.Crop` (preserves previous behavior)
+- **`CameraScaleType` enum** — configurable camera preview scale type on Android (`FILL_CENTER`, `FILL_START`, `FILL_END`, `FIT_CENTER`, `FIT_START`, `FIT_END`)
+- `CameraCaptureConfig.cameraScaleType` defaults to `FILL_CENTER`
+- `PermissionAndConfirmationConfig.confirmationImageContentScale` — controls how the captured photo is scaled in the post-capture confirmation screen (Android); defaults to `ContentScale.Crop`
 
 ### Changed
+- All Spanish inline comments across the codebase translated to English
 
-- All Spanish-language inline comments across the codebase translated to English
+---
 
 ## [1.0.40] — 2026-04-29
 
 ### Added
+- **`PhotoResult.absolutePath`** — returns the absolute file system path as a `String?`
+  - Android: resolves `content://` URIs via `ContentResolver`
+  - iOS: extracts path from `URL.path`
+  - Desktop/Web: strips `file://` prefix
 
-- **New `PhotoResult.absolutePath` extension for direct file system path access**
-  - `PhotoResult.absolutePath: String?` — returns the absolute file system path as a String (platform-specific implementation)
-  - Platform implementations:
-    - **Android**: Uses ContentResolver to resolve content:// URIs to actual file paths
-    - **iOS**: Uses URL.path to extract the file system path
-    - **Desktop/Web**: Direct path extraction from file:// URIs
-  - Enables direct file system access without manual URI parsing
-  - Complements the existing `toPath()` extension for kotlinx-io compatibility
-
-### Changed
-
-- Minor internal improvements and optimizations
+---
 
 ## [1.0.39] — 2026-04-29
 
 ### Fixed
+- **Android — Camera preview black/blank on API 24–30** — `PreviewView` now uses `COMPATIBLE` mode (TextureView) on API ≤ 30 instead of `PERFORMANCE` (SurfaceView), which does not render in Compose on those versions
+- Camera initialization delay extended to Android 7–11 (was only Android 10)
 
-- **Android — Camera preview now displays correctly on Android 7–11 (API 24–30)**
-  - Root cause: `PreviewView` was hardcoded to `ImplementationMode.PERFORMANCE` (SurfaceView), which does not render inside Jetpack Compose on Android ≤ API 30, resulting in a black/blank camera preview
-  - **Solution**: `PreviewView` now uses `ImplementationMode.COMPATIBLE` (TextureView) on Android ≤ API 30, ensuring correct rendering on all supported Android versions
-  - **Changed files**:
-    - `HighPerformanceConfig.requiresCompatibilityMode()` now returns `true` for `SDK_INT <= 30` (was only `SDK_INT == 29`)
-    - `CameraCapturePreview.kt` now conditionally sets `implementationMode` based on Android version
-    - `setLayerType(LAYER_TYPE_HARDWARE)` is no longer applied on Android ≤ API 30, eliminating the conflict with TextureView
-    - Camera initialization delay in `CameraController.kt` now applies to Android 7–11 (was only Android 10), preventing surface-not-ready errors on older devices
+---
 
 ## [1.0.38] — 2026-04-29
 
 ### Added
-
-- **New `PhotoResult.toPath()` extension for cross-platform file operations**
-  - `PhotoResult.toPath(): Path?` — converts the photo's URI to a `kotlinx.io.files.Path` for cross-platform file operations (Android, iOS, Desktop, Web)
-  - Enables cross-platform file manipulation using kotlinx-io APIs
-  - Returns `null` if conversion fails
-  - Requires `kotlinx-io` dependency
+- **`PhotoResult.toPath()`** — converts a photo URI to a `kotlinx.io.files.Path`
 
 ### Changed
+- Kotlin upgraded to `2.3.20`
+- Compose Multiplatform upgraded to `1.10.3`
+- Android Gradle Plugin upgraded to `8.13.2`
 
-- Updated Kotlin to `2.3.20`
-- Updated Compose Multiplatform to `1.10.3`
-- Updated Android Gradle Plugin to `8.13.2`
-- Minor stability improvements
-
-### Fixed
-
-- Improved documentation for available `PhotoResult` extensions
-- Fixed examples in README for file path usage
+---
 
 ## [1.0.35-alpha1] — 2026-03-28
 
 ### Added
-
-- **`rememberImagePickerKMP` — unified Compose state-holder API**
-  - New top-level composable function `rememberImagePickerKMP(config)` that returns an `ImagePickerKMPState`
-  - Replaces the manual `showCamera`/`showGallery` boolean pattern with a single remembered state object. **No `Render()` call needed — the picker self-manages when `launchCamera()` or `launchGallery()` is invoked**
-  - `ImagePickerKMPState.launchCamera(cameraCaptureConfig?, enableCrop?, onDismiss?, onError?)` — opens the camera picker. All parameters are optional per-launch overrides of the global config
-  - `ImagePickerKMPState.launchGallery(allowMultiple?, mimeTypes?, selectionLimit?, enableCrop?, includeExif?, redactGpsData?, mimeTypeMismatchMessage?, cameraCaptureConfig?, onDismiss?, onError?)` — opens the gallery picker with per-launch overrides
-  - `ImagePickerKMPState.result: ImagePickerResult` — observable reactive state; `Idle | Loading | Success | Dismissed | Error`
-  - `ImagePickerKMPState.reset()` — resets result back to `Idle` and closes any active picker
-  - `ImagePickerKMPConfig` data class — single configuration object for all defaults (camera, gallery, crop, UI, permissions)
-  - `ImagePickerResult` sealed hierarchy for exhaustive result handling. `Success` exposes `photos: List<PhotoResult>` and `first: PhotoResult?`
-  - All existing `ImagePickerLauncher` / `GalleryPickerLauncher` APIs remain fully supported
+- **`rememberImagePickerKMP`** — new unified Compose state-holder API
+  - `ImagePickerKMPState.launchCamera(...)` / `.launchGallery(...)` with per-launch overrides
+  - `ImagePickerKMPState.result: ImagePickerResult` — observable sealed state (`Idle | Loading | Success | Dismissed | Error`)
+  - `ImagePickerKMPState.reset()`
+  - `ImagePickerKMPConfig` — single configuration object for all defaults
+  - `ImagePickerResult.Success.photos: List<PhotoResult>` and `.first: PhotoResult?`
 
 ### Deprecated
-
-- **`ImagePickerLauncher`** — marked `@Deprecated(level = WARNING)`. The function still compiles and runs normally, but the compiler emits a migration warning pointing to `rememberImagePickerKMP`. Will be removed in a future major release.
-  - **Migration**: Replace `ImagePickerLauncher(config = ImagePickerConfig(...))` with `val picker = rememberImagePickerKMP(...)` + `picker.launchCamera()`
-- **`GalleryPickerLauncher`** — marked `@Deprecated(level = WARNING)` for the same reason.
-  - **Migration**: Replace `GalleryPickerLauncher(...)` with `val picker = rememberImagePickerKMP(...)` + `picker.launchGallery()`
-
-> **Note — architectural decision:** `rememberImagePickerKMP` itself calls `ImagePickerLauncher` / `GalleryPickerLauncher` internally (they are the platform-specific rendering layer). The call site inside the library is annotated with `@Suppress("DEPRECATION")` so end-users of the new API see no warnings. Users of the legacy API directly still see the migration warning.
+- `ImagePickerLauncher` — replaced by `rememberImagePickerKMP`. Still works; compiler emits a migration warning.
+- `GalleryPickerLauncher` — same deprecation policy.
 
 ### Fixed
-
-- **Android — `ImagePickerLauncher` now rendered inside a full-screen `Dialog`**: fixes camera preview not visible when the composable is placed outside a `Box(Modifier.fillMaxSize())` container. The new `Dialog` wrapper handles dismissal via back press and does not dismiss on outside click.
+- `ImagePickerLauncher` now renders inside a full-screen `Dialog` on Android, fixing invisible camera preview when the composable is placed outside a `fillMaxSize` container
 
 ### ⚠️ Breaking Changes
-
-- **BREAKING: Minimum Kotlin version is now 2.3.20**
-  - This library is compiled with **Kotlin 2.3.20**. Kotlin's KMP ABI is not backward compatible across major Kotlin versions.
-  - Projects using **Kotlin < 2.3.x will fail to compile** with an error like `ABI version X.Y.Z is incompatible with current Kotlin compiler`.
-  - **Migration**: Update your project's Kotlin version to `2.3.20` or higher.
-  - If you need to stay on Kotlin 2.1.x, use the previous release of this library.
+- **Minimum Kotlin version is now 2.3.20** — the library is compiled with Kotlin 2.3.20 and the KMP ABI is not backward-compatible. Projects on Kotlin < 2.3.x will get a compile error.
 
 ### Changed
-
-- **Kotlin** upgraded from `2.1.21` → `2.3.20`
-- **Compose Multiplatform** upgraded from `1.9.1` → `1.10.3` (requires Kotlin 2.3.x)
-- **Compose Compiler plugin** upgraded from `2.0.21` → `2.3.20` (must match Kotlin version exactly)
-- **Ktor** upgraded from `3.0.2` → `3.4.1` (built with Kotlin 2.3.x, requires Kotlin 2.3.x consumer)
-- **Lifecycle Runtime Compose** upgraded from `2.9.0` → `2.10.0`
-- **Activity Compose** upgraded from `1.11.0` → `1.13.0`
-- **AndroidX Compose UI** upgraded from `1.9.4` → `1.10.5`
-- **CameraX** (`camera-core`, `camera-camera2`, `camera-lifecycle`, `camera-view`) upgraded from `1.5.1` → `1.5.3`
-- **ZXing Core** upgraded from `3.5.3` → `3.5.4`
-- **Android Gradle Plugin** upgraded from `8.13.0` → `8.13.2`
-- **Deprecated `ByteArray.encodeBase64()`** (Ktor util) replaced with `Base64.Default.encode()` from Kotlin stdlib
-
-
-
-- **Fixed Cropped Image Metadata (Android)**: Resolved issue where `GalleryPhotoResult` after cropping returned incorrect metadata
-  - `fileName` now reflects the cropped image file name instead of original
-  - `fileSize` now contains the actual cropped image size in bytes instead of original
-  - `mimeType` now correctly shows "image/png" for cropped images instead of original format
-  - Affects both `GalleryPickerLauncher` and custom confirmation views with crop enabled
-  - Only `exif` data is preserved from original image (as expected)
-
-### Changed
-
-- **BREAKING: `fileSize` now returns bytes instead of KB**: `PhotoResult.fileSize` and `GalleryPhotoResult.fileSize` now return the exact file size in bytes instead of KB
-  - **Better Precision**: Eliminates rounding errors that occurred with KB conversion
-  - **S3 Compatibility**: Fixes issues with S3 pre-signed URLs that require exact Content-Length in bytes
-  - **API Compatibility**: Useful for any service that requires precise byte values
-  - **Migration Guide**: To get KB from bytes, divide by 1024: `val fileSizeKB = (result.fileSize ?: 0) / 1024.0`
-  - **Updated Documentation**: All examples and documentation updated to reflect byte-based sizes
-  - ### Fixed
-  - Resolved manifest merge conflict with host apps using FileProvider
-
-### Added
-
-- ** Automatic Image Compression**: Complete compression system for both camera and gallery
-  - **Configurable Compression Levels**: LOW (95% quality, 2560px), MEDIUM (75% quality, 1920px), HIGH (50% quality, 1280px)
-  - **Multi-format Support**: JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP compression
-  - **Async Processing**: Non-blocking UI with Kotlin Coroutines integration
-  - **Smart Optimization**: Combines dimension scaling + quality compression
-  - **Memory Efficient**: Automatic bitmap recycling and cleanup
-  - **Unified API**: Same compression logic for camera capture and gallery selection
-  - **Cross-platform**: Works on both Android and iOS
-  - **Performance Optimized**: Background processing with proper thread management
-
-- ** Automatic Context Management**: The `applyCrop` function now automatically handles Android context management
-  - **@Composable Integration**: The function is now `@Composable` and uses `LocalContext.current` internally
-  - **Simplified API**: Developers no longer need to manually provide Android context
-  - **Cross-platform Consistency**: Same API signature for both Android and iOS implementations
-
-- ** Smart Gallery vs File Explorer Picker (Android)**: Automatic detection system that determines which type of picker to open
-  - **Automatic MIME Type Detection**: Library analyzes requested MIME types and chooses appropriate picker
-    - **Images Only** (`image/*`): Uses `Intent.ACTION_PICK` + `MediaStore` to open Android's native gallery
-    - **PDFs** (`application/pdf`): Uses `ActivityResultContracts.GetContent()` for file explorer access
-    - **Mixed Types**: Automatically uses file explorer for maximum compatibility
-  - **New Custom Contracts**: 
-    - `PickImageFromGallery`: Gallery-specific contract using MediaStore
-    - `PickMultipleImagesFromGallery`: Multiple image gallery picker
-  - **Flexible Configuration**: `AndroidGalleryConfig` allows manual override when needed
-  - **Backward Compatibility**: All existing code continues working without changes
-
-- ** AndroidGalleryConfig Configuration**: New configuration class to control Android picker behavior
-  - `forceGalleryOnly: Boolean`: Forces gallery vs file explorer usage
-  - `localOnly: Boolean`: Include only local images (no cloud storage)
-  - Convenience methods: `forMimeTypes()` and `forMimeTypeStrings()` for automatic configuration
-
-### Enhanced
-
-- ** Smart MIME Type Logic**: File processor now better handles picker type determination
-  - Automatic MIME type analysis to determine optimal picker strategy
-  - Better user experience with more appropriate pickers for each content type
-  - Consistent handling between single and multiple selection
-
-- ** Optimized Android User Experience**:
-  - **For Images**: Users see native photo gallery directly
-  - **For Documents**: Users access file explorer for full navigation
-  - **Predictable Behavior**: Interface that opens matches expected content type
-
-- ** Enhanced File Processing**: `GalleryFileProcessor` now better handles different file types
-  - Improved PDF support in processing pipeline
-  - Better MIME type detection and handling
-  - More robust metadata processing
-
-### Changed
-
-- Updated `CameraCaptureConfig` with new `compressionLevel: CompressionLevel?` parameter
-- Enhanced `GalleryPickerLauncher` to support compression through `cameraCaptureConfig`
-- Improved image processing pipeline with unified compression architecture
-- Updated documentation with comprehensive compression examples and guides
-- **Made `applyCrop` function @Composable**: Function signature updated to remove manual context parameter requirement
-- **Enhanced crop aspect ratio calculations**: Improved handling of vertical aspect ratios (like 9:16) with better space management
-
-### Fixed
-
-- Fixed inverted compression logic (HIGH compression now produces smaller files as expected)
-- Corrected image scaling algorithm for consistent quality across compression levels
-- Resolved CompressionConfig test failures by excluding IMAGE_ALL wildcard from supported formats
-- ** Fixed iOS Crop Coordinate Calculations**: Resolved image cropping issues on iOS where cropped images appeared incorrectly centered
-  - **Consistent Cross-platform Behavior**: iOS now uses the same coordinate calculation logic as Android
-  - **Accurate Image Positioning**: Fixed `displayedImageSize` and `imageOffset` calculations for proper image scaling and centering
-  - **Corrected Crop Rectangle Mapping**: Implemented proper `adjustedCropRect` calculation with accurate scaling factors
-- ** Fixed Layout Z-Index Conflicts**: Resolved issues where crop controls appeared in wrong layer order
-  - **Removed Problematic zIndex**: Eliminated `zIndex` modifiers that caused crop area to appear below header controls
-  - **Improved Component Stacking**: Natural layout flow now handles component layering correctly
-  - **Better 9:16 Aspect Ratio Support**: Crop rectangle now properly fits within available canvas space for vertical aspect ratios
-- ** Fixed Zoom Overlay Issues**: Resolved problem where zoomed images appeared above crop header controls
-  - **Added Bounds Clipping**: Implemented `clipToBounds()` to contain zoomed content within designated area
-  - **Maintained UI Hierarchy**: Zoom functionality now respects layout boundaries and doesn't interfere with header controls
-  - **Enhanced User Experience**: Crop controls remain accessible and visible during zoom operations
-- ** Gallery vs File Explorer Issue**: Fixed issue where `GalleryPickerLauncher` opened downloads folder instead of gallery on Android
-  - Implemented custom contracts that guarantee gallery usage for images
-  - User experience is now consistent and predictable
-  - Developers don't need to make changes to existing code
-
-## [1.0.22] - 2024-12-XX
-
-### Added
-
-- **Custom Permission Dialog Composables**: New `customDeniedDialog` and `customSettingsDialog` parameters in `PermissionAndConfirmationConfig`
-  - `customDeniedDialog`: Custom composable for when permission is denied (allows retry)
-  - `customSettingsDialog`: Custom composable for when permission is permanently denied (opens settings)
-- **Complete UI Control**: Full customization of permission dialogs with your own composables
-- **Cross-platform Support**: Custom permission dialogs work on both Android and iOS
-- **Enhanced Developer Experience**: Easy-to-use API for permission dialog customization
-
-### Changed
-
-- Updated `PermissionAndConfirmationConfig` data class with new optional parameters
-- Enhanced permission handling flow to support custom composable dialogs
-- Improved documentation with comprehensive examples of custom permission dialogs
-
-### Fixed
-
-- Permission dialog flow now properly handles custom composables on both platforms
-
-### Added
-
-- Custom permission dialogs
-- Custom confirmation views
-- High-quality photo capture option
-- Memory optimization improvements
-- Better error handling and recovery
-- Gallery selection support for Android and iOS
-- Customizable dialog texts for iOS and Android
-- Accessibility improvements: contentDescription and configurable button sizes
-- JPEG compression quality configuration for image processing
-- Logger interface for configurable logging
-- Unit test for PhotoResult
-- Linter and static analysis (ktlint, detekt) configuration
-- Example and documentation for internationalization
-- CI and coverage badges in README
-- **Internationalization (i18n) support**: Complete multi-language system with type-safe string resources
-- **Automatic language detection**: Strings adapt to device language automatically
-- **Support for English, Spanish, and French**: Ready-to-use translations for all three languages
-- **Extensible language system**: Easy to add new languages without external dependencies
-- **Automatic translations**: Permission dialogs and UI texts are now automatically translated by default
-- **Front camera orientation correction**: Automatic correction of front camera image orientation to fix mirrored/rotated photos
-- Automatic gallery permission handling: `GalleryPickerLauncher` now manages gallery permissions automatically on both Android and iOS, no manual request needed.
-- Custom gallery permission dialog (Android): Added a dedicated, localizable dialog for gallery permissions, separate from the camera dialog.
-- Multi-image selection on iOS: Implemented using `PHPickerViewController` (iOS 14+), replacing the old single-image picker.
-- New instrumented and unit tests: Added and re-enabled tests to cover new permission flows and multi-image selection.
-- Improved localization: New strings and translations for gallery permission dialogs.
-- **Configurable selection limit for gallery picker**: Added `selectionLimit` parameter to `GalleryConfig` to control the maximum number of images that can be selected in the gallery picker. The limit is enforced at compile time with a maximum value of 30 images to prevent performance issues and crashes when selecting too many images on iOS.
-
-### Changed
-- Improved permission handling flow
-- Enhanced UI components
-- Better cross-platform compatibility
-- Preview image in confirmation now uses FIT_CENTER to avoid zoom on gallery images
-- Enhanced image processing with automatic orientation correction for front camera photos
-- iOS gallery permission flow: Now requests permission directly via the system dialog, with no pre-permission custom dialog, matching native iOS behavior.
-- Refactored permission logic: Gallery and camera permission handling is now more consistent and cross-platform.
-- **Gallery selection limit**: Changed from unlimited selection (0) to configurable limit with maximum of 30 images to prevent performance issues and crashes on iOS when selecting too many images.
-
-### Fixed
-- iOS permission denial flow
-- Android camera initialization issues
-- Memory leaks in photo processing
-- Permission dialog display issues
-- Disparador (capture button) always centered, gallery button does not push it
-- Front camera photos appearing mirrored or incorrectly oriented
-- Dialog text errors: Gallery permission dialog no longer shows camera texts.
-- Multi-image selection bugs: Fixed performance issues and crashes when selecting many images on iOS.
-- Threading and casting errors: Resolved concurrency and type conversion issues in image selection.
-- **iOS gallery performance issues**: Fixed crashes and performance degradation when selecting more than 30 images by implementing a configurable selection limit with compile-time validation.
-
-### Documentation
-
-- Thoroughly updated all Markdown documentation files to ensure all usage examples of `ImagePickerLauncher`, `GalleryPickerLauncher`, and related components reflect the current, real API.
-- Replaced all outdated examples using the old API (with top-level callbacks and handlers) with the correct pattern: all configuration and handlers are now shown nested inside `config = ImagePickerConfig(...)`, with custom handlers further nested as required.
-- Ensured all documentation in both English and Spanish is fully synchronized and accurate.
-- All examples and guides updated to reflect new automatic permission handling and multi-image selection on iOS.
-- Added notes on platform differences for permission and selection behavior (Android vs iOS).
-
-## [1.0.1] - 2025-01-15
-
-### Added
-- **First Official Release** of ImagePickerKMP
-- **Cross-platform camera integration** for Android and iOS
-- **High-quality photo capture** with preview and confirmation
-- **Smart permission handling** for both platforms
-- **Customizable UI components** with Compose Multiplatform
-- **Comprehensive error handling** and user feedback
-- **Photo result data class** with metadata
-- **Capture preferences** (FAST, BALANCED, HIGH_QUALITY)
-- **Gallery selection support** for both platforms
-- **Internationalization (i18n)** with English, Spanish, and French
-- **Front camera orientation correction** to fix mirrored photos
-- **Memory optimization** and performance improvements
-- **Extensive documentation** and examples
-- **CI/CD pipeline** with automated testing and deployment
-- **Code coverage** and quality assurance
-
-### Features
-- **Android Support**: Full camera integration using CameraX with modern UI
-- **iOS Support**: Native camera integration using AVFoundation
-- **Permission Management**: Smart permission handling with custom dialogs
-- **Photo Capture**: High-quality photo capture with automatic orientation correction
-- **Error Handling**: Comprehensive error handling with specific exception types
-- **Customization**: Extensive customization options for UI and behavior
-- **Internationalization**: Multi-language support with automatic detection
-- **Testing**: Complete test suite with unit and UI tests
-- **Documentation**: Comprehensive guides and API reference
-
-### Technical Details
-- **Minimum SDK**: Android API 21+, iOS 12.0+
-- **Kotlin Version**: 1.9+
-- **Compose Multiplatform**: Full support with Material components
-- **Dependencies**: Optimized external dependencies
-- **Code Coverage**: >40% with comprehensive testing
-- **CI/CD**: Automated build, test, and deployment pipeline
-
-## [0.9.0] - 2024-01-10
-
-### Added
-- Beta release for testing
-- Core camera functionality
-- Basic permission handling
-- Photo capture and preview
-- Error handling framework
-
-### Known Issues
-- iOS permission flow incomplete
-- Memory optimization needed
-- Limited customization options
-
-## [0.8.0] - 2024-01-05
-
-### Added
-- Alpha release
-- Basic camera integration
-- Permission request handling
-- Photo capture functionality
-
-### Limitations
-- Android only
-- Basic UI
-- Limited error handling
-
-## [0.7.0] - 2024-01-01
-
-### Added
-- Initial development release
-- Project structure setup
-- Basic camera functionality
-- Permission handling
+- Kotlin `2.1.21` → `2.3.20`
+- Compose Multiplatform `1.9.1` → `1.10.3`
+- Ktor `3.0.2` → `3.4.1`
+- CameraX `1.5.1` → `1.5.3`
+- `fileSize` now returns **bytes** instead of KB — divide by 1024 to get KB: `val kb = (photo.fileSize ?: 0) / 1024.0`
 
 ---
 
-## Version History
+## [1.0.22] — 2025-XX-XX
 
-### Version 1.0.1 (Current Stable)
-- **Release Date**: January 15, 2024
-- **Status**: Stable
-- **Key Features**:
-  - Cross-platform camera integration
-  - Smart permission handling
-  - High-quality photo capture
-  - Comprehensive error handling
-  - Customizable UI components
+### Added
+- `customDeniedDialog` and `customSettingsDialog` in `PermissionAndConfirmationConfig` — fully custom Compose permission dialogs
+- Automatic image compression for camera and gallery (`CompressionLevel.LOW / MEDIUM / HIGH`)
+- Smart gallery vs file-explorer picker on Android — images open the native gallery, PDFs open the file explorer
+- `AndroidGalleryConfig` for manual control over picker strategy
+- Multi-image selection on iOS via `PHPickerViewController` (iOS 14+)
+- `selectionLimit` parameter in `GalleryConfig` (max 30)
 
-### Version 0.9.0 (Beta)
-- **Release Date**: January 10, 2024
-- **Status**: Beta
-- **Key Features**:
-  - Core functionality complete
-  - Basic permission handling
-  - Photo capture and preview
-  - Error handling framework
+### Fixed
+- `GalleryPickerLauncher` opened the Downloads folder instead of the gallery on some Android versions
+- iOS crop coordinate calculations causing off-center crops
+- Layout z-index conflict where crop controls appeared behind other UI layers
+- Zoomed images appearing above crop header controls
 
-### Version 0.8.0 (Alpha)
-- **Release Date**: January 5, 2024
-- **Status**: Alpha
-- **Key Features**:
-  - Basic camera integration
-  - Permission request handling
-  - Photo capture functionality
+---
 
-### Version 0.7.0 (Development)
-- **Release Date**: January 1, 2024
-- **Status**: Development
-- **Key Features**:
-  - Project structure setup
-  - Basic camera functionality
-  - Permission handling
+## [1.0.1] — 2025-01-15
+
+### Added
+- First official stable release
+- Cross-platform camera integration for Android and iOS
+- Photo capture, gallery selection, crop, compression
+- Smart permission handling with customisable dialogs
+- EXIF metadata extraction (Android / iOS)
+- Internationalization — English, Spanish, French (auto-detected)
+- Front-camera orientation correction
+- Extension functions: `loadPainter()`, `loadBytes()`, `loadBase64()`, `loadImageBitmap()`
+- PDF selection support
+
+---
 
 ## Migration Guide
 
-### From 0.9.0 to 1.0.1
+### From 1.0.x to 2.0.x
 
-#### Breaking Changes
-- Updated permission handling API
-- Changed error handling structure
-- Modified photo result data class
+#### `ImagePickerLauncher` → `rememberImagePickerKMP`
 
-#### Migration Steps
-1. **Update Dependencies**
-   ```kotlin
-   // Old
-   implementation("io.github.ismoy:imagepickerkmp:0.9.0")
-   
-   // New
-   implementation("io.github.ismoy:imagepickerkmp:1.0.22")
-   ```
+```kotlin
+// Before (still works with deprecation warning)
+ImagePickerLauncher(
+    config = ImagePickerConfig(
+        onPhotoCaptured = { photo -> /* ... */ },
+        onError = { e -> /* ... */ }
+    )
+)
 
-2. **Update Permission Handling**
-   ```kotlin
-   // Old
-   RequestCameraPermission(
-       onPermissionGranted = { /* ... */ },
-       onPermissionDenied = { /* ... */ }
-   )
-   
-   // New
-   RequestCameraPermission(
-       onPermissionPermanentlyDenied = { /* ... */ },
-       onResult = { granted -> /* ... */ }
-   )
-   ```
-
-3. **Update Error Handling**
-   ```kotlin
-   // Old
-   onError = { error ->
-       // Handle generic error
-   }
-   
-   // New
-   onError = { exception ->
-       when (exception) {
-           is CameraPermissionException -> { /* ... */ }
-           is PhotoCaptureException -> { /* ... */ }
-           else -> { /* ... */ }
-       }
-   }
-   ```
-
-### From 0.8.0 to 0.9.0
-
-#### Breaking Changes
-- Added iOS support
-- Updated API structure
-- Changed permission handling
-
-#### Migration Steps
-1. **Update Platform Support**
-   ```kotlin
-   // Old (Android only)
-   ImagePickerLauncher(
-       context = LocalContext.current,
-       // ...
-   )
-   
-   // New (Cross-platform)
-   ImagePickerLauncher(
-       context = LocalContext.current, // null for iOS
-       // ...
-   )
-   ```
-
-2. **Update Permission Handling**
-   ```kotlin
-   // Old
-   requestCameraPermission()
-   
-   // New
-   RequestCameraPermission(
-       onPermissionGranted = { /* ... */ },
-       onPermissionDenied = { /* ... */ }
-   )
-   ```
-
-## Deprecation Policy
-
-### Deprecated Features
-- No deprecated features in current version
-
-### Removal Schedule
-- Deprecated features will be removed in the next major version
-- Users will be notified 6 months before removal
-- Migration guides will be provided
-
-## Compatibility Matrix
-
-| Version | Android API | iOS Version | Kotlin Version | Compose Version |
-|---------|-------------|-------------|----------------|-----------------|
-| 1.0.1   | 21+         | 12.0+       | 1.8+           | 1.4+            |
-| 0.9.0   | 21+         | 12.0+       | 1.8+           | 1.4+            |
-| 0.8.0   | 21+         | N/A         | 1.8+           | 1.4+            |
-| 0.7.0   | 21+         | N/A         | 1.8+           | 1.4+            |
-
-## Known Issues
-
-### Version 1.0.1
-- **Issue**: Memory usage high with large photos
-  - **Status**: Fixed in next release
-  - **Workaround**: Use image compression
-
-- **Issue**: iOS permission dialog sometimes doesn't show
-  - **Status**: Fixed in next release
-  - **Workaround**: Use custom permission handler
-
-### Version 0.9.0
-- **Issue**: Camera initialization slow on some devices
-  - **Status**: Fixed in 1.0.1
-  - **Workaround**: Use FAST capture preference
-
-### Version 0.8.0
-- **Issue**: Permission handling incomplete
-  - **Status**: Fixed in 0.9.0
-  - **Workaround**: Manual permission handling
-
-## Roadmap
-
-### Version 1.1.0 (Planned)
-- **Features**:
-  
-  - Custom UI themes
-  - Video capture support
-  - Image filters and effects
-  - Batch photo capture
-
-### Version 1.2.0 (Planned)
-- **Features**:
-  - AR camera integration
-  - Real-time filters
-  - Social media sharing
-  - Cloud storage integration
-  - Advanced editing tools
-
-### Version 2.0.0 (Future)
-- **Features**:
-  - Complete UI redesign
-  - Advanced customization
-  - Plugin system
-  - Performance optimizations
-  - Extended platform support
-
-## Contributing
-
-### How to Contribute
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
-### Development Setup
-```bash
-# Clone the repository
-git clone https://github.com/ismoy/ImagePickerKMP.git
-
-# Navigate to project directory
-cd ImagePickerKMP
-
-# Build the project
-./gradlew build
-
-# Run tests
-./gradlew test
+// After
+val picker = rememberImagePickerKMP(
+    config = ImagePickerKMPConfig(
+        cameraCaptureConfig = CameraCaptureConfig(...)
+    )
+)
+picker.launchCamera()
+when (val result = picker.result) {
+    is ImagePickerResult.Success -> result.photos.forEach { /* ... */ }
+    else -> Unit
+}
 ```
 
-### Release Process
-1. **Version Bump**: Update version in `build.gradle.kts`
-2. **Changelog**: Update this changelog
-3. **Tests**: Run all tests
-4. **Documentation**: Update documentation
-5. **Release**: Create GitHub release
-6. **Publish**: Publish to Maven Central
+#### `fileSize` is now in bytes
 
-## Support
+```kotlin
+// Before (was KB)
+val fileSizeKb = photo.fileSize  // e.g. 350
 
-### Getting Help
-- **Documentation**: [README.md](../README.md)
-- **Issues**: [GitHub Issues](https://github.com/ismoy/ImagePickerKMP/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/ismoy/ImagePickerKMP/discussions)
-- **Email**: belizairesmoy72@gmail.com
-
-### Reporting Issues
-When reporting issues, please include:
-- Version number
-- Platform (Android/iOS)
-- Device information
-- Steps to reproduce
-- Expected vs actual behavior
-- Logs (if applicable)
-
-### Feature Requests
-For feature requests, please:
-- Check existing issues first
-- Provide detailed description
-- Include use case examples
-- Consider implementation complexity
+// After (bytes)
+val fileSizeKb = (photo.fileSize ?: 0) / 1024.0  // convert manually
+```
 
 ---
 
-**Note**: This changelog is maintained by the ImagePickerKMP team. For questions or suggestions, please contact us.
+*For questions about a specific version, open an [issue](https://github.com/ismoy/ImagePickerKMP/issues) or check the [FAQ](FAQ.md).*

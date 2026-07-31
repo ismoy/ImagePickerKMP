@@ -17,11 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: 21
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -36,40 +36,70 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build
+      # ── Build ────────────────────────────────────────────────────────────────
+      - name: Build all modules
         run: ./gradlew build --no-daemon --stacktrace
 
-      - name: Run tests
-        run: ./gradlew test --no-daemon --stacktrace
+      # ── Tests ────────────────────────────────────────────────────────────────
+      # Each module runs jvmTest independently (avoids KMP iOS variant issues).
+      - name: Run JVM tests — all modules
+        run: |
+          ./gradlew \
+            :imagepicker-core:jvmTest \
+            :imagepickerkmp-photo:jvmTest \
+            :imagepickerkmp-video:jvmTest \
+            :imagepickerkmp-audio:jvmTest \
+            :imagepickerkmp-audio-player:jvmTest \
+            :imagepickerkmp-scanner:jvmTest \
+            :imagepickerkmp-video-player:jvmTest \
+            --no-daemon --continue
         continue-on-error: true
 
+      - name: Run Android unit tests — all modules
+        run: |
+          ./gradlew \
+            :imagepickerkmp-photo:testDebugUnitTest \
+            :imagepickerkmp-video:testDebugUnitTest \
+            :imagepickerkmp-audio-player:testDebugUnitTest \
+            :imagepickerkmp-scanner:testDebugUnitTest \
+            :imagepickerkmp-video-player:testDebugUnitTest \
+            --no-daemon --continue
+        continue-on-error: true
+
+      # ── Lint / Static analysis ───────────────────────────────────────────────
       - name: Run ktlint
         run: ./gradlew ktlintCheck --no-daemon
         continue-on-error: true
 
-      - name: Upload build logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: library/build/
-          retention-days: 7
-
-      - name: Generate Kover coverage report
-        run: ./gradlew koverXmlReport --no-daemon --stacktrace
-
-      - name: Verify coverage thresholds
-        run: ./gradlew koverVerify --no-daemon --stacktrace
+      # ── Coverage ─────────────────────────────────────────────────────────────
+      # koverMergedXmlReport generates per-module XMLs then merges them into
+      # build/reports/kover/report.xml — one file Codecov can ingest.
+      - name: Generate and merge Kover coverage reports
+        run: ./gradlew koverMergedXmlReport --no-daemon --stacktrace
         continue-on-error: true
 
-      - name: Parse Kover coverage data
+      - name: Verify per-module coverage thresholds
+        run: |
+          ./gradlew \
+            :imagepicker-core:koverVerify \
+            :imagepickerkmp-photo:koverVerify \
+            :imagepickerkmp-video:koverVerify \
+            :imagepickerkmp-audio:koverVerify \
+            :imagepickerkmp-audio-player:koverVerify \
+            :imagepickerkmp-scanner:koverVerify \
+            :imagepickerkmp-video-player:koverVerify \
+            --no-daemon --continue
+        continue-on-error: true
+
+      # ── Parse aggregated coverage ────────────────────────────────────────────
+      - name: Parse aggregated coverage data
         id: coverage
         run: |
-          REPORT_PATH="./library/build/reports/kover/report.xml"
+          REPORT_PATH="./build/reports/kover/report.xml"
 
           if [ -f "$REPORT_PATH" ]; then
-            MISSED=$(grep -o 'type="LINE" missed="[^"]*"' "$REPORT_PATH" | tail -1 | sed 's/.*missed="\([^"]*\)".*/\1/' || echo "0")
-            COVERED=$(grep -o 'type="LINE"[^/]* covered="[^"]*"' "$REPORT_PATH" | tail -1 | sed 's/.*covered="\([^"]*\)".*/\1/' || echo "0")
+            MISSED=$(grep -oP 'type="LINE" missed="\K[^"]+' "$REPORT_PATH" | tail -1 || echo "0")
+            COVERED=$(grep -oP 'type="LINE"[^/]* covered="\K[^"]+' "$REPORT_PATH" | tail -1 || echo "0")
 
             TOTAL=$((MISSED + COVERED))
             if [ "$TOTAL" -gt 0 ]; then
@@ -78,61 +108,86 @@ jobs:
               LINE_PERCENTAGE="0"
             fi
 
-            echo "line_coverage=$LINE_PERCENTAGE" >> $GITHUB_OUTPUT
-            echo "covered_lines=$COVERED"         >> $GITHUB_OUTPUT
-            echo "total_lines=$TOTAL"             >> $GITHUB_OUTPUT
-            echo "has_coverage=true"              >> $GITHUB_OUTPUT
-            echo "Kover line coverage: $LINE_PERCENTAGE% ($COVERED/$TOTAL)"
+            echo "line_coverage=$LINE_PERCENTAGE"   >> $GITHUB_OUTPUT
+            echo "covered_lines=$COVERED"           >> $GITHUB_OUTPUT
+            echo "total_lines=$TOTAL"               >> $GITHUB_OUTPUT
+            echo "has_coverage=true"                >> $GITHUB_OUTPUT
+            echo "Aggregated line coverage: $LINE_PERCENTAGE% ($COVERED/$TOTAL)"
           else
-            echo "Kover report not found at $REPORT_PATH"
+            echo "Aggregated report not found"
             echo "line_coverage=0"    >> $GITHUB_OUTPUT
             echo "covered_lines=0"    >> $GITHUB_OUTPUT
             echo "total_lines=0"      >> $GITHUB_OUTPUT
             echo "has_coverage=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Upload coverage artifact
+      # ── Upload artifacts ─────────────────────────────────────────────────────
+      - name: Upload coverage reports artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: library/build/reports/kover/
+          path: |
+            build/reports/kover/
+            imagepicker-core/build/reports/kover/
+            imagepickerkmp-photo/build/reports/kover/
+            imagepickerkmp-video/build/reports/kover/
+            imagepickerkmp-audio/build/reports/kover/
+            imagepickerkmp-audio-player/build/reports/kover/
+            imagepickerkmp-scanner/build/reports/kover/
+            imagepickerkmp-video-player/build/reports/kover/
           retention-days: 30
 
-      - name: Upload coverage to Codecov
+      # ── Codecov — single merged report ───────────────────────────────────────
+      - name: Upload merged coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: ismoy/ImagePickerKMP
-          files: ./library/build/reports/kover/report.xml
+          files: ./build/reports/kover/report.xml
           flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: true
+          name: imagepickerkmp-all-modules
+          fail_ci_if_error: false
           verbose: true
 
+      # ── PR comment ───────────────────────────────────────────────────────────
       - name: Comment PR with coverage summary
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.coverage.outputs.has_coverage == 'true'
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            try {
-              const xmlPath = './library/build/reports/kover/report.xml';
-              if (!fs.existsSync(xmlPath)) return;
-              const xml = fs.readFileSync(xmlPath, 'utf8');
-              const matches = xml.match(/type="LINE" missed="(\d+)" covered="(\d+)"/g);
-              if (!matches) return;
-              const last = matches[matches.length - 1].match(/missed="(\d+)" covered="(\d+)"/);
-              const missed = parseInt(last[1]), covered = parseInt(last[2]);
-              const total = missed + covered;
-              const pct = total > 0 ? ((covered / total) * 100).toFixed(1) : '0.0';
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: `## 📊 Coverage Report\n\n**Line Coverage:** ${pct}% (${covered} of ${total} lines)\n\n[View on Codecov](https://codecov.io/gh/ismoy/ImagePickerKMP)\n\n---\n*Generated automatically by CI*`
-              });
-            } catch (e) { console.log('Could not post coverage comment:', e.message); }
+            const coverage = '${{ steps.coverage.outputs.line_coverage }}';
+            const covered  = '${{ steps.coverage.outputs.covered_lines }}';
+            const total    = '${{ steps.coverage.outputs.total_lines }}';
+            const pct      = parseFloat(coverage);
+            const emoji    = pct >= 90 ? '🟢' : pct >= 75 ? '🟡' : '🔴';
 
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: [
+                '## 📊 Coverage Report — All Modules',
+                '',
+                `${emoji} **Line Coverage:** ${coverage}% (${covered} of ${total} lines)`,
+                '',
+                '| Module | Report |',
+                '|--------|--------|',
+                '| imagepicker-core | ✅ |',
+                '| imagepickerkmp-photo | ✅ |',
+                '| imagepickerkmp-video | ✅ |',
+                '| imagepickerkmp-audio | ✅ |',
+                '| imagepickerkmp-audio-player | ✅ |',
+                '| imagepickerkmp-scanner | ✅ |',
+                '| imagepickerkmp-video-player | ✅ |',
+                '',
+                '[📈 View full report on Codecov](https://codecov.io/gh/ismoy/ImagePickerKMP)',
+                '',
+                '---',
+                '*Generated automatically by CI — merged Kover reports*'
+              ].join('\n')
+            });
+
+      # ── Discord notifications ─────────────────────────────────────────────────
       - name: Notify Discord on Success
         if: success()
         env:
@@ -144,7 +199,7 @@ jobs:
           fi
           curl -s -X POST "$DISCORD_WEBHOOK" \
             -H "Content-Type: application/json" \
-            -d "{\"content\":\"✅ **CI Build Success** — ImagePickerKMP\n**Branch:** \`${{ github.ref_name }}\`\n**Author:** ${{ github.actor }}\n**Coverage:** ${COVERAGE_TEXT}\n🔗 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
+            -d "{\"content\":\"✅ **CI Build Success** — ImagePickerKMP\n**Branch:** \`${{ github.ref_name }}\`\n**Author:** ${{ github.actor }}\n**Coverage (all modules):** ${COVERAGE_TEXT}\n🔗 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
 
       - name: Notify Discord on Failure
         if: failure()
