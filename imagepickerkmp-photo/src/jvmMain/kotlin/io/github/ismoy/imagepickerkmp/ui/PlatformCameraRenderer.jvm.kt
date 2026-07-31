@@ -1,0 +1,45 @@
+package io.github.ismoy.imagepickerkmp.ui
+
+import androidx.compose.runtime.Composable
+import io.github.ismoy.imagepickerkmp.config.ImagePickerConfig
+import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.picker.MimeType
+import io.github.ismoy.imagepickerkmp.picker.PhotoResult
+import io.github.ismoy.imagepickerkmp.domain.utils.JvmFilePicker
+
+@Suppress("FunctionNaming")
+@Composable
+internal actual fun PlatformCameraRenderer(
+    config: ImagePickerConfig
+) {
+    // On JVM, we can only access the file gallery
+    // No camera is available, so we launch the file selector directly
+    
+    JvmFilePicker(
+        onPhotosSelected = { galleryResults ->
+            if (galleryResults.size == 1) {
+                val galleryResult = galleryResults.first()
+                val photoResult = PhotoResult(
+                    uri = galleryResult.uri,
+                    width = galleryResult.width,
+                    height = galleryResult.height,
+                    fileName = galleryResult.fileName,
+                    fileSize = galleryResult.fileSize
+                )
+                config.onPhotoCaptured(photoResult)
+            } else {
+                config.onDismiss()
+            }
+        },
+        onError = { exception ->
+            config.onError(exception)
+        },
+        onDismiss = {
+            config.onDismiss()
+        },
+        allowMultiple = false,
+        mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+        selectionLimit = 1,
+        fileFilterDescription = "Images"
+    )
+}

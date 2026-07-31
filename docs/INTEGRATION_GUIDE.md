@@ -1,4 +1,4 @@
-This document is also available in Spanish: [INTEGRATION_GUIDE.es.md](INTEGRATION_GUIDE.es.md)
+
 
 # Integration Guide
 
@@ -32,7 +32,13 @@ In your `build.gradle.kts` (app level):
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.22")
+    // Escoge los módulos que necesites:
+    implementation("io.github.ismoy:imagepickerkmp-photo:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-video:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-audio:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-scanner:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-videoplayer:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-audioplayer:1.1.0")
 }
 ```
 
@@ -51,7 +57,13 @@ In your `build.gradle.kts` (commonMain):
 
 ```kotlin
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.22")
+    // Escoge los módulos que necesites en commonMain:
+    implementation("io.github.ismoy:imagepickerkmp-photo:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-video:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-audio:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-scanner:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-videoplayer:1.1.0")
+    implementation("io.github.ismoy:imagepickerkmp-audioplayer:1.1.0")
 }
 ```
 ### 2. Add Camera Permission

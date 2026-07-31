@@ -1,6 +1,6 @@
 # Examples
 
-This document is also available in Spanish: [EXAMPLES.es.md](EXAMPLES.es.md)
+
 
 This document provides comprehensive examples for using ImagePickerKMP in various scenarios.
 
@@ -1471,7 +1471,8 @@ fun CustomErrorMessagesExample() {
 ```kotlin
 // build.gradle.kts (app level)
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.22")
+    implementation("io.github.ismoy:imagepickerkmp-photo:1.1.0")
+    // ... add other modules as needed (video, audio, scanner)
     implementation("androidx.compose.ui:ui:1.4.0")
     implementation("androidx.compose.material:material:1.4.0")
     implementation("androidx.activity:activity-compose:1.7.0")
@@ -1925,7 +1926,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("io.github.ismoy:imagepickerkmp:1.0.22")
+                implementation("io.github.ismoy:imagepickerkmp-photo:1.1.0")
+                // ... add other modules as needed (video, audio, scanner)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
                 implementation("org.jetbrains.compose.runtime:runtime:1.4.0")
             }
@@ -1948,7 +1950,7 @@ kotlin {
 }
 
 // CameraScreen.kt (shared module)
-package io.github.ismoy.belzspeedscan.core.camera.ui
+package io.github.ismoy.imagepickerkmp.scanner.core.camera.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

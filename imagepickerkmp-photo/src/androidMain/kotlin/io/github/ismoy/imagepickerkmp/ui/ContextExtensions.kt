@@ -1,0 +1,12 @@
+package io.github.ismoy.imagepickerkmp.ui
+
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+
+internal val Context.activity: Activity?
+    get() = when (this) {
+        is Activity -> this
+        is ContextWrapper -> this.baseContext.activity
+        else -> null
+    }

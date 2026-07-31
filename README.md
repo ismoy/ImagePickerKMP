@@ -1,10 +1,10 @@
 # ImagePickerKMP
-**Cross-platform Image Picker & Camera Library for Kotlin Multiplatform**
 
-Easily capture or select images on Android, iOS, Desktop, and Web — all with a single API.  
-Built with **Compose Multiplatform**, designed for **simplicity, performance, and flexibility**.
+**A complete media library for Kotlin Multiplatform — photos, video, audio, scanning, and playback in one ecosystem.**
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=b9cde436-d518-45b7-9a4a-7b4e084aeffa" />
+
+> 🚧 **Note: Full documentation, comprehensive video tutorials, and more examples will soon be available in English!**
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ismoy/CameraKMP/main/thumnailImagePickerKMP.png" alt="ImagePickerKMP Banner" width="100%">
@@ -12,39 +12,28 @@ Built with **Compose Multiplatform**, designed for **simplicity, performance, an
 
 <p align="center">
   <a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>
-  <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Code Coverage"></a>
+  <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Coverage"></a>
+  <a href="https://search.maven.org/search?q=g:io.github.ismoy"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp.svg?label=Maven%20Central" alt="Maven Central"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License"></a>
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.3.20-blue.svg" alt="Kotlin"></a>
-  <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-  <a href="#contributors"><img src="https://img.shields.io/github/all-contributors/ismoy/ImagePickerKMP?color=ee8449&style=flat-square" alt="All Contributors"></a>
-  <!-- ALL-CONTRIBUTORS-BADGE:END -->
+  <a href="https://github.com/ismoy/ImagePickerKMP/stargazers"><img src="https://img.shields.io/github/stars/ismoy/ImagePickerKMP?style=social" alt="Stars"></a>
 </p>
 
 <p align="center">
-  <a href="https://search.maven.org/artifact/io.github.ismoy/imagepickerkmp"><img src="https://img.shields.io/maven-central/v/io.github.ismoy/imagepickerkmp.svg?label=Maven%20Central" alt="Maven Central"></a>
-  <a href="https://www.npmjs.com/package/imagepickerkmp"><img src="https://img.shields.io/npm/v/imagepickerkmp.svg?label=NPM" alt="NPM Version"></a>
-  <a href="https://www.npmjs.com/package/imagepickerkmp"><img src="https://img.shields.io/npm/dt/imagepickerkmp.svg" alt="NPM Downloads"></a>
-  <a href="https://github.com/ismoy/ImagePickerKMP/releases"><img src="https://img.shields.io/github/v/release/ismoy/ImagePickerKMP?label=GitHub%20Release" alt="GitHub Release"></a>
-  <a href="https://github.com/ismoy/ImagePickerKMP/stargazers"><img src="https://img.shields.io/github/stars/ismoy/ImagePickerKMP?style=social" alt="GitHub Repo stars"></a>
-    <a href="https://github.com/ismoy/ImagePickerKMP/commits/main"><img src="https://img.shields.io/github/last-commit/ismoy/ImagePickerKMP" alt="GitHub last commit"></a>
+  <img src="https://img.shields.io/badge/Android-API%2024+-green" alt="Android">
+  <img src="https://img.shields.io/badge/iOS-16.0+-blue" alt="iOS">
+  <img src="https://img.shields.io/badge/Desktop-JDK%2021+-orange" alt="Desktop">
+  <img src="https://img.shields.io/badge/Web-JS%20%7C%20WASM-yellow" alt="Web">
+  <img src="https://img.shields.io/badge/Compose%20Multiplatform-1.11.1-brightgreen" alt="Compose">
 </p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Compose%20Multiplatform-green" alt="Compose Multiplatform">
-  <img src="https://img.shields.io/badge/Platform-Android-green" alt="Android">
-  <img src="https://img.shields.io/badge/Platform-iOS-blue" alt="iOS">
-  <img src="https://img.shields.io/badge/Platform-Desktop-orange" alt="Desktop">
-  <img src="https://img.shields.io/badge/Platform-JS-yellow" alt="JavaScript">
-  <img src="https://img.shields.io/badge/Platform-WASM-purple" alt="WebAssembly">
-  <a href="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml">
-  <img src="https://github.com/ismoy/ImagePickerKMP/actions/workflows/detekt.yml/badge.svg?branch=main" alt="Detekt"></a>
-</p>
-
----
 
 <p align="center">
   <a href="https://imagepickerkmp.dev/">
-    <img src="https://img.shields.io/badge/%20Full%20Documentation-Visit%20Docs%20Site-0ea5e9?style=for-the-badge&logoColor=white" alt="Documentation Site">
+    <img src="https://img.shields.io/badge/Documentation-imagepickerkmp.dev-0ea5e9?style=for-the-badge" alt="Docs">
+  </a>
+  &nbsp;
+  <a href="https://github.com/ismoy/CameraKMP">
+    <img src="https://img.shields.io/badge/Example%20App-CameraKMP-6366f1?style=for-the-badge" alt="Example">
   </a>
   &nbsp;
   <a href="https://github.com/sponsors/ismoy">
@@ -52,487 +41,358 @@ Built with **Compose Multiplatform**, designed for **simplicity, performance, an
   </a>
 </p>
 
-> **ImagePickerKMP saves you 2 weeks of native Android/iOS/Web integration work.**  
-> It's free and open source. If your app or company benefits from it, consider sponsoring to keep it maintained and updated with every new KMP/Compose release.  
-> [→ Become a sponsor](https://github.com/sponsors/ismoy)
+---
+
+## The Ecosystem
+
+ImagePickerKMP is a **modular** media library. Each module is independent — include only what your app needs.
+
+| Module | Artifact | Description |
+|--------|----------|-------------|
+| **Photo** | `imagepickerkmp` | Camera capture and gallery image picking |
+| **Video** | `imagepickerkmp-video` | Video recording and gallery video picking |
+| **Audio** | `imagepickerkmp-audio` | Audio recording with waveform visualization |
+| **Audio Player** | `imagepickerkmp-audio-player` | Voice message / audio file playback |
+| **Scanner** | `imagepickerkmp-scanner` | Barcode and QR code scanning via live camera |
+| **Video Player** | `imagepickerkmp-video-player` | Full-featured video playback with controls |
+
+> **Requirements:** Kotlin **2.3.20** · Compose Multiplatform **1.11.1** · Android `minSdk` **24** · iOS **16.0+**
 
 ---
-## Example
+## Installation
 
-###  **Complete Example App**
-**[ ImagePickerKMP-Example →](https://github.com/ismoy/CameraKMP)**
+Add only the modules you need. All modules are published to Maven Central.
 
-Full-featured sample application showcasing:
-- All library features and configurations
-
-##  Quick Start
-
-### ⚠️ Requirements
-
-| Requirement | Minimum version |
-|---|---|
-| **Kotlin** | **2.3.20** *(breaking change — see [CHANGELOG](docs/CHANGELOG.md))* |
-| Compose Multiplatform | 1.10.3 |
-| Ktor | 3.4.1 |
-| Android `minSdk` | 24 |
-| Android `compileSdk` | 36 |
-
-> **Note:** This library is compiled with Kotlin 2.3.20. Projects using Kotlin < 2.3.x will get an ABI incompatibility error at compile time. If you need Kotlin 2.1.x support, use a previous version of this library.
-
-### Installation
-
-**Kotlin Multiplatform:**
 ```kotlin
+// build.gradle.kts (commonMain)
 dependencies {
-    implementation("io.github.ismoy:imagepickerkmp:1.0.41")
+    // Photo — camera capture and gallery image picking
+    implementation("io.github.ismoy:imagepickerkmp-photo:1.1.0")
+
+    // Video — video recording and gallery video picking
+    implementation("io.github.ismoy:imagepickerkmp-video:1.1.0")
+
+    // Audio — audio recording
+    implementation("io.github.ismoy:imagepickerkmp-audio:1.1.0")
+
+    // Audio Player — voice message and audio file playback
+    implementation("io.github.ismoy:imagepickerkmp-audioplayer:1.1.0")
+
+    // Scanner — live barcode and QR code scanning
+    implementation("io.github.ismoy:imagepickerkmp-scanner:1.1.0")
+
+    // Video Player — full-featured video playback
+    implementation("io.github.ismoy:imagepickerkmp-videoplayer:1.1.0")
 }
 ```
 
-**React/JavaScript:**
-```bash
-npm install imagepickerkmp
+### iOS — `Info.plist`
+
+Every module that uses the camera or microphone requires a usage description. Add the ones relevant to your app:
+
+```xml
+<!-- Camera (Photo, Video, Scanner) -->
+<key>NSCameraUsageDescription</key>
+<string>Required for camera features.</string>
+
+<!-- Microphone (Video, Audio) -->
+<key>NSMicrophoneUsageDescription</key>
+<string>Required to record audio.</string>
+
+<!-- Photo Library (Photo, Video) -->
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Required to select media from your library.</string>
 ```
 
-### New — `rememberImagePickerKMP` (recommended)
+### iOS — Known Linker Issue
 
-The modern, idiomatic Compose API. A single state holder — no manual booleans, no `Render()` call needed.
+If you get `_OBJC_CLASS_$_CLLocation` during an iOS build, add **CoreLocation.framework** in Xcode:
+> Target → Build Phases → Link Binary With Libraries → **+** → CoreLocation → Add. Clean and rebuild.
+
+---
+
+## Module Quick Start
+
+### Photo — `imagepickerkmp`
+
+Pick images from the gallery or capture with the camera using a single Compose state holder.
 
 ```kotlin
 @Composable
-fun basicUsageScreen() {
+fun PhotoScreen() {
     val picker = rememberImagePickerKMP(
         config = ImagePickerKMPConfig(
-            galleryConfig = GalleryConfig(
-                allowMultiple = true,
-                selectionLimit = 20
-            )
+            galleryConfig = GalleryConfig(allowMultiple = true, selectionLimit = 10),
+            cropConfig    = CropConfig(enabled = true)
         )
     )
-    val result = picker.result
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = { Text("Basic Usage") },
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Go back"
-                        )
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            BottomAppBar {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = { picker.launchCamera() },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Camera")
-                    }
-                    Button(
-                        onClick = { picker.launchGallery() },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Gallery")
-                    }
-                }
-            }
+    Button(onClick = { picker.launchCamera() }) { Text("Camera") }
+    Button(onClick = { picker.launchGallery() }) { Text("Gallery") }
+
+    when (val result = picker.result) {
+        is ImagePickerResult.Success   -> result.photos.forEach { photo ->
+            Image(painter = photo.loadPainter(), contentDescription = null)
         }
-    ){scaffoldPadding->
-        Column(
-            modifier = Modifier
-                .padding(scaffoldPadding)
-                .fillMaxSize()
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                when (result) {
-
-                    is ImagePickerResult.Loading -> {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            CircularProgressIndicator()
-                            Text(
-                                text = "Loading...",
-                                color = Color.Gray,
-                                modifier = Modifier.padding(top = 12.dp)
-                            )
-                        }
-                    }
-
-                    is ImagePickerResult.Success -> {
-                        // Result here
-                    }
-
-                    is ImagePickerResult.Error -> {
-                        Text(
-                            text = "Error: ${result.exception.message}",
-                            color = Color.Red,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-
-                    is ImagePickerResult.Dismissed -> {
-                        Text("Selection cancelled", color = Color.Gray)
-                    }
-
-                    is ImagePickerResult.Idle -> {
-                        Text("Press a button to get started", color = Color.Gray)
-                    }
-                }
-            }
-        }
+        is ImagePickerResult.Loading   -> CircularProgressIndicator()
+        is ImagePickerResult.Error     -> Text("Error: ${result.exception.message}")
+        is ImagePickerResult.Dismissed -> Unit
+        is ImagePickerResult.Idle      -> Unit
     }
 }
 ```
 
-**Per-launch overrides:**
-```kotlin
-// Override gallery options for a single launch
-picker.launchGallery(
-    allowMultiple = true,
-    selectionLimit = 5,
-    mimeTypes = listOf(MimeType.IMAGE_JPEG),
-    includeExif = true
-)
-
-// Override camera options for a single launch
-picker.launchCamera(
-    cameraCaptureConfig = CameraCaptureConfig(compressionLevel = CompressionLevel.HIGH),
-    enableCrop = false
-)
-```
+→ [Full Photo documentation](imagepickerkmp-photo/README.md)
 
 ---
 
-## API — `rememberImagePickerKMP`
+### Video — `imagepickerkmp-video`
 
-The library exposes a single public API based on the standard Compose state-hook pattern:
+Record video or pick from the gallery. Supports compression, metadata, and multiple formats.
 
 ```kotlin
 @Composable
-fun MyScreen() {
-    val picker = rememberImagePickerKMP()
-    val result = picker.result
+fun VideoScreen() {
+    val picker = rememberVideoPicker(
+        config = VideoPickerConfig(
+            audio = AudioConfig.Default,
+            output = VideoOutputConfig(
+                format = VideoOutputFormat.MP4,
+                removeMetadata = false
+            ),
+            allowedMimeTypes = listOf(VideoMimeType.All)
+        )
+    )
 
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Button(onClick = { picker.launchCamera() }, modifier = Modifier.weight(1f)) {
-            Text("Camera")
-        }
-        Button(onClick = { picker.launchGallery() }, modifier = Modifier.weight(1f)) {
-            Text("Gallery")
-        }
+    Button(onClick = { picker.launchCamera() })  { Text("Record") }
+    Button(onClick = { picker.launchGallery() }) { Text("Pick Video") }
+
+    when (val result = picker.result) {
+        is VideoPickerState.Success -> Text("Duration: ${result.video.durationMs}ms")
+        is VideoPickerState.Error   -> Text("Error: ${result.cause}")
+        else -> Unit
     }
+}
+```
 
-    when (result) {
-        is ImagePickerResult.Loading   -> CircularProgressIndicator()
-        is ImagePickerResult.Success   -> {
-            val photos = result.photos
-            if (photos.size == 1) {
-                CameraResultCard(photo = photos.first())
-            } else {
-                MultiPhotoGrid(photos = photos)
+→ [Full Video documentation](imagepickerkmp-video/README.md)
+
+---
+
+### Audio — `imagepickerkmp-audio`
+
+Two APIs — an inline chat-style mic widget and a modal state-holder.
+
+**Inline widget** — embeds a hold-to-record mic button directly in your layout:
+
+```kotlin
+@Composable
+fun ChatInputBar() {
+    AudioRecorder(
+        config   = AudioRecorderConfig(),
+        onResult = { audioResult: AudioResult? ->
+            if (audioResult != null) {
+                println("Recorded: ${audioResult.uri}, ${audioResult.durationMs}ms")
             }
         }
-        is ImagePickerResult.Error     -> Text("Error: ${result.exception.message}", color = Color.Red)
-        is ImagePickerResult.Dismissed -> Text("Selection cancelled", color = Color.Gray)
-        is ImagePickerResult.Idle      -> Text("Press a button to get started", color = Color.Gray)
+    )
+}
+```
+
+**Modal picker** — opens recorder or gallery in a dialog, same state-holder pattern as the other modules:
+
+```kotlin
+@Composable
+fun AudioScreen() {
+    val picker = rememberAudioPicker()
+
+    Button(onClick = { picker.launchRecorder() }) { Text("Record") }
+    Button(onClick = { picker.launchGallery() })  { Text("Pick Audio") }
+
+    when (val state = picker.result) {
+        is AudioPickerState.Success -> Text("Saved: ${state.audio.fileName}")
+        else -> Unit
     }
 }
 ```
 
-### Configuration
-
-Pass an `ImagePickerKMPConfig` to customize behavior globally:
-
-```kotlin
-val picker = rememberImagePickerKMP(
-    config = ImagePickerKMPConfig(
-        cropConfig          = CropConfig(enabled = true, squareCrop = true),
-        galleryConfig       = GalleryConfig(allowMultiple = true, selectionLimit = 10),
-        cameraCaptureConfig = CameraCaptureConfig(
-            compressionLevel = CompressionLevel.HIGH,
-            includeExif      = true
-        )
-    )
-)
-```
-
-### Per-launch overrides
-
-Override any parameter for a single invocation without changing the global config:
-
-```kotlin
-// Allow multiple selection only for this launch
-picker.launchGallery(allowMultiple = true, selectionLimit = 5)
-
-// Enable EXIF only for this camera launch
-picker.launchCamera(cameraCaptureConfig = CameraCaptureConfig(includeExif = true))
-```
-
-
-## Key Features
-
-- **`rememberImagePickerKMP`** — New idiomatic API: single state holder, `launchCamera()` / `launchGallery()` with per-launch overrides, reactive result via `ImagePickerResult` (Idle → Loading → Success/Dismissed/Error). No `Render()`, no manual booleans.
-- **Cross-platform** — Android, iOS, Desktop, Web
-- **Camera & Gallery** — Direct access with unified API
-- **Image Cropping** — Built-in crop functionality
-- **Smart Compression** — Configurable quality levels
-- **EXIF Metadata** — GPS, camera info, timestamps (Android/iOS)
-- **PDF Support** — Select PDF documents alongside images
-- **Extension Functions** — Easy image processing (`loadPainter()`, `loadBytes()`, `loadBase64()`)
-- **Permission Handling** — Automatic permission management
-- **Async Processing** — Non-blocking UI with coroutines
-- **Format Support** — JPEG, PNG, HEIC, HEIF, WebP, GIF, BMP, PDF
-
-##  Platform Support
-
-| Platform | Minimum Version | Camera | Gallery | Crop | EXIF | Status |
-|----------|----------------|--------|---------|------|------|--------|
-| Android  | API 21+       | ✅ | ✅ | ✅ | ✅ | ✅ |
-| iOS      | iOS 12.0+     | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Desktop  | JDK 11+       | ❌ | ✅ | ✅ | ❌ | ✅ |
-| JS/Web      | Modern Browsers| ❌ | ✅ | ✅ | ❌ | ✅ |
-| Wasm/Web      | Modern Browsers| ✅ |
+→ [Full Audio documentation](imagepickerkmp-audio/README.md)
 
 ---
 
-##  Live Demos
+### Audio Player — `imagepickerkmp-audio-player`
 
-###  **Online Demos**
-**[ View Interactive Demos →](https://ismoy.github.io/ImagePickerKMP-Demos)**
+Low-level playback engine. Powers the `ImagePickerAudioPlayer` composable in `imagepickerkmp-audio` and can be used directly to build fully custom player UIs.
 
-Experience ImagePickerKMP in action:
--  **Mobile Demos** - Android & iOS camera/gallery functionality
--  **Desktop Demo** - File picker and image processing
--  **Web Demo** - React integration with WebRTC camera
--  **Crop Demo** - Interactive image cropping across platforms
-
-
-##  Documentation
-
-###  **Complete Guides**
-| Resource | Description |
-|----------|-------------|
-| [ Integration Guide](docs/INTEGRATION_GUIDE.md) | Complete setup and configuration |
-| [ Customization Guide](docs/CUSTOMIZATION_GUIDE.md) | UI customization and theming |
-| [ React Guide](REACT_INTEGRATION_GUIDE.md) | Web development setup |
-| [ Permissions Guide](library/PERMISSION.md) | Platform permissions |
-| [ API Reference](docs/API_REFERENCE.md) | Complete API documentation |
-
-## Advanced Configuration
-
-### Image Compression
 ```kotlin
-val picker = rememberImagePickerKMP(
-    config = ImagePickerKMPConfig(
-        cameraCaptureConfig = CameraCaptureConfig(
-            compressionLevel = CompressionLevel.HIGH // LOW, MEDIUM, HIGH
-        ),
-        permissionAndConfirmationConfig = PermissionAndConfirmationConfig(
-            skipConfirmation = true
-        )
-    )
-)
-picker.launchCamera()
-```
+@Composable
+fun CustomPlayerScreen(audioUri: String) {
+    val playerManager = rememberAudioPlayerManager()
+    val state by playerManager.playbackState.collectAsState()
 
-### EXIF Metadata Extraction (Camera)
-```kotlin
-val picker = rememberImagePickerKMP(
-    config = ImagePickerKMPConfig(
-        cameraCaptureConfig = CameraCaptureConfig(
-            includeExif = true  // Android/iOS only
-        )
-    )
-)
+    LaunchedEffect(audioUri) { playerManager.prepare(audioUri) }
 
-when (val result = picker.result) {
-    is ImagePickerResult.Success -> {
-        result.photos.first().exif?.let { exif ->
-            println(" Location: ${exif.latitude}, ${exif.longitude}")
-            println(" Camera: ${exif.cameraModel}")
-            println(" Taken: ${exif.dateTaken}")
+    LinearProgressIndicator(
+        progress = {
+            if (state.durationMs > 0) state.currentPositionMs.toFloat() / state.durationMs else 0f
         }
-    }
-    else -> Unit
-}
-```
+    )
 
-### EXIF Metadata Extraction (Gallery)
-```kotlin
-val picker = rememberImagePickerKMP(
-    config = ImagePickerKMPConfig(
-        galleryConfig = GalleryConfig(
-            allowMultiple = true,
-            mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
-            includeExif = true  // Android/iOS only
+    FloatingActionButton(
+        onClick = {
+            if (state.isPlaying) playerManager.pause()
+            else playerManager.play(audioUri)
+        }
+    ) {
+        Icon(
+            imageVector = if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+            contentDescription = null
         )
-    )
-)
-picker.launchGallery()
-```
-
-### Multiple Selection with Filtering
-```kotlin
-// Images only
-val picker = rememberImagePickerKMP(
-    config = ImagePickerKMPConfig(
-        galleryConfig = GalleryConfig(
-            allowMultiple = true,
-            mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)
-        ),
-        cropConfig = CropConfig(enabled = true)
-    )
-)
-picker.launchGallery()
-
-// Images and PDFs
-picker.launchGallery(
-    mimeTypes = listOf(
-        MimeType.IMAGE_JPEG,
-        MimeType.IMAGE_PNG,
-        MimeType.APPLICATION_PDF  // PDF support
-    )
-)
-```
-
-### iOS Permissions Setup
-Add to your `Info.plist`:
-```xml
-<key>NSCameraUsageDescription</key>
-<string>Camera access needed to take photos</string>
-<key>NSPhotoLibraryUsageDescription</key>
-<string>Photo library access needed to select images</string>
-```
-
-##  Extension Functions
-
-Process images easily with built-in extension functions:
-
-```kotlin
-val picker = rememberImagePickerKMP()
-
-when (val result = picker.result) {
-    is ImagePickerResult.Success -> {
-        val photo = result.photos.first()
-
-        val imageBytes = photo.loadBytes()        // ByteArray for file operations
-        val imagePainter = photo.loadPainter()    // Painter for Compose UI
-        val imageBitmap = photo.loadImageBitmap() // ImageBitmap for graphics
-        val imageBase64 = photo.loadBase64()      // Base64 string for APIs
-
-        // File system operations (kotlinx-io)
-        val absolutePath = photo.absolutePath     // String - absolute file path
-        val path = photo.asPath()                 // Path object for file operations
-        val exists = photo.exists()               // Check if file exists
-        val rawSource = photo.asRawSource()       // RawSource for low-level reading
-        val source = photo.asSource()             // Buffered Source for efficient reading
-
-        // Copy photo to another location
-        val sink = SystemFileSystem.sink(Path("copy.jpg"))
-        photo.transferToSink(sink)                // Transfer content to RawSink
     }
-    else -> Unit
 }
 ```
 
-## React/Web Integration
-
-ImagePickerKMP is available as an NPM package for web development:
-
-```bash
-npm install imagepickerkmp
-```
-
-Features:
--  **WebRTC Camera Access** - Mobile & desktop camera support
--  **TypeScript Support** - Full type definitions included
--  **Drag & Drop** - File picker with drag and drop
--  **React Components** - Ready-to-use React components
--  **Cross-Framework** - Works with React, Vue, Angular, Vanilla JS
-### Smart Gallery vs File Explorer Detection
-- **Images**: Opens native Android gallery for photos
-- **PDFs**: Opens file explorer for document access  
-- **Mixed Types**: Automatically chooses best picker for content type
-- **Automatic Detection**: No configuration needed - works out of the box!
-
-**[Complete React Integration Guide →](REACT_INTEGRATION_GUIDE.md)**
-
-## ⚠️ Known Issues & Troubleshooting
-
-### iOS build fails with `_OBJC_CLASS_$_CLLocation` linker error
-
-If your iOS build fails with:
-
-```
-ld: Undefined symbols: _OBJC_CLASS_$_CLLocation
-linker command failed with exit code 1
-```
-
-**Android and JVM Desktop work fine**, but iOS fails during the linking phase.
-
-**Fix:** Add `CoreLocation.framework` manually in Xcode:
-
-1. Select your app target → **Build Phases → Link Binary With Libraries**
-2. Click **+**, search for **CoreLocation**, and click **Add**
-3. Clean (**⇧⌘K**) and rebuild
-
-> No code changes needed. See [FAQ](docs/FAQ.md#ios-build-fails-with-linker-error-_objc_class_cllocation-or-corelocationframework-not-found) and [Integration Guide](docs/INTEGRATION_GUIDE.md) for full details.
-
-##  Support & Contributing
-
--  [Report Issues](https://github.com/ismoy/ImagePickerKMP/issues)
--  [Discord Community](https://discord.gg/EjSQTeyh)
--  [Contributing Guide](docs/CONTRIBUTING.md)
--  [Email Support](mailto:belizairesmoy72@gmail.com)
+→ [Full Audio Player documentation](imagepickerkmp-audio-player/README.md)
 
 ---
 
-## Sponsors & Backers
+### Scanner — `imagepickerkmp-scanner`
 
-ImagePickerKMP is free and open source. Maintaining it across **Android, iOS, Desktop, Web and WASM** with every Kotlin/Compose Multiplatform release takes real time and effort.
+Scan barcodes and QR codes from a live camera feed. Supports 19 barcode formats.
 
-If this library saves you time or money in production, please consider supporting it:
+```kotlin
+@Composable
+fun ScannerScreen() {
+    val scanner = rememberScannerPicker(
+        config = ScannerPickerConfig(
+            camera = ScannerCameraConfig(
+                behavior = ScannerBehaviorConfig(
+                    allowedFormats = listOf(BarcodeFormat.QR_CODE, BarcodeFormat.EAN_13)
+                )
+            )
+        )
+    )
 
-| Tier | Amount | Benefit |
-|------|--------|---------|
-| ☕ Coffee | $5/mo | Name in the backers list |
-| 🥈 Silver | $25/mo | Logo in README + priority issue response |
-<p align="center">
-  <a href="https://github.com/sponsors/ismoy">
-    <img src="https://img.shields.io/badge/Sponsor%20ImagePickerKMP-%E2%9D%A4-red?style=for-the-badge&logo=github" alt="Sponsor">
-  </a>
-</p>
+    Button(onClick = { scanner.launchScanner() }) { Text("Scan") }
 
-### Current Sponsors
+    when (val result = scanner.result) {
+        is ScannerPickerState.Success -> Text("Scanned: ${result.result.code}")
+        is ScannerPickerState.Error   -> Text("Error: ${result.error}")
+        else -> Unit
+    }
+}
+```
 
-<!-- SPONSORS-LIST:START - Do not remove or modify this section -->
+→ [Full Scanner documentation](imagepickerkmp-scanner/README.md)
+
+---
+
+### Video Player — `imagepickerkmp-video-player`
+
+Full-featured video player with play/pause, seek, volume, fullscreen, and quality selection.
+
+```kotlin
+@Composable
+fun VideoPlayerScreen(videoUrl: String) {
+    // Simple usage — source and config only
+    ImagePickerVideoPlayer(
+        source = VideoSource.Url(videoUrl),
+        config = VideoPlayerConfig(
+            behavior = VideoBehaviorConfig(autoPlay = true)
+        )
+    )
+}
+```
+
+For programmatic control (play/pause from code), use `rememberVideoPlayerState`:
+
+```kotlin
+val player = rememberVideoPlayerState(source = VideoSource.Url(videoUrl))
+ImagePickerVideoPlayer(state = player, config = VideoPlayerConfig())
+player.seekTo(30_000L)
+```
+
+→ [Full Video Player documentation](imagepickerkmp-video-player/README.md)
+
+---
+
+## Platform Support Matrix
+
+| Feature | Android | iOS | Desktop | JS/Web | WASM |
+|---------|:-------:|:---:|:-------:|:------:|:----:|
+| Photo — Camera | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Photo — Gallery | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Photo — Crop | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Photo — EXIF | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Video — Camera | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Video — Gallery | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Audio — Record | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Audio — Player | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Scanner | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Video Player | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+---
+
+## `PhotoResult` — Shared Result Model
+
+All photo operations return a `PhotoResult` with consistent extension functions across platforms:
+
+```kotlin
+val photo: PhotoResult = result.photos.first()
+
+// Compose UI
+val painter = photo.loadPainter()       // Painter for Image()
+val bitmap  = photo.loadImageBitmap()  // ImageBitmap for Canvas
+
+// Raw data
+val bytes  = photo.loadBytes()         // ByteArray
+val base64 = photo.loadBase64()        // Base64-encoded string
+
+// File system (kotlinx-io)
+val path   = photo.asPath()            // kotlinx.io.files.Path
+val exists = photo.exists()            // Boolean
+val source = photo.asSource()          // Buffered Source
+
+// Transfer
+photo.transferToSink(mySink)           // Copy to RawSink
+```
+
+---
+
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [Changelog](docs/CHANGELOG.md) | Release history and migration notes |
+| [Contributing](docs/CONTRIBUTING.md) | How to contribute |
+| [Examples](docs/EXAMPLES.md) | Full code examples |
+| [Integration Guide](docs/INTEGRATION_GUIDE.md) | Gradle setup, iOS config, ProGuard |
+| [FAQ](docs/FAQ.md) | Common questions and troubleshooting |
+| [Privacy Guide](docs/PRIVACY_GUIDE.md) | GDPR, GPS redaction, metadata handling |
+| [Security](docs/SECURITY.md) | Reporting vulnerabilities |
+
+---
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for setup instructions, code style, and the pull request process.
+
+- [Report a bug](https://github.com/ismoy/ImagePickerKMP/issues/new?template=bug_report.md)
+- [Request a feature](https://github.com/ismoy/ImagePickerKMP/issues/new?template=feature_request.md)
+- [Discord community](https://discord.gg/EjSQTeyh)
+
+---
+
+## Sponsors
+
+ImagePickerKMP is free and open source. Maintaining it across five platforms with every Kotlin and Compose Multiplatform release takes significant effort. If this library saves you time in production, please consider sponsoring.
+
+<!-- SPONSORS-LIST:START -->
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/james-codersHT" title="james-codersHT · Silver Sponsor">
-        <img src="https://avatars.githubusercontent.com/james-codersHT?s=80" width="80px" alt="james-codersHT"/><br/>
+      <a href="https://github.com/james-codersHT">
+        <img src="https://avatars.githubusercontent.com/james-codersHT?s=80" width="64px" alt="james-codersHT"/><br/>
         <sub><b>james-codersHT</b></sub>
       </a>
     </td>
@@ -540,72 +400,165 @@ If this library saves you time or money in production, please consider supportin
 </table>
 <!-- SPONSORS-LIST:END -->
 
-> Sponsors get their name/logo displayed here. [→ Become a sponsor](https://github.com/sponsors/ismoy)
+[→ Become a sponsor](https://github.com/sponsors/ismoy)
+
+---
+
+## Architecture
+
+ImagePickerKMP follows a layered architecture. All platform-specific logic lives inside each module's `androidMain` / `iosMain` source sets. Your app code only ever touches the `commonMain` API.
+
+```mermaid
+flowchart TD
+    %% Layer 1
+    App["Your App (commonMain UI)<br/><br/>rememberImagePickerKMP()<br/>rememberVideoPicker()<br/>rememberAudioPicker()<br/>rememberScannerPicker()<br/>ImagePickerVideoPlayer()<br/>ImagePickerAudioPlayer()"]
+
+    %% Layer 2
+    M1(["imagepickerkmp (photo)"])
+    M2(["imagepickerkmp-video"])
+    M3(["imagepickerkmp-video-player"])
+    M4(["imagepickerkmp-audio"])
+    M5(["imagepickerkmp-audio-player"])
+    M6(["imagepickerkmp-scanner"])
+
+    %% Layer 3
+    Core{{"imagepicker-core<br/><br/>Permissions, FileSystem, I18n, MediaLogger"}}
+
+    %% Layer 4
+    Android["Android<br/>Camera Intents, CameraX, MediaPlayer"]
+    iOS["iOS<br/>AVFoundation, PHPickerVC"]
+    Desktop["Desktop<br/>JVM / AWT"]
+    Web["Web<br/>JS / WASM, WebRTC"]
+
+    App --> M1 & M2 & M3 & M4 & M5 & M6
+    M1 & M2 & M3 & M4 & M5 & M6 --> Core
+    Core --> Android & iOS & Desktop & Web
+
+    style App fill:transparent,stroke:#777,stroke-width:2px,rx:10,ry:10
+    style M1 fill:#8e24aa,color:#fff,stroke:none
+    style M2 fill:#8e24aa,color:#fff,stroke:none
+    style M3 fill:#8e24aa,color:#fff,stroke:none
+    style M4 fill:#8e24aa,color:#fff,stroke:none
+    style M5 fill:#8e24aa,color:#fff,stroke:none
+    style M6 fill:#8e24aa,color:#fff,stroke:none
+    style Core fill:transparent,stroke:#777,stroke-width:2px
+    style Android fill:#388e3c,color:#fff,stroke:none
+    style iOS fill:#1565c0,color:#fff,stroke:none
+    style Desktop fill:#388e3c,color:#fff,stroke:none
+    style Web fill:#388e3c,color:#fff,stroke:none
+```
+
+### Module dependency graph
+
+```mermaid
+flowchart BT
+    Photo["imagepickerkmp"]
+    Video["imagepickerkmp-video"]
+    Scanner["imagepickerkmp-scanner"]
+    VideoPlayer["imagepickerkmp-video-player"]
+    Audio["imagepickerkmp-audio"]
+    AudioPlayer["imagepickerkmp-audio-player"]
+    
+    Core(("imagepicker-core<br/>(API)"))
+    
+    Photo -.-> Core
+    Video -.-> Core
+    Scanner -.-> Core
+    VideoPlayer -.-> Core
+    Audio -.-> Core
+    AudioPlayer -.-> Core
+
+    style Core fill:transparent,stroke:#777,stroke-width:2px
+    style Photo fill:#0288d1,color:#fff,stroke:none
+    style Video fill:#0288d1,color:#fff,stroke:none
+    style Scanner fill:#0288d1,color:#fff,stroke:none
+    style VideoPlayer fill:#0288d1,color:#fff,stroke:none
+    style Audio fill:#0288d1,color:#fff,stroke:none
+    style AudioPlayer fill:#0288d1,color:#fff,stroke:none
+```
+
+All modules expose `imagepicker-core` as an `api` dependency, so `PermissionManager`, `MediaLogger`, `I18nKonfig`, and `PlatformUri` are available in your app without an extra dependency declaration.
+
+### Data flow — Architecture Lifecycle
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User
+    participant App as @Composable UI
+    participant State as StateHolder (commonMain)
+    participant Engine as Platform Engine (expect/actual)
+    
+    User->>App: Interaction (Tap "Camera", "Scan", "Play")
+    activate App
+    App->>State: launchCamera() / launchScanner() / play()
+    activate State
+    State->>State: Update State (e.g., Loading, Playing)
+    State->>Engine: Request Native Action
+    activate Engine
+    
+    rect rgb(240, 248, 255)
+        note right of Engine: Platform Specific Implementations
+        alt Photo & Video
+            Engine->>Permissions: Granted
+            Engine->>Engine: Camera Intents / UIImagePicker → Capture & Compress
+        else Scanner
+            Engine->>Engine: MLKit / Vision API → Detect & Decode QR/Barcode
+        else Audio Record
+            Engine->>Engine: MediaRecorder / AVAudioRecorder → Encode
+        else Media Players
+            Engine->>Engine: MediaPlayer / AVPlayer → Buffer & Play
+        end
+    end
+    
+    Engine-->>State: Native Callbacks (URIs, Bytes, Playback Info)
+    deactivate Engine
+    
+    State->>State: Map to commonMain models (PhotoResult, AudioResult, etc.)
+    State-->>App: Emit State (picker.result / playbackState)
+    deactivate State
+    
+    App->>App: Recompose UI with media/data
+    deactivate App
+```
 
 ---
 
 ## Contributors
 
-Thanks to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
+<!-- ALL-CONTRIBUTORS-LIST:START -->
 <table>
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/ismoy">
-          <img src="https://avatars.githubusercontent.com/u/72107070?v=4" width="100px;" alt="ismoy"/><br />
-          <sub><b>ismoy</b></sub>
-        </a><br />
-        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=ismoy" title="Contributions">💻 📖 🚧 🎨 🤔</a>
+        <a href="https://github.com/ismoy"><img src="https://avatars.githubusercontent.com/u/72107070?v=4" width="80px;" alt="ismoy"/><br/><sub><b>ismoy</b></sub></a><br/>
+        <a title="Code + Docs + Maintenance">💻 📖 🚧</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/medAndro">
-          <img src="https://avatars.githubusercontent.com/u/88672474?v=4" width="100px;" alt="medAndro"/><br />
-          <sub><b>medAndro</b></sub>
-        </a><br />
-        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=medAndro" title="Contributions">💻 🐛</a>
+        <a href="https://github.com/medAndro"><img src="https://avatars.githubusercontent.com/u/88672474?v=4" width="80px;" alt="medAndro"/><br/><sub><b>medAndro</b></sub></a><br/>
+        <a title="Code + Bug fixes">💻 🐛</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/YaminMahdi">
-          <img src="https://avatars.githubusercontent.com/u/48239104?v=4" width="100px;" alt="YaminMahdi"/><br />
-          <sub><b>YaminMahdi</b></sub>
-        </a><br />
-        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=YaminMahdi" title="Contributions">💻</a>
+        <a href="https://github.com/YaminMahdi"><img src="https://avatars.githubusercontent.com/u/48239104?v=4" width="80px;" alt="YaminMahdi"/><br/><sub><b>YaminMahdi</b></sub></a><br/>
+        <a title="Code">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/jadlr">
-          <img src="https://avatars.githubusercontent.com/u/696999?v=4" width="100px;" alt="jadlr"/><br />
-          <sub><b>jadlr</b></sub>
-        </a><br />
-        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=jadlr" title="Contributions">💻</a>
+        <a href="https://github.com/jadlr"><img src="https://avatars.githubusercontent.com/u/696999?v=4" width="80px;" alt="jadlr"/><br/><sub><b>jadlr</b></sub></a><br/>
+        <a title="Code">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/daniil-pastuhov">
-          <img src="https://avatars.githubusercontent.com/u/8494442?v=4" width="100px;" alt="daniil-pastuhov"/><br />
-          <sub><b>daniil-pastuhov</b></sub>
-        </a><br />
-        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
+        <a href="https://github.com/daniil-pastuhov"><img src="https://avatars.githubusercontent.com/u/8494442?v=4" width="80px;" alt="daniil-pastuhov"/><br/><sub><b>daniil-pastuhov</b></sub></a><br/>
+        <a title="Code">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/fanqieVip">
-          <img src="https://avatars.githubusercontent.com/u/42194904?v=4" width="100px;" alt="fanqieVip"/><br />
-          <sub><b>fanqieVip</b></sub>
-        </a><br />
-        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=fanqieVip" title="Contributions">💻</a>
+        <a href="https://github.com/fanqieVip"><img src="https://avatars.githubusercontent.com/u/42194904?v=4" width="80px;" alt="fanqieVip"/><br/><sub><b>fanqieVip</b></sub></a><br/>
+        <a title="Code">💻</a>
       </td>
     </tr>
   </tbody>
 </table>
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
 ---
 
-**Made with ❤️ for the Kotlin Multiplatform community**  
-*Star this repo if it helped you!*
+**MIT License** · Made with ❤️ for the Kotlin Multiplatform community · [⭐ Star this repo](https://github.com/ismoy/ImagePickerKMP)

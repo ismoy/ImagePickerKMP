@@ -501,7 +501,7 @@ const bundleContent = `
 }));
 `;
 
-const bundleFile = './build/js/packages/ImagePickerKMP-library/ImagePickerKMP-bundle.js';
+const bundleFile = './build/js/packages/ImagePickerKMP-imagepickerkmp-photo/ImagePickerKMP-bundle.js';
 fs.writeFileSync(bundleFile, bundleContent);
 
 console.log(' Bundle WebRTC created successfully:', bundleFile);
@@ -567,7 +567,7 @@ declare module 'imagepickerkmp' {
 }
 `;
 
-const bundleTypeFile = './build/js/packages/ImagePickerKMP-library/ImagePickerKMP-bundle.d.ts';
+const bundleTypeFile = './build/js/packages/ImagePickerKMP-imagepickerkmp-photo/ImagePickerKMP-bundle.d.ts';
 fs.writeFileSync(bundleTypeFile, bundleTypeDefinitions);
 console.log(' Bundle TypeScript declarations created:', bundleTypeFile);
 

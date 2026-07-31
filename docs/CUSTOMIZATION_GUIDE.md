@@ -1,4 +1,4 @@
-This document is also available in Spanish: [CUSTOMIZATION_GUIDE.es.md](CUSTOMIZATION_GUIDE.es.md)
+
 
 # Customization Guide
 

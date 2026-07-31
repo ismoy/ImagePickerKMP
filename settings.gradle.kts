@@ -16,4 +16,10 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "ImagePickerKMP"
-include(":library")
+include(":imagepicker-core")
+include(":imagepickerkmp-photo")
+include(":imagepickerkmp-video")
+include(":imagepickerkmp-audio")
+include(":imagepickerkmp-audio-player")
+include(":imagepickerkmp-scanner")
+include(":imagepickerkmp-video-player")
