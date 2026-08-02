@@ -214,9 +214,9 @@ private fun showCameraInterface(
                     val result = js("{}")
                     result.uri = imageUrl
                     result.fileName = "camera_capture_$timestamp.png"
-                    result.fileSize = blob.size.toDouble()
-                    result.width = canvas.width.toDouble()
-                    result.height = canvas.height.toDouble()
+                    result.fileSize = blob.size.toLong()
+                    result.width = canvas.width
+                    result.height = canvas.height
                     
                     cleanupCameraResources(stream, overlay)
                     onSuccess(result)
@@ -275,9 +275,9 @@ private fun handleFilePicker(
                                         val fileResult = js("{}")
                                         fileResult.uri = result
                                         fileResult.fileName = file.name
-                                        fileResult.fileSize = file.size.toDouble()
-                                        fileResult.width = 0.0
-                                        fileResult.height = 0.0
+                                        fileResult.fileSize = file.size.toLong()
+                                        fileResult.width = 0
+                                        fileResult.height = 0
                                         
                                         results.push(fileResult)
                                     }
@@ -301,9 +301,9 @@ private fun handleFilePicker(
                                     val fileResult = js("{}")
                                     fileResult.uri = result
                                     fileResult.fileName = file.name
-                                    fileResult.fileSize = file.size.toDouble()
-                                    fileResult.width = 0.0
-                                    fileResult.height = 0.0
+                                    fileResult.fileSize = file.size.toLong()
+                                    fileResult.width = 0
+                                    fileResult.height = 0
                                     
                                     onSuccess(fileResult)
                                 } else {
