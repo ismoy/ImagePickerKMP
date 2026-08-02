@@ -566,6 +566,13 @@ sequenceDiagram
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/azevio">
+          <img src="https://avatars.githubusercontent.com/u/167407234?v=4" width="100px;" alt="azevio"/><br />
+          <sub><b>azevio</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=azevio" title="Contributions">💻</a>
+      </td>
+      <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/fanqieVip">
           <img src="https://avatars.githubusercontent.com/u/42194904?v=4" width="100px;" alt="fanqieVip"/><br />
           <sub><b>fanqieVip</b></sub>
