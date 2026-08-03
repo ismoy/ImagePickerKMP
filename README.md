@@ -385,12 +385,12 @@ Contributions are welcome. See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for setup
 
 ImagePickerKMP is free and open source. Maintaining it across five platforms with every Kotlin and Compose Multiplatform release takes significant effort. If this library saves you time in production, please consider sponsoring.
 
-<!-- SPONSORS-LIST:START -->
+<!-- SPONSORS-LIST:START - Do not remove or modify this section -->
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/james-codersHT">
-        <img src="https://avatars.githubusercontent.com/james-codersHT?s=80" width="64px" alt="james-codersHT"/><br/>
+      <a href="https://github.com/james-codersHT" title="james-codersHT · Silver Sponsor">
+        <img src="https://avatars.githubusercontent.com/james-codersHT?s=80" width="80px" alt="james-codersHT"/><br/>
         <sub><b>james-codersHT</b></sub>
       </a>
     </td>
@@ -564,6 +564,13 @@ sequenceDiagram
           <sub><b>daniil-pastuhov</b></sub>
         </a><br />
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
+      </td>
+      <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/azevio">
+          <img src="https://avatars.githubusercontent.com/u/167407234?v=4" width="100px;" alt="azevio"/><br />
+          <sub><b>azevio</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=azevio" title="Contributions">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/fanqieVip">
