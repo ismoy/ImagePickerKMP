@@ -7,9 +7,7 @@ internal sealed interface PickerMode {
     data object None : PickerMode
     data class Camera(
         val cameraCaptureConfig: CameraCaptureConfig,
-        val enableCrop: Boolean,
-        val onDismiss: (() -> Unit)?,
-        val onError: ((Exception) -> Unit)?
+        val enableCrop: Boolean
     ) : PickerMode
     data class Gallery(
         val allowMultiple: Boolean,
@@ -19,8 +17,6 @@ internal sealed interface PickerMode {
         val includeExif: Boolean,
         val redactGpsData: Boolean,
         val mimeTypeMismatchMessage: String?,
-        val cameraCaptureConfig: CameraCaptureConfig?,
-        val onDismiss: (() -> Unit)?,
-        val onError: ((Exception) -> Unit)?
+        val cameraCaptureConfig: CameraCaptureConfig?
     ) : PickerMode
 }

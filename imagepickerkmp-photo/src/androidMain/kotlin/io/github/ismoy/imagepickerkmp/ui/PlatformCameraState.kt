@@ -1,5 +1,6 @@
 package io.github.ismoy.imagepickerkmp.ui
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
@@ -12,10 +13,12 @@ import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.camera.AndroidPhotoCaptureManager
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.config.ImagePickerConfig
+import io.github.ismoy.imagepickerkmp.core.I18nKonfig.Errors.camera_unavailable_error
 import io.github.ismoy.imagepickerkmp.core.permissions.PermissionManager
 import io.github.ismoy.imagepickerkmp.core.permissions.PermissionStatus
 import io.github.ismoy.imagepickerkmp.core.permissions.PermissionType
 import io.github.ismoy.imagepickerkmp.picker.ImagePickerConfigResolver
+import io.github.ismoy.imagepickerkmp.picker.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -111,8 +114,20 @@ internal class PlatformCameraState(
             includeExif = effectiveCamConfig.includeExif,
             redactGpsData = effectiveCamConfig.redactGpsData
         )
-        val (intent, _) = manager.buildCaptureIntent()
-        launchCamera(intent)
+        // Launched from a LaunchedEffect, so anything thrown here would kill the consuming app.
+        try {
+            val (intent, _) = manager.buildCaptureIntent()
+            launchCamera(intent)
+        } catch (e: ActivityNotFoundException) {
+            reportLaunchFailure(PhotoCaptureException(camera_unavailable_error, e))
+        } catch (e: Exception) {
+            reportLaunchFailure(e)
+        }
+    }
+
+    private fun reportLaunchFailure(exception: Exception) {
+        config.onError(exception)
+        config.onDismiss()
     }
 
     fun acceptCrop(croppedResult: PhotoResult) {
