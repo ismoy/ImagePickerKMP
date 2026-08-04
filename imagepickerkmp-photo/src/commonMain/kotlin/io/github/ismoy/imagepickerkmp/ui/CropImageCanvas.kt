@@ -26,6 +26,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import io.github.ismoy.imagepickerkmp.crop.CropHandle
 import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 import io.github.ismoy.imagepickerkmp.crop.drawCropHandles
@@ -67,7 +70,11 @@ import kotlin.math.min
                 .clipToBounds()
         ) {
             AsyncImage(
-                model = photoResult.uri,
+                model = ImageRequest.Builder(LocalPlatformContext.current)
+                    .data(photoResult.uri)
+                    .size(1000)
+                    .memoryCachePolicy(CachePolicy.DISABLED)
+                    .build(),
                 contentDescription = "Imagen a recortar",
                 modifier = Modifier
                     .fillMaxSize()

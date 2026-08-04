@@ -6,8 +6,17 @@ import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
 import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 import io.github.ismoy.imagepickerkmp.logger.PhotoLogger
 import io.github.ismoy.imagepickerkmp.camera.ExifDataExtractor
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.useContents
+import kotlin.native.runtime.GC
+import kotlin.native.runtime.NativeRuntimeApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
 import platform.UIKit.UIImage
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerDelegateProtocol
@@ -35,7 +44,11 @@ internal class CameraDelegate(
                 dismissPicker(picker)
                 return
             }
-        processCapturedImage(image, picker)
+        picker.dismissViewControllerAnimated(true) {
+            CoroutineScope(Dispatchers.Default).launch {
+                processCapturedImage(image, picker)
+            }
+        }
     }
 
     override fun imagePickerControllerDidCancel(picker: UIImagePickerController) {
@@ -44,13 +57,15 @@ internal class CameraDelegate(
         }
     }
 
+    @OptIn(NativeRuntimeApi::class, BetaInteropApi::class)
     private fun processCapturedImage(image: UIImage, picker: UIImagePickerController) {
         try {
-            val processedData = if (compressionLevel != null) {
-                ImageProcessor.processImage(image, compressionLevel)
-            } else {
-                UIImageJPEGRepresentation(image, 1.0)
-            }
+            autoreleasepool {
+                val processedData = if (compressionLevel != null) {
+                    ImageProcessor.processImage(image, compressionLevel)
+                } else {
+                    ImageProcessor.processImage(image, CompressionLevel.HIGH)
+                }
             
             if (processedData != null) {
                 val tempURL = ImageProcessor.saveImageToTempDirectory(processedData)
@@ -72,24 +87,27 @@ internal class CameraDelegate(
                         fileSize = fileSizeInBytes,
                         exif = exifData
                     )
-                    // Dismiss the picker FIRST, then deliver the result in the completion
-                    // handler. This prevents "Unbalanced calls to begin/end appearance
-                    // transitions" when crop opens a Dialog immediately after capture.
-                    picker.dismissViewControllerAnimated(true) {
+                    dispatch_async(dispatch_get_main_queue()) {
                         onPhotoCaptured(photoResult)
                     }
                 } else {
-                    onError(PhotoCaptureException("Failed to save processed image"))
-                    dismissPicker(picker)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        onError(PhotoCaptureException("Failed to save processed image"))
+                    }
                 }
             } else {
-                onError(PhotoCaptureException("Failed to process image"))
-                dismissPicker(picker)
+                dispatch_async(dispatch_get_main_queue()) {
+                    onError(PhotoCaptureException("Failed to process image"))
+                }
+            }
             }
         } catch (e: Exception) {
             logDebug("Error processing image: ${e.message}")
-            onError(PhotoCaptureException("Failed to process image: ${e.message}"))
-            dismissPicker(picker)
+            dispatch_async(dispatch_get_main_queue()) {
+                onError(PhotoCaptureException("Failed to process image: ${e.message}"))
+            }
+        } finally {
+            GC.collect()
         }
     }
 

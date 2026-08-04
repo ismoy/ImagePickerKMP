@@ -110,6 +110,17 @@ Every module that uses the camera or microphone requires a usage description. Ad
 ```
 ---
 
+## <img src="https://raw.githubusercontent.com/primer/octicons/main/icons/globe-24.svg" width="24" height="24" align="center" /> Internationalization (i18n)
+
+ImagePickerKMP features out-of-the-box automatic translation (powered by the **i18nKonfig** Gradle plugin created by Ismoy Belizaire). The UI components will automatically detect the user's device language and display localized strings (permissions, camera UI, etc.) without any extra setup.
+
+Currently, we support **12 languages** including English, Spanish, French, Chinese, Japanese, and more. 
+
+**Want to add your language?** We welcome community contributions! 
+Head over to the [Core Module README](imagepicker-core/README.md) to learn how to fork the repository, add your language to the `translations.yaml` file, and submit a Pull Request.
+
+---
+
 ## Module Quick Start
 
 ### Photo — `imagepickerkmp`

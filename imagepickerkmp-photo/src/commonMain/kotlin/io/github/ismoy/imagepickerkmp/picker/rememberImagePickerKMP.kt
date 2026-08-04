@@ -1,13 +1,13 @@
 package io.github.ismoy.imagepickerkmp.picker
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.config.CropConfig
 import io.github.ismoy.imagepickerkmp.config.ImagePickerConfig
 import io.github.ismoy.imagepickerkmp.config.PermissionAndConfirmationConfig
-import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 import io.github.ismoy.imagepickerkmp.ui.PlatformCameraRenderer
 import io.github.ismoy.imagepickerkmp.ui.PlatformGalleryRenderer
 
@@ -17,6 +17,10 @@ fun rememberImagePickerKMP(
 ): ImagePickerKMPState {
     val state = remember { ImagePickerKMPState(config) }
     val currentState = rememberUpdatedState(state)
+
+    LaunchedEffect(Unit) {
+        PlatformPrewarmer.prewarm()
+    }
 
     val notifySuccessFn: (List<PhotoResult>) -> Unit = remember(state) {
         { photos -> currentState.value.notifySuccess(photos) }

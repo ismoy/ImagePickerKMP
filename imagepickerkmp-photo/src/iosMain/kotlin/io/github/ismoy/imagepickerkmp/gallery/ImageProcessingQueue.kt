@@ -15,6 +15,8 @@ import platform.Foundation.NSURL
 import platform.Foundation.NSUUID
 import platform.Foundation.dataWithContentsOfURL
 import platform.PhotosUI.PHPickerResult
+import kotlin.native.runtime.GC
+import kotlin.native.runtime.NativeRuntimeApi
 import platform.UIKit.UIImage
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
@@ -41,7 +43,6 @@ internal class ImageProcessingQueue(
 ) {
 
     companion object {
-        // Process up to 3 images concurrently — good balance of speed vs memory on iOS devices
         private const val MAX_CONCURRENT = 3
     }
 
@@ -58,7 +59,6 @@ internal class ImageProcessingQueue(
             onComplete(emptyList(), 0)
             return
         }
-        // Kick off initial batch
         val initialBatch = minOf(MAX_CONCURRENT, totalCount)
         for (i in 0 until initialBatch) {
             loadNextImage()
@@ -84,8 +84,6 @@ internal class ImageProcessingQueue(
         pickerResult.itemProvider.loadFileRepresentationForTypeIdentifier(
             typeIdentifier
         ) { url, error ->
-            // NOTE: `url` points to a temporary file that iOS deletes as soon as this
-            // completion handler returns, so all reads of it must happen synchronously here.
             if (error != null || url == null) {
                 onImageDone(null)
                 return@loadFileRepresentationForTypeIdentifier
@@ -105,10 +103,8 @@ internal class ImageProcessingQueue(
             autoreleasepool {
                 try {
                     galleryResult = if (isGifRequest) {
-                        // GIFs must preserve raw bytes to keep animation frames
                         processGifFromURL(url)
                     } else {
-                        // ImageIO reads only the bytes needed for downsampling, directly from disk.
                         processImageFromURL(url)
                     }
                 } catch (_: Exception) {
@@ -137,20 +133,17 @@ internal class ImageProcessingQueue(
      * Called on main queue after each image completes. Starts the next image if there
      * are more to process, or finalizes when all are done.
      */
+    @OptIn(NativeRuntimeApi::class)
     private fun advanceOrFinish() {
         if (processedCount >= totalCount) {
             onComplete(results.toList(), mismatchedCount)
+            GC.collect()
         } else if (nextIndex < totalCount) {
-            // Fill the slot that was just freed
             loadNextImage()
         }
     }
 
-    // ─── Image Processing ────────────────────────────────────────────────────────
-
     private fun processImageFromURL(url: NSURL): GalleryPhotoResult? {
-        // ImageIO downsamples directly from disk — no full-resolution bitmap or full-file
-        // NSData is ever allocated.
         val processed = ImageOptimizer.processImageFromURL(url, compressionLevel)
             ?: throw Exception("Failed to process image")
 
@@ -175,7 +168,6 @@ internal class ImageProcessingQueue(
     }
 
     private fun processGifFromURL(url: NSURL): GalleryPhotoResult? {
-        // GIFs need their raw bytes preserved verbatim to keep animation frames.
         val gifData = NSData.dataWithContentsOfURL(url)
             ?: throw Exception("Failed to read GIF data")
 
@@ -201,8 +193,6 @@ internal class ImageProcessingQueue(
             exif = null
         )
     }
-
-    // ─── Helpers ─────────────────────────────────────────────────────────────────
 
     private fun urlMatchesMimeTypes(url: NSURL, allowedMimeTypes: List<MimeType>): Boolean {
         if (allowedMimeTypes.any { it == MimeType.IMAGE_ALL }) return true

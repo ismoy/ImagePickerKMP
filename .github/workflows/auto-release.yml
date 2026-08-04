@@ -44,9 +44,9 @@ jobs:
             
             echo "Checking version for $DIR..."
             
-            # Extract version directly from Gradle using 'properties'
-            # Using tr -d '\r' to prevent Windows line ending issues
-            VERSION=$(./gradlew :$DIR:properties -q | grep "^version:" | awk '{print $2}' | tr -d '\r')
+            # Extract version directly from the mavenPublishing block in build.gradle.kts
+            # This handles hardcoded versions per-module instead of global project properties
+            VERSION=$(grep -A 10 "mavenPublishing" "$DIR/build.gradle.kts" | grep "version\s*=" | head -n 1 | sed -E 's/.*version\s*=\s*"([^"]+)".*/\1/')
             
             if [ -z "$VERSION" ] || [ "$VERSION" == "unspecified" ]; then
               echo "Could not determine version for $DIR. Skipping."
@@ -56,15 +56,16 @@ jobs:
             TAG="${PREFIX}/v${VERSION}"
             echo "Module $DIR is at version $VERSION. Expected tag: $TAG"
             
-            # Check if the tag already exists in the local repository
-            if git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then
-              echo "Tag $TAG already exists. No new release needed."
+            # Check if the tag already exists in the remote repository
+            if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+              echo "Tag $TAG already exists on remote. No new release needed."
             else
               echo "Tag $TAG does not exist. Creating new release..."
               
               # Automatically create the tag and release on GitHub
-              # --generate-notes automatically extracts merged PRs to populate the release notes
+              # Using --target ensures we tag the exact commit that triggered the workflow
               gh release create "$TAG" \
+                --target $GITHUB_SHA \
                 --title "${DIR} v${VERSION}" \
                 --generate-notes
                 

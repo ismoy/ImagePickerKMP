@@ -56,21 +56,21 @@ internal class PHPickerDelegate(
             allowedMimeTypes = allowedMimeTypes,
             onComplete = { results, mismatchedCount ->
                 if (results.isEmpty() && mismatchedCount > 0) {
-                    // All selected images had the wrong MIME type
                     val msg = mimeTypeMismatchMessage
                         ?: "The selected file(s) do not match the allowed types: ${allowedMimeTypes.joinToString { it.value }}"
                     onError(Exception(msg))
                 } else {
                     handleProcessingComplete(results)
                 }
-                dismissPicker(picker)
             },
             onError = { error ->
                 onError(error)
             }
         )
         
-        processingQueue.start()
+        picker.dismissViewControllerAnimated(true) {
+            processingQueue.start()
+        }
     }
 
     private fun handleProcessingComplete(results: List<GalleryPhotoResult>) {
@@ -94,7 +94,6 @@ internal class PHPickerDelegate(
         }
     }
 
-    // Llamado por iOS cuando el usuario hace swipe-to-dismiss (drag down) en el picker
     override fun presentationControllerDidDismiss(presentationController: UIPresentationController) {
         if (!dismissHandled) {
             dismissHandled = true
