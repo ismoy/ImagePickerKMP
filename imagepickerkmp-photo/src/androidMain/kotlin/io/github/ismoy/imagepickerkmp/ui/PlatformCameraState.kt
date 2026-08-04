@@ -119,15 +119,10 @@ internal class PlatformCameraState(
             val (intent, _) = manager.buildCaptureIntent()
             launchCamera(intent)
         } catch (e: ActivityNotFoundException) {
-            reportLaunchFailure(PhotoCaptureException(camera_unavailable_error, e))
+            reportLaunchFailure(PhotoCaptureException(camera_unavailable_error, e), config.onError, config.onDismiss)
         } catch (e: Exception) {
-            reportLaunchFailure(e)
+            reportLaunchFailure(e, config.onError, config.onDismiss)
         }
-    }
-
-    private fun reportLaunchFailure(exception: Exception) {
-        config.onError(exception)
-        config.onDismiss()
     }
 
     fun acceptCrop(croppedResult: PhotoResult) {

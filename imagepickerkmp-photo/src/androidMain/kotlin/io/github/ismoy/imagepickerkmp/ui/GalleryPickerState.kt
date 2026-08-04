@@ -49,20 +49,15 @@ internal class GalleryPickerState(
                     singlePickerLauncher.launch(mimeTypesArray)
                 }
             } catch (e: ActivityNotFoundException) {
-                reportLaunchFailure(PhotoCaptureException(gallery_unavailable_error, e))
+                reportLaunchFailure(PhotoCaptureException(gallery_unavailable_error, e), config.onError, config.onDismiss)
             } catch (e: Exception) {
-                reportLaunchFailure(e)
+                reportLaunchFailure(e, config.onError, config.onDismiss)
             }
         }
     }
 
     fun setShouldLaunch() {
         shouldLaunch = true
-    }
-
-    private fun reportLaunchFailure(exception: Exception) {
-        config.onError(exception)
-        config.onDismiss()
     }
 
     fun acceptCrop(croppedResult: PhotoResult) {
