@@ -27,47 +27,30 @@ kover {
         filters {
             excludes {
                 annotatedBy("androidx.compose.runtime.Composable")
-
-                // ── Generated resource files ────────────────────────────────
-                // Compose Multiplatform generates these at build time; they contain
-                // no business logic and cannot be unit-tested.
                 classes(
-                    // Compose resource collectors and accessors (generated)
                     "io.github.ismoy.imagepickerkmp.generated.*",
                     "*ActualResourceCollectors*",
                     "*ExpectResourceCollectors*",
                     "*Res*",
-                    // i18n generated string constants
                     "*String0*",
                     "*StringResource0*"
                 )
-
-                // ── Platform-specific UI / Android-only implementations ────────
-                // These require the Android runtime or Compose host and cannot
-                // be covered by JVM unit tests.
                 classes(
-                    // Android gallery / camera internals
                     "io.github.ismoy.imagepickerkmp.gallery.*",
                     "io.github.ismoy.imagepickerkmp.camera.*",
                     "io.github.ismoy.imagepickerkmp.ui.*",
-                    // JVM file picker utilities (Swing / AWT-based, and Composable wrappers)
                     "io.github.ismoy.imagepickerkmp.domain.utils.JvmFilePickerUtilsKt",
                     "io.github.ismoy.imagepickerkmp.domain.utils.JvmFilePicker*",
                     "io.github.ismoy.imagepickerkmp.domain.utils.CreateFileChooserKt",
                     "io.github.ismoy.imagepickerkmp.domain.utils.CreateGalleryPhotoResultKt",
-                    // Platform rememberImagePickerKMP expect/actual
                     "io.github.ismoy.imagepickerkmp.picker.RememberImagePickerKMPKt",
-                    // Platform extensions (bitmap, URI resolution)
                     "io.github.ismoy.imagepickerkmp.extensions.*",
-                    // Crop: Android-only bitmap operations
                     "io.github.ismoy.imagepickerkmp.crop.ApplyCropKt",
                     "io.github.ismoy.imagepickerkmp.crop.ApplyCropUtilsKt",
                     "io.github.ismoy.imagepickerkmp.crop.ApplyCropUtilsKt\$*",
                     "io.github.ismoy.imagepickerkmp.crop.CreateCircularBitmapKt",
                     "io.github.ismoy.imagepickerkmp.crop.DrawCropHandlesKt",
-                    // openAppSettings platform shim
                     "io.github.ismoy.imagepickerkmp.ui.OpenAppSettingsKt",
-                    // PhotoLogger is internal and wraps a third-party logger
                     "io.github.ismoy.imagepickerkmp.logger.PhotoLogger"
                 )
             }
@@ -120,13 +103,11 @@ kotlin {
         }
     }
     
-    // JS target for web compatibility and NPM publishing
     js(IR) {
         browser {
             testTask {
-                enabled = false // Disable tests due to skiko.mjs dependency issues
+                enabled = false
             }
-            // Configuration for web development
             webpackTask {
                 cssSupport {
                     enabled.set(true)
@@ -140,20 +121,15 @@ kotlin {
         }
         nodejs {
             testTask {
-                enabled = false // Disable Node.js tests due to skiko.mjs dependency issues
+                enabled = false
             }
         }
         
-        // Generate imagepickerkmp-photo for NPM package usage
         binaries.library()
-        
-        // Complete package.json configuration for NPM
         compilations["main"].packageJson {
-            // Basic package information
             name = "imagepickerkmp"
-            version = project.version.toString() // Automatically takes the project version
+            version = project.version.toString()
             
-            // Metadata
             customField("description", "ImagePicker KMP imagepickerkmp-photo with camera support for React/Vue/Angular applications")
             customField("keywords", arrayOf(
                 "image-picker", 
@@ -181,13 +157,11 @@ kotlin {
                 "url" to "https://github.com/ismoy/ImagePickerKMP/issues"
             ))
             
-            // File configuration - point to the single bundle
             customField("main", "ImagePickerKMP-bundle.js")
             customField("types", "ImagePickerKMP-bundle.d.ts")
             customField("module", "ImagePickerKMP-bundle.js")
             customField("browser", "ImagePickerKMP-bundle.js")
             
-            // Files included in the package
             customField("files", arrayOf(
                 "kotlin/",
                 "*.md",
@@ -196,22 +170,18 @@ kotlin {
                 "ImagePickerKMP-bundle.d.ts"
             ))
             
-            // Engines and compatibility
             customField("engines", mapOf(
                 "node" to ">=14.0.0"
             ))
             
-            // Configuration for bundlers
             customField("sideEffects", false)
             
-            // Useful NPM scripts
             customField("scripts", mapOf(
                 "test" to "echo \"No test specified\"",
                 "build" to "echo \"Already built\"",
                 "prepublishOnly" to "echo \"Package ready for publishing\""
             ))
             
-            // Peer dependencies for React (optional)
             customField("peerDependencies", mapOf(
                 "react" to ">=16.8.0"
             ))
@@ -221,7 +191,6 @@ kotlin {
         }
     }
     
-    // WASM target for modern web compatibility
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser {
@@ -420,7 +389,7 @@ mavenPublishing{
     coordinates(
         groupId = "io.github.ismoy",
         artifactId = "imagepickerkmp",
-        version = project.version.toString()
+        version = "1.1.2"
     )
     pom {
         name.set("ImagePickerKMP")
@@ -509,7 +478,6 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.4")
 }
 
-// Detekt configuration
 detekt {
     config.setFrom(files("${rootProject.projectDir}/detekt.yml"))
     source.setFrom(
@@ -536,11 +504,6 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     }
 }
 
-// ========================================
-// SPECIFIC TASKS FOR NPM PUBLISHING
-// ========================================
-
-// Directory where JS packages are generated
 val jsPackageOutputDir = layout.buildDirectory.dir("js/packages/ImagePickerKMP-imagepickerkmp-photo")
 
 // Task to prepare the NPM package
@@ -563,7 +526,6 @@ tasks.register<Copy>("prepareNpmPackage") {
         include("**/*")
     }
     
-    // Copy the main JavaScript imagepickerkmp-photo file and package.json
     from(layout.buildDirectory.dir("dist/js/productionLibrary")) {
         into("kotlin")
         include("ImagePickerKMP-imagepickerkmp-photo.js")
@@ -573,11 +535,8 @@ tasks.register<Copy>("prepareNpmPackage") {
         include("package.json")
     }
     
-    // Create NPM-specific files
     doLast {
         val packageDir = jsPackageOutputDir.get().asFile
-        
-        // Create NPM-specific README
         val npmReadme = File(packageDir, "README.md")
         if (!npmReadme.exists()) {
             npmReadme.writeText("""

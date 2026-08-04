@@ -38,6 +38,9 @@ import platform.ImageIO.CGImageSourceRef
 import platform.ImageIO.kCGImageSourceCreateThumbnailFromImageAlways
 import platform.ImageIO.kCGImageSourceCreateThumbnailWithTransform
 import platform.ImageIO.kCGImageSourceThumbnailMaxPixelSize
+import platform.CoreGraphics.CGImageRelease
+import platform.CoreFoundation.CFRelease
+import platform.Foundation.dataWithContentsOfURL
 import platform.UIKit.UIGraphicsBeginImageContextWithOptions
 import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
@@ -74,8 +77,8 @@ internal object ImageOptimizer {
             } else {
                 CGSizeMake(MAX_DIMENSION * aspectRatio, MAX_DIMENSION)
             }
-            
-            UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+
+            UIGraphicsBeginImageContextWithOptions(newSize, true, 1.0)
             val rect = newSize.useContents {
                 CGRectMake(0.0, 0.0, this.width, this.height)
             }
@@ -131,29 +134,100 @@ internal object ImageOptimizer {
      * @return A [ProcessedImageResult], or null if processing fails (caller should fall back).
      */
     fun processImageFromURL(url: NSURL, compressionLevel: CompressionLevel?): ProcessedImageResult? {
-        val path = url.path ?: return null
         val maxDim = getMaxDimension(compressionLevel).toInt()
         var result: ProcessedImageResult? = null
 
         autoreleasepool {
-            // Build a CFURL from the file-system path (avoids an unsafe NSURL→CFURLRef cast).
-            val cfPath = CFStringCreateWithCString(null, path, kCFStringEncodingUTF8)
-            val cfUrl = CFURLCreateWithFileSystemPath(null, cfPath, kCFURLPOSIXPathStyle, false)
-            val source = CGImageSourceCreateWithURL(cfUrl, null) ?: return@autoreleasepool
-            val thumbnail = createThumbnail(source, maxDim) ?: return@autoreleasepool
-            val image = UIImage.imageWithCGImage(thumbnail)
+            var source: CGImageSourceRef? = null
+            var thumbnail: CGImageRef? = null
+            var cfData: platform.CoreFoundation.CFDataRef? = null
 
-            val finalWidth = image.size.useContents { width.toInt() }
-            val finalHeight = image.size.useContents { height.toInt() }
-            val quality = calculateCompressionQuality(finalWidth, finalHeight, compressionLevel)
+            try {
+                val data = NSData.dataWithContentsOfURL(url)
+                if (data == null) return@autoreleasepool
 
-            val data = UIImageJPEGRepresentation(image, quality)
-            if (data != null) {
-                result = ProcessedImageResult(data = data, width = finalWidth, height = finalHeight)
+                val bytes = data.bytes
+                val length = data.length.toLong()
+                if (bytes == null || length <= 0) return@autoreleasepool
+
+                cfData = platform.CoreFoundation.CFDataCreateWithBytesNoCopy(
+                    null,
+                    bytes.reinterpret(),
+                    length,
+                    platform.CoreFoundation.kCFAllocatorNull
+                )
+                if (cfData == null) return@autoreleasepool
+                
+                source = platform.ImageIO.CGImageSourceCreateWithData(cfData, null)
+                if (source == null) return@autoreleasepool
+                
+                thumbnail = createThumbnail(source, maxDim)
+                if (thumbnail == null) return@autoreleasepool
+                
+                var image = UIImage.imageWithCGImage(thumbnail)
+
+                UIGraphicsBeginImageContextWithOptions(image.size, true, 1.0)
+                val rect = image.size.useContents { CGRectMake(0.0, 0.0, this.width, this.height) }
+                image.drawInRect(rect)
+                val opaqueImage = UIGraphicsGetImageFromCurrentImageContext()
+                UIGraphicsEndImageContext()
+                
+                if (opaqueImage != null) {
+                    image = opaqueImage
+                }
+
+                val finalWidth = image.size.useContents { width.toInt() }
+                val finalHeight = image.size.useContents { height.toInt() }
+                val quality = calculateCompressionQuality(finalWidth, finalHeight, compressionLevel)
+
+                val outData = UIImageJPEGRepresentation(image, quality)
+                if (outData != null) {
+                    result = ProcessedImageResult(data = outData, width = finalWidth, height = finalHeight)
+                }
+            } finally {
+                if (cfData != null) CFRelease(cfData)
+                if (source != null) CFRelease(source)
+                if (thumbnail != null) CGImageRelease(thumbnail)
             }
         }
 
         return result
+    }
+
+    fun loadDownsampledUIImage(url: NSURL, maxDimension: Int): UIImage? {
+        val path = url.path ?: return null
+        var resultImage: UIImage? = null
+
+        autoreleasepool {
+            var cfPath: platform.CoreFoundation.CFStringRef? = null
+            var cfUrl: platform.CoreFoundation.CFURLRef? = null
+            var source: CGImageSourceRef? = null
+            var thumbnail: CGImageRef? = null
+
+            try {
+                cfPath = CFStringCreateWithCString(null, path, kCFStringEncodingUTF8)
+                if (cfPath == null) return@autoreleasepool
+                
+                cfUrl = CFURLCreateWithFileSystemPath(null, cfPath,
+                    kCFURLPOSIXPathStyle, false)
+                if (cfUrl == null) return@autoreleasepool
+                
+                source = CGImageSourceCreateWithURL(cfUrl, null)
+                if (source == null) return@autoreleasepool
+                
+                thumbnail = createThumbnail(source, maxDimension)
+                if (thumbnail == null) return@autoreleasepool
+                
+                resultImage = UIImage.imageWithCGImage(thumbnail)
+            } finally {
+                if (cfPath != null) platform.CoreFoundation.CFRelease(cfPath)
+                if (cfUrl != null) platform.CoreFoundation.CFRelease(cfUrl)
+                if (source != null) platform.CoreFoundation.CFRelease(source)
+                if (thumbnail != null) CGImageRelease(thumbnail)
+            }
+        }
+
+        return resultImage
     }
 
     /**
@@ -185,7 +259,12 @@ internal object ImageOptimizer {
                 kCFTypeDictionaryValueCallBacks.ptr
             )
 
-            CGImageSourceCreateThumbnailAtIndex(source, 0u, options)
+            val thumbnail = CGImageSourceCreateThumbnailAtIndex(source, 0u, options)
+            
+            if (maxSizeNumber != null) CFRelease(maxSizeNumber)
+            if (options != null) CFRelease(options)
+            
+            thumbnail
         }
     }
 }

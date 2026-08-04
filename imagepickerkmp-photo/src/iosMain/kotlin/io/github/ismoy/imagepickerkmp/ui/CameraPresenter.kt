@@ -9,6 +9,11 @@ import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UIModalPresentationFullScreen
 import platform.UIKit.UIViewController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
 
 internal object CameraPresenter {
 
@@ -22,33 +27,48 @@ internal object CameraPresenter {
         compressionLevel: CompressionLevel? = null,
         includeExif: Boolean = false
     ) {
-        try {
-            if (!UIImagePickerController.isSourceTypeAvailable(
-                UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
-            )) {
-                val errorMessage = " Camera is not available on this device. " +
-                    "The iOS Simulator does not support camera functionality. " +
-                    "Please test camera features on a physical iOS device."
+        // Offload heavy CameraUI framework loading to a background thread
+        // to prevent the main UI from freezing for 1 second.
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                val isAvailable = UIImagePickerController.isSourceTypeAvailable(
+                    UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
+                )
                 
-                PhotoLogger.debug("Camera not available on this device")
-
-                onError(PhotoCaptureException(errorMessage))
-                onDismiss()
-                return
+                dispatch_async(dispatch_get_main_queue()) {
+                    if (!isAvailable) {
+                        val errorMessage = " Camera is not available on this device. " +
+                            "The iOS Simulator does not support camera functionality. " +
+                            "Please test camera features on a physical iOS device."
+                        
+                        PhotoLogger.debug("Camera not available on this device")
+                        onError(PhotoCaptureException(errorMessage))
+                        onDismiss()
+                        return@dispatch_async
+                    }
+                    
+                    try {
+                        val imagePickerController = createImagePickerController(
+                            onPhotoCaptured,
+                            onError,
+                            onDismiss,
+                            compressionLevel,
+                            includeExif
+                        )
+                        viewController.presentViewController(imagePickerController, animated = true, completion = null)
+                    } catch (e: Exception) {
+                        PhotoLogger.debug("Camera presentation error: ${e::class.simpleName}")
+                        onError(PhotoCaptureException("Failed to present camera: ${e.message}"))
+                        onDismiss()
+                    }
+                }
+            } catch (e: Exception) {
+                PhotoLogger.debug("Camera presentation error: ${e::class.simpleName}")
+                dispatch_async(dispatch_get_main_queue()) {
+                    onError(PhotoCaptureException("Failed to present camera: ${e.message}"))
+                    onDismiss()
+                }
             }
-            
-            val imagePickerController = createImagePickerController(
-                onPhotoCaptured,
-                onError,
-                onDismiss,
-                compressionLevel,
-                includeExif
-            )
-            viewController.presentViewController(imagePickerController, animated = true, completion = null)
-        } catch (e: Exception) {
-            PhotoLogger.debug("Camera presentation error: ${e::class.simpleName}")
-            onError(PhotoCaptureException("Failed to present camera: ${e.message}"))
-            onDismiss()
         }
     }
 

@@ -1,7 +1,9 @@
 package io.github.ismoy.imagepickerkmp.camera
 
 import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.useContents
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
@@ -20,7 +22,7 @@ import platform.UIKit.UIImageJPEGRepresentation
 /**
  * Handles image processing operations for iOS, including compression and conversion.
  */
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 internal object ImageProcessor {
 
     /**
@@ -28,14 +30,17 @@ internal object ImageProcessor {
      */
     fun processImage(image: UIImage, compressionLevel: CompressionLevel): NSData? {
         return try {
-            val quality = compressionLevel.toQualityValue()
-            val maxDimension = when (compressionLevel) {
-                CompressionLevel.HIGH -> 1280.0
-                CompressionLevel.MEDIUM -> 1920.0
-                CompressionLevel.LOW -> 2560.0
+            var result: NSData? = null
+            autoreleasepool {
+                val quality = compressionLevel.toQualityValue()
+                val maxDimension = when (compressionLevel) {
+                    CompressionLevel.HIGH -> 1280.0
+                    CompressionLevel.MEDIUM -> 1920.0
+                    CompressionLevel.LOW -> 2560.0
+                }
+                val processedImage = resizeImageIfNeeded(image, maxDimension)
+                result = UIImageJPEGRepresentation(processedImage, quality)
             }
-            val processedImage = resizeImageIfNeeded(image, maxDimension)
-            val result = UIImageJPEGRepresentation(processedImage, quality)
             
             println("   Final data size: ${result?.length ?: 0} bytes")
             
@@ -49,14 +54,17 @@ internal object ImageProcessor {
      */
     fun processImageForGallery(image: UIImage, compressionLevel: CompressionLevel): NSData? {
         return try {
-            val quality = compressionLevel.toQualityValue()
-            val maxDimension = when (compressionLevel) {
-                CompressionLevel.HIGH -> 1280.0
-                CompressionLevel.MEDIUM -> 1920.0
-                CompressionLevel.LOW -> 2560.0
+            var result: NSData? = null
+            autoreleasepool {
+                val quality = compressionLevel.toQualityValue()
+                val maxDimension = when (compressionLevel) {
+                    CompressionLevel.HIGH -> 1280.0
+                    CompressionLevel.MEDIUM -> 1920.0
+                    CompressionLevel.LOW -> 2560.0
+                }
+                val processedImage = resizeImageIfNeeded(image, maxDimension)
+                result = UIImageJPEGRepresentation(processedImage, quality)
             }
-            val processedImage = resizeImageIfNeeded(image, maxDimension)
-            val result = UIImageJPEGRepresentation(processedImage, quality)
             
             println("   Final data size: ${result?.length ?: 0} bytes")
             
@@ -90,12 +98,15 @@ internal object ImageProcessor {
      * Resize image to specific size
      */
     private fun resizeImage(image: UIImage, newSize: kotlinx.cinterop.CValue<platform.CoreGraphics.CGSize>): UIImage {
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
-        newSize.useContents {
-            image.drawInRect(CGRectMake(0.0, 0.0, width, height))
+        var resizedImage: UIImage? = null
+        autoreleasepool {
+            UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+            newSize.useContents {
+                image.drawInRect(CGRectMake(0.0, 0.0, width, height))
+            }
+            resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
         }
-        val resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
         return resizedImage ?: image
     }
 
