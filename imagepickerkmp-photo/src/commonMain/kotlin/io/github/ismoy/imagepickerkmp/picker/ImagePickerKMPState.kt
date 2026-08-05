@@ -5,8 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
-import io.github.ismoy.imagepickerkmp.picker.MimeType
-import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 
 @Stable
 class ImagePickerKMPState internal constructor(
@@ -19,8 +17,6 @@ class ImagePickerKMPState internal constructor(
 
     internal var activeMode by mutableStateOf<PickerMode>(PickerMode.None)
 
-    // Latched per launch: platforms can report onError then onDismiss, and the first report
-    // clears activeMode, so callbacks cannot live on the mode object.
     private var consumerOnDismiss: (() -> Unit)? = null
     private var consumerOnError: ((Exception) -> Unit)? = null
 
@@ -63,6 +59,7 @@ class ImagePickerKMPState internal constructor(
         includeExif: Boolean? = null,
         redactGpsData: Boolean? = null,
         mimeTypeMismatchMessage: String? = null,
+        compressionLevel: CompressionLevel? = null,
         cameraCaptureConfig: CameraCaptureConfig? = null,
         onDismiss: (() -> Unit)? = null,
         onError: ((Exception) -> Unit)? = null
@@ -87,6 +84,7 @@ class ImagePickerKMPState internal constructor(
             includeExif = includeExif ?: config.galleryConfig.includeExif,
             redactGpsData = redactGpsData ?: config.galleryConfig.redactGpsData,
             mimeTypeMismatchMessage = mimeTypeMismatchMessage ?: config.galleryConfig.mimeTypeMismatchMessage,
+            compressionLevel = compressionLevel ?: config.galleryConfig.compressionLevel,
             cameraCaptureConfig = cameraCaptureConfig
         )
     }
@@ -117,13 +115,11 @@ class ImagePickerKMPState internal constructor(
         result = ImagePickerResult.Idle
     }
 
-    /** Settles internal state first, so a caller-supplied callback can never wedge the next launch. */
     internal fun dispatchDismiss() {
         notifyDismiss()
         consumerOnDismiss?.invoke()
     }
 
-    /** Error counterpart of [dispatchDismiss]. */
     internal fun dispatchError(exception: Exception) {
         onError(exception)
         consumerOnError?.invoke(exception)

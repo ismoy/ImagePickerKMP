@@ -118,8 +118,8 @@ class ImagePickerConfigAdvancedTest {
     // ── CameraCaptureConfig defaults ──────────────────────────────────────────
 
     @Test
-    fun cameraCaptureConfig_defaultCompressionLevel_isLow() {
-        assertEquals(CompressionLevel.LOW, CameraCaptureConfig().compressionLevel)
+    fun cameraCaptureConfig_defaultCompressionLevel_isNull() {
+        assertNull(CameraCaptureConfig().compressionLevel)
     }
 
     @Test

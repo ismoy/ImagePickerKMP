@@ -1,7 +1,6 @@
 package io.github.ismoy.imagepickerkmp.picker
 
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
-import io.github.ismoy.imagepickerkmp.picker.MimeType
 
 internal sealed interface PickerMode {
     data object None : PickerMode
@@ -17,6 +16,7 @@ internal sealed interface PickerMode {
         val includeExif: Boolean,
         val redactGpsData: Boolean,
         val mimeTypeMismatchMessage: String?,
-        val cameraCaptureConfig: CameraCaptureConfig?
+        val cameraCaptureConfig: CameraCaptureConfig?,
+        val compressionLevel: CompressionLevel?
     ) : PickerMode
 }

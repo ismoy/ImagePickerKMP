@@ -630,7 +630,7 @@ fun GalleryScreen() {
 
 ## Image Compression Integration
 
-ImagePickerKMP includes automatic image compression to optimize file sizes while maintaining quality. This feature works for both camera capture and gallery selection.
+ImagePickerKMP supports optional image compression for both camera capture and gallery selection. Compression is **disabled by default** (`compressionLevel = null`) — the original file is returned untouched.
 
 ### Basic Compression Setup
 
@@ -673,6 +673,9 @@ fun CompressedCameraScreen() {
 ```
 
 #### Gallery with Compression
+
+Gallery compression is configured via `GalleryConfig.compressionLevel`, not `CameraCaptureConfig`:
+
 ```kotlin
 @Composable
 fun CompressedGalleryScreen() {
@@ -680,10 +683,8 @@ fun CompressedGalleryScreen() {
         config = ImagePickerKMPConfig(
             galleryConfig = GalleryConfig(
                 allowMultiple = true,
-                mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG)
-            ),
-            cameraCaptureConfig = CameraCaptureConfig(
-                compressionLevel = CompressionLevel.HIGH
+                mimeTypes = listOf(MimeType.IMAGE_JPEG, MimeType.IMAGE_PNG),
+                compressionLevel = CompressionLevel.HIGH  // ← set here for gallery
             )
         )
     )
@@ -716,35 +717,25 @@ fun CompressedGalleryScreen() {
 
 ### Compression Levels
 
-Choose the appropriate compression level based on your use case:
+| Level | JPEG Quality | Max Dimension | Default? |
+|-------|-------------|---------------|----------|
+| `null` | — | original | ✅ Yes — no compression |
+| `LOW` | 85% | 3840 px | — |
+| `MEDIUM` | 70% | 1920 px | — |
+| `HIGH` | 50% | 1280 px | — |
 
 ```kotlin
-// Low compression - High quality, larger files (95% quality, 2560px max)
-ImagePickerKMPConfig(
-    cameraCaptureConfig = CameraCaptureConfig(
-        compressionLevel = CompressionLevel.LOW
-    )
-)
+// No compression — return original (default)
+CameraCaptureConfig()  // compressionLevel = null
 
-// Medium compression - Balanced quality/size (75% quality, 1920px max) 
-// RECOMMENDED for most applications
-ImagePickerKMPConfig(
-    cameraCaptureConfig = CameraCaptureConfig(
-        compressionLevel = CompressionLevel.MEDIUM
-    )
-)
+// Low compression — near-lossless, large files
+CameraCaptureConfig(compressionLevel = CompressionLevel.LOW)
 
-// High compression - Smaller files, good quality (50% quality, 1280px max)
-ImagePickerKMPConfig(
-    cameraCaptureConfig = CameraCaptureConfig(
-        compressionLevel = CompressionLevel.HIGH
-    )
-)
+// Medium compression — balanced quality/size, recommended
+CameraCaptureConfig(compressionLevel = CompressionLevel.MEDIUM)
 
-// No compression (default)
-ImagePickerKMPConfig(
-    cameraCaptureConfig = CameraCaptureConfig()
-)
+// High compression — smallest files
+CameraCaptureConfig(compressionLevel = CompressionLevel.HIGH)
 ```
 
 ### Supported Image Formats
@@ -755,15 +746,15 @@ All common image formats are supported for compression:
 - **HEIC** (image/heic) - Full compression support
 - **HEIF** (image/heif) - Full compression support
 - **WebP** (image/webp) - Full compression support
-- **GIF** (image/gif) - Full compression support
+- **GIF** (image/gif) - Preserved as-is (animation safe)
 - **BMP** (image/bmp) - Full compression support
 
 ### Performance Considerations
 
-- **Async Processing**: Compression runs on background threads (Dispatchers.IO)
-- **Memory Management**: Original bitmaps are automatically recycled
-- **Storage**: Compressed images are saved to app cache directory
-- **Quality**: Smart balance between file size reduction and visual quality
+- **Async Processing**: Compression runs on background threads (`Dispatchers.IO` on Android, background queue on iOS)
+- **Memory Management**: Original bitmaps are automatically recycled after processing
+- **Storage**: Compressed images are saved to the app cache directory
+- **No compression (`null`)**: On Android, the original file URI is returned directly — no copy is made. On iOS, the original bytes are returned without re-encoding
 
 ### Real-world Example
 
@@ -775,8 +766,7 @@ fun PhotoCaptureWithCompression() {
     val picker = rememberImagePickerKMP(
         config = ImagePickerKMPConfig(
             cameraCaptureConfig = CameraCaptureConfig(
-                compressionLevel = CompressionLevel.MEDIUM,
-                preference = CapturePhotoPreference.QUALITY
+                compressionLevel = CompressionLevel.MEDIUM
             )
         )
     )

@@ -14,7 +14,7 @@ import kotlin.test.assertNull
 class CropUtilsTest {
 
     private val cropRect = Rect(100f, 100f, 500f, 400f)
-    private val handleSize = 40f
+    private val handleSize = 120f
 
     // ───────────── Corner handles ─────────────
 
@@ -94,13 +94,15 @@ class CropUtilsTest {
 
     @Test
     fun detectHandle_completelyOutside_returnsNull() {
-        val touch = Offset(0f, 0f)
+        // With handleSize=120f, TOP_LEFT covers down to (100-120)=-20 on both axes.
+        // Use a point far enough outside all handles.
+        val touch = Offset(-200f, -200f)
         assertNull(CropUtils.detectHandle(touch, cropRect))
     }
 
     @Test
     fun detectHandle_justOutsideTolerance_returnsNull() {
-        // Just beyond handleSize from TOP_LEFT corner
+        // Just beyond handleSize (120f) from TOP_LEFT corner
         val touch = Offset(cropRect.left - handleSize - 1f, cropRect.top - handleSize - 1f)
         assertNull(CropUtils.detectHandle(touch, cropRect))
     }

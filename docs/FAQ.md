@@ -578,14 +578,17 @@ fun CompressedImagePicker() {
     val picker = rememberImagePickerKMP(
         config = ImagePickerKMPConfig(
             cameraCaptureConfig = CameraCaptureConfig(
-                compressionLevel = 80
+                compressionLevel = CompressionLevel.MEDIUM  // LOW | MEDIUM | HIGH
+            ),
+            galleryConfig = GalleryConfig(
+                compressionLevel = CompressionLevel.MEDIUM  // set separately for gallery
             )
         )
     )
 
     when (val result = picker.result) {
         is ImagePickerResult.Success -> {
-            // Image is already compressed
+            // Image is compressed
             val photo = result.photos.first()
         }
         is ImagePickerResult.Error -> { /* handle error */ }

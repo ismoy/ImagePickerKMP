@@ -8,6 +8,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) · Versioning: 
 
 ## [Unreleased]
 
+### Added
+- **`GalleryConfig.compressionLevel`** — gallery compression is now configured independently via `GalleryConfig.compressionLevel` instead of `CameraCaptureConfig.compressionLevel`. Both camera and gallery now have their own compression settings
+- `launchGallery(compressionLevel = ...)` per-launch override for gallery compression
+
+### Changed
+- **`CameraCaptureConfig.compressionLevel` default changed from `CompressionLevel.LOW` to `null`** — no compression is applied by default. Pass an explicit level to enable it
+- **`compressionLevel = null` now correctly skips all processing on iOS** — previously `null` fell back to adaptive JPEG compression (50–70%) on iOS. It now returns the original file bytes without any resize or re-encoding, matching Android behaviour
+- `PhotoResult.fileSize` is always in **bytes** consistently across all paths (previously some iOS PHPicker paths reported KB)
+
 ### Fixed
 - **Android: crash when no camera app is present** — `launchCamera()` launched `MediaStore.ACTION_IMAGE_CAPTURE` unguarded, so an unresolvable intent killed the consuming app with `ActivityNotFoundException`. The throw happened inside the library's own `LaunchedEffect`, so callers could not catch it. It now reports `onError` then `onDismiss` and leaves `result` as `ImagePickerResult.Error`, matching the iOS `CameraPresenter`. Regression introduced in 1.1.0 when the in-app CameraX preview was replaced by the system camera intent
 - **A dismissal following an error no longer overwrites the error** — platforms report an unavailable camera as `onError(...)` then `onDismiss()`, which previously left `result` as `Dismissed`, making "no camera app" indistinguishable from "user cancelled". Affected iOS as well, which now reports `Error` for an unavailable camera instead of `Dismissed`

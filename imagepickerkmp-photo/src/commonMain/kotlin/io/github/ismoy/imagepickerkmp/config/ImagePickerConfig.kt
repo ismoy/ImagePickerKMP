@@ -19,7 +19,8 @@ data class GalleryConfig(
     val selectionLimit: Int = 30,
     val includeExif: Boolean = false,
     val redactGpsData: Boolean = true,
-    val mimeTypeMismatchMessage: String? = null
+    val mimeTypeMismatchMessage: String? = null,
+    val compressionLevel: CompressionLevel? = null
 )
 
 data class CropConfig(
@@ -31,7 +32,7 @@ data class CropConfig(
 )
 
 data class CameraCaptureConfig(
-    val compressionLevel: CompressionLevel? = CompressionLevel.LOW,
+    val compressionLevel: CompressionLevel? = null,
     val includeExif: Boolean = false,
     val redactGpsData: Boolean = true,
     val permissionAndConfirmationConfig: PermissionAndConfirmationConfig = PermissionAndConfirmationConfig(),

@@ -91,11 +91,12 @@ fun CameraWithCompressionLevels() {
 ```kotlin
 @Composable
 fun GalleryWithCompression() {
-    var compressionLevel by remember { mutableStateOf(CompressionLevel.MEDIUM) }
+    var compressionLevel by remember { mutableStateOf<CompressionLevel?>(CompressionLevel.MEDIUM) }
 
     val picker = rememberImagePickerKMP(
         config = ImagePickerKMPConfig(
-            cameraCaptureConfig = CameraCaptureConfig(
+            // Gallery compression is configured in GalleryConfig, not CameraCaptureConfig
+            galleryConfig = GalleryConfig(
                 compressionLevel = compressionLevel
             )
         )
@@ -108,10 +109,11 @@ fun GalleryWithCompression() {
         ) {
             Text("Compression:")
             SegmentedButton(
-                options = listOf("LOW", "MEDIUM", "HIGH"),
-                selectedOption = compressionLevel.name,
+                options = listOf("NONE", "LOW", "MEDIUM", "HIGH"),
+                selectedOption = compressionLevel?.name ?: "NONE",
                 onSelectionChanged = { selected ->
-                    compressionLevel = CompressionLevel.valueOf(selected)
+                    compressionLevel = if (selected == "NONE") null
+                    else CompressionLevel.valueOf(selected)
                 }
             )
         }

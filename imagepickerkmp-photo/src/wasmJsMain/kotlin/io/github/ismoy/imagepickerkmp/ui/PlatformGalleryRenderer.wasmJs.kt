@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
+import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
 import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.picker.MimeType
 import kotlinx.browser.document
@@ -32,6 +33,7 @@ internal actual fun PlatformGalleryRenderer(
     fileFilterDescription: String,
     includeExif: Boolean,
     mimeTypeMismatchMessage: String?,
+    compressionLevel: CompressionLevel?,
     onCropPending: () -> Unit
 ) {
     val launchKey = remember { currentTimeMillis().toString() }

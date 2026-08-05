@@ -70,6 +70,7 @@ fun rememberImagePickerKMP(
                 enableCrop = mode.enableCrop,
                 includeExif = mode.includeExif,
                 mimeTypeMismatchMessage = mode.mimeTypeMismatchMessage,
+                compressionLevel = mode.compressionLevel,
                 cameraCaptureConfig = galleryCamConfig,
                 onPhotosSelected = notifySuccessFn,
                 onCropPending = notifyCropPendingFn,

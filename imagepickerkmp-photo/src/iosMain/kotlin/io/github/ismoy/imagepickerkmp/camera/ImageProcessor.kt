@@ -19,55 +19,34 @@ import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
 
-/**
- * Handles image processing operations for iOS, including compression and conversion.
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 internal object ImageProcessor {
 
-    /**
-     * Process an image with compression for camera capture
-     */
     fun processImage(image: UIImage, compressionLevel: CompressionLevel): NSData? {
         return try {
             var result: NSData? = null
             autoreleasepool {
                 val quality = compressionLevel.toQualityValue()
-                val maxDimension = when (compressionLevel) {
-                    CompressionLevel.HIGH -> 1280.0
-                    CompressionLevel.MEDIUM -> 1920.0
-                    CompressionLevel.LOW -> 2560.0
-                }
+                val maxDimension = compressionLevel.toMaxDimension().toDouble()
                 val processedImage = resizeImageIfNeeded(image, maxDimension)
                 result = UIImageJPEGRepresentation(processedImage, quality)
             }
-            
-            println("   Final data size: ${result?.length ?: 0} bytes")
-            
             result
         } catch (e: Exception) {
             println("❌ iOS Camera ImageProcessor error: ${e.message}")
             null
         }
-    }    /**
-     * Process an image with compression for gallery selection
-     */
+    }
+
     fun processImageForGallery(image: UIImage, compressionLevel: CompressionLevel): NSData? {
         return try {
             var result: NSData? = null
             autoreleasepool {
                 val quality = compressionLevel.toQualityValue()
-                val maxDimension = when (compressionLevel) {
-                    CompressionLevel.HIGH -> 1280.0
-                    CompressionLevel.MEDIUM -> 1920.0
-                    CompressionLevel.LOW -> 2560.0
-                }
+                val maxDimension = compressionLevel.toMaxDimension().toDouble()
                 val processedImage = resizeImageIfNeeded(image, maxDimension)
                 result = UIImageJPEGRepresentation(processedImage, quality)
             }
-            
-            println("   Final data size: ${result?.length ?: 0} bytes")
-            
             result
         } catch (e: Exception) {
             println("❌ iOS ImageProcessor error: ${e.message}")
@@ -75,9 +54,6 @@ internal object ImageProcessor {
         }
     }
 
-    /**
-     * Resize image if it exceeds the maximum size while maintaining aspect ratio
-     */
     private fun resizeImageIfNeeded(image: UIImage, maxSize: Double): UIImage {
         return image.size.useContents { 
             if (width > maxSize || height > maxSize) {
@@ -94,9 +70,6 @@ internal object ImageProcessor {
         }
     }
 
-    /**
-     * Resize image to specific size
-     */
     private fun resizeImage(image: UIImage, newSize: kotlinx.cinterop.CValue<platform.CoreGraphics.CGSize>): UIImage {
         var resizedImage: UIImage? = null
         autoreleasepool {
@@ -110,9 +83,6 @@ internal object ImageProcessor {
         return resizedImage ?: image
     }
 
-    /**
-     * Save image data to temporary directory and return URL
-     */
     fun saveImageToTempDirectory(imageData: NSData): NSURL? {
         return try {
             val tempDir = NSFileManager.defaultManager.temporaryDirectory
@@ -130,9 +100,7 @@ internal object ImageProcessor {
             null
         }
     }
-    /**
-     * Save raw data to temporary directory with custom filename and return URL
-     */
+
     fun saveDataToTempDirectory(data: NSData, fileName: String): NSURL? {
         return try {
             val tempDir = NSFileManager.defaultManager.temporaryDirectory

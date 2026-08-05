@@ -196,17 +196,28 @@ Available on Android and iOS only.
 
 ## Compression
 
+Default is **no compression** (`compressionLevel = null`). Pass a level to enable it.
+
 ```kotlin
+// Camera
 CameraCaptureConfig(
-    compressionLevel = CompressionLevel.HIGH  // LOW | MEDIUM | HIGH
+    compressionLevel = CompressionLevel.HIGH  // LOW | MEDIUM | HIGH | null (default, no compression)
+)
+
+// Gallery — use GalleryConfig, not CameraCaptureConfig
+GalleryConfig(
+    compressionLevel = CompressionLevel.MEDIUM
 )
 ```
 
-| Level | JPEG Quality | Max Dimension |
-|-------|-------------|---------------|
-| `LOW` | 85 | 3840 px |
-| `MEDIUM` | 70 | 1920 px |
-| `HIGH` | 50 | 1280 px |
+| Level | JPEG Quality | Max Dimension | Use case |
+|-------|-------------|---------------|----------|
+| `null` (default) | — | original | Preserve original quality |
+| `LOW` | 85% | 3840 px | Near-lossless, large files |
+| `MEDIUM` | 70% | 1920 px | Balanced — recommended |
+| `HIGH` | 50% | 1280 px | Small files, upload-friendly |
+
+`compressionLevel = null` skips all resizing and re-encoding on both Android and iOS — `PhotoResult.fileSize` will reflect the original file size.
 
 ---
 

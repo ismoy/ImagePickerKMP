@@ -42,7 +42,7 @@ class ImagePickerConfigTest {
     fun `CameraCaptureConfig should have default values`() {
         val config = CameraCaptureConfig()
 
-        assertEquals(CompressionLevel.LOW, config.compressionLevel)
+        assertEquals(null, config.compressionLevel)
         assertFalse(config.includeExif)
         assertTrue(config.redactGpsData)
     }

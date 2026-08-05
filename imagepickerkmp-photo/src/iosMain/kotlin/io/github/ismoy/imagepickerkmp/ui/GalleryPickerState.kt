@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.gallery.GalleryPickerOrchestrator
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
+import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
 import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.picker.MimeType
 import io.github.ismoy.imagepickerkmp.picker.PhotoResult
@@ -25,13 +26,14 @@ internal fun rememberGalleryPickerState(
     fileFilterDescription: String,
     includeExif: Boolean,
     mimeTypeMismatchMessage: String?,
+    compressionLevel: CompressionLevel?,
     onCropPending: () -> Unit
 ): GalleryPickerState {
     return remember { 
         GalleryPickerState(
             onPhotosSelected, onError, onDismiss, allowMultiple, mimeTypes, 
             selectionLimit, cameraCaptureConfig, enableCrop, fileFilterDescription, 
-            includeExif, mimeTypeMismatchMessage, onCropPending
+            includeExif, mimeTypeMismatchMessage, compressionLevel, onCropPending
         )
     }
 }
@@ -50,6 +52,7 @@ internal class GalleryPickerState(
     val fileFilterDescription: String,
     val includeExif: Boolean,
     val mimeTypeMismatchMessage: String?,
+    val compressionLevel: CompressionLevel?,
     val onCropPending: () -> Unit
 ) {
     var selectedPhotoForCrop by mutableStateOf<GalleryPhotoResult?>(null)
@@ -67,8 +70,6 @@ internal class GalleryPickerState(
         currentOnDismiss: () -> Unit,
         currentOnCropPending: () -> Unit
     ) {
-        val compressionLevel = cameraCaptureConfig?.compressionLevel
-
         if (allowMultiple) {
             GalleryPickerOrchestrator.launchGallery(
                 onPhotoSelected = { _ -> },

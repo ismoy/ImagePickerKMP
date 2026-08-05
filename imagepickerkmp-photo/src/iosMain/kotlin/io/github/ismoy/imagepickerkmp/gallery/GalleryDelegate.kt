@@ -93,7 +93,6 @@ internal class GalleryDelegate(
                 dismissPicker(picker)
                 return
             }
-            // Read dimensions from first frame only — file on disk is untouched
             val previewImage = UIImage.imageWithData(gifData)
             val width = previewImage?.size?.useContents { width.toInt() } ?: 0
             val height = previewImage?.size?.useContents { height.toInt() } ?: 0
@@ -102,7 +101,7 @@ internal class GalleryDelegate(
                 width = width,
                 height = height,
                 fileName = fileName,
-                fileSize = gifData.length.toLong() / 1024,
+                fileSize = gifData.length.toLong(),
                 mimeType = MimeType.IMAGE_GIF.value,
                 exif = null
             )
@@ -119,14 +118,20 @@ internal class GalleryDelegate(
             val processedData = if (compressionLevel != null) {
                 ImageProcessor.processImageForGallery(image, compressionLevel)
             } else {
-                // Apply default resizing and adaptive compression to prevent memory spikes
-                // with high-resolution photos (e.g. 48MP sensors).
-                logDebug("No compression level specified - applying default optimization")
-                ImageOptimizer.processImage(image, null)
+                // compressionLevel = null means no compression — return original data
+                // using lossless PNG encoding to preserve full quality.
+                logDebug("No compression level specified - returning original image data")
+                platform.UIKit.UIImagePNGRepresentation(image)
             }
             
             if (processedData != null) {
-                val tempURL = ImageProcessor.saveImageToTempDirectory(processedData)
+                val tempURL = if (compressionLevel != null) {
+                    ImageProcessor.saveImageToTempDirectory(processedData)
+                } else {
+                    // Save as PNG to preserve lossless quality
+                    val fileName = "${NSUUID().UUIDString}.png"
+                    ImageProcessor.saveDataToTempDirectory(processedData, fileName)
+                }
                 if (tempURL != null) {
                     val fileSizeInBytes = processedData.length.toLong()
                     val exifData = if (includeExif) {
@@ -136,14 +141,12 @@ internal class GalleryDelegate(
                         logDebug("EXIF extraction skipped (includeExif = false)")
                         null
                     }
-                    
-                    // Calculate final dimensions based on resize constraints
-                    val maxDim = ImageOptimizer.getMaxDimension(compressionLevel)
                     val origW = image.size.useContents { width.toInt() }
                     val origH = image.size.useContents { height.toInt() }
                     val finalWidth: Int
                     val finalHeight: Int
-                    if (origW <= maxDim.toInt() && origH <= maxDim.toInt()) {
+                    val maxDim = ImageOptimizer.getMaxDimension(compressionLevel)
+                    if (maxDim == null || (origW <= maxDim.toInt() && origH <= maxDim.toInt())) {
                         finalWidth = origW
                         finalHeight = origH
                     } else {
@@ -163,7 +166,7 @@ internal class GalleryDelegate(
                         height = finalHeight,
                         fileName = tempURL.lastPathComponent,
                         fileSize = fileSizeInBytes,
-                        mimeType = "image/jpeg",
+                        mimeType = if (compressionLevel != null) "image/jpeg" else "image/png",
                         exif = exifData
                     )
                     onImagePicked(galleryResult)

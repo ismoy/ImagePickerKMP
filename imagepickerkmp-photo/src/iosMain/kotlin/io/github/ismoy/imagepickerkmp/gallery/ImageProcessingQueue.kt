@@ -22,16 +22,6 @@ import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 
 
-/**
- * Processes images selected from PHPicker with **bounded parallelism** to balance
- * speed and memory usage.
- *
- * Up to [MAX_CONCURRENT] images are loaded and processed simultaneously. Each image
- * is decoded, resized, compressed, saved to disk, and released within an autoreleasepool
- * before its slot is freed for the next image. This keeps peak memory bounded to
- * approximately MAX_CONCURRENT images worth of data (~45-60MB) regardless of how many
- * images are selected.
- */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 internal class ImageProcessingQueue(
     private val pickerResults: List<PHPickerResult>,
@@ -65,10 +55,6 @@ internal class ImageProcessingQueue(
         }
     }
 
-    /**
-     * Loads one image from the item provider and begins processing it.
-     * Called from the main queue to manage concurrency.
-     */
     private fun loadNextImage() {
         if (nextIndex >= totalCount) return
 
@@ -129,10 +115,6 @@ internal class ImageProcessingQueue(
         }
     }
 
-    /**
-     * Called on main queue after each image completes. Starts the next image if there
-     * are more to process, or finalizes when all are done.
-     */
     @OptIn(NativeRuntimeApi::class)
     private fun advanceOrFinish() {
         if (processedCount >= totalCount) {
@@ -161,7 +143,7 @@ internal class ImageProcessingQueue(
             width = processed.width,
             height = processed.height,
             fileName = tempURL.lastPathComponent,
-            fileSize = processed.data.length.toLong() / 1024,
+            fileSize = processed.data.length.toLong(),
             mimeType = "image/jpeg",
             exif = exifData
         )
@@ -188,7 +170,7 @@ internal class ImageProcessingQueue(
             width = width,
             height = height,
             fileName = fileName,
-            fileSize = gifData.length.toLong() / 1024,
+            fileSize = gifData.length.toLong(),
             mimeType = MimeType.IMAGE_GIF.value,
             exif = null
         )
@@ -240,7 +222,7 @@ internal class ImageProcessingQueue(
                     width = width,
                     height = height,
                     fileName = tempURL.lastPathComponent ?: "fallback_$index.jpg",
-                    fileSize = imageData.length.toLong() / 1024,
+                    fileSize = imageData.length.toLong(),
                     mimeType = "image/jpeg",
                     exif = null
                 )
