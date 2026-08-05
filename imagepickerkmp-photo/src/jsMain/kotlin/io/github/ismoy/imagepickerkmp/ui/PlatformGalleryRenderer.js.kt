@@ -2,6 +2,7 @@ package io.github.ismoy.imagepickerkmp.ui
 
 import androidx.compose.runtime.Composable
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
+import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
 import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.picker.MimeType
 import io.github.ismoy.imagepickerkmp.domain.utils.JsFilePicker
@@ -20,6 +21,7 @@ internal actual fun PlatformGalleryRenderer(
     fileFilterDescription: String,
     includeExif: Boolean,
     mimeTypeMismatchMessage: String?,
+    compressionLevel: CompressionLevel?,
     onCropPending: () -> Unit
 ) {
     JsFilePicker(

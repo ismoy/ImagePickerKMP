@@ -1,13 +1,11 @@
 # ImagePickerKMP
 
 **A complete media library for Kotlin Multiplatform — photos, video, audio, scanning, and playback in one ecosystem.**
-
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=b9cde436-d518-45b7-9a4a-7b4e084aeffa" />
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ismoy/CameraKMP/main/thumnailImagePickerKMP.png" alt="ImagePickerKMP Banner" width="100%">
 </p>
-
 <p align="center">
   <a href="https://github.com/ismoy/ImagePickerKMP/actions"><img src="https://github.com/ismoy/ImagePickerKMP/workflows/CI/badge.svg" alt="CI"></a>
   <a href="https://codecov.io/gh/ismoy/ImagePickerKMP"><img src="https://codecov.io/gh/ismoy/ImagePickerKMP/branch/main/graph/badge.svg" alt="Coverage"></a>
@@ -62,6 +60,24 @@ ImagePickerKMP is a **modular** media library. Each module is independent — in
 | **Video Player** | `imagepickerkmp-video-player` | Full-featured video playback with controls |
 
 > **Requirements:** Kotlin **2.3.20** · Compose Multiplatform **1.11.1** · Android `minSdk` **24** · iOS **16.0+**
+
+---
+<div align="center">
+  <table>
+    <tr>
+      <th align="center">Android</th>
+      <th align="center">iOS</th>
+    </tr>
+    <tr>
+      <td width="50%" align="center">
+        <video src="https://github.com/user-attachments/assets/6a09f4d4-81e6-40b8-9aff-3d10e3108e0e" autoplay loop muted playsinline width="100%"></video>
+      </td>
+      <td width="50%" align="center">
+        <video src="https://github.com/user-attachments/assets/ef5db514-0553-4e35-81b1-48e40d461439" autoplay loop muted playsinline width="100%"></video>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ---
 ## Installation

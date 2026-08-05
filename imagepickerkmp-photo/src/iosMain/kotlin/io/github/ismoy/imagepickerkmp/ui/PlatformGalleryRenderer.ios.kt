@@ -9,6 +9,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.config.CropConfig
+import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
 import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.picker.MimeType
 import io.github.ismoy.imagepickerkmp.picker.PhotoResult
@@ -27,12 +28,13 @@ internal actual fun PlatformGalleryRenderer(
     fileFilterDescription: String,
     includeExif: Boolean,
     mimeTypeMismatchMessage: String?,
+    compressionLevel: CompressionLevel?,
     onCropPending: () -> Unit
 ) {
     val state = rememberGalleryPickerState(
         onPhotosSelected, onError, onDismiss, allowMultiple, mimeTypes,
         selectionLimit, cameraCaptureConfig, enableCrop, fileFilterDescription,
-        includeExif, mimeTypeMismatchMessage, onCropPending
+        includeExif, mimeTypeMismatchMessage, compressionLevel, onCropPending
     )
 
     val currentOnPhotosSelected by rememberUpdatedState(onPhotosSelected)

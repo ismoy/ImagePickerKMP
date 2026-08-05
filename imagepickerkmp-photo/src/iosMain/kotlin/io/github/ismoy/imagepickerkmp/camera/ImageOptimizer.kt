@@ -1,8 +1,5 @@
 package io.github.ismoy.imagepickerkmp.camera
 
-import cnames.structs.CGImageSource
-import cnames.structs.__CFDictionary
-import cnames.structs.__CFURL
 import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ByteVar
@@ -19,6 +16,7 @@ import kotlinx.cinterop.useContents
 import kotlinx.cinterop.value
 import platform.CoreFoundation.CFDictionaryCreate
 import platform.CoreFoundation.CFNumberCreate
+import platform.CoreFoundation.CFRelease
 import platform.CoreFoundation.CFStringCreateWithCString
 import platform.CoreFoundation.CFURLCreateWithFileSystemPath
 import platform.CoreFoundation.kCFBooleanTrue
@@ -28,24 +26,24 @@ import platform.CoreFoundation.kCFTypeDictionaryKeyCallBacks
 import platform.CoreFoundation.kCFTypeDictionaryValueCallBacks
 import platform.CoreFoundation.kCFURLPOSIXPathStyle
 import platform.CoreGraphics.CGImageRef
+import platform.CoreGraphics.CGImageRelease
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
 import platform.Foundation.NSURL
+import platform.Foundation.dataWithContentsOfURL
 import platform.ImageIO.CGImageSourceCreateThumbnailAtIndex
 import platform.ImageIO.CGImageSourceCreateWithURL
 import platform.ImageIO.CGImageSourceRef
 import platform.ImageIO.kCGImageSourceCreateThumbnailFromImageAlways
 import platform.ImageIO.kCGImageSourceCreateThumbnailWithTransform
 import platform.ImageIO.kCGImageSourceThumbnailMaxPixelSize
-import platform.CoreGraphics.CGImageRelease
-import platform.CoreFoundation.CFRelease
-import platform.Foundation.dataWithContentsOfURL
 import platform.UIKit.UIGraphicsBeginImageContextWithOptions
 import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
+import platform.UIKit.UIImagePNGRepresentation
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 internal object ImageOptimizer {
@@ -53,12 +51,8 @@ internal object ImageOptimizer {
   
     private const val MAX_DIMENSION = 1280.0
 
-    /**
-     * Returns the max dimension used for resizing based on [compressionLevel].
-     * When null, defaults to [MAX_DIMENSION].
-     */
-    fun getMaxDimension(compressionLevel: CompressionLevel?): Double {
-        return compressionLevel?.toMaxDimension()?.toDouble() ?: MAX_DIMENSION
+    fun getMaxDimension(compressionLevel: CompressionLevel?): Double? {
+        return compressionLevel?.toMaxDimension()?.toDouble()
     }
     
    
@@ -112,29 +106,57 @@ internal object ImageOptimizer {
     fun compressImage(image: UIImage, quality: Double): NSData? {
         return UIImageJPEGRepresentation(image, quality)
     }
-    
- 
+
     fun processImage(image: UIImage, compressionLevel: CompressionLevel?): NSData? {
-        val resizedImage = resizeImageIfNeeded(image)
+        if (compressionLevel == null) {
+            return UIImagePNGRepresentation(image)
+        }
+        val maxDim = compressionLevel.toMaxDimension().toDouble()
+        val resizedImage = resizeImageToMaxDimension(image, maxDim)
         val width = resizedImage.size.useContents { width.toInt() }
         val height = resizedImage.size.useContents { height.toInt() }
-        val quality = calculateCompressionQuality(width, height, compressionLevel)
-        
-        return compressImage(resizedImage, quality)
+        val quality = compressionLevel.toQualityValue()
+        return UIImageJPEGRepresentation(resizedImage, quality)
     }
 
-    /**
-     * Processes an image directly from a file [url] using **ImageIO hardware-accelerated
-     * downsampling**, reading only the bytes needed for the target size. This avoids loading
-     * the full original file into memory and never allocates a full-resolution bitmap, making
-     * it the fastest and most memory-efficient path.
-     *
-     * @param url File URL to the source image (e.g. the temp file from PHPicker).
-     * @param compressionLevel Optional compression level. When null, adaptive quality is used.
-     * @return A [ProcessedImageResult], or null if processing fails (caller should fall back).
-     */
+    private fun resizeImageToMaxDimension(image: UIImage, maxDim: Double): UIImage {
+        val originalWidth = image.size.useContents { width }
+        val originalHeight = image.size.useContents { height }
+
+        if (originalWidth <= maxDim && originalHeight <= maxDim) return image
+
+        return image.size.useContents {
+            val aspectRatio = width / height
+            val newSize = if (width > height) {
+                CGSizeMake(maxDim, maxDim / aspectRatio)
+            } else {
+                CGSizeMake(maxDim * aspectRatio, maxDim)
+            }
+            UIGraphicsBeginImageContextWithOptions(newSize, true, 1.0)
+            val rect = newSize.useContents { CGRectMake(0.0, 0.0, this.width, this.height) }
+            image.drawInRect(rect)
+            val resized = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            resized ?: image
+        }
+    }
     fun processImageFromURL(url: NSURL, compressionLevel: CompressionLevel?): ProcessedImageResult? {
-        val maxDim = getMaxDimension(compressionLevel).toInt()
+        if (compressionLevel == null) {
+            var result: ProcessedImageResult? = null
+            autoreleasepool {
+                val data = NSData.dataWithContentsOfURL(url) ?: return@autoreleasepool
+                var image: UIImage? = null
+                autoreleasepool {
+                    image = UIImage.imageWithData(data)
+                }
+                val width = image?.size?.useContents { width.toInt() } ?: 0
+                val height = image?.size?.useContents { height.toInt() } ?: 0
+                result = ProcessedImageResult(data = data, width = width, height = height)
+            }
+            return result
+        }
+
+        val maxDim = getMaxDimension(compressionLevel)!!.toInt()
         var result: ProcessedImageResult? = null
 
         autoreleasepool {
@@ -220,9 +242,9 @@ internal object ImageOptimizer {
                 
                 resultImage = UIImage.imageWithCGImage(thumbnail)
             } finally {
-                if (cfPath != null) platform.CoreFoundation.CFRelease(cfPath)
-                if (cfUrl != null) platform.CoreFoundation.CFRelease(cfUrl)
-                if (source != null) platform.CoreFoundation.CFRelease(source)
+                if (cfPath != null) CFRelease(cfPath)
+                if (cfUrl != null) CFRelease(cfUrl)
+                if (source != null) CFRelease(source)
                 if (thumbnail != null) CGImageRelease(thumbnail)
             }
         }
@@ -230,9 +252,6 @@ internal object ImageOptimizer {
         return resultImage
     }
 
-    /**
-     * Builds the ImageIO thumbnail options dictionary and generates a downsampled [CGImageRef].
-     */
     private fun createThumbnail(source: CGImageSourceRef, maxPixelSize: Int): CGImageRef? {
         return memScoped {
             val intVar = alloc<IntVar>()

@@ -45,6 +45,19 @@ internal class ImageProcessor(
                 }
             } else null
 
+            if (compressionLevel == null) {
+                val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                BitmapFactory.decodeFile(imageFile.absolutePath, options)
+                return@withContext PhotoResult(
+                    uri = fileManager.fileToUriString(imageFile),
+                    width = options.outWidth,
+                    height = options.outHeight,
+                    fileName = imageFile.name,
+                    fileSize = imageFile.length(),
+                    exif = exifData
+                )
+            }
+
             val isHighEnd = HighPerformanceConfig.isHighEndDevice(context)
             val options = BitmapFactory.Options().apply {
                 inPreferredConfig = if (isHighEnd) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
@@ -66,15 +79,11 @@ internal class ImageProcessor(
 
             var outputBitmap: Bitmap? = null
             try {
-                val resizedBitmap = if (compressionLevel != null) {
-                    resizeForCompression(orientedBitmap, compressionLevel)
-                } else {
-                    orientedBitmap
-                }
+                val resizedBitmap = resizeForCompression(orientedBitmap, compressionLevel)
                 if (resizedBitmap !== orientedBitmap) orientedBitmap.recycle()
 
                 outputBitmap = resizedBitmap
-                val quality = compressionLevel?.toJpegQuality() ?: 100
+                val quality = compressionLevel.toJpegQuality()
 
                 val outputFile = fileManager.createImageFile()
                 FileOutputStream(outputFile).use { out ->

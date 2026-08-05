@@ -28,11 +28,12 @@ fun rememberImagePickerKMP(
     val notifyCropPendingFn: () -> Unit = remember(state) {
         { currentState.value.notifyCropPending() }
     }
-    val onDismissDefault: () -> Unit = remember(state) {
-        { currentState.value.notifyDismiss() }
+
+    val handleDismiss: () -> Unit = remember(state) {
+        { currentState.value.dispatchDismiss() }
     }
-    val onErrorDefault: (Exception) -> Unit = remember(state) {
-        { e -> currentState.value.onError(e) }
+    val handleError: (Exception) -> Unit = remember(state) {
+        { e -> currentState.value.dispatchError(e) }
     }
 
     when (val mode = state.activeMode) {
@@ -46,8 +47,8 @@ fun rememberImagePickerKMP(
                     enableCrop = mode.enableCrop,
                     onPhotoCaptured = { photo -> notifySuccessFn(listOf(photo)) },
                     onCropPending = notifyCropPendingFn,
-                    onDismiss = mode.onDismiss ?: onDismissDefault,
-                    onError = mode.onError ?: onErrorDefault
+                    onDismiss = handleDismiss,
+                    onError = handleError
                 )
             )
         }
@@ -69,11 +70,12 @@ fun rememberImagePickerKMP(
                 enableCrop = mode.enableCrop,
                 includeExif = mode.includeExif,
                 mimeTypeMismatchMessage = mode.mimeTypeMismatchMessage,
+                compressionLevel = mode.compressionLevel,
                 cameraCaptureConfig = galleryCamConfig,
                 onPhotosSelected = notifySuccessFn,
                 onCropPending = notifyCropPendingFn,
-                onDismiss = mode.onDismiss ?: onDismissDefault,
-                onError = mode.onError ?: onErrorDefault
+                onDismiss = handleDismiss,
+                onError = handleError
             )
         }
         is PickerMode.None -> Unit

@@ -1,29 +1,27 @@
 package io.github.ismoy.imagepickerkmp.camera
 
-import io.github.ismoy.imagepickerkmp.camera.ImageProcessor
-import io.github.ismoy.imagepickerkmp.picker.PhotoCaptureException
-import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
-import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 import io.github.ismoy.imagepickerkmp.logger.PhotoLogger
-import io.github.ismoy.imagepickerkmp.camera.ExifDataExtractor
+import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
+import io.github.ismoy.imagepickerkmp.picker.PhotoCaptureException
+import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.autoreleasepool
 import kotlinx.cinterop.useContents
-import kotlin.native.runtime.GC
-import kotlin.native.runtime.NativeRuntimeApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import platform.darwin.dispatch_async
-import platform.darwin.dispatch_get_main_queue
 import platform.UIKit.UIImage
+import platform.UIKit.UIImagePNGRepresentation
 import platform.UIKit.UIImagePickerController
 import platform.UIKit.UIImagePickerControllerDelegateProtocol
 import platform.UIKit.UIImagePickerControllerOriginalImage
-import platform.UIKit.UIImageJPEGRepresentation
 import platform.UIKit.UINavigationControllerDelegateProtocol
 import platform.darwin.NSObject
+import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
+import kotlin.native.runtime.GC
+import kotlin.native.runtime.NativeRuntimeApi
 
 @OptIn(ExperimentalForeignApi::class)
 internal class CameraDelegate(
@@ -64,7 +62,7 @@ internal class CameraDelegate(
                 val processedData = if (compressionLevel != null) {
                     ImageProcessor.processImage(image, compressionLevel)
                 } else {
-                    ImageProcessor.processImage(image, CompressionLevel.HIGH)
+                    UIImagePNGRepresentation(image)
                 }
             
             if (processedData != null) {

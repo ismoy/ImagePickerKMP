@@ -5,8 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
-import io.github.ismoy.imagepickerkmp.picker.MimeType
-import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 
 @Stable
 class ImagePickerKMPState internal constructor(
@@ -19,10 +17,15 @@ class ImagePickerKMPState internal constructor(
 
     internal var activeMode by mutableStateOf<PickerMode>(PickerMode.None)
 
+    private var consumerOnDismiss: (() -> Unit)? = null
+    private var consumerOnError: ((Exception) -> Unit)? = null
+
     fun reset() {
         result = ImagePickerResult.Idle
         isCropActive = false
         activeMode = PickerMode.None
+        consumerOnDismiss = null
+        consumerOnError = null
     }
 
     fun launchCamera(
@@ -40,11 +43,11 @@ class ImagePickerKMPState internal constructor(
             }
         }
         result = ImagePickerResult.Loading
+        consumerOnDismiss = onDismiss
+        consumerOnError = onError
         activeMode = PickerMode.Camera(
             cameraCaptureConfig = cameraCaptureConfig ?: config.cameraCaptureConfig,
-            enableCrop = config.cropConfig.enabled,
-            onDismiss = onDismiss,
-            onError = onError
+            enableCrop = config.cropConfig.enabled
         )
     }
 
@@ -56,6 +59,7 @@ class ImagePickerKMPState internal constructor(
         includeExif: Boolean? = null,
         redactGpsData: Boolean? = null,
         mimeTypeMismatchMessage: String? = null,
+        compressionLevel: CompressionLevel? = null,
         cameraCaptureConfig: CameraCaptureConfig? = null,
         onDismiss: (() -> Unit)? = null,
         onError: ((Exception) -> Unit)? = null
@@ -70,6 +74,8 @@ class ImagePickerKMPState internal constructor(
             }
         }
         result = ImagePickerResult.Loading
+        consumerOnDismiss = onDismiss
+        consumerOnError = onError
         activeMode = PickerMode.Gallery(
             allowMultiple = allowMultiple ?: config.galleryConfig.allowMultiple,
             mimeTypes = mimeTypes ?: config.galleryConfig.mimeTypes,
@@ -78,9 +84,8 @@ class ImagePickerKMPState internal constructor(
             includeExif = includeExif ?: config.galleryConfig.includeExif,
             redactGpsData = redactGpsData ?: config.galleryConfig.redactGpsData,
             mimeTypeMismatchMessage = mimeTypeMismatchMessage ?: config.galleryConfig.mimeTypeMismatchMessage,
-            cameraCaptureConfig = cameraCaptureConfig,
-            onDismiss = onDismiss,
-            onError = onError
+            compressionLevel = compressionLevel ?: config.galleryConfig.compressionLevel,
+            cameraCaptureConfig = cameraCaptureConfig
         )
     }
 
@@ -92,7 +97,10 @@ class ImagePickerKMPState internal constructor(
 
     internal fun notifyDismiss() {
         isCropActive = false
-        result = ImagePickerResult.Dismissed
+        // A dismiss that follows an error is just teardown; keep the reason visible.
+        if (result !is ImagePickerResult.Error) {
+            result = ImagePickerResult.Dismissed
+        }
         activeMode = PickerMode.None
     }
 
@@ -105,5 +113,15 @@ class ImagePickerKMPState internal constructor(
     internal fun notifyCropPending() {
         isCropActive = true
         result = ImagePickerResult.Idle
+    }
+
+    internal fun dispatchDismiss() {
+        notifyDismiss()
+        consumerOnDismiss?.invoke()
+    }
+
+    internal fun dispatchError(exception: Exception) {
+        onError(exception)
+        consumerOnError?.invoke(exception)
     }
 }

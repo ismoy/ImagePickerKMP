@@ -10,6 +10,8 @@ import kotlin.test.assertNull
 
 class CropUtilsTest {
 
+    // handleSize in CropUtils.detectHandle is 120f
+
     @Test
     fun testDetectHandle_topLeftCorner() {
         val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
@@ -21,8 +23,10 @@ class CropUtilsTest {
 
     @Test
     fun testDetectHandle_topRightCorner() {
-        val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        val offset = Offset(200f, 100f)
+        // Rect must be wide enough so right is >240f from left (2×handleSize)
+        // to avoid TOP_LEFT overlapping TOP_RIGHT.
+        val cropRect = Rect(left = 0f, top = 100f, right = 500f, bottom = 400f)
+        val offset = Offset(500f, 100f)
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertEquals(CropHandle.TOP_RIGHT, result)
@@ -30,8 +34,9 @@ class CropUtilsTest {
 
     @Test
     fun testDetectHandle_bottomLeftCorner() {
-        val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        val offset = Offset(100f, 200f)
+        // Rect must be tall enough so bottom is >240f from top (2×handleSize)
+        val cropRect = Rect(left = 100f, top = 0f, right = 400f, bottom = 500f)
+        val offset = Offset(100f, 500f)
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertEquals(CropHandle.BOTTOM_LEFT, result)
@@ -39,8 +44,9 @@ class CropUtilsTest {
 
     @Test
     fun testDetectHandle_bottomRightCorner() {
-        val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        val offset = Offset(200f, 200f)
+        // Rect must be large enough so no corner overlaps
+        val cropRect = Rect(left = 0f, top = 0f, right = 500f, bottom = 500f)
+        val offset = Offset(500f, 500f)
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertEquals(CropHandle.BOTTOM_RIGHT, result)
@@ -48,8 +54,9 @@ class CropUtilsTest {
 
     @Test
     fun testDetectHandle_topCenter() {
-        val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        val offset = Offset(150f, 100f) // Center X, top Y
+        // Use a large rect so center X is far enough from corners to not overlap
+        val cropRect = Rect(left = 0f, top = 100f, right = 1000f, bottom = 500f)
+        val offset = Offset(500f, 100f) // Center X, top Y
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertEquals(CropHandle.TOP_CENTER, result)
@@ -57,8 +64,9 @@ class CropUtilsTest {
 
     @Test
     fun testDetectHandle_bottomCenter() {
-        val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        val offset = Offset(150f, 200f) // Center X, bottom Y
+        // Use a large rect so center X is far enough from corners to not overlap
+        val cropRect = Rect(left = 0f, top = 100f, right = 1000f, bottom = 500f)
+        val offset = Offset(500f, 500f) // Center X, bottom Y
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertEquals(CropHandle.BOTTOM_CENTER, result)
@@ -66,8 +74,9 @@ class CropUtilsTest {
 
     @Test
     fun testDetectHandle_leftCenter() {
-        val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        val offset = Offset(100f, 150f) // Left X, center Y
+        // Use a large rect so center Y is far enough from corners to not overlap
+        val cropRect = Rect(left = 100f, top = 0f, right = 500f, bottom = 1000f)
+        val offset = Offset(100f, 500f) // Left X, center Y
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertEquals(CropHandle.LEFT_CENTER, result)
@@ -75,8 +84,9 @@ class CropUtilsTest {
 
     @Test
     fun testDetectHandle_rightCenter() {
-        val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        val offset = Offset(200f, 150f) // Right X, center Y
+        // Use a large rect so center Y is far enough from corners to not overlap
+        val cropRect = Rect(left = 100f, top = 0f, right = 500f, bottom = 1000f)
+        val offset = Offset(500f, 500f) // Right X, center Y
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertEquals(CropHandle.RIGHT_CENTER, result)
@@ -84,8 +94,10 @@ class CropUtilsTest {
 
     @Test
     fun testDetectHandle_outsideHandleArea() {
-        val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        val offset = Offset(150f, 150f) // Center of crop area, not on handle
+        // With handleSize=120f, must be far enough from ALL handles
+        // Use a large rect and pick a point that's >120f away from any edge/corner
+        val cropRect = Rect(left = 0f, top = 0f, right = 1000f, bottom = 1000f)
+        val offset = Offset(500f, 500f) // Dead center, >120f from every edge
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertNull(result)
@@ -94,7 +106,7 @@ class CropUtilsTest {
     @Test
     fun testDetectHandle_farFromCropRect() {
         val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        val offset = Offset(300f, 300f) // Far outside
+        val offset = Offset(600f, 600f) // >120f from any handle
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertNull(result)
@@ -103,8 +115,8 @@ class CropUtilsTest {
     @Test
     fun testDetectHandle_nearButOutsideHandleSize() {
         val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        // Just outside the 40f handle area for TOP_LEFT
-        val offset = Offset(100f - 41f, 100f - 41f)
+        // Just outside the 120f handle area for TOP_LEFT
+        val offset = Offset(100f - 121f, 100f - 121f)
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertNull(result)
@@ -113,7 +125,7 @@ class CropUtilsTest {
     @Test
     fun testDetectHandle_withinHandleSize() {
         val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        // Within 40f handle area for TOP_LEFT
+        // Within 120f handle area for TOP_LEFT
         val offset = Offset(100f + 30f, 100f + 30f)
         
         val result = CropUtils.detectHandle(offset, cropRect)
@@ -123,8 +135,8 @@ class CropUtilsTest {
     @Test
     fun testDetectHandle_exactHandleBoundary() {
         val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        // Exactly at 40f distance from TOP_LEFT
-        val offset = Offset(100f + 40f, 100f + 40f)
+        // Exactly at 120f distance from TOP_LEFT
+        val offset = Offset(100f + 120f, 100f + 120f)
         
         val result = CropUtils.detectHandle(offset, cropRect)
         assertEquals(CropHandle.TOP_LEFT, result)
@@ -132,10 +144,8 @@ class CropUtilsTest {
 
     @Test
     fun testDetectHandle_priorityOrder() {
-        // Test that corner handles have priority over center handles
+        // Corner handles have priority over center handles
         val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
-        // This position could potentially match both TOP_LEFT and TOP_CENTER
-        // but TOP_LEFT appears first in the when statement
         val offset = Offset(100f, 100f)
         
         val result = CropUtils.detectHandle(offset, cropRect)
@@ -174,26 +184,27 @@ class CropUtilsTest {
         val cropRect = Rect(left = 100f, top = 100f, right = 100f, bottom = 100f)
         val offset = Offset(100f, 100f)
         
-        val result = CropUtils.detectHandle(offset, cropRect)
         // All handles would be at the same point, TOP_LEFT has priority
+        val result = CropUtils.detectHandle(offset, cropRect)
         assertEquals(CropHandle.TOP_LEFT, result)
     }
 
     @Test
     fun testDetectHandle_edgeCaseBoundaries() {
-        val cropRect = Rect(left = 100f, top = 100f, right = 200f, bottom = 200f)
+        // Use a large rect (>240f in both dimensions) to avoid corner overlap with handleSize=120f
+        val cropRect = Rect(left = 200f, top = 200f, right = 600f, bottom = 600f)
         
-        // Test exact boundary conditions for each handle
+        // Test exact boundary conditions for each handle (inclusive at ±120f)
         val testCases = listOf(
-            Offset(100f - 40f, 100f - 40f) to CropHandle.TOP_LEFT,
-            Offset(100f + 40f, 100f + 40f) to CropHandle.TOP_LEFT,
-            Offset(200f - 40f, 100f - 40f) to CropHandle.TOP_RIGHT,
-            Offset(200f + 40f, 100f + 40f) to CropHandle.TOP_RIGHT
+            Offset(200f - 120f, 200f - 120f) to CropHandle.TOP_LEFT,   // exact outer boundary
+            Offset(200f + 120f, 200f + 120f) to CropHandle.TOP_LEFT,   // exact inner boundary
+            Offset(600f - 120f, 200f - 120f) to CropHandle.TOP_RIGHT,  // inner boundary for TOP_RIGHT
+            Offset(600f + 120f, 200f + 120f) to CropHandle.TOP_RIGHT   // outer boundary for TOP_RIGHT
         )
         
         testCases.forEach { (offset, expectedHandle) ->
             val result = CropUtils.detectHandle(offset, cropRect)
-            assertEquals(expectedHandle, result)
+            assertEquals(expectedHandle, result, "Expected $expectedHandle for offset $offset")
         }
     }
 }

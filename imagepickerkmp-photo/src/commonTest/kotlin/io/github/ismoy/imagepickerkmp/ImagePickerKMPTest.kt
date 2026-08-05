@@ -337,44 +337,6 @@ class ImagePickerKMPStateLaunchCameraTest {
     }
 
     @Test
-    fun launchCamera_customOnDismiss_storedInMode() {
-        var called = false
-        val state = makeState()
-        state.launchCamera(onDismiss = { called = true })
-        val mode = state.activeMode as PickerMode.Camera
-        assertNotNull(mode.onDismiss)
-        mode.onDismiss.invoke()
-        assertTrue(called)
-    }
-
-    @Test
-    fun launchCamera_nullOnDismiss_modeHasNullDismiss() {
-        val state = makeState()
-        state.launchCamera(onDismiss = null)
-        val mode = state.activeMode as PickerMode.Camera
-        assertNull(mode.onDismiss)
-    }
-
-    @Test
-    fun launchCamera_customOnError_storedInMode() {
-        var caught: Exception? = null
-        val state = makeState()
-        state.launchCamera(onError = { caught = it })
-        val mode = state.activeMode as PickerMode.Camera
-        assertNotNull(mode.onError)
-        mode.onError.invoke(RuntimeException("cam-err"))
-        assertEquals("cam-err", caught?.message)
-    }
-
-    @Test
-    fun launchCamera_nullOnError_modeHasNullError() {
-        val state = makeState()
-        state.launchCamera(onError = null)
-        val mode = state.activeMode as PickerMode.Camera
-        assertNull(mode.onError)
-    }
-
-    @Test
     fun launchCamera_whileAlreadyActive_isIgnored() {
         val state = makeState()
         state.launchCamera()
@@ -544,44 +506,6 @@ class ImagePickerKMPStateLaunchGalleryTest {
         state.launchGallery()
         val mode = state.activeMode as PickerMode.Gallery
         assertNull(mode.cameraCaptureConfig)
-    }
-
-    @Test
-    fun launchGallery_customOnDismiss_storedInMode() {
-        var called = false
-        val state = makeState()
-        state.launchGallery(onDismiss = { called = true })
-        val mode = state.activeMode as PickerMode.Gallery
-        assertNotNull(mode.onDismiss)
-        mode.onDismiss.invoke()
-        assertTrue(called)
-    }
-
-    @Test
-    fun launchGallery_nullOnDismiss_modeHasNullDismiss() {
-        val state = makeState()
-        state.launchGallery(onDismiss = null)
-        val mode = state.activeMode as PickerMode.Gallery
-        assertNull(mode.onDismiss)
-    }
-
-    @Test
-    fun launchGallery_customOnError_storedInMode() {
-        var caught: Exception? = null
-        val state = makeState()
-        state.launchGallery(onError = { caught = it })
-        val mode = state.activeMode as PickerMode.Gallery
-        assertNotNull(mode.onError)
-        mode.onError.invoke(RuntimeException("gallery-err"))
-        assertEquals("gallery-err", caught?.message)
-    }
-
-    @Test
-    fun launchGallery_nullOnError_modeHasNullError() {
-        val state = makeState()
-        state.launchGallery(onError = null)
-        val mode = state.activeMode as PickerMode.Gallery
-        assertNull(mode.onError)
     }
 
     @Test

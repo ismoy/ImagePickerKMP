@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.core.I18nKonfig.Errors.invalid_context_error
+import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
 import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.picker.MimeType
 
@@ -22,6 +23,7 @@ internal actual fun PlatformGalleryRenderer(
     fileFilterDescription: String,
     includeExif: Boolean,
     mimeTypeMismatchMessage: String?,
+    compressionLevel: CompressionLevel?,
     onCropPending: () -> Unit
 ) {
     val context = LocalContext.current
@@ -43,6 +45,7 @@ internal actual fun PlatformGalleryRenderer(
         enableCrop = enableCrop,
         includeExif = includeExif,
         selectionLimit = selectionLimit.toInt(),
+        compressionLevel = compressionLevel,
         mimeTypeMismatchMessage = mimeTypeMismatchMessage
     )
     GalleryPickerLauncherContent(config)

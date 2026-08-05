@@ -1,7 +1,9 @@
 package io.github.ismoy.imagepickerkmp.camera
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
@@ -25,6 +27,10 @@ internal class AndroidPhotoCaptureManager(
     private var pendingRedactGps: Boolean = true
 
     fun buildCaptureIntent(): Pair<Intent, android.net.Uri> {
+        val checkNoAppIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        context.packageManager.resolveActivity(checkNoAppIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            ?: throw ActivityNotFoundException("No app available to handle ${MediaStore.ACTION_IMAGE_CAPTURE}")
+
         val file = fileManager.createImageFile()
         captureFile = file
         val uri = FileProvider.getUriForFile(

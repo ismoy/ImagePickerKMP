@@ -423,6 +423,29 @@ fun IOSImagePicker() {
 2. **Permissions**: Camera permission may be denied
 3. **Camera in use**: Another app may be using camera
 4. **Simulator**: Camera not available in simulator (use device)
+5. **No camera app**: On Android the capture goes through the system camera app, which can be
+   absent or disabled (enterprise/kiosk devices, or a user disabling the stock camera)
+
+### The error stays on screen after the picker closes. How do I clear it?
+
+`result` is sticky: `ImagePickerResult.Error` persists until you either start another launch
+(which sets `Loading`) or clear it explicitly. Call `reset()` once you've shown the error:
+
+```kotlin
+is ImagePickerResult.Error -> {
+    ErrorBanner(
+        message = result.exception.message,
+        onDismiss = { picker.reset() }   // back to Idle
+    )
+}
+```
+
+Call `reset()` from an event handler as above, not directly inside the `when` block — writing
+state during composition is what you want to avoid.
+
+This applies to every error, not just an unavailable camera — a MIME-type mismatch or a failed
+gallery read behaves the same way. A dismissal that follows an error does *not* clear it, so
+"no camera app" stays distinguishable from "user cancelled".
 
 ### The app crashes when taking photos. How do I fix it?
 
@@ -555,14 +578,17 @@ fun CompressedImagePicker() {
     val picker = rememberImagePickerKMP(
         config = ImagePickerKMPConfig(
             cameraCaptureConfig = CameraCaptureConfig(
-                compressionLevel = 80
+                compressionLevel = CompressionLevel.MEDIUM  // LOW | MEDIUM | HIGH
+            ),
+            galleryConfig = GalleryConfig(
+                compressionLevel = CompressionLevel.MEDIUM  // set separately for gallery
             )
         )
     )
 
     when (val result = picker.result) {
         is ImagePickerResult.Success -> {
-            // Image is already compressed
+            // Image is compressed
             val photo = result.photos.first()
         }
         is ImagePickerResult.Error -> { /* handle error */ }

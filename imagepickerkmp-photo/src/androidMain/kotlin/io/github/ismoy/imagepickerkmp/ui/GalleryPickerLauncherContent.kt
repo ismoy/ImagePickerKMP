@@ -6,13 +6,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import io.github.ismoy.imagepickerkmp.gallery.AndroidGalleryConfig
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.config.CropConfig
 import io.github.ismoy.imagepickerkmp.config.ImagePickerUiConstants.NUMBER_TEN
+import io.github.ismoy.imagepickerkmp.gallery.AndroidGalleryConfig
+import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
 import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.picker.PhotoResult
-import io.github.ismoy.imagepickerkmp.ui.ImageCropView
 
 internal data class GalleryPickerConfig(
     val context: Context,
@@ -25,6 +25,7 @@ internal data class GalleryPickerConfig(
     val enableCrop: Boolean = false,
     val includeExif: Boolean = false,
     val selectionLimit: Int = NUMBER_TEN,
+    val compressionLevel: CompressionLevel? = null,
     val androidGalleryConfig: AndroidGalleryConfig? = null,
     val mimeTypeMismatchMessage: String? = null
 ) {
@@ -48,13 +49,13 @@ internal fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
     val singlePickerLauncher = if (effectiveGalleryConfig.forceGalleryOnly) {
         rememberGalleryOnlyPickerLauncher(
             config.context, { state.onPhotoSelected(it) }, config.onError, config.onDismiss,
-            config.cameraCaptureConfig?.compressionLevel, config.includeExif,
+            config.compressionLevel, config.includeExif,
             mimeTypesArray, config.mimeTypeMismatchMessage
         )
     } else {
         rememberSinglePickerLauncher(
             config.context, { state.onPhotoSelected(it) }, config.onError, config.onDismiss,
-            config.cameraCaptureConfig?.compressionLevel, config.includeExif,
+            config.compressionLevel, config.includeExif,
             mimeTypesArray, config.mimeTypeMismatchMessage
         )
     }
@@ -62,13 +63,13 @@ internal fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
     val multiplePickerLauncher = if (effectiveGalleryConfig.forceGalleryOnly) {
         rememberGalleryOnlyMultiplePickerLauncher(
             config.context, config.onPhotosSelected, config.onError, config.onDismiss,
-            config.cameraCaptureConfig?.compressionLevel, config.includeExif,
+            config.compressionLevel, config.includeExif,
             config.selectionLimit, mimeTypesArray, config.mimeTypeMismatchMessage
         )
     } else {
         rememberMultiplePickerLauncher(
             config.context, config.onPhotosSelected, config.onError, config.onDismiss,
-            config.cameraCaptureConfig?.compressionLevel, config.includeExif,
+            config.compressionLevel, config.includeExif,
             config.selectionLimit, mimeTypesArray, config.mimeTypeMismatchMessage
         )
     }

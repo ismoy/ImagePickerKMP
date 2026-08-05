@@ -7,13 +7,8 @@ import android.graphics.Matrix
 import android.net.Uri
 import androidx.core.graphics.scale
 import androidx.exifinterface.media.ExifInterface
-import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
-import io.github.ismoy.imagepickerkmp.picker.ExifData
-import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
-import io.github.ismoy.imagepickerkmp.logger.PhotoLogger
 import io.github.ismoy.imagepickerkmp.camera.ExifDataExtractor
 import io.github.ismoy.imagepickerkmp.config.ImagePickerUiConstants.IMAGEPROCESSOR_TAG
-import io.github.ismoy.imagepickerkmp.config.ImagePickerUiConstants.IMAGE_PREFIX_TEXT
 import io.github.ismoy.imagepickerkmp.config.ImagePickerUiConstants.NUMBER_ZERO
 import io.github.ismoy.imagepickerkmp.config.ImagePickerUiConstants.ORIENTATION_FLIP_HORIZONTAL_X
 import io.github.ismoy.imagepickerkmp.config.ImagePickerUiConstants.ORIENTATION_FLIP_HORIZONTAL_Y
@@ -23,6 +18,10 @@ import io.github.ismoy.imagepickerkmp.config.ImagePickerUiConstants.ORIENTATION_
 import io.github.ismoy.imagepickerkmp.config.ImagePickerUiConstants.ORIENTATION_ROTATE_270
 import io.github.ismoy.imagepickerkmp.config.ImagePickerUiConstants.ORIENTATION_ROTATE_90
 import io.github.ismoy.imagepickerkmp.config.ImagePickerUiConstants.PREFIX_COMPRESSED
+import io.github.ismoy.imagepickerkmp.logger.PhotoLogger
+import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
+import io.github.ismoy.imagepickerkmp.picker.ExifData
+import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -54,8 +53,7 @@ internal object GalleryImageProcessor {
                 }
             } else {
                 createFallbackResult(context, uri, fileSize, fileName, mimeType, exifData)
-            }
-        } catch (e: Exception) {
+            }        } catch (e: Exception) {
             PhotoLogger.debug("$IMAGEPROCESSOR_TAG: ${e.message}")
             null
         }
@@ -68,7 +66,6 @@ internal object GalleryImageProcessor {
                 return cursor.getLong(sizeIndex)
             }
         }
-        // Fallback to ParcelFileDescriptor statSize if query fails
         runCatching {
             context.contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
                 return pfd.statSize
@@ -157,10 +154,9 @@ internal object GalleryImageProcessor {
         fileName: String?,
         mimeType: String?,
         exifData: ExifData?,
-        compressionLevel: CompressionLevel?
+        compressionLevel: CompressionLevel
     ): GalleryPhotoResult? {
-        val level = compressionLevel ?: CompressionLevel.LOW
-        val bytes = GalleryImageCompressor.compressBitmapToByteArray(bitmap, level)
+        val bytes = GalleryImageCompressor.compressBitmapToByteArray(bitmap, compressionLevel)
         val tempFile = GalleryImageCompressor.createTempImageFile(context, bytes) ?: return null
         return GalleryPhotoResult(
             uri = Uri.fromFile(tempFile).toString(),
@@ -185,9 +181,6 @@ internal object GalleryImageProcessor {
         context.contentResolver.openInputStream(uri)?.use { stream ->
             BitmapFactory.decodeStream(stream, null, options)
         }
-
-        // Si no hay compresión, usar el URI original en lugar de copiar a archivo temporal
-        // a menos que sea necesario para la API. Asumimos que podemos devolver content:// uri.
         return GalleryPhotoResult(
             uri = uri.toString(),
             width = options.outWidth,

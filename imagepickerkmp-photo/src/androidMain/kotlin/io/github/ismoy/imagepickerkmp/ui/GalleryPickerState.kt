@@ -1,12 +1,15 @@
 package io.github.ismoy.imagepickerkmp.ui
 
+import android.content.ActivityNotFoundException
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import io.github.ismoy.imagepickerkmp.core.I18nKonfig.Errors.gallery_unavailable_error
 import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
+import io.github.ismoy.imagepickerkmp.picker.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 
 @Composable
@@ -38,15 +41,17 @@ internal class GalleryPickerState(
 
     fun onLaunchEffectHandled(multiplePickerLauncher: androidx.activity.compose.ManagedActivityResultLauncher<Array<String>, List<android.net.Uri>>, singlePickerLauncher: androidx.activity.compose.ManagedActivityResultLauncher<Array<String>, android.net.Uri?>, mimeTypesArray: Array<String>) {
         if (shouldLaunch) {
+            shouldLaunch = false
             try {
                 if (config.allowMultiple) {
                     multiplePickerLauncher.launch(mimeTypesArray)
                 } else {
                     singlePickerLauncher.launch(mimeTypesArray)
                 }
-                shouldLaunch = false
+            } catch (e: ActivityNotFoundException) {
+                reportLaunchFailure(PhotoCaptureException(gallery_unavailable_error, e), config.onError, config.onDismiss)
             } catch (e: Exception) {
-                config.onError(e)
+                reportLaunchFailure(e, config.onError, config.onDismiss)
             }
         }
     }
