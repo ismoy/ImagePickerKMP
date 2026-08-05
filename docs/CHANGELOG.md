@@ -6,6 +6,19 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) · Versioning: 
 
 ---
 
+## [Unreleased]
+
+### Fixed
+- **Android: crash when no camera app is present** — `launchCamera()` launched `MediaStore.ACTION_IMAGE_CAPTURE` unguarded, so an unresolvable intent killed the consuming app with `ActivityNotFoundException`. The throw happened inside the library's own `LaunchedEffect`, so callers could not catch it. It now reports `onError` then `onDismiss` and leaves `result` as `ImagePickerResult.Error`, matching the iOS `CameraPresenter`. Regression introduced in 1.1.0 when the in-app CameraX preview was replaced by the system camera intent
+- **A dismissal following an error no longer overwrites the error** — platforms report an unavailable camera as `onError(...)` then `onDismiss()`, which previously left `result` as `Dismissed`, making "no camera app" indistinguishable from "user cancelled". Affected iOS as well, which now reports `Error` for an unavailable camera instead of `Dismissed`
+- **Terminal outcomes no longer wedge the picker** — supplying a custom `onError`/`onDismiss` to `launchCamera()`/`launchGallery()` left the internal mode active with `result` stuck on `Loading`, so the next launch was silently ignored. Internal state now settles before the caller's callback runs
+- **Android: gallery launch failures are reported with a localized message** rather than the raw `ActivityNotFoundException` text, and follow the same `onError` then `onDismiss` contract as the camera path
+
+### Added
+- `camera_unavailable_error` / `gallery_unavailable_error` translations across all 12 supported languages
+
+---
+
 ## [2.0.1] — 2026-07-28
 
 ### Added

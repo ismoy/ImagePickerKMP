@@ -394,6 +394,34 @@ gallery_selection_error:
   ru: "Ошибка выбора из галереи"
   uk: "Помилка вибору з галереї"
 
+camera_unavailable_error:
+  fr: "Aucune application d'appareil photo n'est disponible sur cet appareil."
+  en: "No camera app is available on this device."
+  es: "No hay ninguna aplicación de cámara disponible en este dispositivo."
+  zh: "此设备上没有可用的相机应用。"
+  ko: "이 기기에서 사용할 수 있는 카메라 앱이 없습니다."
+  ja: "この端末で利用できるカメラアプリがありません。"
+  hi: "इस डिवाइस पर कोई कैमरा ऐप उपलब्ध नहीं है।"
+  th: "ไม่มีแอปกล้องที่ใช้งานได้บนอุปกรณ์นี้"
+  it: "Nessuna app fotocamera disponibile su questo dispositivo."
+  de: "Auf diesem Gerät ist keine Kamera-App verfügbar."
+  ru: "На этом устройстве нет доступного приложения камеры."
+  uk: "На цьому пристрої немає доступного застосунку камери."
+
+gallery_unavailable_error:
+  fr: "Aucune application n'est disponible pour sélectionner des images sur cet appareil."
+  en: "No app is available to select images on this device."
+  es: "No hay ninguna aplicación disponible para seleccionar imágenes en este dispositivo."
+  zh: "此设备上没有可用于选择图片的应用。"
+  ko: "이 기기에서 이미지를 선택할 수 있는 앱이 없습니다."
+  ja: "この端末で画像を選択できるアプリがありません。"
+  hi: "इस डिवाइस पर चित्र चुनने के लिए कोई ऐप उपलब्ध नहीं है।"
+  th: "ไม่มีแอปสำหรับเลือกรูปภาพบนอุปกรณ์นี้"
+  it: "Nessuna app disponibile per selezionare immagini su questo dispositivo."
+  de: "Auf diesem Gerät ist keine App zum Auswählen von Bildern verfügbar."
+  ru: "На этом устройстве нет приложения для выбора изображений."
+  uk: "На цьому пристрої немає застосунку для вибору зображень."
+
 permission_error:
   fr: "Une erreur d'autorisation est survenue"
   en: "Permission error occurred"
