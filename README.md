@@ -1,6 +1,11 @@
 # ImagePickerKMP
 
-**A complete media library for Kotlin Multiplatform — photos, video, audio, scanning, and playback in one ecosystem.**
+**A complete media library for Android Native, Jetpack Compose, Kotlin Multiplatform and iOS. Capture, pick, scan and play media with one modern ecosystem.**
+## Platform Support
+| Android Native | Jetpack Compose | Kotlin Multiplatform | Compose Multiplatform | iOS |
+|:--------------:|:---------------:|:--------------------:|:---------------------:|:---:|
+| Supported | Supported | Supported | Supported | Supported |
+
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=b9cde436-d518-45b7-9a4a-7b4e084aeffa" />
 
 <p align="center">
