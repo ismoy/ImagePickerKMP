@@ -1,6 +1,11 @@
 # ImagePickerKMP
 
-**A complete media library for Kotlin Multiplatform — photos, video, audio, scanning, and playback in one ecosystem.**
+**A complete media library for Android Native, Jetpack Compose, Kotlin Multiplatform and iOS. Capture, pick, scan and play media with one modern ecosystem.**
+## Platform Support
+| Android Native | Jetpack Compose | Kotlin Multiplatform | Compose Multiplatform | iOS |
+|:--------------:|:---------------:|:--------------------:|:---------------------:|:---:|
+| Supported | Supported | Supported | Supported | Supported |
+
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=b9cde436-d518-45b7-9a4a-7b4e084aeffa" />
 
 <p align="center">
@@ -593,12 +598,21 @@ sequenceDiagram
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/Magmi183">
+          <img src="https://avatars.githubusercontent.com/u/5003513?v=4" width="100px;" alt="Magmi183"/><br />
+          <sub><b>Magmi183</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=Magmi183" title="Contributions">💻</a>
+      </td>
+      <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/azevio">
           <img src="https://avatars.githubusercontent.com/u/167407234?v=4" width="100px;" alt="azevio"/><br />
           <sub><b>azevio</b></sub>
         </a><br />
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=azevio" title="Contributions">💻</a>
       </td>
+    </tr>
+    <tr>
       <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/fanqieVip">
           <img src="https://avatars.githubusercontent.com/u/42194904?v=4" width="100px;" alt="fanqieVip"/><br />
