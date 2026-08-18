@@ -1,6 +1,6 @@
 package io.github.ismoy.imagepickerkmp.ui
 
-import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
@@ -27,10 +27,8 @@ internal actual fun PlatformGalleryRenderer(
     onCropPending: () -> Unit
 ) {
     val context = LocalContext.current
-    val activity = context
-    val invalidContextMsg =invalid_context_error
-    if (activity !is ComponentActivity) {
-        onError(Exception(invalidContextMsg))
+    if (LocalActivityResultRegistryOwner.current == null) {
+        onError(Exception(invalid_context_error))
         return
     }
 
