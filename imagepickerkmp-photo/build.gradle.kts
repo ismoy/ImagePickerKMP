@@ -20,7 +20,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.22"
 }
 
-version = "1.1.3"
+version = "1.1.5"
 
 kover {
     reports {
