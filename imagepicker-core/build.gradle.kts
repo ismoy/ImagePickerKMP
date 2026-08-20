@@ -16,7 +16,7 @@ plugins {
     alias(libs.plugins.kover)
 }
 
-version = "0.0.2"
+version = "0.0.3"
 
 kover {
     reports {
