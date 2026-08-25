@@ -13,7 +13,7 @@ import androidx.compose.runtime.setValue
 import io.github.ismoy.imagepickerkmp.camera.AndroidPhotoCaptureManager
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.config.ImagePickerConfig
-import io.github.ismoy.imagepickerkmp.core.I18nKonfig.Errors.camera_unavailable_error
+import io.github.ismoy.imagepickerkmp.I18nKonfig.Errors.camera_unavailable_error
 import io.github.ismoy.imagepickerkmp.core.permissions.PermissionManager
 import io.github.ismoy.imagepickerkmp.core.permissions.PermissionStatus
 import io.github.ismoy.imagepickerkmp.core.permissions.PermissionType

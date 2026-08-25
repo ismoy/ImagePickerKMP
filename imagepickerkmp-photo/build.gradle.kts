@@ -15,12 +15,13 @@ plugins {
     id("com.vanniktech.maven.publish")
     id("maven-publish")
     alias(libs.plugins.kover)
+    alias(libs.plugins.i18nkonfig)
     id("io.gitlab.arturbosch.detekt")
     id("org.jetbrains.dokka") version "2.1.0"
     kotlin("plugin.serialization") version "1.9.22"
 }
 
-version = "1.1.5"
+version = "1.1.6"
 
 kover {
     reports {
@@ -29,6 +30,8 @@ kover {
                 annotatedBy("androidx.compose.runtime.Composable")
                 classes(
                     "io.github.ismoy.imagepickerkmp.generated.*",
+                    "io.github.ismoy.imagepickerkmp.I18nKonfig",
+                    "io.github.ismoy.imagepickerkmp.I18nKonfig$*",
                     "*ActualResourceCollectors*",
                     "*ExpectResourceCollectors*",
                     "*Res*",
@@ -515,3 +518,8 @@ configurations.all {
         }
     }
 }
+
+i18nKonfig {
+    packageName = "io.github.ismoy.imagepickerkmp"
+}
+

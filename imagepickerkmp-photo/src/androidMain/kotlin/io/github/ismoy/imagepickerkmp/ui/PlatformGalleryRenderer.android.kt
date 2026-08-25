@@ -3,8 +3,8 @@ package io.github.ismoy.imagepickerkmp.ui
 import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import io.github.ismoy.imagepickerkmp.I18nKonfig.Errors.invalid_context_error
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
-import io.github.ismoy.imagepickerkmp.core.I18nKonfig.Errors.invalid_context_error
 import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
 import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.picker.MimeType

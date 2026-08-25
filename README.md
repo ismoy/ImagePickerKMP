@@ -133,12 +133,12 @@ Every module that uses the camera or microphone requires a usage description. Ad
 
 ## <img src="https://raw.githubusercontent.com/primer/octicons/main/icons/globe-24.svg" width="24" height="24" align="center" /> Internationalization (i18n)
 
-ImagePickerKMP features out-of-the-box automatic translation (powered by the **i18nKonfig** Gradle plugin created by Ismoy Belizaire). The UI components will automatically detect the user's device language and display localized strings (permissions, camera UI, etc.) without any extra setup.
+ImagePickerKMP features out-of-the-box automatic translation (powered by the **i18nKonfig** Gradle plugin created by Ismoy Belizaire). Each module bundles its own localized strings and automatically detects the user's device language (via `getLanguageDevice()`) to display localized UI strings (permissions, camera UI, error feedback, etc.) without any extra setup.
 
-Currently, we support **12 languages** including English, Spanish, French, Chinese, Japanese, and more. 
+Currently, we support **14 languages**: English (`en`), Spanish (`es`), French (`fr`), Chinese (`zh`), Korean (`ko`), Japanese (`ja`), Hindi (`hi`), Thai (`th`), Italian (`it`), German (`de`), Russian (`ru`), Ukrainian (`uk`), Polish (`pl`), and Dutch (`nl`).
 
 **Want to add your language?** We welcome community contributions! 
-Head over to the [Core Module README](imagepicker-core/README.md) to learn how to fork the repository, add your language to the `translations.yaml` file, and submit a Pull Request.
+Head over to each module's `src/commonMain/resources/translations.yaml` to add your language and submit a Pull Request.
 
 ---
 
@@ -605,14 +605,21 @@ sequenceDiagram
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/x-sheep">
+          <img src="https://avatars.githubusercontent.com/u/7021451?v=4" width="100px;" alt="x-sheep"/><br />
+          <sub><b>x-sheep</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=x-sheep" title="Contributions">💻</a>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/Magmi183">
           <img src="https://avatars.githubusercontent.com/u/5003513?v=4" width="100px;" alt="Magmi183"/><br />
           <sub><b>Magmi183</b></sub>
         </a><br />
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=Magmi183" title="Contributions">💻</a>
       </td>
-    </tr>
-    <tr>
       <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/azevio">
           <img src="https://avatars.githubusercontent.com/u/167407234?v=4" width="100px;" alt="azevio"/><br />

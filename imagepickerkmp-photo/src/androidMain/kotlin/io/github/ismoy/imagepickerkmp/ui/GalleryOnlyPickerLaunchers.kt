@@ -6,10 +6,11 @@ import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import io.github.ismoy.imagepickerkmp.core.I18nKonfig.Errors.gallery_selection_error
-import io.github.ismoy.imagepickerkmp.core.I18nKonfig.Errors.mime_type_mismatch_error
+import io.github.ismoy.imagepickerkmp.I18nKonfig.Errors.gallery_selection_error
+import io.github.ismoy.imagepickerkmp.I18nKonfig.Errors.mime_type_mismatch_error
 import io.github.ismoy.imagepickerkmp.gallery.GalleryFileProcessor
 import io.github.ismoy.imagepickerkmp.picker.CompressionLevel
 import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult

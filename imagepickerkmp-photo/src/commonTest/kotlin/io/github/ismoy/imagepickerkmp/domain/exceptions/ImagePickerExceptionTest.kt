@@ -66,7 +66,7 @@ class ImagePickerExceptionTest {
 
     @Test
     fun permissionDeniedException_cause_isStoredWhenProvided() {
-        val cause = SecurityException("sec")
+        val cause = Exception("sec")
         val ex = io.github.ismoy.imagepickerkmp.picker.PermissionDeniedException("denied", cause)
         assertEquals("sec", ex.cause!!.message)
     }

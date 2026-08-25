@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import io.github.ismoy.imagepickerkmp.core.I18nKonfig.Errors.gallery_unavailable_error
+import io.github.ismoy.imagepickerkmp.I18nKonfig.Errors.gallery_unavailable_error
 import io.github.ismoy.imagepickerkmp.picker.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.picker.PhotoCaptureException
 import io.github.ismoy.imagepickerkmp.picker.PhotoResult

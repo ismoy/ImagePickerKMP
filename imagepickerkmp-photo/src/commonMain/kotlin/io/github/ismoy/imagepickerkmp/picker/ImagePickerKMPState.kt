@@ -4,12 +4,18 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.github.ismoy.imagepickerkmp.I18nKonfig
+import io.github.ismoy.imagepickerkmp.core.language.getLanguageDevice
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
 
 @Stable
 class ImagePickerKMPState internal constructor(
     internal val config: ImagePickerKMPConfig
 ) {
+    init {
+        I18nKonfig.setLocale(getLanguageDevice())
+    }
+
     var result: ImagePickerResult by mutableStateOf(ImagePickerResult.Idle)
         private set
     var isCropActive: Boolean by mutableStateOf(false)

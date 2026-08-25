@@ -4,7 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
-import io.github.ismoy.imagepickerkmp.core.I18nKonfig
+import io.github.ismoy.imagepickerkmp.I18nKonfig
 import io.github.ismoy.imagepickerkmp.picker.PhotoCaptureException
 import io.mockk.every
 import io.mockk.mockk
