@@ -605,14 +605,21 @@ sequenceDiagram
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=daniil-pastuhov" title="Contributions">💻</a>
       </td>
       <td align="center" valign="top" width="14.28%">
+        <a href="https://github.com/x-sheep">
+          <img src="https://avatars.githubusercontent.com/u/7021451?v=4" width="100px;" alt="x-sheep"/><br />
+          <sub><b>x-sheep</b></sub>
+        </a><br />
+        <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=x-sheep" title="Contributions">💻</a>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/Magmi183">
           <img src="https://avatars.githubusercontent.com/u/5003513?v=4" width="100px;" alt="Magmi183"/><br />
           <sub><b>Magmi183</b></sub>
         </a><br />
         <a href="https://github.com/ismoy/ImagePickerKMP/commits?author=Magmi183" title="Contributions">💻</a>
       </td>
-    </tr>
-    <tr>
       <td align="center" valign="top" width="14.28%">
         <a href="https://github.com/azevio">
           <img src="https://avatars.githubusercontent.com/u/167407234?v=4" width="100px;" alt="azevio"/><br />
