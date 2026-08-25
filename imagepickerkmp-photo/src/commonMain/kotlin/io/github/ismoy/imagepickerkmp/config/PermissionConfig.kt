@@ -1,7 +1,7 @@
 package io.github.ismoy.imagepickerkmp.config
 
 import androidx.compose.runtime.Composable
-import io.github.ismoy.imagepickerkmp.core.I18nKonfig
+import io.github.ismoy.imagepickerkmp.I18nKonfig
 
 /**
  * Configuration for camera permission dialogs and messages.

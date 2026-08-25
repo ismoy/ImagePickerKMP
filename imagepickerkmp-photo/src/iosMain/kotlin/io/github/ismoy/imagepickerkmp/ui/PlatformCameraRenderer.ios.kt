@@ -10,7 +10,7 @@ import io.github.ismoy.imagepickerkmp.core.CoreServices
 import io.github.ismoy.imagepickerkmp.config.CameraPermissionDialogConfig
 import io.github.ismoy.imagepickerkmp.config.CropConfig
 import io.github.ismoy.imagepickerkmp.config.ImagePickerConfig
-import io.github.ismoy.imagepickerkmp.core.I18nKonfig
+import io.github.ismoy.imagepickerkmp.I18nKonfig
 
 @Suppress("FunctionNaming", "LongMethod", "ComplexMethod")
 @Composable

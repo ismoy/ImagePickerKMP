@@ -1,5 +1,4 @@
-# Translation file - includes Android resources + manual additions
-# Last updated by i18nKonfig merge operation
+# Translation file for imagepickerkmp-photo
 # Languages: fr, en, es, zh, ko, ja, hi, th, it, de, ru, uk, pl, nl
 
 camera_permission_required:
@@ -18,6 +17,7 @@ camera_permission_required:
   pl: "Wymagane uprawnienia do korzystania z aparatu"
   nl: "Cameratoestemming vereist"
 
+
 camera_permission_description:
   fr: "L'autorisation de la caméra est requise pour prendre des photos. Veuillez l'accorder dans les paramètres."
   en: "Camera permission is required to capture photos. Please grant it in settings"
@@ -34,21 +34,6 @@ camera_permission_description:
   pl: "Uprawnienia aparatu są wymagane do robienia zdjęć. Proszę je przyznać w ustawieniach"
   nl: "Cameratoestemming is nodig om foto's te maken. Activeer dit in Instellingen."
 
-camera_permission_scanner_description:
-  fr: "L'autorisation de la caméra est requise pour scanner les codes QR et les codes-barres. Veuillez l'accorder dans les paramètres."
-  en: "Camera permission is required to scan QR codes and barcodes. Please grant it in settings."
-  es: "Se requiere el permiso de la cámara para escanear códigos QR y de barras. Por favor, otórgalo en la configuración."
-  zh: "扫描二维码和条形码需要相机权限。请在设置中授予。"
-  ko: "QR 코드와 바코드를 스캔하려면 카메라 권한이 필요합니다. 설정에서 권한을 허용해 주세요."
-  ja: "QRコードとバーコードをスキャンするにはカメラの権限が必要です。設定から許可してください。"
-  hi: "QR कोड और बारकोड स्कैन करने के लिए कैमरा अनुमति आवश्यक है। कृपया सेटिंग्स में इसकी अनुमति दें।"
-  th: "จำเป็นต้องได้รับอนุญาตใช้งานกล้องเพื่อสแกนคิวอาร์โค้ดและบาร์โค้ด โปรดอนุญาตในการตั้งค่า"
-  it: "L'autorizzazione della fotocamera è richiesta per scansionare codici QR e codici a barre. Si prega di concederla nelle impostazioni."
-  de: "Die Kameraberechtigung ist erforderlich, um QR-Codes und Barcodes zu scannen. Bitte in den Einstellungen aktivieren."
-  ru: "Разрешение на использование камеры требуется для сканирования QR-кодов и штрихкодов. Пожалуйста, предоставьте его в настройках."
-  uk: "Дозвіл на використання камери потрібен для сканування QR-кодів та штрих-кодів. Будь ласка, надайте його в налаштуваннях."
-  pl: "Uprawnienia aparatu są wymagane do skanowania kodów QR i kodów kreskowych. Proszę je przyznać w ustawieniach"
-  nl: "Cameratoestemming is nodig om QR-codes en barcodes te scannen. Activeer dit in Instellingen."
 
 open_settings:
   fr: "Ouvrir les paramètres"
@@ -66,6 +51,7 @@ open_settings:
   pl: "Otwórz ustawienia"
   nl: "Naar Instellingen"
 
+
 camera_permission_denied:
   fr: "Autorisation de la caméra refusée"
   en: "Camera permission denied"
@@ -81,6 +67,7 @@ camera_permission_denied:
   uk: "У дозволі на камеру відмовлено"
   pl: "Odmowa udzielenia uprawnienia dla aparatu"
   nl: "Cameratoestemming geweigerd"
+
 
 camera_permission_denied_description:
   fr: "L'autorisation de la caméra est requise pour prendre des photos. Veuillez accorder les autorisations."
@@ -98,21 +85,6 @@ camera_permission_denied_description:
   pl: "Uprawnienia aparatu są wymagane do robienia zdjęć. Proszę przyznać uprawnienia"
   nl: "Cameratoestemming is nodig om foto's te maken. Activeer dit in Instellingen."
 
-camera_permission_denied_scanner_description:
-  fr: "L'autorisation de la caméra est requise pour scanner les codes QR et les codes-barres. Veuillez accorder les autorisations."
-  en: "Camera permission is required to scan QR codes and barcodes. Please grant the permissions."
-  es: "Se requiere el permiso de la cámara para escanear códigos QR y de barras. Por favor, otorga los permisos."
-  zh: "扫描二维码和条形码需要相机权限。请授予权限。"
-  ko: "QR 코드와 바코드를 스캔하려면 카메라 권한이 필요합니다. 권한을 허용해 주세요."
-  ja: "QRコードとバーコードをスキャンするにはカメラの権限が必要です。権限を許可してください。"
-  hi: "QR कोड और बारकोड स्कैन करने के लिए कैमरा अनुमति आवश्यक है। कृपया अनुमति दें।"
-  th: "จำเป็นต้องได้รับอนุญาตใช้งานกล้องเพื่อสแกนคิวอาร์โค้ดและบาร์โค้ด โปรดให้สิทธิ์การเข้าถึง"
-  it: "L'autorizzazione della fotocamera è richiesta per scansionare codici QR e codici a barre. Si prega di concedere i permessi."
-  de: "Die Kameraberechtigung ist erforderlich, um QR-Codes und Barcodes zu scannen. Bitte erteilen Sie die Berechtigungen."
-  ru: "Разрешение на использование камеры требуется для сканирования QR-кодов и штрихкодов. Пожалуйста, предоставьте разрешения."
-  uk: "Дозвіл на використання камери потрібен для сканування QR-кодів та штрих-кодів. Будь ласка, надайте дозвіл."
-  pl: "Uprawnienia aparatu są wymagane do skanowania kodów QR i kodów kreskowych. Proszę przyznać uprawnienia"
-  nl: "Cameratoestemming is nodig om QR-codes en barcodes te scannen. Activeer dit in Instellingen."
 
 grant_permission:
   fr: "Accorder l'autorisation"
@@ -130,6 +102,7 @@ grant_permission:
   pl: "Udziel zgody"
   nl: "Toestemming geven"
 
+
 camera_permission_permanently_denied:
   fr: "Autorisation de la caméra définitivement refusée"
   en: "Camera permission permanently denied"
@@ -145,6 +118,7 @@ camera_permission_permanently_denied:
   uk: "У дозволі на камеру відмовлено назавжди"
   pl: "Uprawnienia aparatu trwale odrzucone"
   nl: "Cameratoestemming permanent geweigerd"
+
 
 gallery_permission_required:
   fr: "Autorisation de stockage requise"
@@ -162,6 +136,7 @@ gallery_permission_required:
   pl: "Wymagane uprawnienie do przechowywania danych"
   nl: "Toegang tot galerij vereist"
 
+
 gallery_permission_description:
   fr: "L'accès au stockage est requis pour sélectionner des images de votre galerie. Veuillez accorder l'autorisation."
   en: "Access to storage is required to select images from your gallery. Please grant the permission."
@@ -177,6 +152,7 @@ gallery_permission_description:
   uk: "Доступ до сховища потрібен для вибору зображень із галереї. Будь ласка, надайте дозвіл."
   pl: "Uprawnienia do przechowywania danych są wymagane do wybierania zdjęć z galerii. Proszę przyznać uprawnienia"
   nl: "Toegang tot de galerij is nodig om afbeeldingen te selecteren. Verleen a.u.b. toestemming."
+
 
 gallery_permission_denied:
   fr: "Autorisation de stockage refusée"
@@ -194,6 +170,7 @@ gallery_permission_denied:
   pl: "Odmowa udzielenia uprawnienia do przechowywania"
   nl: "Toegang tot galerij geweigerd"
 
+
 gallery_permission_denied_description:
   fr: "L'autorisation de stockage est requise pour sélectionner des images. Veuillez l'activer dans les paramètres de l'application."
   en: "Storage permission is required to select images. Please enable it in app settings."
@@ -209,6 +186,7 @@ gallery_permission_denied_description:
   uk: "Дозвіл на сховище потрібен для вибору зображень. Будь ласка, увімкніть його в налаштуваннях програми."
   pl: "Uprawnienia do przechowywania danych są wymagane do wybierania zdjęć z galerii. Proszę je przyznać w ustawieniach"
   nl: "Toegang tot de galerij is nodig om afbeeldingen te selecteren. Activeer dit in Instellingen."
+
 
 gallery_grant_permission:
   fr: "Accorder l'autorisation"
@@ -226,6 +204,7 @@ gallery_grant_permission:
   pl: "Udziel zgody"
   nl: "Toestemming geven"
 
+
 gallery_btn_settings:
   fr: "Ouvrir les paramètres"
   en: "Open settings"
@@ -241,6 +220,7 @@ gallery_btn_settings:
   uk: "Відкрити налаштування"
   pl: "Otwórz ustawienia"
   nl: "Naar Instellingen"
+
 
 image_confirmation_title:
   fr: "Êtes-vous satisfait de la photo ?"
@@ -258,6 +238,7 @@ image_confirmation_title:
   pl: "Czy jesteś zadowolony ze zdjęcia?"
   nl: "Bent u tevreden met deze foto?"
 
+
 accept_button:
   fr: "Accepter"
   en: "Accept"
@@ -273,6 +254,7 @@ accept_button:
   uk: "Прийняти"
   pl: "Zaakceptuj"
   nl: "Accepteer"
+
 
 retry_button:
   fr: "Réessayer"
@@ -290,6 +272,7 @@ retry_button:
   pl: "Powtórz"
   nl: "Opnieuw"
 
+
 select_option_dialog_title:
   fr: "Sélectionner une option"
   en: "Select option"
@@ -305,6 +288,7 @@ select_option_dialog_title:
   uk: "Виберіть варіант"
   pl: "Wybierz opcję"
   nl: "Maak een keuze"
+
 
 take_photo_option:
   fr: "Prendre une photo"
@@ -322,6 +306,7 @@ take_photo_option:
   pl: "Zrób zdjęcie"
   nl: "Neem foto"
 
+
 select_from_gallery_option:
   fr: "Sélectionner depuis la galerie"
   en: "Select from gallery"
@@ -337,6 +322,7 @@ select_from_gallery_option:
   uk: "Вибрати з галереї"
   pl: "Wybierz z galerii"
   nl: "Kies uit galerij"
+
 
 cancel_option:
   fr: "Annuler"
@@ -354,6 +340,7 @@ cancel_option:
   pl: "Anuluj"
   nl: "Annuleer"
 
+
 preview_image_description:
   fr: "Aperçu"
   en: "Preview"
@@ -369,6 +356,7 @@ preview_image_description:
   uk: "Попередній перегляд"
   pl: "Podgląd"
   nl: "Voorbeeld"
+
 
 hd_quality_description:
   fr: "HD"
@@ -386,6 +374,7 @@ hd_quality_description:
   pl: "HD"
   nl: "HD"
 
+
 sd_quality_description:
   fr: "SD"
   en: "SD"
@@ -401,6 +390,7 @@ sd_quality_description:
   uk: "SD"
   pl: "SD"
   nl: "SD"
+
 
 invalid_context_error:
   fr: "Contexte invalide. Doit être ComponentActivity"
@@ -418,6 +408,7 @@ invalid_context_error:
   pl: "Nieprawidłowy kontekst. Musi to być ComponentActivity"
   nl: "Context is ongeldig. Dit moet ComponentActivity zijn"
 
+
 photo_capture_error:
   fr: "Échec de la capture de la photo"
   en: "Photo capture failed"
@@ -433,6 +424,7 @@ photo_capture_error:
   uk: "Помилка зйомки фотографії"
   pl: "Błąd podczas robienia zdjęcia"
   nl: "Foto nemen is mislukt"
+
 
 gallery_selection_error:
   fr: "Échec de la sélection de la galerie"
@@ -450,6 +442,7 @@ gallery_selection_error:
   pl: "Błąd podczas wybierania zdjęcia"
   nl: "Afbeelding selecteren is mislukt"
 
+
 camera_unavailable_error:
   fr: "Aucune application d'appareil photo n'est disponible sur cet appareil."
   en: "No camera app is available on this device."
@@ -465,6 +458,7 @@ camera_unavailable_error:
   uk: "На цьому пристрої немає доступного застосунку камери."
   pl: "Brak dostępnej aplikacji kamery na tym urządzeniu"
   nl: "Er is geen camera-app op dit apparaat."
+
 
 gallery_unavailable_error:
   fr: "Aucune application n'est disponible pour sélectionner des images sur cet appareil."
@@ -482,6 +476,7 @@ gallery_unavailable_error:
   pl: "Brak dostępnej aplikacji do wybrania zdjęcia na tym urządzeniu"
   nl: "Er is geen app op dit apparaat om foto's te selecteren."
 
+
 permission_error:
   fr: "Une erreur d'autorisation est survenue"
   en: "Permission error occurred"
@@ -497,6 +492,7 @@ permission_error:
   uk: "Сталася помилка дозволу"
   pl: "Wystąpił błąd uprawnień"
   nl: "Toestemmingsfout"
+
 
 mime_type_mismatch_error:
   fr: "Le fichier sélectionné ne correspond pas aux types autorisés : %1$s"
@@ -514,6 +510,7 @@ mime_type_mismatch_error:
   pl: "Wybrany plik nie należy do dozwolonych typów: %1$s"
   nl: "Het geselecteerde bestand is niet van een toegestaan type: %1$s"
 
+
 image_crop_view_title:
   fr: "Rogner l'image"
   en: "Crop Image"
@@ -529,6 +526,7 @@ image_crop_view_title:
   uk: "Обрізати зображення"
   pl: "Przytnij zdjęcie"
   nl: "Bijsnijden"
+
 
 image_crop_view_cancel_description:
   fr: "Annuler"
@@ -546,6 +544,7 @@ image_crop_view_cancel_description:
   pl: "Anuluj"
   nl: "Annuleer"
 
+
 image_crop_view_apply_description:
   fr: "Appliquer"
   en: "Apply"
@@ -561,6 +560,7 @@ image_crop_view_apply_description:
   uk: "Застосувати"
   pl: "Zastosuj"
   nl: "Toepassen"
+
 
 image_crop_view_rectangular_description:
   fr: "Rognage rectangulaire"
@@ -578,6 +578,7 @@ image_crop_view_rectangular_description:
   pl: "Prostokątne kadrowanie"
   nl: "Rechthoekig"
 
+
 image_crop_view_circular_description:
   fr: "Rognage circulaire"
   en: "Circular crop"
@@ -593,6 +594,7 @@ image_crop_view_circular_description:
   uk: "Кругле обрізання"
   pl: "Okrągłe kadrowanie"
   nl: "Cirkelvormig"
+
 
 image_crop_view_zoom_label:
   fr: "Zoom"
@@ -610,6 +612,7 @@ image_crop_view_zoom_label:
   pl: "Przybliżenie"
   nl: "Zoom"
 
+
 image_crop_view_rotation_label:
   fr: "Rotation"
   en: "Rotation"
@@ -626,290 +629,4 @@ image_crop_view_rotation_label:
   pl: "Rotacja"
   nl: "Rotatie"
 
-camera_mic_permission_description:
-  fr: "Les autorisations de la caméra et du microphone sont requises pour enregistrer des vidéos. Veuillez les accorder dans les paramètres."
-  en: "Camera and microphone permissions are required to record video. Please grant them in settings."
-  es: "Se requieren los permisos de cámara y micrófono para grabar video. Por favor, otórgalos en la configuración."
-  zh: "录制视频需要相机和麦克风权限。请在设置中授予。"
-  ko: "동영상을 녹화하려면 카메라 및 마이크 권한이 필요합니다. 설정에서 권한을 허용해 주세요."
-  ja: "動画を録画するにはカメラとマイクの権限が必要です。設定から許可してください。"
-  hi: "वीडियो रिकॉर्ड करने के लिए कैमरा और माइक्रोफ़ोन अनुमति आवश्यक है। कृपया सेटिंग्स में इसकी अनुमति दें।"
-  th: "จำเป็นต้องได้รับอนุญาตใช้งานกล้องและไมโครโฟนเพื่อบันทึกวิดีโอ โปรดอนุญาตในการตั้งค่า"
-  it: "Le autorizzazioni della fotocamera e del microfono sono richieste per registrare video. Si prega di concederle nelle impostazioni."
-  de: "Kamera- und Mikrofonberechtigungen sind erforderlich, um Videos aufzunehmen. Bitte in den Einstellungen aktivieren."
-  ru: "Для записи видео требуются разрешения на использование камеры и микрофона. Пожалуйста, предоставьте их в настройках."
-  uk: "Для запису відео потрібні дозволи на камеру та мікрофон. Будь ласка, надайте їх у налаштуваннях."
-  pl: "Uprawnienia kamery i mikrofonu są niezbędne do nagrywania filmów. Proszę je przyznać w ustawieniach"
-  nl: "Microfoon- en cameratoestemming is nodig om video's op te nemen. Activeer deze in Instellingen."
 
-camera_mic_permission_denied_description:
-  fr: "Les autorisations de la caméra et du microphone sont requises pour enregistrer des vidéos. Veuillez accorder les autorisations."
-  en: "Camera and microphone permissions are required to record video. Please grant the permissions."
-  es: "Se requieren los permisos de cámara y micrófono para grabar video. Por favor, otorga los permisos."
-  zh: "录制视频需要相机和麦克风权限。请授予权限。"
-  ko: "동영상을 녹화하려면 카메라 및 마이크 권한이 필요합니다. 권한을 허용해 주세요."
-  ja: "動画を録画するにはカメラとマイクの権限が必要です。権限を許可してください。"
-  hi: "वीडियो रिकॉर्ड करने के लिए कैमरा और माइक्रोफ़ोन अनुमति आवश्यक है। कृपया अनुमति दें।"
-  th: "จำเป็นต้องได้รับอนุญาตใช้งานกล้องและไมโครโฟนเพื่อบันทึกวิดีโอ โปรดให้สิทธิ์การเข้าถึง"
-  it: "Le autorizzazioni della fotocamera e del microfono sono richieste per registrare video. Si prega di concedere i permessi."
-  de: "Kamera- und Mikrofonberechtigungen sind erforderlich, um Videos aufzunehmen. Bitte erteilen Sie die Berechtigungen."
-  ru: "Для записи видео требуются разрешения на использование камеры и микрофона. Пожалуйста, предоставьте разрешения."
-  uk: "Для запису відео потрібні дозволи на камеру та мікрофон. Будь ласка, надайте дозвіл."
-  pl: "Uprawnienia kamery i mikrofonu są niezbędne do nagrywania filmów. Proszę przyznać uprawnienia"
-  nl: "Microfoon- en cameratoestemming is nodig om video's op te nemen. Verleen a.u.b. deze toestemmingen."
-
-mic_permission_required:
-  fr: "Autorisation du microphone requise"
-  en: "Microphone permission required"
-  es: "Permiso de micrófono requerido"
-  zh: "需要麦克风权限"
-  ko: "마이크 권한 필요"
-  ja: "マイクの権限が必要です"
-  hi: "माइक्रोफ़ोन अनुमति आवश्यक है"
-  th: "ต้องขออนุญาตใช้งานไมโครโฟน"
-  it: "Autorizzazione microfono richiesta"
-  de: "Mikrofonberechtigung erforderlich"
-  ru: "Требуется разрешение на использование микрофона"
-  uk: "Потрібен дозвіл на мікрофон"
-  pl: "Wymagane uprawnienia mikrofonu"
-  nl: "Microfoontoestemming vereist"
-
-mic_permission_description:
-  fr: "L'autorisation du microphone est requise pour enregistrer des fichiers audio. Veuillez l'accorder dans les paramètres."
-  en: "Microphone permission is required to record audio. Please grant it in settings."
-  es: "Se requiere el permiso del micrófono para grabar audio. Por favor, otórgalo en la configuración."
-  zh: "录制音频需要麦克风权限。请在设置中授予。"
-  ko: "오디오를 녹음하려면 마이크 권한이 필요합니다. 설정에서 권한을 허용해 주세요."
-  ja: "音声を録音するにはマイクの権限が必要です。設定から許可してください。"
-  hi: "ऑडियो रिकॉर्ड करने के लिए माइक्रोफ़ोन अनुमति आवश्यक है। कृपया सेटिंग्स में इसकी अनुमति दें।"
-  th: "จำเป็นต้องได้รับอนุญาตใช้งานไมโครโฟนเพื่อบันทึกเสียง โปรดอนุญาตในการตั้งค่า"
-  it: "L'autorizzazione del microfono è richiesta per registrare audio. Si prega di concederla nelle impostazioni."
-  de: "Die Mikrofonberechtigung ist erforderlich, um Audio aufzunehmen. Bitte in den Einstellungen aktivieren."
-  ru: "Разрешение на использование микрофона требуется для записи звука. Пожалуйста, предоставьте его в настройках."
-  uk: "Дозвіл на мікрофон потрібен для запису звуку. Будь ласка, надайте його в налаштуваннях."
-  pl: "Uprawnienia mikrofonu są niezbędne do nagrywania dźwięku. Proszę je przyznać w ustawieniach"
-  nl: "Microfoontoestemming is nodig om geluid op te nemen. Activeer deze in Instellingen."
-
-mic_permission_denied:
-  fr: "Autorisation du microphone refusée"
-  en: "Microphone permission denied"
-  es: "Permiso de micrófono denegado"
-  zh: "麦克风权限被拒绝"
-  ko: "마이크 권한 거부됨"
-  ja: "マイクの権限が拒否されました"
-  hi: "माइक्रोफ़ोन अनुमति अस्वीकार कर दी गई"
-  th: "ปฏิเสธการอนุญาตใช้งานไมโครโฟน"
-  it: "Autorizzazione microfono negata"
-  de: "Mikrofonberechtigung verweigert"
-  ru: "В разрешении на использование микрофона отказано"
-  uk: "У дозволі на мікрофон відмовлено"
-  pl: "Uprawnienia mikrofonu odrzucone"
-  nl: "Microfoontoestemming geweigerd"
-
-mic_permission_denied_description:
-  fr: "L'autorisation du microphone est requise pour enregistrer des fichiers audio. Veuillez accorder les autorisations."
-  en: "Microphone permission is required to record audio. Please grant the permissions."
-  es: "Se requiere el permiso del micrófono para grabar audio. Por favor, otorga los permisos."
-  zh: "录制音频需要麦克风权限。请授予权限。"
-  ko: "오디오를 녹음하려면 마이크 권한이 필요합니다. 권한을 허용해 주세요."
-  ja: "音声を録音するにはマイクの権限が必要です。権限を許可してください。"
-  hi: "ऑडियो रिकॉर्ड करने के लिए माइक्रोफ़ोन अनुमति आवश्यक है। कृपया अनुमति दें।"
-  th: "จำเป็นต้องได้รับอนุญาตใช้งานไมโครโฟนเพื่อบันทึกเสียง โปรดให้สิทธิ์การเข้าถึง"
-  it: "L'autorizzazione del microfono è richiesta per registrare audio. Si prega di concedere i permessi."
-  de: "Die Mikrofonberechtigung ist erforderlich, um Audio aufzunehmen. Bitte erteilen Sie die Berechtigungen."
-  ru: "Разрешение на использование микрофона требуется для записи звука. Пожалуйста, предоставьте разрешения."
-  uk: "Дозвіл на мікрофон потрібен для запису звуку. Будь ласка, надайте дозвіл."
-  pl: "Uprawnienia mikrofonu są niezbędne do nagrywania dźwięku. Proszę przyznać uprawnienia"
-  nl: "Microfoontoestemming is nodig om geluid op te nemen. Verleen a.u.b. toestemming."
-
-slide_to_cancel:
-  fr: "Glisser pour annuler"
-  en: "Slide to cancel"
-  es: "Desliza para cancelar"
-  zh: "滑动取消"
-  ko: "밀어서 취소"
-  ja: "スライドしてキャンセル"
-  hi: "रद्द करने के लिए स्लाइड करें"
-  th: "เลื่อนเพื่อยกเลิก"
-  it: "Scorri per annullare"
-  de: "Wischen zum Abbrechen"
-  ru: "Проведите для отмены"
-  uk: "Проведіть для скасування"
-  pl: "Przesuń aby anulować"
-  nl: "Veeg om te annuleren"
-
-audio_error_extension_not_allowed:
-  fr: "Le format de fichier n'est pas autorisé."
-  en: "File format not allowed."
-  es: "Formato de archivo no permitido."
-  zh: "不允许的文件格式。"
-  ko: "허용되지 않는 파일 형식입니다."
-  ja: "許可されていないファイル形式です。"
-  hi: "फ़ाइल स्वरूप की अनुमति नहीं है।"
-  th: "ไม่อนุญาตให้ใช้รูปแบบไฟล์นี้"
-  it: "Formato file non consentito."
-  de: "Dateiformat nicht zulässig."
-  ru: "Формат файла не разрешен."
-  uk: "Формат файлу не дозволено."
-  pl: "Niedozwolony format pliku."
-  nl: "Bestandsformaat niet toegestaan."
-
-audio_error_file_too_large:
-  fr: "Le fichier est trop volumineux."
-  en: "File is too large."
-  es: "El archivo es demasiado grande."
-  zh: "文件太大。"
-  ko: "파일이 너무 큽니다."
-  ja: "ファイルが大きすぎます。"
-  hi: "फ़ाइल बहुत बड़ी है।"
-  th: "ไฟล์มีขนาดใหญ่เกินไป"
-  it: "Il file è troppo grande."
-  de: "Datei ist zu groß."
-  ru: "Файл слишком большой."
-  uk: "Файл занадто великий."
-  pl: "Plik zbyt duży."
-  nl: "Bestand is te groot."
-
-audio_error_duration_out_of_range:
-  fr: "La durée de l'audio est hors limites."
-  en: "Audio duration is out of range."
-  es: "La duración del audio está fuera de rango."
-  zh: "音频时长超出范围。"
-  ko: "오디오 재생 시간이 범위를 벗어났습니다."
-  ja: "音声の長さが範囲外です。"
-  hi: "ऑडियो अवधि सीमा से बाहर है।"
-  th: "ระยะเวลาเสียงอยู่นอกระยะที่กำหนด"
-  it: "La durata dell'audio è fuori intervallo."
-  de: "Audiodauer ist außerhalb des zulässigen Bereichs."
-  ru: "Длительность аудио вне диапазона."
-  uk: "Тривалість аудіо поза межами діапазону."
-  pl: "Długość nagrania poza dopuszczalnym zakresem."
-  nl: "Speelduur is niet in toegestaan bereik."
-
-audio_error_read_failed:
-  fr: "Échec de la lecture du fichier."
-  en: "Failed to read file."
-  es: "Error al leer el archivo."
-  zh: "读取文件失败。"
-  ko: "파일을 읽지 못했습니다."
-  ja: "ファイルの読み込みに失敗しました。"
-  hi: "फ़ाइल पढ़ने में विफल।"
-  th: "อ่านไฟล์ไม่สำเร็จ"
-  it: "Impossibile leggere il file."
-  de: "Fehler beim Lesen der Datei."
-  ru: "Не удалось прочитать файл."
-  uk: "Не вдалося прочитати файл."
-  pl: "Błąd podczas odczytu pliku."
-  nl: "Kan bestand niet openen."
-
-audio_not_supported_on_platform:
-  fr: "L'enregistrement audio n'est pas pris en charge sur cette plateforme."
-  en: "Audio recording is not supported on this platform."
-  es: "La grabación de audio no es compatible con esta plataforma."
-  zh: "此平台不支持录音。"
-  ko: "이 플랫폼에서는 오디오 녹음이 지원되지 않습니다."
-  ja: "このプラットフォームでは録音はサポートされていません。"
-  hi: "इस प्लेटफ़ॉर्म पर ऑडियो रिकॉर्डिंग समर्थित नहीं है।"
-  th: "ไม่รองรับการบันทึกเสียงบนแพลตฟอร์มนี้"
-  it: "La registrazione audio non è supportata su questa piattaforma."
-  de: "Audioaufnahmen werden auf dieser Plattform nicht unterstützt."
-  ru: "Запись звука не поддерживается на этой платформе."
-  uk: "Запис аудіо не підтримується на цій платформі."
-  pl: "Nagrywanie dźwięku niedostępne na tej platformie."
-  nl: "Geluidsopname is niet mogelijk op dit platform."
-
-scanner_too_far:
-  fr: "Rapprochez le code de la caméra Distance trop éloignée"
-  en: "Bring the code closer to the camera Distance too far"
-  es: "Acerca el código a la cámara Distancia demasiado lejos"
-  zh: "将代码靠近相机 距离太远"
-  ko: "코드를 카메라에 더 가까이 가져오세요 거리가 너무 멉니다"
-  ja: "コードをカメラに近づけてください 距離が遠すぎます"
-  hi: "कोड को कैमरे के करीब लाएं दूरी बहुत दूर है"
-  th: "นำรหัสเข้าใกล้กล้องมากขึ้น ระยะห่างไกลเกินไป"
-  it: "Avvicina il codice alla fotocamera Distanza troppo elevata"
-  de: "Bringen Sie den Code näher an die Kamera Entfernung zu groß"
-  ru: "Приблизьте код к камере Слишком большое расстояние"
-  uk: "Піднесіть код ближче до камери Занадто велика відстань"
-  pl: "Przybliż kod do kamery, dystans za duży"
-  nl: "Breng de code dichterbij de camera Afstand te groot"
-
-scanner_too_close:
-  fr: "Éloignez le code de la caméra Trop près"
-  en: "Move the code away from the camera Too close"
-  es: "Aleja el código de la cámara Demasiado cerca"
-  zh: "将代码移离相机 太近了"
-  ko: "코드를 카메라에서 멀리 이동하세요 너무 가깝습니다"
-  ja: "コードをカメラから離してください 近すぎます"
-  hi: "कोड को कैमरे से दूर ले जाएं बहुत करीब"
-  th: "ย้ายรหัสออกจากกล้อง ใกล้เกินไป"
-  it: "Allontana il codice dalla fotocamera Troppo vicino"
-  de: "Bewegen Sie den Code von der Kamera weg Zu nah"
-  ru: "Отодвиньте код от камеры Слишком близко"
-  uk: "Відсуньте код від камери Занадто близько"
-  pl: "Oddal kod od kamery, dystans za mały"
-  nl: "Beweeg de code verder weg van de camera Te dichtbij"
-
-scanner_optimal:
-  fr: "Distance parfaite ! Gardez le code dans le cadre"
-  en: "Perfect distance! Keep the code within the frame"
-  es: "¡Distancia perfecta! Mantén el código dentro del marco"
-  zh: "完美距离！将代码保持在画面内"
-  ko: "완벽한 거리입니다!코드를 프레임 안에 유지하세요"
-  ja: "完璧な距離です！コードをフレーム内に保ってください"
-  hi: "सही दूरी! कोड को फ़्रेम के भीतर रखें"
-  th: "ระยะห่างที่สมบูรณ์แบบ! รักษารหัสไว้ในกรอบ"
-  it: "Distanza perfetta! Mantieni il codice all'interno dell'inquadratura"
-  de: "Perfekte Entfernung! Halten Sie den Code im Rahmen"
-  ru: "Идеальное расстояние! Держите код в кадре"
-  uk: "Ідеальна відстань! Тримайте код у кадрі"
-  pl: "Idealny dystans! Utrzymaj kod w ramce"
-  nl: "Goede afstand! Houd de code binnen de kaders"
-
-scanner_done:
-  fr: "TERMINÉ"
-  en: "DONE"
-  es: "HECHO"
-  zh: "完成"
-  ko: "완료"
-  ja: "完了"
-  hi: "हो गया"
-  th: "เสร็จสิ้น"
-  it: "FATTO"
-  de: "FERTIG"
-  ru: "ГОТОВО"
-  uk: "ГОТОВО"
-  pl: "GOTOWE"
-  nl: "KLAAR"
-
-scanner_scanned:
-  fr: "Scanné(s)"
-  en: "Scanned"
-  es: "Escaneados"
-  zh: "已扫描"
-  ko: "스캔됨"
-  ja: "スキャン済み"
-  hi: "स्कैन किया गया"
-  th: "สแกนแล้ว"
-  it: "Scansionati"
-  de: "Gescannt"
-  ru: "Отсканировано"
-  uk: "Відскановано"
-  pl: "Zeskanowane"
-  nl: "Gescand"
-
-scanner_distance_warning:
-  fr: "Avertissement de distance"
-  en: "Distance warning"
-  es: "Advertencia de distancia"
-  zh: "距离警告"
-  ko: "거리 경고"
-  ja: "距離警告"
-  hi: "दूरी की चेतावनी"
-  th: "คำเตือนระยะห่าง"
-  it: "Avviso di distanza"
-  de: "Abstandswarnung"
-  ru: "Предупреждение о расстоянии"
-  uk: "Попередження про відстань"
-  pl: "Ostrzeżenie o odległości"
-  nl: "Afstandswaarschuwing"

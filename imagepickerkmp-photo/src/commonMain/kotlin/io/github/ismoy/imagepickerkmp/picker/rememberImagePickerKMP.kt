@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import io.github.ismoy.imagepickerkmp.I18nKonfig
+import io.github.ismoy.imagepickerkmp.core.language.getLanguageDevice
 import io.github.ismoy.imagepickerkmp.config.CameraCaptureConfig
 import io.github.ismoy.imagepickerkmp.config.CropConfig
 import io.github.ismoy.imagepickerkmp.config.ImagePickerConfig
@@ -15,6 +17,7 @@ import io.github.ismoy.imagepickerkmp.ui.PlatformGalleryRenderer
 fun rememberImagePickerKMP(
     config: ImagePickerKMPConfig = ImagePickerKMPConfig()
 ): ImagePickerKMPState {
+    I18nKonfig.setLocale(getLanguageDevice())
     val state = remember { ImagePickerKMPState(config) }
     val currentState = rememberUpdatedState(state)
 

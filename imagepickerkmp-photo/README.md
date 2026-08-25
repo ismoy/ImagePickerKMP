@@ -266,6 +266,14 @@ On Android, the library automatically opens the appropriate system picker (galle
 
 ---
 
+## Internationalization (i18n)
+
+`imagepickerkmp-photo` includes built-in translations powered by `i18nKonfig`. It automatically detects the device language (via `getLanguageDevice()`) and translates all camera, gallery, crop, permissions, and error strings.
+
+Supported out of the box for 14 languages: `en`, `es`, `fr`, `zh`, `ko`, `ja`, `hi`, `th`, `it`, `de`, `ru`, `uk`, `pl`, `nl`.
+
+---
+
 ## Platform support
 
 | Feature | Android | iOS | Desktop | Web |

@@ -5,7 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import io.github.ismoy.imagepickerkmp.camera.AndroidPhotoCaptureManager
 import io.github.ismoy.imagepickerkmp.config.ImagePickerConfig
-import io.github.ismoy.imagepickerkmp.core.I18nKonfig
+import io.github.ismoy.imagepickerkmp.I18nKonfig
 import io.github.ismoy.imagepickerkmp.core.permissions.PermissionManager
 import io.github.ismoy.imagepickerkmp.picker.PhotoCaptureException
 import io.mockk.every

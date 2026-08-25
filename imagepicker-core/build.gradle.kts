@@ -12,7 +12,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     id("com.vanniktech.maven.publish")
-    alias(libs.plugins.i18nkonfig)
     alias(libs.plugins.kover)
 }
 
@@ -24,8 +23,6 @@ kover {
             excludes {
                 annotatedBy("androidx.compose.runtime.Composable")
                 classes(
-                    "io.github.ismoy.imagepickerkmp.core.I18nKonfig",
-                    "io.github.ismoy.imagepickerkmp.core.I18nKonfig\$*",
                     "*ActualResourceCollectors*",
                     "*String0*",
                     "*Res*"
@@ -237,6 +234,4 @@ if (localPropertiesFile.exists()) {
         System.setProperty(key.toString(), value.toString())
     }
 }
-i18nKonfig {
-    packageName = "io.github.ismoy.imagepickerkmp.core"
-}
+

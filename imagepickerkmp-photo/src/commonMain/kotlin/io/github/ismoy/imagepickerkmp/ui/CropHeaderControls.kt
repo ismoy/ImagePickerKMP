@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.ismoy.imagepickerkmp.core.I18nKonfig
+import io.github.ismoy.imagepickerkmp.I18nKonfig
 
 @Composable
 fun CropHeaderControls(
