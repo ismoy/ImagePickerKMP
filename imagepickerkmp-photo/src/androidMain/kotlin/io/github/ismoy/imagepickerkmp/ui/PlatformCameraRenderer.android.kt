@@ -85,7 +85,8 @@ internal actual fun PlatformCameraRenderer(config: ImagePickerConfig) {
                     CropConfig(enabled = true, circularCrop = true, squareCrop = true)
                 },
                 onAccept = { state.acceptCrop(it) },
-                onCancel = { state.cancelCrop() }
+                onCancel = { state.cancelCrop() },
+                onSkip = { state.skipCrop() }
             )
         }
     }

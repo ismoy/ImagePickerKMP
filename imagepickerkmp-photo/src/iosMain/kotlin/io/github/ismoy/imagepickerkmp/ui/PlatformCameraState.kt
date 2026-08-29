@@ -48,7 +48,8 @@ internal class PlatformCameraState(
         scope.launch {
             val status = permissionManager.checkPermission(PermissionType.Camera)
             when {
-                status is PermissionStatus.Granted -> {
+                status is PermissionStatus.Granted &&
+                    hasNavigatedToSettings && isProcessingSettingsAction -> {
                     isProcessingSettingsAction = false
                     hasNavigatedToSettings = false
                     showSettingsDialog = false
@@ -136,6 +137,12 @@ internal class PlatformCameraState(
 
     fun acceptCrop(croppedResult: PhotoResult) {
         config.onPhotoCaptured(croppedResult)
+        showCropView = false
+        selectedPhotoForCrop = null
+    }
+
+    fun skipCrop() {
+        selectedPhotoForCrop?.let(config.onPhotoCaptured)
         showCropView = false
         selectedPhotoForCrop = null
     }

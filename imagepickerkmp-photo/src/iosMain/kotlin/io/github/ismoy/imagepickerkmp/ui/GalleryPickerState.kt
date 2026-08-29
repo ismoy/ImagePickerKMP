@@ -130,6 +130,12 @@ internal class GalleryPickerState(
         selectedPhotoForCrop = null
     }
 
+    fun skipCrop(currentOnPhotosSelected: (List<GalleryPhotoResult>) -> Unit) {
+        selectedPhotoForCrop?.let { currentOnPhotosSelected(listOf(it)) }
+        showCropView = false
+        selectedPhotoForCrop = null
+    }
+
     fun cancelCrop() {
         showCropView = false
         selectedPhotoForCrop = null

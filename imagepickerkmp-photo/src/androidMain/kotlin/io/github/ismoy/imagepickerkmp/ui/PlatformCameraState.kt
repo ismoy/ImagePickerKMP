@@ -131,6 +131,12 @@ internal class PlatformCameraState(
         photoForCrop = null
     }
 
+    fun skipCrop() {
+        photoForCrop?.let(config.onPhotoCaptured)
+        showCropView = false
+        photoForCrop = null
+    }
+
     fun cancelCrop() {
         showCropView = false
         photoForCrop = null

@@ -122,7 +122,7 @@ private fun applyCropUtilsIOS(
                 val cropSize = CGSizeMake(finalW, finalH)
 
                 val croppedImage: UIImage? = if (isCircularCrop) {
-                    UIGraphicsBeginImageContextWithOptions(cropSize, true, 1.0)
+                    UIGraphicsBeginImageContextWithOptions(cropSize, false, 1.0)
                     val context = UIGraphicsGetCurrentContext()
                     val radius = min(finalW, finalH) / 2.0
                     val centerX = finalW / 2.0
@@ -139,7 +139,6 @@ private fun applyCropUtilsIOS(
                     UIGraphicsEndImageContext()
                     img
                 } else {
-                    // Zero-copy memory-efficient rectangular crop
                     val cgImage = rotatedImage.CGImage
                     if (cgImage != null) {
                         val cropRectCG = CGRectMake(finalX, finalY, finalW, finalH)
@@ -153,7 +152,7 @@ private fun applyCropUtilsIOS(
                 }
 
                 if (croppedImage != null) {
-                    finalResult = saveCroppedImageIOS(croppedImage, photoResult)
+                    finalResult = saveCroppedImageIOS(croppedImage, photoResult, isCircularCrop)
                 }
             }
         }
@@ -178,8 +177,7 @@ private fun rotateUIImage(image: UIImage, angleDegrees: Float): UIImage {
         val newH = origW * sinA + origH * cosA
 
         val newSize = CGSizeMake(newW, newH)
-        // Use true (opaque) to avoid massive RAM spikes during JPEG compression
-        UIGraphicsBeginImageContextWithOptions(newSize, true, 1.0)
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
         val context = UIGraphicsGetCurrentContext() ?: run {
             UIGraphicsEndImageContext()
             return@autoreleasepool

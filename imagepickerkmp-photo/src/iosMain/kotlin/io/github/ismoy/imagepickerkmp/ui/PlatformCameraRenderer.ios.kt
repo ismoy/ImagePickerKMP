@@ -83,7 +83,8 @@ internal actual fun PlatformCameraRenderer(
                     config.cameraCaptureConfig.cropConfig
                 },
                 onAccept = { state.acceptCrop(it) },
-                onCancel = { state.cancelCrop() }
+                onCancel = { state.cancelCrop() },
+                onSkip = { state.skipCrop() }
             )
         }
     }

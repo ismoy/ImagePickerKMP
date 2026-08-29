@@ -76,6 +76,12 @@ internal class GalleryPickerState(
         showCropView = false
     }
 
+    fun skipCrop() {
+        selectedPhotoForCrop?.let { config.onPhotosSelected(listOf(it)) }
+        selectedPhotoForCrop = null
+        showCropView = false
+    }
+
     fun cancelCrop() {
         selectedPhotoForCrop = null
         showCropView = false

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,17 +31,18 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import io.github.ismoy.imagepickerkmp.crop.CropHandle
-import io.github.ismoy.imagepickerkmp.picker.PhotoResult
+import io.github.ismoy.imagepickerkmp.crop.CropUtils.detectHandle
 import io.github.ismoy.imagepickerkmp.crop.drawCropHandles
 import io.github.ismoy.imagepickerkmp.crop.resizeCropRect
-import io.github.ismoy.imagepickerkmp.crop.CropUtils.detectHandle
+import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
 @Composable
- fun CropImageCanvas(
+fun CropImageCanvas(
     photoResult: PhotoResult,
+    imageSize: Size,
     zoomLevel: Float,
     rotationAngle: Float,
     cropRect: Rect,
@@ -49,15 +51,24 @@ import kotlin.math.min
     activeHandle: CropHandle?,
     dragStartOffset: Offset,
     isCircularCrop: Boolean,
+    constrainCropToImageBounds: Boolean,
     onImageSizeChanged: (Size) -> Unit,
     onCropRectChanged: (Rect) -> Unit,
     onCanvasSizeChanged: (Size) -> Unit,
     onDragStateChanged: (Boolean, CropHandle?, Offset) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    val imageBounds = displayedImageBounds(imageSize, canvasSize, zoomLevel)
+    val initialImageBounds = displayedImageBounds(imageSize, canvasSize, 1f)
+
+    LaunchedEffect(cropRect, imageBounds, constrainCropToImageBounds) {
+        if (constrainCropToImageBounds && cropRect != Rect.Zero && imageBounds != null) {
+            val constrainedCropRect = cropRect.constrainTo(imageBounds)
+            if (constrainedCropRect != cropRect) onCropRectChanged(constrainedCropRect)
+        }
+    }
+
+    Column(modifier = modifier) {
         var localCropRect by remember(cropRect) { mutableStateOf(cropRect) }
         var localCanvasSize by remember(canvasSize) { mutableStateOf(canvasSize) }
         var localIsDragging by remember(isDragging) { mutableStateOf(isDragging) }
@@ -75,7 +86,7 @@ import kotlin.math.min
                     .size(1000)
                     .memoryCachePolicy(CachePolicy.DISABLED)
                     .build(),
-                contentDescription = "Imagen a recortar",
+                contentDescription = "Image to crop",
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer(
@@ -98,7 +109,12 @@ import kotlin.math.min
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
-                    .pointerInput(Unit) {
+                    .pointerInput(
+                        imageBounds,
+                        constrainCropToImageBounds,
+                        isCircularCrop,
+                        localCanvasSize
+                    ) {
                         detectDragGestures(
                             onDragStart = { offset ->
                                 val handle = detectHandle(offset, localCropRect)
@@ -118,61 +134,43 @@ import kotlin.math.min
                                 onDragStateChanged(false, null, Offset.Zero)
                             },
                             onDrag = { _, dragAmount ->
-                                if (localIsDragging) {
-                                    if (localActiveHandle != null) {
-                                        val newRect = resizeCropRect(
-                                            localCropRect,
-                                            localActiveHandle!!,
-                                            dragAmount,
-                                            localCanvasSize
-                                        )
+                                if (!localIsDragging) return@detectDragGestures
 
-                                        if (isCircularCrop) {
-                                            val centerX = localCropRect.center.x
-                                            val centerY = localCropRect.center.y
-                                            val deltaFromCenter = when (localActiveHandle!!) {
-                                                CropHandle.TOP_LEFT, CropHandle.TOP_RIGHT,
-                                                CropHandle.BOTTOM_LEFT, CropHandle.BOTTOM_RIGHT -> {
-                                                    val newCenterX = newRect.center.x
-                                                    val newCenterY = newRect.center.y
-                                                    max(
-                                                        abs(newRect.left - newCenterX),
-                                                        abs(newRect.top - newCenterY)
-                                                    )
-                                                }
-                                                CropHandle.TOP_CENTER, CropHandle.BOTTOM_CENTER -> {
-                                                    newRect.height / 2
-                                                }
-                                                CropHandle.LEFT_CENTER, CropHandle.RIGHT_CENTER -> {
-                                                    newRect.width / 2
-                                                }
-                                            }
-
-                                            localCropRect = Rect(
-                                                left = centerX - deltaFromCenter,
-                                                top = centerY - deltaFromCenter,
-                                                right = centerX + deltaFromCenter,
-                                                bottom = centerY + deltaFromCenter
-                                            )
-                                        } else {
-                                            localCropRect = newRect
-                                        }
-                                        onCropRectChanged(localCropRect)
+                                val updatedCropRect = if (localActiveHandle != null) {
+                                    val resizedRect = resizeCropRect(
+                                        localCropRect,
+                                        localActiveHandle!!,
+                                        dragAmount,
+                                        localCanvasSize
+                                    )
+                                    if (isCircularCrop) {
+                                        circularCropRect(localCropRect, resizedRect, localActiveHandle!!)
                                     } else {
-                                        val newLeft = (localCropRect.left + dragAmount.x)
-                                            .coerceAtLeast(0f)
-                                            .coerceAtMost(localCanvasSize.width - localCropRect.width)
-                                        val newTop = (localCropRect.top + dragAmount.y)
-                                            .coerceAtLeast(0f)
-                                            .coerceAtMost(localCanvasSize.height - localCropRect.height)
-
-                                        localCropRect = Rect(
-                                            offset = Offset(newLeft, newTop),
-                                            size = Size(localCropRect.width, localCropRect.height)
+                                        resizedRect
+                                    }
+                                } else {
+                                    val movedCropRect = Rect(
+                                        offset = Offset(
+                                            x = localCropRect.left + dragAmount.x,
+                                            y = localCropRect.top + dragAmount.y
+                                        ),
+                                        size = Size(localCropRect.width, localCropRect.height)
+                                    )
+                                    if (constrainCropToImageBounds && imageBounds != null) {
+                                        movedCropRect
+                                    } else {
+                                        movedCropRect.constrainTo(
+                                            Rect(0f, 0f, localCanvasSize.width, localCanvasSize.height)
                                         )
-                                        onCropRectChanged(localCropRect)
                                     }
                                 }
+
+                                localCropRect = if (constrainCropToImageBounds && imageBounds != null) {
+                                    updatedCropRect.constrainTo(imageBounds)
+                                } else {
+                                    updatedCropRect
+                                }
+                                onCropRectChanged(localCropRect)
                             }
                         )
                     }
@@ -180,31 +178,18 @@ import kotlin.math.min
                 localCanvasSize = size
                 onCanvasSizeChanged(size)
 
-                if (localCropRect == Rect.Zero) {
-                    val margin = 40f
-                    val availableWidth = size.width - margin * 2
-                    val availableHeight = size.height - margin * 2
-                    val rectWidth: Float
-                    val rectHeight: Float
-                    when {
-                        isCircularCrop -> {
-                            val side = min(availableWidth, availableHeight) * 0.7f
-                            rectWidth = side
-                            rectHeight = side
-                        }
-                        else -> {
-                            rectWidth = availableWidth * 0.8f
-                            rectHeight = availableHeight * 0.6f
-                        }
+                if (localCropRect == Rect.Zero &&
+                    (!constrainCropToImageBounds ||
+                        (imageBounds != null && initialImageBounds != null))
+                ) {
+                    localCropRect = if (constrainCropToImageBounds && imageBounds != null &&
+                        initialImageBounds != null
+                    ) {
+                        initialCropRectForImage(initialImageBounds, isCircularCrop)
+                            .constrainTo(imageBounds)
+                    } else {
+                        defaultCropRect(size, isCircularCrop)
                     }
-                    val centerX = size.width / 2
-                    val centerY = size.height / 2
-                    localCropRect = Rect(
-                        left = centerX - rectWidth / 2,
-                        top = centerY - rectHeight / 2,
-                        right = centerX + rectWidth / 2,
-                        bottom = centerY + rectHeight / 2
-                    )
                     onCropRectChanged(localCropRect)
                 }
 
@@ -213,6 +198,103 @@ import kotlin.math.min
         }
     }
 }
+
+private fun displayedImageBounds(imageSize: Size, canvasSize: Size, zoomLevel: Float): Rect? {
+    if (imageSize.width <= 0f || imageSize.height <= 0f ||
+        canvasSize.width <= 0f || canvasSize.height <= 0f
+    ) {
+        return null
+    }
+
+    val imageAspectRatio = imageSize.width / imageSize.height
+    val canvasAspectRatio = canvasSize.width / canvasSize.height
+    val baseSize = if (imageAspectRatio > canvasAspectRatio) {
+        Size(canvasSize.width, canvasSize.width / imageAspectRatio)
+    } else {
+        Size(canvasSize.height * imageAspectRatio, canvasSize.height)
+    }
+    val scaledSize = Size(baseSize.width * zoomLevel, baseSize.height * zoomLevel)
+    val offset = Offset(
+        x = (canvasSize.width - scaledSize.width) / 2f,
+        y = (canvasSize.height - scaledSize.height) / 2f
+    )
+    return Rect(offset, scaledSize)
+}
+
+private fun initialCropRectForImage(imageBounds: Rect, isCircularCrop: Boolean): Rect {
+    if (!isCircularCrop) return imageBounds
+
+    val side = min(imageBounds.width, imageBounds.height)
+    return Rect(
+        left = imageBounds.center.x - side / 2f,
+        top = imageBounds.center.y - side / 2f,
+        right = imageBounds.center.x + side / 2f,
+        bottom = imageBounds.center.y + side / 2f
+    )
+}
+
+private fun defaultCropRect(canvasSize: Size, isCircularCrop: Boolean): Rect {
+    val margin = 40f
+    val availableWidth = canvasSize.width - margin * 2
+    val availableHeight = canvasSize.height - margin * 2
+    val rectSize = if (isCircularCrop) {
+        val side = min(availableWidth, availableHeight) * 0.7f
+        Size(side, side)
+    } else {
+        Size(availableWidth * 0.8f, availableHeight * 0.6f)
+    }
+    return Rect(
+        left = canvasSize.width / 2f - rectSize.width / 2f,
+        top = canvasSize.height / 2f - rectSize.height / 2f,
+        right = canvasSize.width / 2f + rectSize.width / 2f,
+        bottom = canvasSize.height / 2f + rectSize.height / 2f
+    )
+}
+
+private fun circularCropRect(
+    currentCropRect: Rect,
+    resizedCropRect: Rect,
+    activeHandle: CropHandle
+): Rect {
+    val centerX = currentCropRect.center.x
+    val centerY = currentCropRect.center.y
+    val deltaFromCenter = when (activeHandle) {
+        CropHandle.TOP_LEFT, CropHandle.TOP_RIGHT,
+        CropHandle.BOTTOM_LEFT, CropHandle.BOTTOM_RIGHT -> max(
+            abs(resizedCropRect.left - resizedCropRect.center.x),
+            abs(resizedCropRect.top - resizedCropRect.center.y)
+        )
+        CropHandle.TOP_CENTER, CropHandle.BOTTOM_CENTER -> resizedCropRect.height / 2f
+        CropHandle.LEFT_CENTER, CropHandle.RIGHT_CENTER -> resizedCropRect.width / 2f
+    }
+    return Rect(
+        left = centerX - deltaFromCenter,
+        top = centerY - deltaFromCenter,
+        right = centerX + deltaFromCenter,
+        bottom = centerY + deltaFromCenter
+    )
+}
+
+private fun Rect.constrainTo(bounds: Rect): Rect {
+    if (width <= 0f || height <= 0f || bounds.width <= 0f || bounds.height <= 0f) {
+        return this
+    }
+
+    val scale = min(1f, min(bounds.width / width, bounds.height / height))
+    val constrainedWidth = min(width * scale, bounds.width)
+    val constrainedHeight = min(height * scale, bounds.height)
+    val maxLeft = max(bounds.left, bounds.right - constrainedWidth)
+    val maxTop = max(bounds.top, bounds.bottom - constrainedHeight)
+    val constrainedLeft = left.coerceIn(bounds.left, maxLeft)
+    val constrainedTop = top.coerceIn(bounds.top, maxTop)
+    return Rect(
+        left = constrainedLeft,
+        top = constrainedTop,
+        right = constrainedLeft + constrainedWidth,
+        bottom = constrainedTop + constrainedHeight
+    )
+}
+
 private fun DrawScope.drawCropOverlay(
     cropRect: Rect,
     isCircularCrop: Boolean,
@@ -221,7 +303,7 @@ private fun DrawScope.drawCropOverlay(
     val overlayPath = Path().apply {
         addRect(Rect(0f, 0f, canvasSize.width, canvasSize.height))
         if (isCircularCrop) {
-            val radius = min(cropRect.width, cropRect.height) / 2
+            val radius = min(cropRect.width, cropRect.height) / 2f
             addOval(
                 Rect(
                     cropRect.center.x - radius,
@@ -240,7 +322,7 @@ private fun DrawScope.drawCropOverlay(
     }
 
     if (isCircularCrop) {
-        val radius = min(cropRect.width, cropRect.height) / 2
+        val radius = min(cropRect.width, cropRect.height) / 2f
         drawCircle(
             color = Color.White,
             radius = radius,
@@ -256,23 +338,23 @@ private fun DrawScope.drawCropOverlay(
             style = Stroke(width = 2f)
         )
 
-        val thirdWidth = cropRect.width / 3
-        val thirdHeight = cropRect.height / 3
+        val thirdWidth = cropRect.width / 3f
+        val thirdHeight = cropRect.height / 3f
 
-        for (i in 1..2) {
+        for (index in 1..2) {
             drawLine(
                 color = Color.White.copy(alpha = 0.5f),
-                start = Offset(cropRect.left + thirdWidth * i, cropRect.top),
-                end = Offset(cropRect.left + thirdWidth * i, cropRect.bottom),
+                start = Offset(cropRect.left + thirdWidth * index, cropRect.top),
+                end = Offset(cropRect.left + thirdWidth * index, cropRect.bottom),
                 strokeWidth = 1f
             )
         }
 
-        for (i in 1..2) {
+        for (index in 1..2) {
             drawLine(
                 color = Color.White.copy(alpha = 0.5f),
-                start = Offset(cropRect.left, cropRect.top + thirdHeight * i),
-                end = Offset(cropRect.right, cropRect.top + thirdHeight * i),
+                start = Offset(cropRect.left, cropRect.top + thirdHeight * index),
+                end = Offset(cropRect.right, cropRect.top + thirdHeight * index),
                 strokeWidth = 1f
             )
         }
