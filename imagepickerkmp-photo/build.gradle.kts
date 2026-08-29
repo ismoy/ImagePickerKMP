@@ -21,7 +21,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.22"
 }
 
-version = "1.1.6"
+version = "1.1.7"
 
 kover {
     reports {

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -14,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,6 +24,7 @@ import io.github.ismoy.imagepickerkmp.I18nKonfig
 fun CropHeaderControls(
     onCancel: () -> Unit,
     applyCrop: () -> Unit,
+    onSkip: (() -> Unit)? = null
 ) {
     Box(
         modifier = Modifier
@@ -40,6 +41,19 @@ fun CropHeaderControls(
                 contentDescription = I18nKonfig.Common.image_crop_view_cancel_description,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
+        }
+
+        if (onSkip != null) {
+            IconButton(
+                onClick = onSkip,
+                modifier = Modifier.align(Alignment.CenterStart).padding(start = 48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.SkipNext,
+                    contentDescription = "Skip crop",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
 
         Text(

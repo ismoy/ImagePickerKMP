@@ -28,7 +28,15 @@ data class CropConfig(
     val aspectRatioLocked: Boolean = false,
     val circularCrop: Boolean = true,
     val squareCrop: Boolean = true,
-    val freeformCrop: Boolean = false
+    val freeformCrop: Boolean = false,
+    /** Initial image scale in the crop editor. Values are constrained to the supported range. */
+    val initialZoom: Float = 1f,
+    /** Lowest image scale selectable in the crop editor. */
+    val minZoom: Float = 1f,
+    /** Keeps the crop region within the rendered image instead of the entire editor canvas. */
+    val constrainCropToImageBounds: Boolean = true,
+    /** Shows an action that returns the pending image without applying the crop operation. */
+    val allowSkip: Boolean = false
 )
 
 data class CameraCaptureConfig(

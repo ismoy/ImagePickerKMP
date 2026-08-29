@@ -84,7 +84,8 @@ internal actual fun PlatformGalleryRenderer(
                     freeformCrop = true
                 ),
                 onAccept = { state.acceptCrop(it, currentOnPhotosSelected) },
-                onCancel = { state.cancelCrop() }
+                onCancel = { state.cancelCrop() },
+                onSkip = { state.skipCrop(currentOnPhotosSelected) }
             )
         }
     }

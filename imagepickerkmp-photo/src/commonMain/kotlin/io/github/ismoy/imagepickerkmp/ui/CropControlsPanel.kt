@@ -2,6 +2,7 @@ package io.github.ismoy.imagepickerkmp.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.outlined.Circle
@@ -30,11 +32,13 @@ import androidx.compose.ui.unit.sp
 import io.github.ismoy.imagepickerkmp.I18nKonfig
 import io.github.ismoy.imagepickerkmp.config.CropConfig
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun CropControlsPanel(
     isCircularCrop: Boolean,
     aspectRatio: String,
     zoomLevel: Float,
+    minZoom: Float,
     rotationAngle: Float,
     cropConfig: CropConfig,
     onToggleCropShape: (Boolean) -> Unit,
@@ -143,14 +147,35 @@ fun CropControlsPanel(
                 modifier = Modifier.padding(bottom = 4.dp)
             )
             Slider(
+                modifier = Modifier
+                    .fillMaxWidth(0.85f)
+                    .align(androidx.compose.ui.Alignment.CenterHorizontally),
                 value = zoomLevel,
                 onValueChange = onZoomChange,
-                valueRange = 0.5f..3.0f,
+                valueRange = minZoom..3.0f,
                 colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colorScheme.primary,
                     activeTrackColor = MaterialTheme.colorScheme.primary,
                     inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
-                )
+                ),
+                thumb = {
+                    Box(
+                        modifier = Modifier
+                            .size(14.dp)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
+                    )
+                },
+                track = { sliderState ->
+                    SliderDefaults.Track(
+                        sliderState = sliderState,
+                        modifier = Modifier.height(5.dp),
+                        colors = SliderDefaults.colors(
+                            thumbColor = MaterialTheme.colorScheme.primary,
+                            activeTrackColor = MaterialTheme.colorScheme.primary,
+                            inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    )
+                }
             )
         }
 
@@ -164,6 +189,9 @@ fun CropControlsPanel(
                 modifier = Modifier.padding(bottom = 4.dp)
             )
             Slider(
+                modifier = Modifier
+                    .fillMaxWidth(0.85f)
+                    .align(androidx.compose.ui.Alignment.CenterHorizontally),
                 value = rotationAngle,
                 onValueChange = onRotationChange,
                 valueRange = -180f..180f,
@@ -171,7 +199,25 @@ fun CropControlsPanel(
                     thumbColor = MaterialTheme.colorScheme.primary,
                     activeTrackColor = MaterialTheme.colorScheme.primary,
                     inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
-                )
+                ),
+                thumb = {
+                    Box(
+                        modifier = Modifier
+                            .size(14.dp)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
+                    )
+                },
+                track = { sliderState ->
+                    SliderDefaults.Track(
+                        sliderState = sliderState,
+                        modifier = Modifier.height(5.dp),
+                        colors = SliderDefaults.colors(
+                            thumbColor = MaterialTheme.colorScheme.primary,
+                            activeTrackColor = MaterialTheme.colorScheme.primary,
+                            inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    )
+                }
             )
         }
     }

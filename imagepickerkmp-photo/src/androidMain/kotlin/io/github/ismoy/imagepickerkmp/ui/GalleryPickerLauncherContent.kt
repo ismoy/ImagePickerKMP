@@ -108,7 +108,8 @@ internal fun GalleryPickerLauncherContent(config: GalleryPickerConfig) {
                     CropConfig(enabled = true)
                 },
                 onAccept = { state.acceptCrop(it) },
-                onCancel = { state.cancelCrop() }
+                onCancel = { state.cancelCrop() },
+                onSkip = { state.skipCrop() }
             )
         }
     }
