@@ -66,6 +66,14 @@ barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref =
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 browser = { module = "androidx.browser:browser", version.ref = "browser" }
 startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
+jetbrains-compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version = "1.11.1" }
+jetbrains-compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version = "1.11.1" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesCore" }
+mockk = { module = "io.mockk:mockk", version = "1.13.12" }
+androidx-test-core = { module = "androidx.test:core", version = "1.6.1" }
+robolectric = { module = "org.robolectric:robolectric", version = "4.13" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 [plugins]
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
