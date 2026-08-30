@@ -70,21 +70,34 @@ ImagePickerKMP is a **modular** media library. Each module is independent — in
 <div align="center">
   <table>
     <tr>
+      <th colspan="2" align="center">Photos</th>
+      <th colspan="2" align="center">Scanner</th>
+    </tr>
+    <tr>
+      <th align="center">Android</th>
+      <th align="center">iOS</th>
       <th align="center">Android</th>
       <th align="center">iOS</th>
     </tr>
     <tr>
-      <td width="50%" align="center">
+      <td width="25%" align="center">
         <video src="https://github.com/user-attachments/assets/6a09f4d4-81e6-40b8-9aff-3d10e3108e0e" autoplay loop muted playsinline width="100%"></video>
       </td>
-      <td width="50%" align="center">
+      <td width="25%" align="center">
         <video src="https://github.com/user-attachments/assets/ef5db514-0553-4e35-81b1-48e40d461439" autoplay loop muted playsinline width="100%"></video>
+      </td>
+      <td width="25%" align="center">
+        <video src="https://github.com/user-attachments/assets/3bbd96c3-0374-418e-bc96-f1a35dd10c85" autoplay loop muted playsinline width="100%"></video>
+      </td>
+      <td width="25%" align="center">
+        <video src="https://github.com/user-attachments/assets/3af2efcb-77fd-4e04-97d4-b7bd3a21ccc9" autoplay loop muted playsinline width="100%"></video>
       </td>
     </tr>
   </table>
 </div>
 
 ---
+
 ## Installation
 
 Add only the modules you need. All modules are published to Maven Central.
@@ -95,6 +108,9 @@ dependencies {
     // Photo — camera capture and gallery image picking
     implementation("io.github.ismoy:imagepickerkmp:1.1.0")
 
+    // Scanner — live barcode and QR code scanning
+    implementation("io.github.ismoy:imagepickerkmp-scanner:1.1.0")
+
     // Video — video recording and gallery video picking
     implementation("io.github.ismoy:imagepickerkmp-video:1.1.0") // SOON
 
@@ -103,9 +119,6 @@ dependencies {
 
     // Audio Player — voice message and audio file playback
     implementation("io.github.ismoy:imagepickerkmp-audioplayer:1.1.0") // SOON
-
-    // Scanner — live barcode and QR code scanning
-    implementation("io.github.ismoy:imagepickerkmp-scanner:1.1.0") // SOON
 
     // Video Player — full-featured video playback
     implementation("io.github.ismoy:imagepickerkmp-videoplayer:1.1.0") // SOON
