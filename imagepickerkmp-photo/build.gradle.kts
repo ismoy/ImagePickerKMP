@@ -436,17 +436,6 @@ mavenPublishing{
 }
 afterEvaluate {
     publishing {
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://github.com/ismoy/ImagePickerKMP")
-                credentials {
-                    username = System.getenv("GITHUB_ACTOR") ?: ""
-                    password = System.getenv("GITHUB_TOKEN") ?: ""
-                }
-            }
-        }
-
         publications.forEach { publication ->
             val mavenPublication = publication as? MavenPublication
             if (mavenPublication != null) {
