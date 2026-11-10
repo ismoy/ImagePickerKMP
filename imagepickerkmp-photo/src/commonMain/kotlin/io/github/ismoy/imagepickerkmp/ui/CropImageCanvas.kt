@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
@@ -38,6 +40,9 @@ import io.github.ismoy.imagepickerkmp.picker.PhotoResult
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+
+// Inset around the image so handles on the crop edges keep their full touch area.
+private val CropTouchMargin = 24.dp
 
 @Composable
 fun CropImageCanvas(
@@ -69,131 +74,136 @@ fun CropImageCanvas(
     }
 
     Column(modifier = modifier) {
-        var localCropRect by remember(cropRect) { mutableStateOf(cropRect) }
+        var localCropRect by remember { mutableStateOf(cropRect) }
         var localCanvasSize by remember(canvasSize) { mutableStateOf(canvasSize) }
         var localIsDragging by remember(isDragging) { mutableStateOf(isDragging) }
         var localActiveHandle by remember(activeHandle) { mutableStateOf(activeHandle) }
+
+        LaunchedEffect(cropRect) {
+            if (localCropRect != cropRect) localCropRect = cropRect
+        }
 
         Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
                 .clipToBounds()
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .data(photoResult.uri)
-                    .size(1000)
-                    .memoryCachePolicy(CachePolicy.DISABLED)
-                    .build(),
-                contentDescription = "Image to crop",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer(
-                        scaleX = zoomLevel,
-                        scaleY = zoomLevel,
-                        rotationZ = rotationAngle
-                    ),
-                contentScale = ContentScale.Fit,
-                onSuccess = { state ->
-                    val painter = state.painter
-                    onImageSizeChanged(
-                        Size(
-                            painter.intrinsicSize.width,
-                            painter.intrinsicSize.height
-                        )
+                .pointerInput(
+                    imageBounds,
+                    constrainCropToImageBounds,
+                    isCircularCrop,
+                    localCanvasSize
+                ) {
+                    val margin = CropTouchMargin.toPx()
+                    detectDragGestures(
+                        onDragStart = { touchOffset ->
+                            val offset = touchOffset - Offset(margin, margin)
+                            val handle = detectHandle(offset, localCropRect)
+                            if (handle != null) {
+                                localActiveHandle = handle
+                                localIsDragging = true
+                                onDragStateChanged(true, handle, offset)
+                            } else if (localCropRect.contains(offset)) {
+                                localActiveHandle = null
+                                localIsDragging = true
+                                onDragStateChanged(true, null, offset)
+                            }
+                        },
+                        onDragEnd = {
+                            localIsDragging = false
+                            localActiveHandle = null
+                            onDragStateChanged(false, null, Offset.Zero)
+                        },
+                        onDrag = { _, dragAmount ->
+                            if (!localIsDragging) return@detectDragGestures
+
+                            val updatedCropRect = if (localActiveHandle != null) {
+                                val resizedRect = resizeCropRect(
+                                    localCropRect,
+                                    localActiveHandle!!,
+                                    dragAmount,
+                                    localCanvasSize
+                                )
+                                if (isCircularCrop) {
+                                    circularCropRect(localCropRect, resizedRect, localActiveHandle!!)
+                                } else {
+                                    resizedRect
+                                }
+                            } else {
+                                val movedCropRect = Rect(
+                                    offset = Offset(
+                                        x = localCropRect.left + dragAmount.x,
+                                        y = localCropRect.top + dragAmount.y
+                                    ),
+                                    size = Size(localCropRect.width, localCropRect.height)
+                                )
+                                if (constrainCropToImageBounds && imageBounds != null) {
+                                    movedCropRect
+                                } else {
+                                    movedCropRect.constrainTo(
+                                        Rect(0f, 0f, localCanvasSize.width, localCanvasSize.height)
+                                    )
+                                }
+                            }
+
+                            localCropRect = if (constrainCropToImageBounds && imageBounds != null) {
+                                updatedCropRect.constrainTo(imageBounds)
+                            } else {
+                                updatedCropRect
+                            }
+                            onCropRectChanged(localCropRect)
+                        }
                     )
                 }
-            )
-
-            Canvas(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(
-                        imageBounds,
-                        constrainCropToImageBounds,
-                        isCircularCrop,
-                        localCanvasSize
-                    ) {
-                        detectDragGestures(
-                            onDragStart = { offset ->
-                                val handle = detectHandle(offset, localCropRect)
-                                if (handle != null) {
-                                    localActiveHandle = handle
-                                    localIsDragging = true
-                                    onDragStateChanged(true, handle, offset)
-                                } else if (localCropRect.contains(offset)) {
-                                    localActiveHandle = null
-                                    localIsDragging = true
-                                    onDragStateChanged(true, null, offset)
-                                }
-                            },
-                            onDragEnd = {
-                                localIsDragging = false
-                                localActiveHandle = null
-                                onDragStateChanged(false, null, Offset.Zero)
-                            },
-                            onDrag = { _, dragAmount ->
-                                if (!localIsDragging) return@detectDragGestures
-
-                                val updatedCropRect = if (localActiveHandle != null) {
-                                    val resizedRect = resizeCropRect(
-                                        localCropRect,
-                                        localActiveHandle!!,
-                                        dragAmount,
-                                        localCanvasSize
-                                    )
-                                    if (isCircularCrop) {
-                                        circularCropRect(localCropRect, resizedRect, localActiveHandle!!)
-                                    } else {
-                                        resizedRect
-                                    }
-                                } else {
-                                    val movedCropRect = Rect(
-                                        offset = Offset(
-                                            x = localCropRect.left + dragAmount.x,
-                                            y = localCropRect.top + dragAmount.y
-                                        ),
-                                        size = Size(localCropRect.width, localCropRect.height)
-                                    )
-                                    if (constrainCropToImageBounds && imageBounds != null) {
-                                        movedCropRect
-                                    } else {
-                                        movedCropRect.constrainTo(
-                                            Rect(0f, 0f, localCanvasSize.width, localCanvasSize.height)
-                                        )
-                                    }
-                                }
-
-                                localCropRect = if (constrainCropToImageBounds && imageBounds != null) {
-                                    updatedCropRect.constrainTo(imageBounds)
-                                } else {
-                                    updatedCropRect
-                                }
-                                onCropRectChanged(localCropRect)
-                            }
+        ) {
+            Box(modifier = Modifier.fillMaxSize().padding(CropTouchMargin)) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                        .data(photoResult.uri)
+                        .size(1000)
+                        .memoryCachePolicy(CachePolicy.DISABLED)
+                        .build(),
+                    contentDescription = "Image to crop",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer(
+                            scaleX = zoomLevel,
+                            scaleY = zoomLevel,
+                            rotationZ = rotationAngle
+                        ),
+                    contentScale = ContentScale.Fit,
+                    onSuccess = { state ->
+                        val painter = state.painter
+                        onImageSizeChanged(
+                            Size(
+                                painter.intrinsicSize.width,
+                                painter.intrinsicSize.height
+                            )
                         )
                     }
-            ) {
-                localCanvasSize = size
-                onCanvasSizeChanged(size)
+                )
 
-                if (localCropRect == Rect.Zero &&
-                    (!constrainCropToImageBounds ||
-                        (imageBounds != null && initialImageBounds != null))
-                ) {
-                    localCropRect = if (constrainCropToImageBounds && imageBounds != null &&
-                        initialImageBounds != null
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    localCanvasSize = size
+                    onCanvasSizeChanged(size)
+
+                    if (localCropRect == Rect.Zero &&
+                        (!constrainCropToImageBounds ||
+                            (imageBounds != null && initialImageBounds != null))
                     ) {
-                        initialCropRectForImage(initialImageBounds, isCircularCrop)
-                            .constrainTo(imageBounds)
-                    } else {
-                        defaultCropRect(size, isCircularCrop)
+                        localCropRect = if (constrainCropToImageBounds && imageBounds != null &&
+                            initialImageBounds != null
+                        ) {
+                            initialCropRectForImage(initialImageBounds, isCircularCrop)
+                                .constrainTo(imageBounds)
+                        } else {
+                            defaultCropRect(size, isCircularCrop)
+                        }
+                        onCropRectChanged(localCropRect)
                     }
-                    onCropRectChanged(localCropRect)
-                }
 
-                drawCropOverlay(localCropRect, isCircularCrop, size)
+                    drawCropOverlay(localCropRect, isCircularCrop, size)
+                }
             }
         }
     }
