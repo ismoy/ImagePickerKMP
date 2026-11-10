@@ -21,7 +21,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.22"
 }
 
-version = "1.1.7"
+version = "1.1.8"
 
 kover {
     reports {
@@ -228,7 +228,6 @@ kotlin {
             api(libs.kotlinx.io.core)
             implementation(libs.coil.compose)
             implementation(libs.material.icons.core)
-            implementation(libs.material.icons.extended)
             implementation(libs.components.resources)
         }
         androidMain.dependencies {
