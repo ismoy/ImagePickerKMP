@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Crop
-import androidx.compose.material.icons.outlined.Circle
+import io.github.ismoy.imagepickerkmp.ui.icons.Crop
+import io.github.ismoy.imagepickerkmp.ui.icons.Circle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon

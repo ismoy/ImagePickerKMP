@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Security
+import io.github.ismoy.imagepickerkmp.ui.icons.CameraAlt
+import io.github.ismoy.imagepickerkmp.ui.icons.Security
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
